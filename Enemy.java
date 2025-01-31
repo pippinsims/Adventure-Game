@@ -6,7 +6,7 @@ public class Enemy {
     {
         Scanner kbd = new Scanner(System.in);
 
-        int silly;
+        int silly = 10;
         silly = kbd.nextInt();
         
 
