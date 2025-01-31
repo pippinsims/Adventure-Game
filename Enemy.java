@@ -13,5 +13,11 @@ public class Enemy {
             System.out.println("You're fat and weird.");
         }
 
+
+        String dumb = "You're the dumnbest ever.";
+        while(dumb == "You're the dumnbest ever.") //the message is written twice jsut for you
+        {
+            dumb += 1;
+        }
     }
 }
