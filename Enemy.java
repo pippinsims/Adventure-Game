@@ -7,11 +7,13 @@ public class Enemy {
         Scanner kbd = new Scanner(System.in);
 
         int silly = 10;
+        String name = "jester";
+        int bells = 3;
         while(silly != 19)
         { 
             silly = kbd.nextInt();
             System.out.println("You're fat and weird.");
         }
-
+        
     }
 }
