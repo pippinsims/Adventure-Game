@@ -8,38 +8,38 @@ public class Environment {
 
         //r0[i] refers to room i of the rooms connected to r0
 
-        Scanner kbd = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
         String inputStr = "";
         
         //instantiating the player
         Player player = new Player();
         
+        Room curRoom = r0;
+
         while(!inputStr.equals("Quit."))
         { 
-            player.setActions();
+            player.setActions(curRoom);
                 
             //exposition////////////
                 System.out.println("You're in " + r0.getDescription() + ".");
 
                 //list actions available
                 System.out.println("You can:");
-                int numActions = player.getActions().length;
-                for(int i = 1; i <= numActions; i++)
+                String[] actionDescriptions = player.getActionDescriptions();
+                for(int i = 1; i <= actionDescriptions.length; i++)
                 {
-                    System.out.print("(" + i + ") ");
-                    switch(i)
-                    {
-                        case 1: System.out.println("Do nothing."); break;
-                        case 2: System.out.println("Open door 1."); break;
-                        case 3: System.out.println("Open door 2."); break;
-                        case 4: System.out.println("Open door 3."); break;
-                    }
+                    System.out.println("(" + i + ") " + actionDescriptions[i - 1]);
                 }
             //could be a method?////
 
-            inputStr = kbd.nextLine();
+            inputStr = scanner.nextLine();
             //we now have a running game loop.
+            
+            //SHOULD BE COMPLETELY ERROR-TRAPPED
+            player.performAction(Integer.parseInt(inputStr));
         }
+
+        scanner.close();
     }
 
     private static Room generateMap()
@@ -47,7 +47,7 @@ public class Environment {
         Room r0 = new Room(new Room[3]);        
 
         //creating rooms for each door
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < r0.getNumRooms(); i++)
         {
             r0.setRoom(0, new Room(new Room[]{r0}));
         }

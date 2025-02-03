@@ -48,6 +48,11 @@ public class Room {
         return enemies[i];
     }
 
+    public int getNumRooms()
+    {
+        return doors.length;
+    }
+
     public String getDescription()
     {
         return description + " with " + doors.length + " doors";

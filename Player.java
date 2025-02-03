@@ -1,13 +1,64 @@
+import java.util.*;
+
 public class Player {
     
-    public void setActions()
-    {
-
+    enum action {
+        NOTHING,
+        DOOR,
+        INSPECT
     }
 
-    public String[] getActions()
+    public List<action> actions = new ArrayList<action>();
+
+    public void setActions(Room curRoom)
     {
-        //SUPER TEMPORARY, I DON'T PLAN ON "ACTIONS" JUST BEING STRINGS
-        return new String[]{""};
+        actions.clear();
+        actions.add(action.NOTHING);
+
+        for(int i = 0; i < curRoom.getNumRooms(); i++)
+        {
+            actions.add(action.DOOR);
+        }
+
+        actions.add(action.INSPECT);
+    }
+
+    public String[] getActionDescriptions()
+    {   
+        String[] actionDescriptions = new String[actions.size()];
+        int doorNumber = 0;
+        for(int i = 0; i < actionDescriptions.length; i++)
+        {
+            actionDescriptions[i] = actionToString(actions.get(i)) + ((actions.get(i) == action.DOOR) ? ++doorNumber : "");
+        }
+        return actionDescriptions;
+    }
+
+    private String actionToString(action a)
+    {
+        String str;
+        switch (a) {
+            case NOTHING:
+                str = "Do nothing";
+                break;
+            
+            case DOOR:
+                str = "Try door ";
+                break;
+            
+            case INSPECT:
+                str = "Inspect your surroundings";
+                break;
+        
+            default:
+                str = "[Empty Action]";
+                break;
+        }
+        return str;
+    }
+
+    public void performAction(int i)
+    {
+        //perform some action.
     }
 }
