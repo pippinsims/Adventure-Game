@@ -21,6 +21,9 @@ public class Enemy {
         {
             dumb += 1;
         }
+
+        if(dumb == "You're the dumbest ever.")
+            dumb = "What is wrong with reality?";
         
         //I am weird
     }
