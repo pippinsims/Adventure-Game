@@ -26,5 +26,6 @@ public class Enemy {
             dumb = "What is wrong with reality?";
         
         //I am weird
+        //Reality complex destruction
     }
 }
