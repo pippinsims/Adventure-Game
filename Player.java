@@ -31,7 +31,10 @@ public class Player {
         {
             actionDescriptions[i] = actionToString(actions.get(i)) + ((actions.get(i) == action.DOOR) ? ++doorNumber : "");
             /*if(actions.get(i) == action.DOOR)
-                actionDescriptions[i] += ++doorNumber;*/
+               {
+                   doorNumber++;
+                   actionDescriptions[i] += doorNumber;
+               }*/
         }
         return actionDescriptions;
     }
