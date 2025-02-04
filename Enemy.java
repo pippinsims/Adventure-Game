@@ -1,8 +1,7 @@
-import java.io.*;
 import java.util.Scanner;
 public class Enemy {
     //Something
-    /*public static void main (String []args)
+    public void dumbyBABAYboy()
     {
         Scanner kbd = new Scanner(System.in);
 
@@ -13,6 +12,7 @@ public class Enemy {
         { 
             silly = kbd.nextInt();
             System.out.println("You're fat and weird.");
+            System.out.println(name + bells);
         }
 
 
@@ -27,5 +27,7 @@ public class Enemy {
         
         //I am weird
         //Reality complex destruction
-    }*/
+
+        kbd.close();
+    }
 }

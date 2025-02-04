@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class Environment {
     public static void main(String[] args) {
         
-        //room r0 is the origin room
+        //room r0 is the current room
         Room r0 = generateMap();
 
         //r0[i] refers to room i of the rooms connected to r0
@@ -13,12 +13,10 @@ public class Environment {
         
         //instantiating the player
         Player player = new Player();
-        
-        Room curRoom = r0;
 
         while(!inputStr.equals("Quit."))
         { 
-            player.setActions(curRoom);
+            player.setActions(r0);
                 
             //exposition////////////
                 System.out.println("You're in " + r0.getDescription() + ".");
