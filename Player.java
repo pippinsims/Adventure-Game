@@ -30,6 +30,8 @@ public class Player {
         for(int i = 0; i < actionDescriptions.length; i++)
         {
             actionDescriptions[i] = actionToString(actions.get(i)) + ((actions.get(i) == action.DOOR) ? ++doorNumber : "");
+            /*if(actions.get(i) == action.DOOR)
+                actionDescriptions[i] += ++doorNumber;*/
         }
         return actionDescriptions;
     }
@@ -59,6 +61,6 @@ public class Player {
 
     public void performAction(int i)
     {
-        //perform some action.
+        //PERFORM SOME ACTION
     }
 }

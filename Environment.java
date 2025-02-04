@@ -46,7 +46,7 @@ public class Environment {
     {
         Room r0 = new Room(new Room[3]);        
 
-        //creating rooms for each door
+        //creating 1-door rooms for each door
         for(int i = 0; i < r0.getNumRooms(); i++)
         {
             r0.setRoom(0, new Room(new Room[]{r0}));
