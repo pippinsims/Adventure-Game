@@ -1,33 +1,35 @@
-import java.util.Scanner;
+
 public class Enemy {
-    //Something
-    public void dumbyBABAYboy()
+    private int health;
+    private Inventory inv;
+    private int dmg;
+    private int wisdom;
+
+    public Enemy(int h, Inventory i, int d, int w)
     {
-        Scanner kbd = new Scanner(System.in);
+        health = h;
+        inv = i;
+        dmg = d;
+        wisdom = w;
 
-        int silly = 10;
-        String name = "jester";
-        int bells = 3;
-        while(silly != 19)
-        { 
-            silly = kbd.nextInt();
-            System.out.println("You're fat and weird.");
-            System.out.println(name + bells);
-        }
-
-
-        String dumb = "You're the dumnbest ever.";
-        while(dumb == "You're the dumnbest ever.") //the message is written twice jsut for you
-        {
-            dumb += 1;
-        }
-
-        if(dumb == "You're the dumbest ever.")
-            dumb = "What is wrong with reality?";
-        
-        //I am weird
-        //Reality complex destruction
-
-        kbd.close();
     }
+    public Enemy(int h)
+    {
+        health = h;
+        inv = new Inventory(5);
+        dmg = 2;
+        wisdom = 20;
+    }
+
+    public int getHealth()
+    {
+        return health;
+    }
+    public void receiveDamage(int damage)
+    {
+        health -= damage;
+    }
+
+    
+
 }

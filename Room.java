@@ -43,12 +43,22 @@ public class Room {
         doors[i] = d;
     }
 
+    public void setEnemy(int i, Enemy e)
+    {
+        enemies[i] = e;
+    }
+
     public Enemy getEnemy(int i)
     {
         if(enemies == null)
             return null;
         else
             return enemies[i];
+    }
+
+    public Enemy[] getEnemies()
+    {
+        return enemies;
     }
 
     public int getNumRooms()

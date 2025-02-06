@@ -54,7 +54,12 @@ public class Environment {
         {
             r0.setRoom(i, new Room(new Room[]{r0}));
         }
-
+        for (int i = 0; i < r0.getEnemies().length; i++) 
+        {
+            r0.setEnemy(i, new Enemy(3));
+        }
+         
+       
         return r0;
     }
 
@@ -67,22 +72,35 @@ public class Environment {
             case DOOR:
                 System.out.println("Which door traveler?");
 
-                String[] options = new String[r0.getNumRooms()];
-                for (int j=0; j < options.length; j++) {
-                    options [j] = "Try door " + (j+1);
-                    System.out.println(options[j]);
-                }
+                String[] doorOptions = promptList("Which door traveler?", r0.getNumRooms(), "Try door &");
+                
 
                 String doahnumma = "";
                 //we haev a glitch in el system
                 //doahnumma = kbd.nextLine();
                 doahnumma = "2";
 
-                if (inputNumberCheck(doahnumma, options))
+                if (inputNumberCheck(doahnumma, doorOptions))
                 {
                     r0 = r0.getRoom(Integer.parseInt(doahnumma));
                 }
                 break;
+            case FIGHT:
+                String[] fightOptions = promptList("How will you vanquish yoerer foeee??", 1, "Punch");
+                String inputStr = "1"; //would actually be a call to scanner but scanner doesn't work
+                if(inputNumberCheck(inputStr, fightOptions)) //how do you want to fight
+                {
+                    fightOptions = promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getEnemies().length,"Fight enemy &");
+
+                    inputStr = "1"; //ditto
+                    if(inputNumberCheck(inputStr, fightOptions)) //who do you want to fight
+                    {
+                        r0.getEnemy(Integer.parseInt(inputStr) - 1).receiveDamage(1);
+                        
+                    }
+                }
+                
+
             default:
                 break;
         
@@ -91,6 +109,32 @@ public class Environment {
         }
         kbd.close();
     }
+
+    /**
+     * Description of method...
+     * @param question the question that will be printed
+     * @param listSize
+     * @param listPrompts
+     * @return
+     */
+    private static String[] promptList(String question, int listSize, String listPrompts)
+    {
+        String[] options = new String[listSize];
+                for (int i=0; i < listSize; i++) {
+                    String tempListPrompts = listPrompts;
+                    for(int j = 0; j < listPrompts.length(); j++)
+                    {
+                        if(tempListPrompts.charAt(j) == '&')
+                        {
+                           tempListPrompts = tempListPrompts.substring(0, j) + (i+1) + tempListPrompts.substring(j+1, tempListPrompts.length());
+                        }
+                    }
+                    options[i] = tempListPrompts;
+                    System.out.println(options[i]);
+                }
+                return options;
+    }
+
     private static boolean inputNumberCheck(String s, String[] options)
     {
         Scanner kbd = new Scanner(System.in);
