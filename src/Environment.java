@@ -1,10 +1,11 @@
 import java.util.Scanner;
 
-public class Environment {
+public class Environment 
+{
     public static Scanner scanner = new Scanner(System.in);
     private static Room r0;
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) 
+    {
         //room r0 is the current room
         r0 = generateMap();
 
@@ -25,8 +26,11 @@ public class Environment {
             //lists available actions, lets the player choose, then performs chosen action.
             performAction(promptList("You can:", player.getActionDescriptions()), player);
 
-            for (Enemy e : r0.getEnemies()) {
-                performAction(e);
+            if (r0.getEnemies() != null)
+            {
+                for (Enemy e : r0.getEnemies()) {
+                    performAction(e);   
+                }
             }
         }
         scanner.close();
