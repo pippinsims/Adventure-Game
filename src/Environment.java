@@ -20,22 +20,21 @@ public class Environment {
             player.setActions(r0);
                 
             //exposition
-            System.out.println("You're in " + r0.getDescription() + ".");
+            slowPrintln("You're in " + r0.getDescription() + ".");
 
-            //list actions available
-            String[] actionDescriptions = promptList("You can:", player.getActionDescriptions());
-            
-            inputStr = scanner.nextLine();
-            
-            //we now have a running game loop.
-            performAction(forceInputToInt(inputStr, actionDescriptions), player);
+            //lists available actions, lets the player choose, then performs chosen action.
+            performAction(promptList("You can:", player.getActionDescriptions()), player);
+
+            for (Enemy e : r0.getEnemies()) {
+                performAction(e);
+            }
         }
         scanner.close();
     }
 
     private static Room generateMap()
     {
-        Room r0 = new Room(new Room[3], new Enemy[1], new Interactible[2], "a dimly lit room.\nThere is a faint foul odor... \nThe patchwork on the wall depicts of a redheaded lunatic. \nLord Gareth the Mad.\nThe room is gifted");        
+        Room r0 = new Room(new Room[3], new Enemy[1], new Interactible[2], "a dimly lit room.\nThere is a faint foul odor... \nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"\nThe room is gifted");        
 
         //creating 1-door rooms for each door
         for(int i = 0; i < r0.getNumExits(); i++)
@@ -58,28 +57,23 @@ public class Environment {
 
     private static void performAction(int i, Player p)
     {   
-        //PERFORM SOME ACTION
-        switch(p.actions.get(i-1))
+        switch(p.actions.get(i))
         {
             case DOOR:
-                String[] doorOptions = promptList("Which door traveler?", r0.getNumExits(), "Try door &");
-
-                String inputStr = scanner.nextLine();
-                r0 = r0.getRoom(forceInputToInt(inputStr, doorOptions));
+                r0 = r0.getRoom(promptList("Which door traveler?", r0.getNumExits(), "Try door &"));
                 
                 break;
 
             case FIGHT:
-                String[] fightOptions = promptList("How will you vanquish yoerer foeee??", new String[]{"Punch"});
-                
-                inputStr = scanner.nextLine(); //would actually be a call to scanner but scanner doesn't work
-                if(forceInputToInt(inputStr, fightOptions) != null)
-                {
-                    fightOptions = promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getEnemies().length,"Fight enemy &");
+                String[] attackTypes = new String[]{"Punch"};
+                int attackDamage = 0;
+            
+                if(attackTypes[promptList("How will you vanquish yoerer foeee??", attackTypes)].equals("Punch"))
+                    attackDamage = 1;
 
-                    inputStr = scanner.nextLine();
-                    r0.getEnemy(forceInputToInt(inputStr, fightOptions) - 1).receiveDamage(1);
-                }
+                r0.getEnemy(promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &")).receiveDamage(attackDamage);;
+
+                //SHOULD INFORM THE PLAYER ABOUT THE FIGHT
 
                 break;
 
@@ -88,7 +82,23 @@ public class Environment {
         }
     }
 
-    private static String[] promptList(String question, int listSize, String listPrompts)
+
+    //IDEALLY THERE WILL ONLY BE 1 DEFINITION OF performAction() BUT THAT IS AFTER THE Person INTERFACE
+    private static void performAction(Enemy e)
+    {   
+        switch(e.chooseAction(r0))
+        {
+            case 1:
+                slowPrintln("The enemy raises it's fiendish arms and jumps at you with startling dexterity.\nYou have no choice but to die.\nYET YOU LIVE.");
+                
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private static int promptList(String question, int listSize, String listPrompts)
     {        
         String[] options = new String[listSize];
         for(int i = 0; i < listSize; i++)
@@ -102,20 +112,20 @@ public class Environment {
                     options[i] = options[i].substring(0, j) + (i + 1) + options[i].substring(j + 1, options[i].length());
             }
         }
-
+        
         return promptList(question, options);
     }
 
-    private static String[] promptList(String question, String[] listPrompts)
+    private static int promptList(String question, String[] listPrompts)
     {
         System.out.println(question);
         
         for(int i = 0; i < listPrompts.length; i++) 
         {
-            System.out.println("(" + i + ") " + listPrompts[i]);
+            System.out.println("(" + (i + 1) + ") " + listPrompts[i]);
         }
 
-        return listPrompts;
+        return forceInputToInt(scanner.nextLine(), listPrompts) - 1;
     }
 
     private static Integer forceInputToInt(String s, String[] options)
@@ -129,18 +139,41 @@ public class Environment {
             }   
             catch(Exception e)
             {
+                String question = "[Incorrect input!]";
                 if (s.contains("fuck"))             
-                    System.out.println("Yeah okay fuck you too man, I'm just trying to do my job."); 
+                    question = "Yeah okay fuck you too man, I'm just trying to do my job."; 
 
-                for(int i = 1; i <= options.length; i++)
-                {
-                    System.out.println("(" + i + ") " + options[i - 1]);
-                }
+                promptList(question, options);
 
-                s = scanner.nextLine(); //breaks
+                s = scanner.nextLine();
             } 
         } while(inputInt == null);
 
-        return inputInt - 1; //input is 1-based
+        return inputInt;
+    }
+
+    private static void slowPrint(String output, int sleepDuration)
+    {   
+        for(int i = 0; i < output.length(); i++)
+        {   
+            try{
+                if(output.charAt(i) == '\n')
+                    Thread.sleep(sleepDuration*5);
+                Thread.sleep(sleepDuration);
+            }
+            catch(Exception e){}
+
+            System.out.print(output.charAt(i));
+        }
+    }
+
+    private static void slowPrintln(String output, int sleepDuration)
+    {
+        slowPrint(output+'\n', sleepDuration);
+    }
+
+    private static void slowPrintln(String output)
+    {
+        slowPrintln(output, 50);
     }
 }

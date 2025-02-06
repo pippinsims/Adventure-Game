@@ -45,4 +45,10 @@ public class Enemy {
     {
         health -= damage;
     }
+
+    public int chooseAction(Room curRoom)
+    {
+        //DECISIONMAKING FOR ENEMY
+        return 1;
+    }
 }
