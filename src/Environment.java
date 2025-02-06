@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.io.File;
 
 public class Environment 
 {
@@ -78,9 +79,13 @@ public class Environment
                 r0.getEnemy(promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &")).receiveDamage(attackDamage);;
 
                 //SHOULD INFORM THE PLAYER ABOUT THE FIGHT
-
                 break;
-
+            case INSPECT:
+                String s = readFile("C:\\\\Users\\saga7\\OneDrive\\Desktop\\Whatever you want\\Adventure-Game\\src\\mad_king.txt");
+                System.out.print(s);
+                System.out.println("\n"+ "Press enter to continue");
+                scanner.nextLine();
+                break;
             default:
                 break;
         }
@@ -147,9 +152,7 @@ public class Environment
                 if (s.contains("fuck"))             
                     question = "Yeah okay fuck you too man, I'm just trying to do my job."; 
 
-                promptList(question, options);
-
-                s = scanner.nextLine();
+                inputInt = promptList(question, options) + 1;
             } 
         } while(inputInt == null);
 
@@ -178,6 +181,23 @@ public class Environment
 
     private static void slowPrintln(String output)
     {
-        slowPrintln(output, 50);
+        slowPrintln(output, 1); //50 for real
+    }
+
+    private static String readFile (String fileName)
+    {   
+        String completeString = "";
+        try {
+            File file = new File(fileName);
+            Scanner fileScanner = new Scanner(file);
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                completeString += line + "\n";
+            }
+            fileScanner.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return completeString;
     }
 }
