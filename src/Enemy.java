@@ -11,8 +11,8 @@ public class Enemy {
         inv = i;
         dmg = d;
         wisdom = w;
-
     }
+
     public Enemy(int h)
     {
         health = h;
@@ -25,11 +25,24 @@ public class Enemy {
     {
         return health;
     }
+
+    public Inventory getInventory()
+    {
+        return inv;
+    }
+
+    public int getAttackDamage()
+    {
+        return dmg;
+    }
+
+    public int getWisdom()
+    {
+        return wisdom;
+    }
+
     public void receiveDamage(int damage)
     {
         health -= damage;
     }
-
-    
-
 }

@@ -1,29 +1,29 @@
 public class Room {
 
-    private Room[] doors = new Room[10];
+    private Room[] exits = new Room[10];
     private Enemy[] enemies = new Enemy[10];
     private Interactible[] interactibles = new Interactible[10];
     private String description = "a bare room";
 
-    public Room(Room[] d, Enemy[] e, Interactible[] i, String des)
+    public Room(Room[] ex, Enemy[] e, Interactible[] i, String des)
     {
-        doors = d;
+        exits = ex;
         enemies = e;
         interactibles = i;
         description = des;
     }
 
-    public Room(String des, Room[] d)
+    public Room(String des, Room[] ex)
     {
         description = des;
-        doors = d;
+        exits = ex;
         enemies = null;
         interactibles = null;
     }
 
-    public Room(Room[] d)
+    public Room(Room[] ex)
     {
-        doors = d;
+        exits = ex;
         enemies = null;
         interactibles = null;
     }
@@ -35,17 +35,12 @@ public class Room {
 
     public Room getRoom(int i)
     {
-        return doors[i];
+        return exits[i];
     }
 
     public void setRoom(int i, Room d)
     {
-        doors[i] = d;
-    }
-
-    public void setEnemy(int i, Enemy e)
-    {
-        enemies[i] = e;
+        exits[i] = d;
     }
 
     public Enemy getEnemy(int i)
@@ -56,18 +51,33 @@ public class Room {
             return enemies[i];
     }
 
+    public void setEnemy(int i, Enemy e)
+    {
+        enemies[i] = e;
+    }
+
     public Enemy[] getEnemies()
     {
         return enemies;
     }
 
-    public int getNumRooms()
+    public int getNumExits()
     {
-        return doors.length;
+        return exits.length;
+    }
+
+    public int getNumEnemies()
+    {
+        return enemies.length;
+    }
+
+    public int getNumInteractibles()
+    {
+        return interactibles.length;
     }
 
     public String getDescription()
     {
-        return description + " with " + doors.length + " doors";
+        return description + " with " + exits.length + " doors";
     }
 }
