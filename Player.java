@@ -5,7 +5,10 @@ public class Player {
     enum action {
         NOTHING,
         DOOR,
-        INSPECT
+        INSPECT,
+        FIGHT,
+        TALK,
+        INTERACT
     }
 
     public List<action> actions = new ArrayList<action>();
@@ -15,26 +18,26 @@ public class Player {
         actions.clear();
         actions.add(action.NOTHING);
 
-        for(int i = 0; i < curRoom.getNumRooms(); i++)
+        if (curRoom.getRoom(0) != null)
         {
             actions.add(action.DOOR);
         }
 
         actions.add(action.INSPECT);
+
+        if (curRoom.getEnemy(0) != null)
+        {
+            actions.add(action.FIGHT);
+        }
     }
 
     public String[] getActionDescriptions()
     {   
         String[] actionDescriptions = new String[actions.size()];
-        int doorNumber = 0;
+       
         for(int i = 0; i < actionDescriptions.length; i++)
         {
-            actionDescriptions[i] = actionToString(actions.get(i)) + ((actions.get(i) == action.DOOR) ? ++doorNumber : "");
-            /*if(actions.get(i) == action.DOOR)
-               {
-                   doorNumber++;
-                   actionDescriptions[i] += doorNumber;
-               }*/
+            actionDescriptions[i] = actionToString(actions.get(i));
         }
         return actionDescriptions;
     }
@@ -54,7 +57,9 @@ public class Player {
             case INSPECT:
                 str = "Inspect your surroundings";
                 break;
-        
+            case FIGHT:
+                str = "It's kill or be killed.";
+                break;
             default:
                 str = "[Empty Action]";
                 break;
@@ -62,8 +67,5 @@ public class Player {
         return str;
     }
 
-    public void performAction(int i)
-    {
-        //PERFORM SOME ACTION
-    }
+   
 }

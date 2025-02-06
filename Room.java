@@ -45,7 +45,10 @@ public class Room {
 
     public Enemy getEnemy(int i)
     {
-        return enemies[i];
+        if(enemies == null)
+            return null;
+        else
+            return enemies[i];
     }
 
     public int getNumRooms()
