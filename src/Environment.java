@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class Environment {
-
+    public static Scanner scanner = new Scanner(System.in);
     private static Room r0;
     public static void main(String[] args) {
         
@@ -10,7 +10,6 @@ public class Environment {
 
         //r0[i] refers to room i of the rooms connected to r0
 
-        Scanner scanner = new Scanner(System.in);;
         String inputStr = "";
         
         //instantiating the player
@@ -66,19 +65,16 @@ public class Environment {
     private static void performAction(int i, Player p)
     {   
         i--;
-        Scanner kbd = new Scanner(System.in);
         //PERFORM SOME ACTION
         switch(p.actions.get(i)){
             case DOOR:
                 System.out.println("Which door traveler?");
 
                 String[] doorOptions = promptList("Which door traveler?", r0.getNumRooms(), "Try door &");
-                
 
-                String doahnumma = "";
-                //we haev a glitch in el system
-                //doahnumma = kbd.nextLine();
-                doahnumma = "2";
+
+                String doahnumma = scanner.nextLine();
+                // doahnumma = "2";
 
                 if (inputNumberCheck(doahnumma, doorOptions))
                 {
@@ -107,7 +103,6 @@ public class Environment {
             
 
         }
-        kbd.close();
     }
 
     /**
@@ -137,8 +132,6 @@ public class Environment {
 
     private static boolean inputNumberCheck(String s, String[] options)
     {
-        Scanner kbd = new Scanner(System.in);
-    
         boolean falseInput = true;
         do
         {      
@@ -157,10 +150,9 @@ public class Environment {
                         System.out.println("(" + i + ") " + options[i - 1]);
                     }
                 falseInput = true;
-                s = kbd.nextLine();
+                s = scanner.nextLine();
             } 
         } while(falseInput);
-        kbd.close();
         return !falseInput;
     }
 
