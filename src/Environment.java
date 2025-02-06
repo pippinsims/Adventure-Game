@@ -1,17 +1,15 @@
 import java.util.Scanner;
 
 public class Environment {
-
-    private static Room r0;
     public static Scanner scanner = new Scanner(System.in);
-    public static void main(String[] args)
-    {        
+    private static Room r0;
+    public static void main(String[] args) {
+        
         //room r0 is the current room
         r0 = generateMap();
 
-        //so r0[i] refers to room i of the rooms connected to r0
+        //r0[i] refers to room i of the rooms connected to r0
 
-        scanner = new Scanner(System.in);;
         String inputStr = "";
         
         //instantiating the player
