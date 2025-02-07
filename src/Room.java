@@ -31,7 +31,7 @@ public class Room {
 
     public Interactible getInteractible(int i)
     {
-        return interactibles[i];
+            return interactibles != null ? interactibles[i] : null;
     }
 
     public Room getRoom(int i)
@@ -46,12 +46,10 @@ public class Room {
 
     public Enemy getEnemy(int i)
     {
-        if(i >= enemies.size())
-            return null;
-        else
-            return enemies.get(i);
+        return enemies != null && i < enemies.size() ? enemies.get(i) : null;
     }
 
+    //what if "enemies" is null or i wrong?
     public void setEnemy(int i, Enemy e)
     {
         enemies.set(i, e);
@@ -62,6 +60,7 @@ public class Room {
         enemies.add(e);
     }
 
+    //what if "enemies" is null or i wrong?
     public void slayEnemy(int i)
     {
         enemies.remove(i);
@@ -77,16 +76,19 @@ public class Room {
         return exits.length;
     }
 
+    //what if "enemies" is null?
     public int getNumEnemies()
     {
         return enemies.size();
     }
 
+    //what if "interactibles" is null?
     public int getNumInteractibles()
     {
         return interactibles.length;
     }
 
+    //what if "interactibles" is null?
     public void setInteractible(int i, Interactible in)
     {
         interactibles[i] = in;

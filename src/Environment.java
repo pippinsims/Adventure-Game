@@ -58,7 +58,7 @@ public class Environment
                 slowPrintln(descriptor);
             }
             //lists available actions, lets the player choose, then performs chosen action.
-            performAction(promptList("You can:", player.getActionDescriptions()), player);
+            performAction(promptList("You can:", player.getActionDescriptions()) - 1, player);
 
             if (r0.getEnemies() != null)
             {
@@ -98,7 +98,7 @@ public class Environment
         switch(p.actions.get(i))
         {
             case DOOR:
-                r0 = r0.getRoom(promptList("Which door traveler?", r0.getNumExits(), "Try door &"));
+                r0 = r0.getRoom(promptList("Which door traveler?", r0.getNumExits(), "Try door &") - 1);
                 
                 break;
 
@@ -106,14 +106,14 @@ public class Environment
                 String[] attackTypes = new String[]{"Punch"};
                 int attackDamage = 0;
             
-                if(attackTypes[promptList("How will you vanquish yoerer foeee??", attackTypes)].equals("Punch"))
+                if(attackTypes[promptList("How will you vanquish yoerer foeee??", attackTypes) - 1].equals("Punch"))
                     attackDamage = 1;
 
-                int chosenEnemyIndex = promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &");
+                int chosenEnemyIndex = promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &") - 1;
                 if(r0.getEnemy(chosenEnemyIndex).receiveDamage(attackDamage))
                 {
+                    slowPrintln("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getDescription(), 1000);
                     r0.slayEnemy(chosenEnemyIndex);
-                    slowPrint("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getDescription(), 1000);
                 }
 
                 //SHOULD INFORM THE PLAYER ABOUT THE FIGHT
@@ -136,7 +136,7 @@ public class Environment
         switch(e.chooseAction(r0))
         {
             case 1:
-                slowPrintln("The enemy raises it's fiendish arms and jumps at you with startling dexterity.\nYou have no choice but to die.\nYET YOU LIVE.");
+                slowPrintln("The " + e.getDescription() + " raises it's fiendish arms and jumps at you with startling dexterity.\nYou have no choice but to die.\nYET YOU LIVE.");
                 
                 break;
 
@@ -172,28 +172,30 @@ public class Environment
             System.out.println("(" + (i + 1) + ") " + listPrompts[i]);
         }
 
-        return forceInputToInt(scanner.nextLine(), listPrompts) - 1;
+        return forceInputToInt(scanner.nextLine(), listPrompts);
     }
 
     private static Integer forceInputToInt(String s, String[] options)
     {    
         Integer inputInt = null;
-        do
-        {      
-            try 
+        if(!s.equals("Quit."))
+        {
+            do
             {
-                inputInt = Integer.parseInt(s);
-            }   
-            catch(Exception e)
-            {
-                String question = "[Incorrect input!]";
-                if (s.contains("fuck"))             
-                    question = "Yeah okay fuck you too man, I'm just trying to do my job."; 
+                try 
+                {
+                    inputInt = Integer.parseInt(s);
+                }   
+                catch(Exception e)
+                {
+                    String question = "[Incorrect input!]";
+                    if (s.contains("fuck"))             
+                        question = "Yeah okay fuck you too man, I'm just trying to do my job."; 
 
-                inputInt = promptList(question, options) + 1;
-            } 
-        } while(inputInt == null);
-
+                    inputInt = promptList(question, options);
+                } 
+            } while(inputInt == null);
+        }
         return inputInt;
     }
 
@@ -229,8 +231,7 @@ public class Environment
             File file = new File(fileName);
             Scanner fileScanner = new Scanner(file);
             while (fileScanner.hasNextLine()) {
-                String line = fileScanner.nextLine();
-                completeString += line + "\n";
+                completeString += fileScanner.nextLine() + "\n";
             }
             fileScanner.close();
         } catch (Exception e) {
