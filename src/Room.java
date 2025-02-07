@@ -1,14 +1,15 @@
+import java.util.ArrayList;
+
 public class Room {
 
     private Room[] exits = new Room[10];
-    private Enemy[] enemies = new Enemy[10];
+    private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private Interactible[] interactibles = new Interactible[10];
     private String description = "a bare room";
 
-    public Room(Room[] ex, Enemy[] e, Interactible[] i, String des)
+    public Room(Room[] ex, Interactible[] i, String des)
     {
         exits = ex;
-        enemies = e;
         interactibles = i;
         description = des;
     }
@@ -45,18 +46,28 @@ public class Room {
 
     public Enemy getEnemy(int i)
     {
-        if(enemies == null)
+        if(i >= enemies.size())
             return null;
         else
-            return enemies[i];
+            return enemies.get(i);
     }
 
     public void setEnemy(int i, Enemy e)
     {
-        enemies[i] = e;
+        enemies.set(i, e);
     }
 
-    public Enemy[] getEnemies()
+    public void addEnemy(Enemy e)
+    {
+        enemies.add(e);
+    }
+
+    public void slayEnemy(int i)
+    {
+        enemies.remove(i);
+    }
+
+    public ArrayList<Enemy> getEnemies()
     {
         return enemies;
     }
@@ -68,12 +79,17 @@ public class Room {
 
     public int getNumEnemies()
     {
-        return enemies.length;
+        return enemies.size();
     }
 
     public int getNumInteractibles()
     {
         return interactibles.length;
+    }
+
+    public void setInteractible(int i, Interactible in)
+    {
+        interactibles[i] = in;
     }
 
     public String getDescription()

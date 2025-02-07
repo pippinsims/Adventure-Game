@@ -4,6 +4,7 @@ public class Enemy {
     private Inventory inv;
     private int dmg;
     private int wisdom;
+    private String description = "Screebling Squabbler";
 
     public Enemy(int h, Inventory i, int d, int w)
     {
@@ -19,6 +20,11 @@ public class Enemy {
         inv = new Inventory(5);
         dmg = 2;
         wisdom = 20;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public int getHealth()
@@ -41,9 +47,10 @@ public class Enemy {
         return wisdom;
     }
 
-    public void receiveDamage(int damage)
+    public boolean receiveDamage(int damage)
     {
         health -= damage;
+        return health <= 0;
     }
 
     public int chooseAction(Room curRoom)

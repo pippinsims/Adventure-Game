@@ -8,7 +8,7 @@ public class Environment
     public static void main(String[] args) 
     {
         //room r0 is the current room
-        r0 = generateMap();
+        generateMap();
 
         //r0[i] refers to room i of the rooms connected to r0
 
@@ -23,7 +23,40 @@ public class Environment
                 
             //exposition
             slowPrintln("You're in " + r0.getDescription() + ".");
-
+            if(r0.getNumInteractibles() > 0)
+            {
+                String descriptor = "There is a ";
+                for(int i = 0; i<r0.getNumInteractibles(); i++)
+                {
+                    descriptor += (r0.getInteractible(i).getDescription()) + ((i<r0.getNumInteractibles()-2) ? ", a " :
+                                                                            (i == r0.getNumInteractibles()-2) ? ", and a " :
+                                                                            ".");
+                    // if(i < r0.getNumInteractibles()-2)
+                    //     descriptor += (", a ");
+                    // else if(i == r0.getNumInteractibles()-2)
+                    //     descriptor += (", and a ");
+                    // else
+                    //     descriptor += (".");
+                }
+                slowPrintln(descriptor);
+            }
+            if(r0.getNumEnemies() > 0)
+            {
+                String descriptor = "There is a ";
+                for(int i = 0; i<r0.getNumEnemies(); i++)
+                {
+                    descriptor += (r0.getEnemy(i).getDescription()) + ((i<r0.getNumEnemies()-2) ? ", a " :
+                                                                    (i == r0.getNumEnemies()-2) ? ", and a " :
+                                                                    ".");
+                    // if(i < r0.getNumEnemies()-2)
+                    //     descriptor += (", a ");
+                    // else if(i == r0.getNumEnemies()-2)
+                    //     descriptor += (", and a ");
+                    // else
+                    //     descriptor += (".");
+                }
+                slowPrintln(descriptor);
+            }
             //lists available actions, lets the player choose, then performs chosen action.
             performAction(promptList("You can:", player.getActionDescriptions()), player);
 
@@ -37,9 +70,11 @@ public class Environment
         scanner.close();
     }
 
-    private static Room generateMap()
+    //public static void describeList(String desclist list desc qre 49)
+
+    private static void generateMap()
     {
-        Room r0 = new Room(new Room[3], new Enemy[1], new Interactible[2], "a dimly lit room.\nThere is a faint foul odor... \nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"\nThe room is gifted");        
+        r0 = new Room(new Room[3], new Interactible[2], "a dimly lit room.\nThere is a faint foul odor... \nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"\nThe room is gifted");        
 
         //creating 1-door rooms for each door
         for(int i = 0; i < r0.getNumExits(); i++)
@@ -47,17 +82,15 @@ public class Environment
             r0.setRoom(i, new Room(new Room[]{r0}));
         }
 
-        for (int i = 0; i < r0.getEnemies().length; i++) 
+        for (int i = 0; i < 1; i++) 
         {
-            r0.setEnemy(i, new Enemy(3));
+            r0.addEnemy(new Enemy(3));
         }
 
         for(int i = 0; i < r0.getNumInteractibles(); i++)
         {
-            //construct interactibles
+            r0.setInteractible(i, new Torch(true));
         }
-
-        return r0;
     }
 
     private static void performAction(int i, Player p)
@@ -76,12 +109,17 @@ public class Environment
                 if(attackTypes[promptList("How will you vanquish yoerer foeee??", attackTypes)].equals("Punch"))
                     attackDamage = 1;
 
-                r0.getEnemy(promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &")).receiveDamage(attackDamage);;
+                int chosenEnemyIndex = promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &");
+                if(r0.getEnemy(chosenEnemyIndex).receiveDamage(attackDamage))
+                {
+                    r0.slayEnemy(chosenEnemyIndex);
+                    slowPrint("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getDescription(), 1000);
+                }
 
                 //SHOULD INFORM THE PLAYER ABOUT THE FIGHT
                 break;
             case INSPECT:
-                String s = readFile("C:\\\\Users\\saga7\\OneDrive\\Desktop\\Whatever you want\\Adventure-Game\\src\\mad_king.txt");
+                String s = readFile("mad_king.txt");
                 System.out.print(s);
                 System.out.println("\n"+ "Press enter to continue");
                 scanner.nextLine();
