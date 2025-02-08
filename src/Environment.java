@@ -50,7 +50,7 @@ public class Environment
                 descriptor = "There is a ";
                 for(int i = 0; i<r0.getNumEnemies(); i++)
                 {
-                    descriptor += (r0.getEnemy(i).getDescription()) + ((i<r0.getNumEnemies()-2) ? ", a " :
+                    descriptor += (r0.getEnemy(i).getRandomDescription()) + ((i<r0.getNumEnemies()-2) ? ", a " :
                                                                        (i == r0.getNumEnemies()-2) ? ", and a " :
                                                                        ".");
                     // if(i < r0.getNumEnemies()-2)
@@ -130,7 +130,7 @@ public class Environment
                 
                 if(r0.getEnemy(chosenEnemyIndex).receiveDamage(attackDamage))
                 {
-                    slowPrintln("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getDescription(), 1000);
+                    slowPrintln("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getRandomDescription(), 1000);
                     r0.slayEnemy(chosenEnemyIndex);
                 }
 
@@ -153,6 +153,21 @@ public class Environment
                 else
                     slowPrintln("Interesting...\nWell, that does nothing.");
                                    
+                break;
+
+            case CAST:
+                String[] spellTypes = new String[]{"brain aneurysm"};
+                int spellDamage = 0;
+
+                System.out.println("Focus...");
+                System.out.print("Speak: ");
+                String spell = scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
+                    
+                if (spell.contains("brain aneurysm"))
+                {
+                    spellDamage = 1000;
+                    //idk yet. maybe getEnemies then damage one of them?
+                }
                 break;
 
             default:

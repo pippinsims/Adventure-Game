@@ -1,3 +1,5 @@
+import java.util.Random;
+
 public class Enemy {
     private final int maxHealth = 3;
     private int health;
@@ -32,8 +34,8 @@ public class Enemy {
             case "sad":
                 type = "poor fiend";
                 break;
-            case 3:
-                description += "pale man";
+            case "random":
+                type = getRandomDescription();
                 break;
         }
 
@@ -43,6 +45,16 @@ public class Enemy {
             return "slightly bruised " + type;
         else
             return type;
+    }
+
+    public String getRandomDescription()
+    {
+        switch (new Random().nextInt(2)) {
+            default:
+                return description;
+            case 1:
+                return "pale man";
+        }
     }
 
     public String getDescription()
