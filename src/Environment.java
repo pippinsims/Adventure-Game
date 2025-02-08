@@ -78,7 +78,7 @@ public class Environment
 
     private static void generateMap()
     {
-        r0 = new Room(new Room[3], new Interactible[2], "a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"\nThe room is gifted");        
+        r0 = new Room(new Room[3], new Interactible[3], "a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"\nThis room is gifted");        
 
         //creating 1-door rooms for each door
         for(int i = 0; i < r0.getNumExits(); i++)
@@ -95,6 +95,7 @@ public class Environment
         {
             r0.setInteractible(i, new Torch(true));
         }
+        r0.setInteractible(2, new ViewablePicture("mad_king.txt"));
     }
 
     private static boolean performAction(int i, Player p)
@@ -137,15 +138,37 @@ public class Environment
                 break;
 
             case INSPECT:
-                String s = readFile("mad_king.txt");
-                System.out.print(s);
-                System.out.println("\n"+ "Press enter to continue");
-                scanner.nextLine();
+                String[] interactiblesDescriptions = new String[r0.getNumInteractibles()];
+                for(int j = 0; j < interactiblesDescriptions.length; j++)
+                {
+                    interactiblesDescriptions[j] = r0.getInteractible(j).getDescription();
+                }
+                Interactible chosenInteractible = r0.getInteractible(promptList("There are a few objects in the room:", interactiblesDescriptions) - 1);
+
+                switch (chosenInteractible.getDescription()) {
+                    case "flaming stick":
+                        slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
+                        break;
+                    
+                    case "depiction": //(if description == depiction chosenInteractible must be an instance of ViewablePicture)
+                        ViewablePicture chosenPicture = (ViewablePicture)chosenInteractible;
+                        slowPrintln("You take a closer look at the depiction:\n");
+                        String s = readFile(chosenPicture.getFileName());
+                        System.out.println(s);
+                        System.out.println("Press enter to continue");
+                        scanner.nextLine();
+
+                        break;
+                
+                    default:
+                        break;
+                }
+                
                 break;
 
             case TALK:
                 System.out.println("What do you say?");
-                s = scanner.nextLine();
+                String s = scanner.nextLine();
                 if(s.equals("Quit."))
                     return false;
                 else if(s.contains("stop"))
@@ -268,6 +291,11 @@ public class Environment
 
             System.out.print(output.charAt(i));
         }
+    }
+
+    private static void slowPrint(String output)
+    {
+        slowPrint(output, 1);
     }
 
     private static void slowPrintln(String output, int sleepDuration)
