@@ -130,7 +130,7 @@ public class Environment
                 
                 if(r0.getEnemy(chosenEnemyIndex).receiveDamage(attackDamage))
                 {
-                    slowPrintln("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getRandomDescription(), 1000);
+                    slowPrintln("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getRandomDescription(), 250);
                     r0.slayEnemy(chosenEnemyIndex);
                 }
 
