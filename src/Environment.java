@@ -42,6 +42,7 @@ public class Environment extends InteractionUtil
                 slowPrintln(descriptor);
             }
 
+
             if(r0.getNumEnemies() > 0)
             {
                 descriptor = "There is a ";
@@ -60,7 +61,9 @@ public class Environment extends InteractionUtil
                 slowPrintln(descriptor);
             }
 
+
             //lists available actions, lets the player choose, then performs chosen action.
+            if(!player.performAction(promptList("You can:", player.getActionDescriptions()) - 1))
             if(!player.performAction(promptList("You can:", player.getActionDescriptions()) - 1))
                 break;
 
@@ -95,116 +98,6 @@ public class Environment extends InteractionUtil
         }
         r0.setInteractible(2, new ViewablePicture("mad_king.txt"));
     }
-
-    private static boolean performAction(int i, Player p)
-    {   
-        switch(p.actions.get(i))
-        {
-            case DOOR:
-                r0 = r0.getRoom(promptList("Which door traveler?", r0.getNumExits(), "Try door &") - 1);
-                
-                break;
-
-            case FIGHT:
-                String[] attackTypes = new String[]{"Punch"};
-                int attackDamage = 0;
-                int chosenAttackType = promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
-                
-                int chosenEnemyIndex;
-                if(r0.getNumEnemies() > 1)
-                    chosenEnemyIndex = promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &") - 1;
-                else
-                    chosenEnemyIndex = 0;
-
-                switch(attackTypes[chosenAttackType])
-                {
-                    case "Punch": 
-                        attackDamage = 1;
-                        System.out.println("You heave a mighty blow at the " + r0.getEnemy(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + attackDamage + " damage!");
-                        break;
-                    
-                    default:
-                        break;
-                }
-                
-                if(r0.getEnemy(chosenEnemyIndex).receiveDamage(attackDamage))
-                {
-                    slowPrintln("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getRandomDescription(), 250);
-                    r0.slayEnemy(chosenEnemyIndex);
-                }
-
-                break;
-
-            case INSPECT:
-                String[] interactiblesDescriptions = new String[r0.getNumInteractibles()];
-                for(int j = 0; j < interactiblesDescriptions.length; j++)
-                {
-                    interactiblesDescriptions[j] = r0.getInteractible(j).getDescription();
-                }
-                Interactible chosenInteractible = r0.getInteractible(promptList("There are a few objects in the room:", interactiblesDescriptions) - 1);
-
-                switch (chosenInteractible.getDescription()) {
-                    case "flaming stick":
-                        slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
-                        break;
-                    
-                    case "depiction": //(if description == depiction chosenInteractible must be an instance of ViewablePicture)
-                        ViewablePicture chosenPicture = (ViewablePicture)chosenInteractible;
-                        slowPrintln("You take a closer look at the depiction:\n");
-                        String s = readFile(chosenPicture.getFileName());
-                        System.out.println(s);
-                        System.out.println("Press enter to continue");
-                        scanner.nextLine();
-
-                        break;
-                
-                    default:
-                        break;
-                }
-                
-                break;
-
-            case TALK:
-                System.out.println("What do you say?");
-                String s = scanner.nextLine();
-                if(s.equals("Quit."))
-                    return false;
-                else if(s.contains("stop"))
-                    ; //here somehow perhaps make enemy react
-                else
-                    slowPrintln("Interesting...\nWell, that does nothing.");
-                                   
-                break;
-
-            case CAST:
-                String[] spellTypes = new String[]{"brain aneurysm"};
-                int spellDamage = 0;
-
-                slowPrintln("Focus...");
-                slowPrintln("Speak: ");
-                String spell = scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
-                    
-                if (spell.contains("brain aneurysm"))
-                {
-                    spellDamage = 1000;
-                    //idk yet. maybe getEnemies then damage one of them?
-                }
-                else
-                {
-                    slowPrintln("The energy within you contorts strangely, almost choking you.");
-                    slowPrintln("Your head spins and it takes everything to not let it hit the cold, hard floor");
-                    slowPrintln("The energy within you stabilizes");
-                    //Maybe does damage for wrong input here?
-                }
-                break;
-
-            default:
-                break;
-        }
-
-        return true;
-    }
-
 
     //IDEALLY THERE WILL ONLY BE 1 DEFINITION OF performAction() BUT THAT IS AFTER THE Person INTERFACE
     private static void performAction(Enemy e)
