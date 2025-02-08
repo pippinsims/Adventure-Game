@@ -25,7 +25,7 @@ public class Player {
 
         actions.add(action.INSPECT);
 
-        if (curRoom.getEnemy(0) != null)
+        if (curRoom.getNumEnemies() != 0)
         {
             actions.add(action.FIGHT);
         }

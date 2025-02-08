@@ -17,20 +17,27 @@ public class Environment
         //instantiating the player
         Player player = new Player();
 
+        Room savedRoom = null;
         while(!inputStr.equals("Quit."))
         {
             player.setActions(r0);
-                
-            //exposition
-            slowPrintln("You're in " + r0.getDescription() + ".");
+            
+            if(r0 != savedRoom)
+            {
+                savedRoom = r0;                
+                //exposition
+                slowPrintln("You're in " + r0.getDescription() + ".");
+            }
+            
+            String descriptor;
             if(r0.getNumInteractibles() > 0)
             {
-                String descriptor = "There is a ";
+                descriptor = "There is a ";
                 for(int i = 0; i<r0.getNumInteractibles(); i++)
                 {
                     descriptor += (r0.getInteractible(i).getDescription()) + ((i<r0.getNumInteractibles()-2) ? ", a " :
-                                                                            (i == r0.getNumInteractibles()-2) ? ", and a " :
-                                                                            ".");
+                                                                              (i == r0.getNumInteractibles()-2) ? ", and a " :
+                                                                              ".");
                     // if(i < r0.getNumInteractibles()-2)
                     //     descriptor += (", a ");
                     // else if(i == r0.getNumInteractibles()-2)
@@ -42,12 +49,12 @@ public class Environment
             }
             if(r0.getNumEnemies() > 0)
             {
-                String descriptor = "There is a ";
+                descriptor = "There is a ";
                 for(int i = 0; i<r0.getNumEnemies(); i++)
                 {
                     descriptor += (r0.getEnemy(i).getDescription()) + ((i<r0.getNumEnemies()-2) ? ", a " :
-                                                                    (i == r0.getNumEnemies()-2) ? ", and a " :
-                                                                    ".");
+                                                                       (i == r0.getNumEnemies()-2) ? ", and a " :
+                                                                       ".");
                     // if(i < r0.getNumEnemies()-2)
                     //     descriptor += (", a ");
                     // else if(i == r0.getNumEnemies()-2)
@@ -70,11 +77,9 @@ public class Environment
         scanner.close();
     }
 
-    //public static void describeList(String desclist list desc qre 49)
-
     private static void generateMap()
     {
-        r0 = new Room(new Room[3], new Interactible[2], "a dimly lit room.\nThere is a faint foul odor... \nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"\nThe room is gifted");        
+        r0 = new Room(new Room[3], new Interactible[2], "a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"\nThe room is gifted");        
 
         //creating 1-door rooms for each door
         for(int i = 0; i < r0.getNumExits(); i++)
@@ -105,11 +110,26 @@ public class Environment
             case FIGHT:
                 String[] attackTypes = new String[]{"Punch"};
                 int attackDamage = 0;
-            
-                if(attackTypes[promptList("How will you vanquish yoerer foeee??", attackTypes) - 1].equals("Punch"))
-                    attackDamage = 1;
+                int chosenAttackType = promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
+                
+                int chosenEnemyIndex;
+                if(r0.getNumEnemies() > 1)
+                    chosenEnemyIndex = promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &") - 1;
+                else
+                    chosenEnemyIndex = 0;
 
-                int chosenEnemyIndex = promptList("Which fooeeoee meets thine bloodtherstey eyee?", r0.getNumEnemies(), "Fight enemy &") - 1;
+                switch(attackTypes[chosenAttackType])
+                {
+                    case "Punch": 
+                        attackDamage = 1;
+                        System.out.println("You heave a mighty blow at the " + r0.getEnemy(chosenEnemyIndex).getDescription() + " and deal a serious " + attackDamage + " damage!");
+                        break;
+                    
+                    default:
+
+                        break;
+                }
+                
                 if(r0.getEnemy(chosenEnemyIndex).receiveDamage(attackDamage))
                 {
                     slowPrintln("You have murdered the " + r0.getEnemy(chosenEnemyIndex).getDescription(), 1000);
@@ -166,11 +186,7 @@ public class Environment
     private static int promptList(String question, String[] listPrompts)
     {
         System.out.println(question);
-        
-        for(int i = 0; i < listPrompts.length; i++) 
-        {
-            System.out.println("(" + (i + 1) + ") " + listPrompts[i]);
-        }
+        printOptions(listPrompts);
 
         return forceInputToInt(scanner.nextLine(), listPrompts);
     }
@@ -178,37 +194,49 @@ public class Environment
     private static Integer forceInputToInt(String s, String[] options)
     {    
         Integer inputInt = null;
-        if(!s.equals("Quit."))
+        do
         {
-            do
+            try 
             {
-                try 
-                {
-                    inputInt = Integer.parseInt(s);
-                }   
-                catch(Exception e)
-                {
-                    String question = "[Incorrect input!]";
-                    if (s.contains("fuck"))             
-                        question = "Yeah okay fuck you too man, I'm just trying to do my job."; 
+                inputInt = Integer.parseInt(s);
+            }   
+            catch(Exception e)
+            {
+                String question = "[Incorrect input!]";
+                if (s.contains("fuck"))             
+                    question = "Yeah okay fuck you too man, I'm just trying to do my job."; 
 
-                    inputInt = promptList(question, options);
-                } 
-            } while(inputInt == null);
-        }
+                System.out.println(question);
+                printOptions(options);
+
+                s = scanner.nextLine();
+            } 
+        } while(inputInt == null);
         return inputInt;
+    }
+
+    private static void printOptions(String[] options)
+    {
+        for(int i = 0; i < options.length; i++) 
+        {
+            System.out.println("(" + (i + 1) + ") " + options[i]);
+        }
     }
 
     private static void slowPrint(String output, int sleepDuration)
     {   
         for(int i = 0; i < output.length(); i++)
         {   
-            try{
+            try
+            {
                 if(output.charAt(i) == '\n')
                     Thread.sleep(sleepDuration*5);
                 Thread.sleep(sleepDuration);
             }
-            catch(Exception e){}
+            catch(Exception e) 
+            {
+                e.printStackTrace();
+            }
 
             System.out.print(output.charAt(i));
         }
@@ -227,14 +255,16 @@ public class Environment
     private static String readFile (String fileName)
     {   
         String completeString = "";
-        try {
-            File file = new File(fileName);
-            Scanner fileScanner = new Scanner(file);
+        try 
+        {
+            Scanner fileScanner = new Scanner(new File(fileName));
             while (fileScanner.hasNextLine()) {
                 completeString += fileScanner.nextLine() + "\n";
             }
             fileScanner.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) 
+        {
             e.printStackTrace();
         }
         return completeString;

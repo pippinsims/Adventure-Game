@@ -31,7 +31,7 @@ public class Room {
 
     public Interactible getInteractible(int i)
     {
-            return interactibles != null ? interactibles[i] : null;
+        return interactibles != null ? interactibles[i] : null;
     }
 
     public Room getRoom(int i)
@@ -76,16 +76,20 @@ public class Room {
         return exits.length;
     }
 
-    //what if "enemies" is null?
     public int getNumEnemies()
     {
-        return enemies.size();
+        if(enemies != null)
+            return enemies.size();
+        else
+            return 0;
     }
 
-    //what if "interactibles" is null?
     public int getNumInteractibles()
     {
-        return interactibles.length;
+        if(interactibles != null)
+            return interactibles.length;
+        else
+            return 0;
     }
 
     //what if "interactibles" is null?
