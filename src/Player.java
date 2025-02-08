@@ -8,7 +8,8 @@ public class Player {
         INSPECT,
         FIGHT,
         TALK,
-        INTERACT
+        INTERACT,
+        CAST
     }
 
     public List<action> actions = new ArrayList<action>();
@@ -29,6 +30,12 @@ public class Player {
         {
             actions.add(action.FIGHT);
         }
+
+        if (true) // Would set to true once Player inspects language. Placeholder DEV true.
+        {
+            actions.add(action.CAST);
+        }
+        
     }
 
     public String[] getActionDescriptions()
@@ -59,6 +66,9 @@ public class Player {
                 break;
             case FIGHT:
                 str = "It's kill or be killed.";
+                break;
+            case CAST:
+                str = "Utilize the power of the ancients";
                 break;
             default:
                 str = "[Empty Action]";

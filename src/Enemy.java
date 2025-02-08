@@ -44,6 +44,9 @@ public class Enemy {
             case 2:
                 description += "monster";
                 break;
+            case 3:
+                description += "pale man";
+                break;
         }
         
         return description;
