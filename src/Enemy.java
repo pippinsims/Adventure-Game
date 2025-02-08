@@ -1,12 +1,10 @@
-import java.util.Random;
-
 public class Enemy {
     private final int maxHealth = 3;
     private int health;
     private Inventory inv;
     private int dmg;
     private int wisdom;
-    private String description;
+    private String description = "Screebling Squabbler";
 
     public Enemy(int h, Inventory i, int d, int w)
     {
@@ -24,28 +22,28 @@ public class Enemy {
         wisdom = 20;
     }
 
-    public String getDescription()
-    { 
-        if(health < (maxHealth * 2)/3)
-            description = "now bent double ";
-        else if(health <= maxHealth - maxHealth/2)
-            description = "slightly bruised ";
-        else
-            description = "";
-    
-        switch (new Random().nextInt(3)) 
+    public String getModifiedDescription(String type)
+    {
+        switch (type) 
         {
-            case 0:
-                description += "Screebling Squabbler";
+            case "scary":
+                type = "monster";
                 break;
-            case 1:
-                description += "poor fiend";
-                break;
-            case 2:
-                description += "monster";
+            case "sad":
+                type = "poor fiend";
                 break;
         }
-        
+
+        if(health < (maxHealth * 2)/3)
+            return "now bent double " + type;
+        else if(health <= maxHealth - maxHealth/2)
+            return "slightly bruised " + type;
+        else
+            return type;
+    }
+
+    public String getDescription()
+    {
         return description;
     }
 

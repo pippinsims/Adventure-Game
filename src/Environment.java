@@ -11,14 +11,12 @@ public class Environment
         generateMap();
 
         //r0[i] refers to room i of the rooms connected to r0
-
-        String inputStr = "";
         
         //instantiating the player
         Player player = new Player();
 
         Room savedRoom = null;
-        while(!inputStr.equals("Quit."))
+        while(true)
         {
             player.setActions(r0);
             
@@ -65,7 +63,8 @@ public class Environment
                 slowPrintln(descriptor);
             }
             //lists available actions, lets the player choose, then performs chosen action.
-            performAction(promptList("You can:", player.getActionDescriptions()) - 1, player);
+            if(!performAction(promptList("You can:", player.getActionDescriptions()) - 1, player))
+                break;
 
             if (r0.getEnemies() != null)
             {
@@ -98,7 +97,7 @@ public class Environment
         }
     }
 
-    private static void performAction(int i, Player p)
+    private static boolean performAction(int i, Player p)
     {   
         switch(p.actions.get(i))
         {
@@ -122,11 +121,10 @@ public class Environment
                 {
                     case "Punch": 
                         attackDamage = 1;
-                        System.out.println("You heave a mighty blow at the " + r0.getEnemy(chosenEnemyIndex).getDescription() + " and deal a serious " + attackDamage + " damage!");
+                        System.out.println("You heave a mighty blow at the " + r0.getEnemy(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + attackDamage + " damage!");
                         break;
                     
                     default:
-
                         break;
                 }
                 
@@ -136,17 +134,32 @@ public class Environment
                     r0.slayEnemy(chosenEnemyIndex);
                 }
 
-                //SHOULD INFORM THE PLAYER ABOUT THE FIGHT
                 break;
+
             case INSPECT:
                 String s = readFile("mad_king.txt");
                 System.out.print(s);
                 System.out.println("\n"+ "Press enter to continue");
                 scanner.nextLine();
                 break;
+
+            case TALK:
+                System.out.println("What do you say?");
+                s = scanner.nextLine();
+                if(s.equals("Quit."))
+                    return false;
+                else if(s.contains("stop"))
+                    ; //here somehow perhaps make enemy react
+                else
+                    slowPrintln("Interesting...\nWell, that does nothing.");
+                                   
+                break;
+
             default:
                 break;
         }
+
+        return true;
     }
 
 
@@ -156,7 +169,7 @@ public class Environment
         switch(e.chooseAction(r0))
         {
             case 1:
-                slowPrintln("The " + e.getDescription() + " raises it's fiendish arms and jumps at you with startling dexterity.\nYou have no choice but to die.\nYET YOU LIVE.");
+                slowPrintln("The " + e.getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.\nYou have no choice but to die.\nYET YOU LIVE.");
                 
                 break;
 
@@ -253,13 +266,13 @@ public class Environment
     }
 
     private static String readFile (String fileName)
-    {   
+    {
         String completeString = "";
         try 
         {
-            Scanner fileScanner = new Scanner(new File(fileName));
+            Scanner fileScanner = new Scanner(new File("./src/" + fileName));
             while (fileScanner.hasNextLine()) {
-                completeString += fileScanner.nextLine() + "\n";
+                completeString += fileScanner.nextLine() + '\n';
             }
             fileScanner.close();
         }

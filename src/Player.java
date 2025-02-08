@@ -29,6 +29,8 @@ public class Player {
         {
             actions.add(action.FIGHT);
         }
+
+        actions.add(action.TALK);
     }
 
     public String[] getActionDescriptions()
@@ -57,9 +59,15 @@ public class Player {
             case INSPECT:
                 str = "Inspect your surroundings";
                 break;
+
             case FIGHT:
                 str = "It's kill or be killed.";
                 break;
+
+            case TALK:
+                str = "Say something";
+                break;
+                
             default:
                 str = "[Empty Action]";
                 break;
