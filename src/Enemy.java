@@ -32,6 +32,9 @@ public class Enemy {
             case "sad":
                 type = "poor fiend";
                 break;
+            case 3:
+                description += "pale man";
+                break;
         }
 
         if(health < (maxHealth * 2)/3)
