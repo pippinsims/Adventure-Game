@@ -64,7 +64,6 @@ public class Environment extends InteractionUtil
 
             //lists available actions, lets the player choose, then performs chosen action.
             if(!player.performAction(promptList("You can:", player.getActionDescriptions()) - 1))
-            if(!player.performAction(promptList("You can:", player.getActionDescriptions()) - 1))
                 break;
 
             if (r0.getEnemies() != null)

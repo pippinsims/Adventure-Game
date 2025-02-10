@@ -49,10 +49,18 @@ public class Room {
         return enemies != null && i < enemies.size() ? enemies.get(i) : null;
     }
 
-    //what if "enemies" is null or i wrong?
+    
     public void setEnemy(int i, Enemy e)
     {
-        enemies.set(i, e);
+        if(enemies != null)
+        {
+            if(0 <= i && i <= enemies.size() - 1)
+                enemies.set(i, e);
+            else
+                System.err.println("setEnemy fail. Index outside of Array bounds. You are stupid.");
+        }
+        else 
+           System.err.println("setEnemy fail. Array doesn't exist. You are stupid.");
     }
 
     public void addEnemy(Enemy e)
@@ -60,10 +68,18 @@ public class Room {
         enemies.add(e);
     }
 
-    //what if "enemies" is null or i wrong?
     public void slayEnemy(int i)
     {
-        enemies.remove(i);
+        if(enemies != null)
+        {
+            if(0 <= i && i <= enemies.size() - 1)
+                enemies.remove(i);
+            else
+                System.err.println("slayEnemy fail. Index outside of Array bounds. You are stupid.");
+        }
+        else 
+           System.err.println("slayEnemy fail. Array doesn't exist. You are stupid.");
+        
     }
 
     public ArrayList<Enemy> getEnemies()
@@ -92,10 +108,22 @@ public class Room {
             return 0;
     }
 
-    //what if "interactibles" is null?
     public void setInteractible(int i, Interactible in)
     {
-        interactibles[i] = in;
+        if (interactibles != null)
+        {
+            if(in != null)
+            {
+                if(0 <= i && i <= interactibles.length - 1)
+                    interactibles[i] = in;
+                else
+                    System.err.println("setInteractible fail. Index outside of Array bounds. You are stupid.");
+            }
+            else 
+                System.err.println("setInteractible fail. You're trying to put a null into interactibles. You are stupid.");
+         }
+         else
+            System.err.println("setInteractible fail. Array does not exist. You are confusing me.");
     }
 
     public String getDescription()

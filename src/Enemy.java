@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class Enemy {
+public class Enemy implements Animate{
     private final int maxHealth = 3;
     private int health;
     private Inventory inv;

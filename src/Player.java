@@ -1,13 +1,12 @@
 import java.util.*;
 
-public class Player extends InteractionUtil {
+//PLAYER NEEDS INTERACTIONUTIL 
+public class Player implements Animate{
     //TRYING TO SET UP BASE STATS TO CREATE USEFUL STATS SYSTEM
     private int maxHealth = 20;
     private int playerDamage = 1;
     private int playerWisdom = 2;
 
-
-    
     enum action {
         NOTHING,
         DOOR,
@@ -52,18 +51,18 @@ public class Player extends InteractionUtil {
         switch(actions.get(i))
         {
             case action.DOOR:
-                curRoom = curRoom.getRoom(promptList("Which door traveler?", curRoom.getNumExits(), "Try door &") - 1);
+                curRoom = curRoom.getRoom(InteractionUtil.promptList("Which door traveler?", curRoom.getNumExits(), "Try door &") - 1);
                 
                 break;
 
             case action.FIGHT:
                 String[] attackTypes = new String[]{"Punch"};
                 int attackDamage = 0;
-                int chosenAttackType = promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
+                int chosenAttackType = InteractionUtil.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
                 
                 int chosenEnemyIndex;
                 if(curRoom.getNumEnemies() > 1)
-                    chosenEnemyIndex = promptList("Which fooeeoee meets thine bloodtherstey eyee?", curRoom.getNumEnemies(), "Fight enemy &") - 1;
+                    chosenEnemyIndex = InteractionUtil.promptList("Which fooeeoee meets thine bloodtherstey eyee?", curRoom.getNumEnemies(), "Fight enemy &") - 1;
                 else
                     chosenEnemyIndex = 0;
 
@@ -80,7 +79,7 @@ public class Player extends InteractionUtil {
                 
                 if(curRoom.getEnemy(chosenEnemyIndex).receiveDamage(attackDamage))
                 {
-                    slowPrintln("You have murdered the " + curRoom.getEnemy(chosenEnemyIndex).getRandomDescription(), 250);
+                    InteractionUtil.slowPrintln("You have murdered the " + curRoom.getEnemy(chosenEnemyIndex).getRandomDescription(), 250);
                     curRoom.slayEnemy(chosenEnemyIndex);
                 }
 
@@ -90,20 +89,20 @@ public class Player extends InteractionUtil {
                 String[] interactiblesDescriptions = new String[curRoom.getNumInteractibles()];
                 for(int j = 0; j < interactiblesDescriptions.length; j++)
                     interactiblesDescriptions[j] = curRoom.getInteractible(j).getDescription();
-                Interactible chosenInteractible = curRoom.getInteractible(promptList("There are a few objects in the room:", interactiblesDescriptions) - 1);
+                Interactible chosenInteractible = curRoom.getInteractible(InteractionUtil.promptList("There are a few objects in the room:", interactiblesDescriptions) - 1);
 
                 switch (chosenInteractible.getDescription()) {
                     case "flaming stick":
-                        slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
+                        InteractionUtil.slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
                         break;
                     
                     case "depiction": //(if description == depiction chosenInteractible must be an instance of ViewablePicture)
                         ViewablePicture chosenPicture = (ViewablePicture)chosenInteractible;
-                        slowPrintln("You take a closer look at the depiction:\n");
-                        String s = readFile(chosenPicture.getFileName());
+                        InteractionUtil.slowPrintln("You take a closer look at the depiction:\n");
+                        String s = InteractionUtil.readFile(chosenPicture.getFileName());
                         System.out.println(s);
                         System.out.println("Press enter to continue");
-                        scanner.nextLine();
+                        InteractionUtil.scanner.nextLine();
 
                         break;
                 
@@ -115,13 +114,13 @@ public class Player extends InteractionUtil {
 
             case action.TALK:
                 System.out.println("What do you say?");
-                String s = scanner.nextLine();
+                String s = InteractionUtil.scanner.nextLine();
                 if(s.equals("Quit."))
                     return false;
                 else if(s.contains("stop"))
                     ; //here somehow perhaps make enemy react
                 else
-                    slowPrintln("Interesting...\nWell, that does nothing.");
+                    InteractionUtil.slowPrintln("Interesting...\nWell, that does nothing.");
                                    
                 break;
 
@@ -131,7 +130,7 @@ public class Player extends InteractionUtil {
 
                 System.out.println("Focus...");
                 System.out.print("Speak: ");
-                String spell = scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
+                String spell = InteractionUtil.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
                     
                 if (spell.contains("brain aneurysm"))
                 {
@@ -191,11 +190,34 @@ public class Player extends InteractionUtil {
         }
         return str;
     }
-// NO CLUE HOW TO DO THIS YET, TRYING TO GET PLAYER DEATH SYSTEM UP AND RUNNING
-/*     public boolean playerDamage(int damage, int health)
-    {
-        health -= damage;
-        return health <= 0;
+
+    @Override
+    public boolean receiveDamage(int damage) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'receiveDamage'");
     }
-   */
+
+    @Override
+    public int getHealth() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getHealth'");
+    }
+
+    @Override
+    public Inventory getInventory() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getInventory'");
+    }
+
+    @Override
+    public int getAttackDamage() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAttackDamage'");
+    }
+
+    @Override
+    public int getWisdom() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getWisdom'");
+    }
 }
