@@ -182,14 +182,21 @@ public class Environment
                 String[] spellTypes = new String[]{"brain aneurysm"};
                 int spellDamage = 0;
 
-                System.out.println("Focus...");
-                System.out.print("Speak: ");
+                slowPrintln("Focus...");
+                slowPrintln("Speak: ");
                 String spell = scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
                     
                 if (spell.contains("brain aneurysm"))
                 {
                     spellDamage = 1000;
                     //idk yet. maybe getEnemies then damage one of them?
+                }
+                else
+                {
+                    slowPrintln("The energy within you contorts strangely, almost choking you.");
+                    slowPrintln("Your head spins and it takes everything to not let it hit the cold, hard floor");
+                    slowPrintln("The energy within you stabilizes");
+                    //Maybe does damage for wrong input here?
                 }
                 break;
 

@@ -1,7 +1,11 @@
 import java.util.*;
 
 public class Player {
-    
+    //TRYING TO SET UP BASE STATS TO CREATE USEFUL STATS SYSTEM
+    private int maxHealth = 20;
+    private int playerDamage = 1;
+    private int playerWisdom = 2;
+
     enum action {
         NOTHING,
         DOOR,
@@ -83,6 +87,11 @@ public class Player {
         }
         return str;
     }
-
-   
+// NO CLUE HOW TO DO THIS YET, TRYING TO GET PLAYER DEATH SYSTEM UP AND RUNNING
+/*     public boolean playerDamage(int damage, int health)
+    {
+        health -= damage;
+        return health <= 0;
+    }
+   */
 }
