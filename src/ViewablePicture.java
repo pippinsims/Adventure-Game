@@ -1,11 +1,13 @@
 public class ViewablePicture implements Interactible{
     String txtFileName;
     String description;
+    private int wall; //1X is floor, 2X is wall, X1 is south, X2 is west, X3 is north, X4 is east
     
-    public ViewablePicture(String fileName)
+    public ViewablePicture(String fileName, int w)
     {
         description = "depiction";
         txtFileName = fileName;
+        wall = w;
     }
 
     @Override
@@ -17,7 +19,23 @@ public class ViewablePicture implements Interactible{
     @Override
     public String getDescription()
     {
-        return description;
+        return description + " on the " + getWall() + " wall";
+    }
+
+    private String getWall() 
+    {
+        switch (wall) {
+            case 1:
+                return "south";
+            case 2:
+                return "west";
+            case 3:
+                return "north";
+            case 4:
+                return "east";
+            default:
+                return "error";
+        }    
     }
 
     public String getFileName()

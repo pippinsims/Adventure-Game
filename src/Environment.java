@@ -16,7 +16,7 @@ public class Environment extends InteractionUtil
         {
             player.setActions(r0);
             
-            if(r0 != savedRoom)
+            if(r0 != savedRoom) //if room is not saved
             {
                 savedRoom = r0;                
                 //exposition
@@ -27,8 +27,9 @@ public class Environment extends InteractionUtil
             if(r0.getNumInteractibles() > 0)
             {
                 descriptor = "There is a ";
-                for(int i = 0; i<r0.getNumInteractibles(); i++)
+                for(int i = 0; i < r0.getNumInteractibles(); i++)
                 {
+                    //what if there are two of the exact same thing
                     descriptor += (r0.getInteractible(i).getDescription()) + ((i<r0.getNumInteractibles()-2) ? ", a " :
                                                                               (i == r0.getNumInteractibles()-2) ? ", and a " :
                                                                               ".");
@@ -46,11 +47,11 @@ public class Environment extends InteractionUtil
             if(r0.getNumEnemies() > 0)
             {
                 descriptor = "There is a ";
-                for(int i = 0; i<r0.getNumEnemies(); i++)
+                for(int i = 0; i < r0.getNumEnemies(); i++)
                 {
                     descriptor += (r0.getEnemy(i).getRandomDescription()) + ((i<r0.getNumEnemies()-2) ? ", a " :
-                                                                       (i == r0.getNumEnemies()-2) ? ", and a " :
-                                                                       ".");
+                                                                             (i == r0.getNumEnemies()-2) ? ", and a " :
+                                                                             ".");
                     // if(i < r0.getNumEnemies()-2)
                     //     descriptor += (", a ");
                     // else if(i == r0.getNumEnemies()-2)
@@ -93,9 +94,12 @@ public class Environment extends InteractionUtil
 
         for(int i = 0; i < r0.getNumInteractibles(); i++)
         {
-            r0.setInteractible(i, new Torch(true));
+            r0.setInteractible(i, new Torch(true, (i + 1) * 2));
         }
-        r0.setInteractible(2, new ViewablePicture("mad_king.txt"));
+        r0.setInteractible(2, new ViewablePicture("mad_king.txt", 2));
+
+        //PROBABLY SHOULD MAKE A "WALL ENTITY" FOR DOOR, VIEWABLEPICTURE, WINDOW, ETC...
+        //NOT TORCH THOUGH, IT IS JUST AN INANIMATE ENTITY BECAUSE IT CAN BE ON THE FLOOR
     }
 
     //IDEALLY THERE WILL ONLY BE 1 DEFINITION OF performAction() BUT THAT IS AFTER THE Person INTERFACE

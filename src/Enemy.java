@@ -93,4 +93,16 @@ public class Enemy implements Animate{
         //DECISIONMAKING FOR ENEMY
         return 1;
     }
+
+    @Override
+    public boolean performAction(int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'performAction'");
+    }
+
+    @Override
+    public void setActions(Room curRoom) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setActions'");
+    }
 }

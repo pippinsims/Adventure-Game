@@ -50,12 +50,13 @@ public class Player implements Animate{
         Room curRoom = Environment.r0;
         switch(actions.get(i))
         {
-            case action.DOOR:
+            case DOOR:
                 curRoom = curRoom.getRoom(InteractionUtil.promptList("Which door traveler?", curRoom.getNumExits(), "Try door &") - 1);
+                Environment.r0 = curRoom;
                 
                 break;
 
-            case action.FIGHT:
+            case FIGHT:
                 String[] attackTypes = new String[]{"Punch"};
                 int attackDamage = 0;
                 int chosenAttackType = InteractionUtil.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
@@ -85,7 +86,7 @@ public class Player implements Animate{
 
                 break;
 
-            case action.INSPECT:
+            case INSPECT:
                 String[] interactiblesDescriptions = new String[curRoom.getNumInteractibles()];
                 for(int j = 0; j < interactiblesDescriptions.length; j++)
                     interactiblesDescriptions[j] = curRoom.getInteractible(j).getDescription();
@@ -112,7 +113,7 @@ public class Player implements Animate{
                 
                 break;
 
-            case action.TALK:
+            case TALK:
                 System.out.println("What do you say?");
                 String s = InteractionUtil.scanner.nextLine();
                 if(s.equals("Quit."))
@@ -124,7 +125,7 @@ public class Player implements Animate{
                                    
                 break;
 
-            case action.CAST:
+            case CAST:
                 String[] spellTypes = new String[]{"brain aneurysm"};
                 int spellDamage = 0;
 
@@ -144,7 +145,7 @@ public class Player implements Animate{
         }
 
         return true;
-        }   
+    }   
 
     public String[] getActionDescriptions()
     {   
