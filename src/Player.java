@@ -29,7 +29,10 @@ public class Player implements Animate{
             actions.add(action.DOOR);
         }
 
-        actions.add(action.INSPECT);
+        if(curRoom.getNumInteractibles() > 0)
+        {
+            actions.add(action.INSPECT);
+        }
 
         if (curRoom.getNumEnemies() != 0)
         {
@@ -45,8 +48,6 @@ public class Player implements Animate{
 
     public boolean performAction(int i)
     {   
-        //Would be kind of nice if all of the stuff relating to player actions were in the Player class, 
-        //but with that said most of his actions affect the environment
         Room curRoom = Environment.r0;
         switch(actions.get(i))
         {
@@ -78,38 +79,18 @@ public class Player implements Animate{
                         break;
                 }
                 
-                if(curRoom.getEnemy(chosenEnemyIndex).receiveDamage(attackDamage))
-                {
-                    InteractionUtil.slowPrintln("You have murdered the " + curRoom.getEnemy(chosenEnemyIndex).getRandomDescription(), 250);
-                    curRoom.slayEnemy(chosenEnemyIndex);
-                }
+                Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage, "basic");
 
                 break;
 
             case INSPECT:
-                String[] interactiblesDescriptions = new String[curRoom.getNumInteractibles()];
-                for(int j = 0; j < interactiblesDescriptions.length; j++)
+                int n = curRoom.getNumInteractibles();    
+
+                String[] interactiblesDescriptions = new String[n];
+                for(int j = 0; j < n; j++)
                     interactiblesDescriptions[j] = curRoom.getInteractible(j).getDescription();
-                Interactible chosenInteractible = curRoom.getInteractible(InteractionUtil.promptList("There are a few objects in the room:", interactiblesDescriptions) - 1);
-
-                switch (chosenInteractible.getDescription()) {
-                    case "flaming stick":
-                        InteractionUtil.slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
-                        break;
-                    
-                    case "depiction": //(if description == depiction chosenInteractible must be an instance of ViewablePicture)
-                        ViewablePicture chosenPicture = (ViewablePicture)chosenInteractible;
-                        InteractionUtil.slowPrintln("You take a closer look at the depiction:\n");
-                        String s = InteractionUtil.readFile(chosenPicture.getFileName());
-                        System.out.println(s);
-                        System.out.println("Press enter to continue");
-                        InteractionUtil.scanner.nextLine();
-
-                        break;
                 
-                    default:
-                        break;
-                }
+                curRoom.getInteractible(InteractionUtil.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", interactiblesDescriptions) - 1).inspectInteractible();
                 
                 break;
 
@@ -119,7 +100,12 @@ public class Player implements Animate{
                 if(s.equals("Quit."))
                     return false;
                 else if(s.contains("stop"))
-                    ; //here somehow perhaps make enemy react
+                {
+                    for (Enemy e : curRoom.getEnemies()) 
+                    {
+                        e.pleaResponse();
+                    }
+                }
                 else
                     InteractionUtil.slowPrintln("Interesting...\nWell, that does nothing.");
                                    
@@ -133,10 +119,20 @@ public class Player implements Animate{
                 System.out.print("Speak: ");
                 String spell = InteractionUtil.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
                     
-                if (spell.contains("brain aneurysm"))
+                if (spell.contains(spellTypes[0]))
                 {
                     spellDamage = 1000;
-                    //idk yet. maybe getEnemies then damage one of them?
+                    
+                    InteractionUtil.slowPrintln("You release a level " + spellDamage + " Psych Strike spell on all of your foes.");
+                    if(curRoom.getNumEnemies() == 0)
+                        InteractionUtil.slowPrint("... but you have no enemies! Nothing happens.");
+                    else
+                    {
+                        for (int j = 0; j < curRoom.getNumEnemies(); j++) 
+                        {
+                            Environment.playerAttackEnemy(j, spellDamage, spellTypes[0]);
+                        }
+                    }
                 }
                 break;
 
@@ -160,40 +156,33 @@ public class Player implements Animate{
 
     private String actionToString(action a)
     {
-        String str;
-        switch (a) {
+        switch (a) 
+        {
             case NOTHING:
-                str = "Do nothing";
-                break;
+                return "Do nothing";
             
             case DOOR:
-                str = "Try door ";
-                break;
+                return "Try door ";
             
             case INSPECT:
-                str = "Inspect your surroundings";
-                break;
+                return "Inspect your surroundings";
 
             case FIGHT:
-                str = "It's kill or be killed.";
-                break;
+                return "It's kill or be killed.";
 
             case TALK:
-                str = "Say something";
-                break;
+                return "Say something";
                 
             case CAST:
-                str = "Utilize the power of the ancients";
-                break;
+                return "Utilize the power of the ancients";
+
             default:
-                str = "[Empty Action]";
-                break;
+                return "[Empty Action]";
         }
-        return str;
     }
 
     @Override
-    public boolean receiveDamage(int damage) {
+    public boolean receiveDamage(int damage, String type) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'receiveDamage'");
     }

@@ -30,7 +30,7 @@ public class Environment extends InteractionUtil
                 for(int i = 0; i < r0.getNumInteractibles(); i++)
                 {
                     //what if there are two of the exact same thing
-                    descriptor += (r0.getInteractible(i).getDescription()) + ((i<r0.getNumInteractibles()-2) ? ", a " :
+                    descriptor += (r0.getInteractible(i).getExposition()) + ((i<r0.getNumInteractibles()-2) ? ", a " :
                                                                               (i == r0.getNumInteractibles()-2) ? ", and a " :
                                                                               ".");
                     // if(i < r0.getNumInteractibles()-2)
@@ -69,8 +69,10 @@ public class Environment extends InteractionUtil
 
             if (r0.getEnemies() != null)
             {
-                for (Enemy e : r0.getEnemies()) {
-                    performAction(e);   
+                for (int i = 0; i < r0.getNumEnemies(); i++) 
+                {
+                    slowPrint("Enemy (" + (i + 1) + "): ");
+                    r0.getEnemy(i).chooseAction(r0);
                 }
             }
         }
@@ -87,7 +89,7 @@ public class Environment extends InteractionUtil
             r0.setRoom(i, new Room(new Room[]{r0}));
         }
 
-        for (int i = 0; i < 1; i++) 
+        for (int i = 0; i < 4; i++) 
         {
             r0.addEnemy(new Enemy(3));
         }
@@ -102,18 +104,12 @@ public class Environment extends InteractionUtil
         //NOT TORCH THOUGH, IT IS JUST AN INANIMATE ENTITY BECAUSE IT CAN BE ON THE FLOOR
     }
 
-    //IDEALLY THERE WILL ONLY BE 1 DEFINITION OF performAction() BUT THAT IS AFTER THE Person INTERFACE
-    private static void performAction(Enemy e)
-    {   
-        switch(e.chooseAction(r0))
+    public static void playerAttackEnemy(int index, int amount, String type)
+    {
+        if(r0.getEnemy(index).receiveDamage(amount, type))
         {
-            case 1:
-                slowPrintln("The " + e.getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.\nYou have no choice but to die.\nYET YOU LIVE.");
-                
-                break;
-
-            default:
-                break;
+            InteractionUtil.slowPrintln("You have murdered the " + r0.getEnemy(index).getRandomDescription(), 250);
+            r0.slayEnemy(index);
         }
     }
 }

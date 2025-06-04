@@ -19,7 +19,23 @@ public class ViewablePicture implements Interactible{
     @Override
     public String getDescription()
     {
-        return description + " on the " + getWall() + " wall";
+        return description;
+    }
+
+    @Override
+    public String getExposition()
+    {
+        return getDescription() + " on the " + getWall() + " wall";
+    }
+
+    @Override
+    public void inspectInteractible()
+    {
+        InteractionUtil.slowPrintln("You take a closer look at the depiction:\n");
+        String s = InteractionUtil.readFile(getFileName());
+        System.out.println(s);
+        System.out.println("Press enter to continue");
+        InteractionUtil.scanner.nextLine();
     }
 
     private String getWall() 

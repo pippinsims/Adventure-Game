@@ -128,6 +128,6 @@ public class Room {
 
     public String getDescription()
     {
-        return description + " with " + exits.length + " doors";
+        return description + " with " + ((exits.length > 1)? exits.length + " doors" : "a door");
     }
 }

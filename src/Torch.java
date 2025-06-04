@@ -13,7 +13,19 @@ public class Torch implements Interactible {
     @Override
     public String getDescription()
     {
-        return description + (loc / 10 == 2? " on the " + getWall() + " wall" : " on the floor");
+        return description;
+    }
+
+    @Override
+    public String getExposition()
+    {
+        return getDescription() + (loc / 10 == 2? " on the " + getWall() + " wall" : " on the floor");
+    }
+
+    @Override
+    public void inspectInteractible()
+    {
+        InteractionUtil.slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
     }
 
     private String getWall() 
