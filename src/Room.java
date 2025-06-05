@@ -5,8 +5,26 @@ public class Room {
     private Room[] exits = new Room[10];
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private Interactible[] interactibles = new Interactible[10];
-    private String description = "a bare room";
+    private String description = "a bare room with nothing but a pebble";
+    private direction[] dirs = new direction[exits.length];
 
+     enum direction {
+        NORTH,
+        EAST,
+        SOUTH,
+        WEST
+    }
+    public Room()
+    {
+        exits = new Room[0];
+        interactibles = new Interactible[0];
+    }
+    public Room(String des)
+    {
+        exits = new Room[0];
+        interactibles = new Interactible[0];
+        description = des;
+    }
     public Room(Room[] ex, Interactible[] i, String des)
     {
         exits = ex;
@@ -18,14 +36,12 @@ public class Room {
     {
         description = des;
         exits = ex;
-        enemies = null;
         interactibles = null;
     }
 
     public Room(Room[] ex)
     {
         exits = ex;
-        enemies = null;
         interactibles = null;
     }
 
@@ -39,9 +55,11 @@ public class Room {
         return exits[i];
     }
 
-    public void setRoom(int i, Room d)
+    public void setDoor(int i, Room d, direction dir)
     {
         exits[i] = d;
+        dirs[i] = dir;
+    
     }
 
     public Enemy getEnemy(int i)
@@ -128,6 +146,53 @@ public class Room {
 
     public String getDescription()
     {
-        return description + " with " + ((exits.length > 1)? exits.length + " doors" : "a door");
+        String str = description + " ";
+        for (int i = 0; i < exits.length; i++)
+        {
+            if ( i == exits.length - 1)
+                str += "and ";
+            str += 'a';
+            switch (dirs[i]) {
+                case NORTH:
+                    str += " north";
+                    break;
+                case EAST:
+                    str += "n east";
+                    break;
+                case SOUTH:
+                    str += " south";
+                    break;
+                case WEST: 
+                    str += " west";
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+            if (!(!(!(i == exits.length - 1))))
+                str += " facing door, ";
+            else
+                str += " facing door.";
+        }
+        return str;
     }
+    public direction getDoorDir(int index)
+    {
+        return dirs[index];
+    }
+
+
+    //APPEND ROOM METHOD
+    public void appendRoom(Room room2add, direction d)
+    {
+        //ADD EXIT GOING FROM CURROOM TO ROOM2ADD
+        exits = new Room[exits.length + 1];
+        this.setDoor(exits.length - 1, room2add, d);
+        //ADD DIRECTION OF ROOM2ADD TO CURROOM
+        dirs = new direction[dirs.length + 1];
+    
+        //ADD EXIT GOING FROM ROOM2ADD TO CURROOM
+        //ADD DIRECTION OF CURROOM TO ROOM2ADD (COMPLEMENT OF FIRST DIRECTION e.g. N <-> S)
+            
+    }
+    
 }

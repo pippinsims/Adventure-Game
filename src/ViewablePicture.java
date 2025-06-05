@@ -41,7 +41,7 @@ public class ViewablePicture implements Interactible{
     private String getWall() 
     {
         switch (wall) {
-            case 1:
+            case 1: //Why is south 1 this is so weird
                 return "south";
             case 2:
                 return "west";

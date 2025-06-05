@@ -25,7 +25,7 @@ public class InteractionUtil {
 
     public static void slowPrint(String output)
     {
-        slowPrint(output, 1);
+        slowPrint(output, 100);
     }
 
     public static void slowPrintln(String output, int sleepDuration)

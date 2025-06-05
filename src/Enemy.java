@@ -16,6 +16,14 @@ public class Enemy implements Animate{
         dmg = d;
         wisdom = w;
     }
+    public Enemy(int h, Inventory i, int d, int w, String des)
+        {
+            health = h;
+            inv = i;
+            dmg = d;
+            wisdom = w;
+            description = des;
+        }
 
     public Enemy(int h)
     {
@@ -50,15 +58,36 @@ public class Enemy implements Animate{
 
     public String getRandomDescription()
     {
-        switch (new Random().nextInt(3)) 
+        if (description.equals("Screebling Squabbler"))
         {
-            default:
-                return description;
-            case 1:
-                return "pale man";
-            case 2:
-                return "bllork";
+            switch (new Random().nextInt(3)) 
+            {
+                default:
+                    return description;
+                case 1:
+                    return "pale man";
+                case 2:
+                    return "bllork";
+            }
         }
+        else if (description.equals("Mushroom"))
+            {
+                switch (new Random().nextInt(5))
+                {
+                    default:
+                        return description;
+                    case 1:
+                        return "Shroomie";
+                    case 2:
+                        return "Delicious Fun Guy";
+                    case 3:
+                        return "Those-Who-Feast";
+                    case 4:
+                        return "Knower of Forest Beds and Roots";
+                }
+            }
+        else
+            return "???";
     }
 
     public String getDescription()
@@ -119,21 +148,45 @@ public class Enemy implements Animate{
 
     public void pleaResponse()
     {
-        switch(new Random().nextInt(3))
+        if (description.equals("Screebling Squabbler"))
         {
-            case 0:
-                InteractionUtil.slowPrintln(getDescription() + ": I care not for your pitifulness.");
-                break;
-            case 1:
-                InteractionUtil.slowPrintln(getDescription() + ": ok.");
-                isNotAttacking = true;
-                break;
-            case 2:
-                InteractionUtil.slowPrintln(getDescription() + ": [Doesn't React]");
-                break;
-            default:
-                System.err.println("error detected in Enemey.java:pleaResponse()");
-                break;
+            switch(new Random().nextInt(3))
+            {
+                case 0:
+                    InteractionUtil.slowPrintln(getDescription() + ": I care not for your pitifulness.");
+                    break;
+                case 1:
+                    InteractionUtil.slowPrintln(getDescription() + ": ok.");
+                    isNotAttacking = true;
+                    break;
+                case 2:
+                    InteractionUtil.slowPrintln(getDescription() + ": [Doesn't React]");
+                    break;
+                default:
+                    System.err.println("error detected in Enemey.java:pleaResponse()");
+                    break;
+            }
+        }
+        else if (description.equals("Mushroom"))
+        {
+            switch(new Random().nextInt(3))
+            {
+                case 0:
+                    InteractionUtil.slowPrintln(getDescription() + ": I never wanted to fight...");
+                     isNotAttacking = true;
+                    break;
+                case 1:
+                    InteractionUtil.slowPrintln(getDescription() + ": orpelm hur hur");
+                    isNotAttacking = true;
+                    break;
+                case 2:
+                    InteractionUtil.slowPrintln(getDescription() + ": kubi kubi!");
+                     isNotAttacking = true;
+                    break;
+                default:
+                    System.err.println("error detected in Enemey.java:pleaResponse()");
+                    break;
+            }
         }
     }
 
