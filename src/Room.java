@@ -5,34 +5,39 @@ public class Room {
     private Room[] exits = new Room[10];
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private Interactible[] interactibles = new Interactible[10];
-    private String description = "a bare room with nothing but a pebble";
+    private String description = "a bare room";
     private direction[] dirs = new direction[exits.length];
+    private String doormsg = "This room has";
 
-     enum direction {
+    enum direction {
         NORTH,
         EAST,
         SOUTH,
-        WEST
+        WEST,
+        NONCARDINAL
     }
+
     public Room()
     {
         exits = new Room[0];
         interactibles = new Interactible[0];
     }
+
     public Room(String des)
     {
         exits = new Room[0];
         interactibles = new Interactible[0];
         description = des;
     }
-    public Room(Room[] ex, Interactible[] i, String des)
+
+    public Room(Room[] ex, String des, Interactible[] i)
     {
         exits = ex;
         interactibles = i;
         description = des;
     }
 
-    public Room(String des, Room[] ex)
+    public Room(Room[] ex, String des)
     {
         description = des;
         exits = ex;
@@ -59,14 +64,17 @@ public class Room {
     {
         exits[i] = d;
         dirs[i] = dir;
-    
+    }
+
+    public void setDoorMsg(String s)
+    {
+        doormsg = s;
     }
 
     public Enemy getEnemy(int i)
     {
         return enemies != null && i < enemies.size() ? enemies.get(i) : null;
     }
-
     
     public void setEnemy(int i, Enemy e)
     {
@@ -146,40 +154,133 @@ public class Room {
 
     public String getDescription()
     {
-        String str = description + " ";
-        for (int i = 0; i < exits.length; i++)
+        String str = description + "\n" + doormsg;
+
+        int[] directionCounts = new int[direction.values().length];
+
+        for(int i = 0; i < directionCounts.length; i++)
         {
-            if ( i == exits.length - 1)
-                str += "and ";
-            str += 'a';
-            switch (dirs[i]) {
-                case NORTH:
-                    str += " north";
-                    break;
-                case EAST:
-                    str += "n east";
-                    break;
-                case SOUTH:
-                    str += " south";
-                    break;
-                case WEST: 
-                    str += " west";
-                    break;
-                default:
-                    throw new AssertionError();
+            directionCounts[i] = countDoors(direction.values()[i]);
+        }
+
+        boolean precursedByZeros = true;
+        for (int i = 0; i < directionCounts.length; i++)
+        {
+            if(directionCounts[i] != 0)
+            {
+                if(isFollowedByZeros(directionCounts, i) && !precursedByZeros)
+                    str += " and";
+                
+                str += " " + getDirDes(direction.values()[i]);
+
+                if (!isFollowedByZeros(directionCounts, i))
+                    str += ",";
+
+                precursedByZeros = false;
             }
-            if (!(!(!(i == exits.length - 1))))
-                str += " facing door, ";
-            else
-                str += " facing door.";
         }
         return str;
     }
-    public direction getDoorDir(int index)
+
+    /**
+     * Checks if all items after item at index i in int array arr are 0.
+     * @param arr The array to check.
+     * @param i The starting point index.
+     * @return True if all items after item at i are 0.
+     */
+    private boolean isFollowedByZeros(int[] arr, int i)
     {
-        return dirs[index];
+        for(int j = i + 1; j < arr.length; j++)
+        {
+            if(arr[j] != 0)
+                return false;
+        }
+
+        return true;
     }
 
+    private direction getDoorDir(int i)
+    {
+        return dirs[i];
+    }
+
+    public String getDoorDes(int i)
+    {
+        String str = getDoorDesArticle(i);
+        
+        str += " " + dirToString(getDoorDir(i)) + " door";
+
+        return str;
+    }
+
+    public String getDirDes(direction d)
+    {
+        String str = getDoorDesAmount(d);
+        
+        str += " " + dirToString(d) + " door";
+
+        if(countDoors(d) > 1)
+            str += "s";
+
+        return str;
+    }
+
+    private int countDoors(direction d)
+    {
+        int sum = 0;
+        for(int i = 0; i < dirs.length; i++)
+        {
+            if(dirs[i] == d)
+                sum++;
+        }
+        return sum;
+    }
+
+    private String getDoorDesArticle(int i)
+    {
+        direction d = getDoorDir(i);
+        if(countDoors(d) == 1)
+            return "the";
+        else
+        {
+            if(getDoorDir(i) == direction.EAST)
+                return "an";
+            else
+                return "a";
+        }
+    }
+
+    private String getDoorDesAmount(direction d)
+    {
+        if(countDoors(d) == 1)
+        {
+            if(d == direction.EAST)
+                return "an";
+            else
+                return "a";
+        }
+        else
+            return countDoors(d) + "";
+    }
+
+    private String dirToString(direction d)
+    {   
+        switch(d)
+        {
+            case NORTH:
+                return "north-facing";
+            case EAST:
+                return "east-facing";
+            case SOUTH:
+                return "south-facing";
+            case WEST: 
+                return "west-facing";
+            case NONCARDINAL:
+                return "non-cardinally-directed";
+            default:
+                throw new AssertionError();
+        }
+    }
 
     //APPEND ROOM METHOD
     public void appendRoom(Room room2add, direction d)

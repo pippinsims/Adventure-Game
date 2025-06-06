@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class Enemy implements Animate{
     private final int maxHealth = 3;
-    private int health;
+    private float health;
     private Inventory inv;
     private int dmg;
     private int wisdom;
@@ -48,9 +48,9 @@ public class Enemy implements Animate{
                 break;
         }
 
-        if(health < (maxHealth * 2)/3)
+        if(health <= maxHealth / 3)
             return "now bent double " + type;
-        else if(health <= maxHealth - maxHealth/2)
+        else if(health <= (maxHealth * 2) / 3)
             return "slightly bruised " + type;
         else
             return type;
@@ -95,7 +95,7 @@ public class Enemy implements Animate{
         return description;
     }
 
-    public int getHealth()
+    public float getHealth()
     {
         return health;
     }

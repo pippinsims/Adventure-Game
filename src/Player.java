@@ -55,28 +55,9 @@ public class Player implements Animate{
                 String[] doornames = new String[curRoom.getNumExits()];
                 for (int j = 0 ; j < doornames.length ; j++)
                 {
-                    doornames[j] = "Try a";
-                    switch (curRoom.getDoorDir(j)) 
-                    {
-                        case NORTH:
-                            doornames[j] += " north";
-                            break;
-                        case EAST:
-                            doornames[j] += "n east";
-                            break;
-                        case SOUTH:
-                            doornames[j] += " south";
-                            break;
-                        case WEST: 
-                            doornames[j] += " west";
-                            break;
-                        default:
-                            throw new AssertionError();
-                    
-                    }
-                    doornames[j] += " door";
-                
+                    doornames[j] = "Door " + (j + 1) + ", " + curRoom.getDoorDes(j) + ".";           
                 }
+
                 curRoom = curRoom.getRoom(InteractionUtil.promptList("Which door traveler?", doornames) - 1);
                 Environment.r0 = curRoom;
                 
@@ -213,7 +194,7 @@ public class Player implements Animate{
     }
 
     @Override
-    public int getHealth() {
+    public float getHealth() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getHealth'");
     }
