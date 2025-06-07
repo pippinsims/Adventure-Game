@@ -81,33 +81,22 @@ public class Environment extends InteractionUtil
 
     private static void generateMap()
     {
-        r0 = new Room(new Room[3], "a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"", new Interactible[3]);
+        r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"");
         r0.setDoorMsg("This room is gifted with");       
         
-        Room mossyRuin = new Room(new Room[2], "a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift, oh and this room is cursed with");
-        r0.setDoor(0, mossyRuin, Room.direction.NORTH);
-        mossyRuin.setDoor(0, r0, Room.direction.SOUTH);
-        mossyRuin.setDoor(1, new Room(new Room[1]), Room.direction.SOUTH);
-        mossyRuin.getRoom(1).setDoor(0, mossyRuin, Room.direction.NORTH);
+        Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,");
+        mossyRuin.setDoorMsg("oh, and this room is cursed with");
+        mossyRuin.addEnemy(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom"));
+        r0.appendRoom(mossyRuin, Room.direction.NORTH);
 
-        r0.setDoor(1, new Room(new Room[1]), Room.direction.WEST);
-        r0.getRoom(1).setDoor(0, r0, Room.direction.EAST);
+        r0.appendRoom(new Room(), Room.direction.WEST);
 
-        Room treasureRoom = new Room(new Room[1], "a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle and set your heart in motion with");
-        r0.setDoor(2, new Room(new Room[2]), Room.direction.EAST);
-        r0.getRoom(2).setDoor(0, r0, Room.direction.WEST);
-        r0.getRoom(2).setDoor(1, treasureRoom, Room.direction.SOUTH);
-        treasureRoom.setDoor(0, r0.getRoom(2), Room.direction.NORTH);
-
-        //treasureRoom.appendRoom(mossyRuin, Room.direction.WEST);
-        //treasureRoom.setRoom(2, new Room(new Room[], {treasureRoom}))
-
+        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle and set your heart in motion with");
+        r0.appendRoom(new Room(), Room.direction.EAST);
         
-        
-        
-       mossyRuin.addEnemy(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom"));
+        r0.getRoom(2).appendRoom(treasureRoom, Room.direction.SOUTH);
 
-        for (int i = 0; i < 4; i++) 
+        for (int i = 0; i < 4; i++)
         {
             r0.addEnemy(new Enemy(3));
         }
@@ -120,8 +109,6 @@ public class Environment extends InteractionUtil
 
         //PROBABLY SHOULD MAKE A "WALL ENTITY" FOR DOOR, VIEWABLEPICTURE, WINDOW, ETC...
         //NOT TORCH THOUGH, IT IS JUST AN INANIMATE ENTITY BECAUSE IT CAN BE ON THE FLOOR
-
-
     }
 
     public static void playerAttackEnemy(int index, int amount, String type)

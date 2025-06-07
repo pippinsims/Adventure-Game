@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 public class Room {
 
-    private Room[] exits = new Room[10];
+    private Room[] exits;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-    private Interactible[] interactibles = new Interactible[10];
+    private ArrayList<Interactible> interactibles = new ArrayList<Interactible>();
     private String description = "a bare room";
-    private direction[] dirs = new direction[exits.length];
+    private direction[] dirs;
     private String doormsg = "This room has";
 
     enum direction {
@@ -20,39 +20,18 @@ public class Room {
     public Room()
     {
         exits = new Room[0];
-        interactibles = new Interactible[0];
+        dirs = new direction[0];
     }
 
     public Room(String des)
     {
-        exits = new Room[0];
-        interactibles = new Interactible[0];
+        this();
         description = des;
-    }
-
-    public Room(Room[] ex, String des, Interactible[] i)
-    {
-        exits = ex;
-        interactibles = i;
-        description = des;
-    }
-
-    public Room(Room[] ex, String des)
-    {
-        description = des;
-        exits = ex;
-        interactibles = null;
-    }
-
-    public Room(Room[] ex)
-    {
-        exits = ex;
-        interactibles = null;
     }
 
     public Interactible getInteractible(int i)
     {
-        return interactibles != null ? interactibles[i] : null;
+        return interactibles != null ? interactibles.get(i) : null;
     }
 
     public Room getRoom(int i)
@@ -129,7 +108,7 @@ public class Room {
     public int getNumInteractibles()
     {
         if(interactibles != null)
-            return interactibles.length;
+            return interactibles.size();
         else
             return 0;
     }
@@ -140,8 +119,8 @@ public class Room {
         {
             if(in != null)
             {
-                if(0 <= i && i <= interactibles.length - 1)
-                    interactibles[i] = in;
+                if(0 <= i && i <= interactibles.size() - 1)
+                    interactibles.set(i, in);
                 else
                     System.err.println("setInteractible fail. Index outside of Array bounds. You are stupid.");
             }
@@ -286,14 +265,60 @@ public class Room {
     public void appendRoom(Room room2add, direction d)
     {
         //ADD EXIT GOING FROM CURROOM TO ROOM2ADD
-        exits = new Room[exits.length + 1];
-        this.setDoor(exits.length - 1, room2add, d);
+        Room[] newExits = new Room[exits.length + 1];
+        for(int i = 0; i < exits.length; i++)
+        {
+            newExits[i] = exits[i];
+        }
+        exits = newExits;
+        exits[exits.length - 1] = room2add;
+        
         //ADD DIRECTION OF ROOM2ADD TO CURROOM
-        dirs = new direction[dirs.length + 1];
+        direction[] newDirs = new direction[dirs.length + 1];
+        for(int i = 0; i < dirs.length; i++)
+        {
+            newDirs[i] = dirs[i];
+        }
+        dirs = newDirs;
+        dirs[dirs.length - 1] = d;
     
         //ADD EXIT GOING FROM ROOM2ADD TO CURROOM
+        newExits = new Room[room2add.exits.length + 1];
+        for(int i = 0; i < room2add.exits.length; i++)
+        {
+            newExits[i] = room2add.exits[i];
+        }
+        room2add.exits = newExits;
+        room2add.exits[room2add.exits.length - 1] = this;
+
         //ADD DIRECTION OF CURROOM TO ROOM2ADD (COMPLEMENT OF FIRST DIRECTION e.g. N <-> S)
-            
+        newDirs = new direction[room2add.dirs.length + 1];
+        for(int i = 0; i < room2add.dirs.length; i++)
+        {
+            newDirs[i] = room2add.dirs[i];
+        }
+        room2add.dirs = newDirs;
+        room2add.dirs[room2add.dirs.length - 1] = complementOf(d);
     }
-    
+
+    direction complementOf(direction d)
+    {
+        switch (d) 
+        {
+            case SOUTH:
+                return direction.NORTH;
+
+            case WEST:
+                return direction.EAST;
+
+            case NORTH:
+                return direction.SOUTH;
+
+            case EAST:
+                return direction.WEST;
+
+            default:
+                return direction.NONCARDINAL;
+        }
+    }
 }
