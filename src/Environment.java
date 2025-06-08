@@ -139,7 +139,7 @@ public class Environment extends InteractionUtil
         if(r0.getEnemies().get(index).receiveDamage(amount, type))
         {
             InteractionUtil.slowPrintln("You have murdered the " + r0.getEnemies().get(index).getRandomDescription(), 250);
-            r0.getEnemies().get(index);
+            r0.getEnemies().remove(index);
         }
     }
 }
