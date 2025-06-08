@@ -49,4 +49,10 @@ public class Torch implements Interactible {
     {
         lit = !lit;
     }
+
+    @Override
+    public boolean isWallInteractible() 
+    {
+        return true;
+    }
 }

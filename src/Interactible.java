@@ -1,6 +1,7 @@
-public interface Interactible {
+public interface Interactible extends Describable
+{
     public void action();
-    public String getDescription();
     public String getExposition();
     public void inspectInteractible();
+    public boolean isWallInteractible();
 }

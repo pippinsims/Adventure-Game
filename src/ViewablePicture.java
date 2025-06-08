@@ -58,4 +58,10 @@ public class ViewablePicture implements Interactible{
     {
         return txtFileName;
     }
+
+    @Override
+    public boolean isWallInteractible() 
+    {
+        return true;
+    }
 }

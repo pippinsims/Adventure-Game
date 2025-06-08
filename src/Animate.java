@@ -1,6 +1,6 @@
 //FOR PLAYER, FOLLOWERS, NPCS, AND ENEMIES
 
-public interface Animate 
+public interface Animate extends Describable
 {
     public boolean performAction(int i);
 
@@ -9,4 +9,5 @@ public interface Animate
     public Inventory getInventory();
     public int getAttackDamage();
     public int getWisdom();
+    public String getName();
 }

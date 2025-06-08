@@ -29,11 +29,6 @@ public class Room {
         description = des;
     }
 
-    public Interactible getInteractible(int i)
-    {
-        return interactibles != null ? interactibles.get(i) : null;
-    }
-
     public Room getRoom(int i)
     {
         return exits[i];
@@ -50,85 +45,19 @@ public class Room {
         doormsg = s;
     }
 
-    public Enemy getEnemy(int i)
-    {
-        return enemies != null && i < enemies.size() ? enemies.get(i) : null;
-    }
-    
-    public void setEnemy(int i, Enemy e)
-    {
-        if(enemies != null)
-        {
-            if(0 <= i && i <= enemies.size() - 1)
-                enemies.set(i, e);
-            else
-                System.err.println("setEnemy fail. Index outside of Array bounds. You are stupid.");
-        }
-        else 
-           System.err.println("setEnemy fail. Array doesn't exist. You are stupid.");
-    }
-
-    public void addEnemy(Enemy e)
-    {
-        enemies.add(e);
-    }
-
-    public void slayEnemy(int i)
-    {
-        if(enemies != null)
-        {
-            if(0 <= i && i <= enemies.size() - 1)
-                enemies.remove(i);
-            else
-                System.err.println("slayEnemy fail. Index outside of Array bounds. You are stupid.");
-        }
-        else 
-           System.err.println("slayEnemy fail. Array doesn't exist. You are stupid.");
-        
-    }
-
     public ArrayList<Enemy> getEnemies()
     {
         return enemies;
     }
 
+    public ArrayList<Interactible> getInteractibles()
+    {
+        return interactibles;
+    }
+
     public int getNumExits()
     {
         return exits.length;
-    }
-
-    public int getNumEnemies()
-    {
-        if(enemies != null)
-            return enemies.size();
-        else
-            return 0;
-    }
-
-    public int getNumInteractibles()
-    {
-        if(interactibles != null)
-            return interactibles.size();
-        else
-            return 0;
-    }
-
-    public void setInteractible(int i, Interactible in)
-    {
-        if (interactibles != null)
-        {
-            if(in != null)
-            {
-                if(0 <= i && i <= interactibles.size() - 1)
-                    interactibles.set(i, in);
-                else
-                    System.err.println("setInteractible fail. Index outside of Array bounds. You are stupid.");
-            }
-            else 
-                System.err.println("setInteractible fail. You're trying to put a null into interactibles. You are stupid.");
-         }
-         else
-            System.err.println("setInteractible fail. Array does not exist. You are confusing me.");
     }
 
     public String getDescription()

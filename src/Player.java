@@ -6,6 +6,7 @@ public class Player implements Animate{
     private int maxHealth = 20;
     private int playerDamage = 1;
     private int playerWisdom = 2;
+    private String name;
 
     enum action {
         NOTHING,
@@ -19,6 +20,11 @@ public class Player implements Animate{
 
     public List<action> actions = new ArrayList<action>();
 
+    public Player()
+    {
+        name = "Laur";
+    }
+
     public void setActions(Room curRoom)
     {
         actions.clear();
@@ -29,12 +35,12 @@ public class Player implements Animate{
             actions.add(action.DOOR);
         }
 
-        if(curRoom.getNumInteractibles() > 0)
+        if(curRoom.getInteractibles().size() > 0)
         {
             actions.add(action.INSPECT);
         }
 
-        if (curRoom.getNumEnemies() != 0)
+        if (curRoom.getEnemies().size() != 0)
         {
             actions.add(action.FIGHT);
         }
@@ -69,8 +75,8 @@ public class Player implements Animate{
                 int chosenAttackType = InteractionUtil.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
                 
                 int chosenEnemyIndex;
-                if(curRoom.getNumEnemies() > 1)
-                    chosenEnemyIndex = InteractionUtil.promptList("Which fooeeoee meets thine bloodtherstey eyee?", curRoom.getNumEnemies(), "Fight enemy &") - 1;
+                if(curRoom.getEnemies().size() > 1)
+                    chosenEnemyIndex = InteractionUtil.promptList("Which fooeeoee meets thine bloodtherstey eyee?", curRoom.getEnemies().size(), "Fight enemy &") - 1;
                 else
                     chosenEnemyIndex = 0;
 
@@ -78,7 +84,7 @@ public class Player implements Animate{
                 {
                     case "Punch": 
                         attackDamage = 1;
-                        System.out.println("You heave a mighty blow at the " + curRoom.getEnemy(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + attackDamage + " damage!");
+                        System.out.println("You heave a mighty blow at the " + curRoom.getEnemies().get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + attackDamage + " damage!");
                         break;
                     
                     default:
@@ -90,13 +96,13 @@ public class Player implements Animate{
                 break;
 
             case INSPECT:
-                int n = curRoom.getNumInteractibles();    
+                int n = curRoom.getInteractibles().size();    
 
                 String[] interactiblesDescriptions = new String[n];
                 for(int j = 0; j < n; j++)
-                    interactiblesDescriptions[j] = curRoom.getInteractible(j).getDescription();
+                    interactiblesDescriptions[j] = curRoom.getInteractibles().get(j).getDescription();
                 
-                curRoom.getInteractible(InteractionUtil.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", interactiblesDescriptions) - 1).inspectInteractible();
+                curRoom.getInteractibles().get(InteractionUtil.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", interactiblesDescriptions) - 1).inspectInteractible();
                 
                 break;
 
@@ -130,11 +136,11 @@ public class Player implements Animate{
                     spellDamage = 1000;
                     
                     InteractionUtil.slowPrintln("You release a level " + spellDamage + " Psych Strike spell on all of your foes.");
-                    if(curRoom.getNumEnemies() == 0)
+                    if(curRoom.getEnemies().size() == 0)
                         InteractionUtil.slowPrint("... but you have no enemies! Nothing happens.");
                     else
                     {
-                        for (int j = 0; j < curRoom.getNumEnemies(); j++) 
+                        for (int j = 0; j < curRoom.getEnemies().size(); j++) 
                         {
                             Environment.playerAttackEnemy(j, spellDamage, spellTypes[0]);
                         }
@@ -215,5 +221,17 @@ public class Player implements Animate{
     public int getWisdom() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getWisdom'");
+    }
+
+    @Override
+    public String getName() 
+    {
+        return name;        
+    }
+
+    @Override
+    public String getDescription() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
     }
 }

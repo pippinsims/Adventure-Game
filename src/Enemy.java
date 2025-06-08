@@ -8,6 +8,7 @@ public class Enemy implements Animate{
     private int wisdom;
     private String description = "Screebling Squabbler";
     private boolean isNotAttacking = false;
+    private String name;
 
     public Enemy(int h, Inventory i, int d, int w)
     {
@@ -31,6 +32,30 @@ public class Enemy implements Animate{
         inv = new Inventory(5);
         dmg = 2;
         wisdom = 20;
+        generateName();
+    }
+
+    private void generateName() 
+    {
+        switch(new Random().nextInt(5))
+        {
+            case 0: name = "Bo"; break;
+            case 1: name = "Kua"; break;
+            case 2: name = "An"; break;
+            case 3: name = "Lis"; break;
+            case 4: name = "Yi"; break;
+        }
+
+        switch (new Random().nextInt(7)) 
+        {
+            case 0: name += "sandual"; break;
+            case 1: name += "\'hananah"; break;
+            case 2: name += "mon"; break;
+            case 3: name += "tio"; break;
+            case 4: name += "narsh"; break;
+            case 5: name += "poaf"; break;
+            case 6: name += "duan"; break;
+        }
     }
 
     public String getModifiedDescription(String type)
@@ -95,6 +120,11 @@ public class Enemy implements Animate{
         return description;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
     public float getHealth()
     {
         return health;
@@ -148,19 +178,20 @@ public class Enemy implements Animate{
 
     public void pleaResponse()
     {
+        InteractionUtil.slowPrint(getName() + ": ");
         if (description.equals("Screebling Squabbler"))
         {
             switch(new Random().nextInt(3))
             {
                 case 0:
-                    InteractionUtil.slowPrintln(getDescription() + ": I care not for your pitifulness.");
+                    InteractionUtil.slowPrintln("I care not for your pitifulness.");
                     break;
                 case 1:
-                    InteractionUtil.slowPrintln(getDescription() + ": ok.");
+                    InteractionUtil.slowPrintln("ok.");
                     isNotAttacking = true;
                     break;
                 case 2:
-                    InteractionUtil.slowPrintln(getDescription() + ": [Doesn't React]");
+                    InteractionUtil.slowPrintln("[Doesn't React]");
                     break;
                 default:
                     System.err.println("error detected in Enemey.java:pleaResponse()");
@@ -169,19 +200,17 @@ public class Enemy implements Animate{
         }
         else if (description.equals("Mushroom"))
         {
+            isNotAttacking = true;
             switch(new Random().nextInt(3))
             {
                 case 0:
-                    InteractionUtil.slowPrintln(getDescription() + ": I never wanted to fight...");
-                     isNotAttacking = true;
+                    InteractionUtil.slowPrintln("I never wanted to fight...");
                     break;
                 case 1:
-                    InteractionUtil.slowPrintln(getDescription() + ": orpelm hur hur");
-                    isNotAttacking = true;
+                    InteractionUtil.slowPrintln("orpelm hur hur");
                     break;
                 case 2:
-                    InteractionUtil.slowPrintln(getDescription() + ": kubi kubi!");
-                     isNotAttacking = true;
+                    InteractionUtil.slowPrintln("kubi kubi!");
                     break;
                 default:
                     System.err.println("error detected in Enemey.java:pleaResponse()");
@@ -193,21 +222,41 @@ public class Enemy implements Animate{
     @Override
     public boolean performAction(int i) 
     {
-        switch(i)
+        String str = "";
+        
+        switch (description) 
         {
-            case 1: //DO NOTHING
-                InteractionUtil.slowPrintln("The " + getModifiedDescription("sad") + " stands still, sort of like a Zucchini Mushroom.");
-                
+            case "Screebling Squabbler":
+                switch(i)
+                {
+                    case 1: //DO NOTHING
+                        str = "The " + getModifiedDescription("sad") + " stands still, sort of like a Zucchini Mushroom.";
+                        break;
+
+                    case 2: //ATTACK
+                        str = "The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.";
+                        break;
+
+                    default:
+                        break;
+                }
                 break;
 
-            case 2: //ATTACK
-                InteractionUtil.slowPrintln("The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.\nYou have no choice but to die.\nYET YOU LIVE.");
+            case "Mushroom":
+                switch(i) 
+                {
+                    case 1:
+                        str = "The strange shroomacious being freezes solid, like a painted statue.";                        
+                        break;
                 
-                break;
-
-            default:
+                    case 2:
+                        str = "The " + getRandomDescription() + " swings the butt of a shotgun at your head to end you.";
+                        break;
+                }
                 break;
         }
+
+        InteractionUtil.slowPrintln(str);
 
         return true;
     }
