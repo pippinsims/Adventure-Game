@@ -1,125 +1,128 @@
 import java.util.ArrayList;
 
-public class Environment extends InteractionUtil
+public class Environment extends Utils
 {
     public static Room r0;
+    public static PlayerManager pm = new PlayerManager();
     public static void main(String[] args) 
     {
         //room r0 is the current room
         generateMap();
-        
-        Player player = new Player();
 
-        InteractionUtil.slowPrintln("In this land, you're known as " + player.getName() + ".\nAdventure awaits, " + player.getName() + ".\n");
+        pm.addPlayer(new Player());
+        Player player1 = pm.players.get(0);
 
-        Room savedRoom = null;
-        while(true)
+        printIntroduction();
+
+        System.out.println();
+
+        while(pm.players.get(0).getHealth() > 0)
         {
-            System.out.println("--Info--");
-            if(r0 != savedRoom) //if room is not saved
-            {
-                savedRoom = r0;                
-                //exposition
-                InteractionUtil.slowPrintln("You're in " + r0.getDescription() + ".");
-            }
-
             printInfo();
 
             System.out.println();
 
-            //lists available actions, lets the player choose, then performs chosen action.
-            System.out.println("--" + player.getName() + "'" + (player.getName().charAt(player.getName().length() - 1) != 's' ? "s" : "") + " Turn--");
+            unitUpdate(player1);
             
-            player.setActions(r0);
-            if(!player.performAction(promptList("You can:", player.getActionDescriptions()) - 1))
-                break;
-
             System.out.println();
 
-            //performs the actions of each enemy automatically
-            if (r0.getEnemies() != null)
+            for (Enemy e : r0.getEnemies()) 
             {
-                Enemy cur;
-                for (int i = 0; i < r0.getEnemies().size(); i++) 
-                {
-                    cur = r0.getEnemies().get(i);
-                    System.out.println("--" + cur.getName() + "'" + (cur.getName().charAt(cur.getName().length() - 1) != 's' ? "s" : "") + " Turn--");
-            
-                    cur.chooseAction(r0);
-                    System.out.println();
-                }
+                unitUpdate(e);
+                System.out.println();
             }
         }
+        
         scanner.close();
+    }
+
+    private static void printIntroduction()
+    {
+        slowPrint("In this land, you're known as ");
+        if(pm.players.size() > 0)
+        {
+            int num = pm.players.size();
+            
+            for(int i = 0; i < num; i++)
+            {
+                slowPrintAsList(pm.players.get(i).getName(), num, i);
+            }
+        }
+        slowPrint(" ", 1000);
+        slowPrint("Adventure awaits!", 10);
+        slowPrint("\n", 200);
+    }
+
+    private static void unitUpdate(Unit a)
+    {
+        String n = a.getName();
+        System.out.println("--" + n + "'" + (n.charAt(n.length() - 1) != 's' ? "s" : "") + " Turn--");
+        if(a instanceof Enemy e)
+        {
+            e.chooseAction(r0);
+        }
+        else if(a instanceof Player p)
+        {
+            p.setActions(r0);
+            //lists available actions, lets the player choose, then performs chosen action
+            p.performAction(promptList("You can:", p.getActionDescriptions()) - 1);
+        }
     }
 
     private static void printInfo()
     {
-        String descriptor;
-            ArrayList<Interactible> inters = r0.getInteractibles();
-            if(inters.size() > 0)
-            {
-                int num = inters.size();
-                descriptor = "There is a ";
-                for(int i = 0; i < num; i++)
-                {
-                    //what if there are two of the exact same thing
-                    descriptor += (inters.get(i).getExposition()) + ((i < num - 2)  ? ", a " :
-                                                                     (i == num - 2) ? ", and a " :
-                                                                                      ".");
-                }
-                slowPrintln(descriptor);
-            }
+        System.out.println("--Info--");
 
-            ArrayList<Enemy> ens = r0.getEnemies();
-            if(ens.size() > 0)
-            {
-                int num = ens.size();
-                descriptor = "There is a ";
-                for(int i = 0; i < num; i++)
-                {
-                    descriptor += (ens.get(i).getRandomDescription()) + ((i < num - 2)  ? ", a " :
-                                                                         (i == num - 2) ? ", and a " :
-                                                                                          ".");
-                }
-                slowPrintln(descriptor);
-            }
-    }
-
-    private static void describeList(ArrayList<? extends Describable> l)
-    {
-        String descriptor;
-        if(r0.getInteractibles().size() > 0)
+        if(!r0.getIsDiscovered())
         {
-            int num = r0.getInteractibles().size();
-            descriptor = "There is a ";
-            for(int i = 0; i < num; i++)
-            {
-                //what if there are two of the exact same thing
-                descriptor += (r0.getInteractibles().get(i).getExposition()) + ((i < num - 2)  ? ", a " :
-                                                                                (i == num - 2) ? ", and a " :
-                                                                                                    ".");
-            }
-            slowPrintln(descriptor);
+            printDelay = 50;
+            slowPrintln("You're in " + r0.getDescription() + ".");
+            r0.setIsDiscovered(true);
+        }
+
+        ArrayList<Interactible> inters = r0.getInteractibles();
+        ArrayList<Enemy> ens = r0.getEnemies();
+        int num = inters.size();
+        for(int i = 0; i < num + ens.size(); i++)
+        {
+            //WAIT what if there are two of the exact same interactible?! "There are two red torches on the east wall", "There are two diamond snakes"
+            if(i == 0 || i == num)
+                slowPrint("There is ");
+
+            if(i < num)
+                slowPrintlnAsListWithArticles(inters.get(i).getExposition(), num, i);
+            else
+                slowPrintlnAsListWithArticles(ens.get(i - num).getRandomDescription(), ens.size(), i - num);
+        }
+
+        if(r0.getIsDiscovered())
+        {
+            printDelay = 3;
         }
     }
 
     private static void generateMap()
     {
-        r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic. \n\"Lord Gareth the Mad.\"");
+        r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"");
         r0.setDoorMsg("This room is gifted with");       
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,");
         mossyRuin.setDoorMsg("oh, and this room is cursed with");
         mossyRuin.getEnemies().add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom"));
+        
         r0.appendRoom(mossyRuin, Room.direction.NORTH);
-
         r0.appendRoom(new Room(), Room.direction.WEST);
-
         r0.appendRoom(new Room(), Room.direction.EAST);
 
-        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle and set your heart in motion with");
-        r0.getRoom(2).appendRoom(treasureRoom, Room.direction.SOUTH);
+        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.");
+        try 
+        {
+            r0.getRoom(2).appendRoom(treasureRoom, Room.direction.SOUTH);
+        } 
+        catch (Exception e) 
+        {
+            System.err.println("trying to get a room that doesn't exist");
+        }
 
         for (int i = 0; i < 4; i++)
         {
@@ -138,7 +141,7 @@ public class Environment extends InteractionUtil
     {
         if(r0.getEnemies().get(index).receiveDamage(amount, type))
         {
-            InteractionUtil.slowPrintln("You have murdered the " + r0.getEnemies().get(index).getRandomDescription(), 250);
+            slowPrintln("You have murdered the " + r0.getEnemies().get(index).getRandomDescription(), 250);
             r0.getEnemies().remove(index);
         }
     }

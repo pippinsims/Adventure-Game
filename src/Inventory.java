@@ -1,10 +1,11 @@
+import java.util.ArrayList;
+
 public class Inventory {
-    private Item[] items;
+    private ArrayList<Item> items = new ArrayList<Item>();
     private int[] itemCounts;
 
     public Inventory(int size)
     {
-        items = new Item[size];
         itemCounts = new int[size];
     }
 
@@ -15,14 +16,26 @@ public class Inventory {
 
     public Item getItem(int i)
     {
-        return items[i];
+        return items.get(i);
+    }
+
+    public boolean addItem(Item i)
+    {
+        if(items.contains(i))
+            itemCounts[items.indexOf(i)]++;
+        else if(items.size() < itemCounts.length)
+            items.add(i);
+        else
+            return false;
+        
+        return true;
     }
 
     public void removeOneOfItem(int i)
     {
         if(--itemCounts[i] == 0)
         {
-            items[i] = null;
+            items.remove(i);
         }
     }
 }

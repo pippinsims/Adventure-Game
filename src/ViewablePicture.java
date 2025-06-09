@@ -31,11 +31,11 @@ public class ViewablePicture implements Interactible{
     @Override
     public void inspectInteractible()
     {
-        InteractionUtil.slowPrintln("You take a closer look at the depiction:\n");
-        String s = InteractionUtil.readFile(getFileName());
+        Utils.slowPrintln("You take a closer look at the depiction:\n");
+        String s = Utils.readFile(getFileName());
         System.out.println(s);
         System.out.println("Press enter to continue");
-        InteractionUtil.scanner.nextLine();
+        Utils.scanner.nextLine();
     }
 
     private String getWall() 

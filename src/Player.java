@@ -1,12 +1,15 @@
 import java.util.*;
 
 //PLAYER NEEDS INTERACTIONUTIL 
-public class Player implements Animate{
+public class Player implements Unit{
     //TRYING TO SET UP BASE STATS TO CREATE USEFUL STATS SYSTEM
     private int maxHealth = 20;
     private int playerDamage = 1;
     private int playerWisdom = 2;
+    private int health = maxHealth;
     private String name;
+    private Inventory inv = new Inventory(10);
+    private PlayerManager pm;
 
     enum action {
         NOTHING,
@@ -23,6 +26,30 @@ public class Player implements Animate{
     public Player()
     {
         name = "Laur";
+        inv.addItem(new Bananarang());
+    }
+
+    public Player(String n)
+    {
+        switch(new Random().nextInt(5))
+        {
+            case 0: name = "Bo"; break;
+            case 1: name = "Kua"; break;
+            case 2: name = "An"; break;
+            case 3: name = "Lis"; break;
+            case 4: name = "Yi"; break;
+        }
+
+        switch (new Random().nextInt(7)) 
+        {
+            case 0: name += "sandual"; break;
+            case 1: name += "\'hananah"; break;
+            case 2: name += "mon"; break;
+            case 3: name += "tio"; break;
+            case 4: name += "narsh"; break;
+            case 5: name += "poaf"; break;
+            case 6: name += "duan"; break;
+        }
     }
 
     public void setActions(Room curRoom)
@@ -30,7 +57,7 @@ public class Player implements Animate{
         actions.clear();
         actions.add(action.NOTHING);
 
-        if (curRoom.getRoom(0) != null)
+        if (curRoom.getNumExits() != 0)
         {
             actions.add(action.DOOR);
         }
@@ -63,20 +90,30 @@ public class Player implements Animate{
                 {
                     doornames[j] = "Door " + (j + 1) + ", " + curRoom.getDoorDes(j) + ".";           
                 }
-
-                curRoom = curRoom.getRoom(InteractionUtil.promptList("Which door traveler?", doornames) - 1);
+                
+                try 
+                {
+                    curRoom = curRoom.getRoom(Utils.promptList("Which door traveler?", doornames) - 1);
+                } 
+                catch (Exception e) 
+                {
+                    System.err.println("trying to get a room that doesn't exist");
+                }
+                
                 Environment.r0 = curRoom;
+
+                
                 
                 break;
 
             case FIGHT:
-                String[] attackTypes = new String[]{"Punch"};
+                String[] attackTypes = new String[]{"Punch", "Bananarang"};
                 int attackDamage = 0;
-                int chosenAttackType = InteractionUtil.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
+                int chosenAttackType = Utils.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
                 
                 int chosenEnemyIndex;
                 if(curRoom.getEnemies().size() > 1)
-                    chosenEnemyIndex = InteractionUtil.promptList("Which fooeeoee meets thine bloodtherstey eyee?", curRoom.getEnemies().size(), "Fight enemy &") - 1;
+                    chosenEnemyIndex = Utils.promptList("Which fooeeoee meets thine bloodtherstey eyee?", curRoom.getEnemies().size(), "Fight enemy &") - 1;
                 else
                     chosenEnemyIndex = 0;
 
@@ -87,6 +124,11 @@ public class Player implements Animate{
                         System.out.println("You heave a mighty blow at the " + curRoom.getEnemies().get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + attackDamage + " damage!");
                         break;
                     
+                    case "Bananarang":
+                        attackDamage = 3;
+                        inv.getItem(0).action();
+                        break;
+
                     default:
                         break;
                 }
@@ -102,13 +144,13 @@ public class Player implements Animate{
                 for(int j = 0; j < n; j++)
                     interactiblesDescriptions[j] = curRoom.getInteractibles().get(j).getDescription();
                 
-                curRoom.getInteractibles().get(InteractionUtil.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", interactiblesDescriptions) - 1).inspectInteractible();
+                curRoom.getInteractibles().get(Utils.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", interactiblesDescriptions) - 1).inspectInteractible();
                 
                 break;
 
             case TALK:
                 System.out.println("What do you say?");
-                String s = InteractionUtil.scanner.nextLine();
+                String s = Utils.scanner.nextLine();
                 if(s.equals("Quit."))
                     return false;
                 else if(s.contains("stop"))
@@ -119,7 +161,7 @@ public class Player implements Animate{
                     }
                 }
                 else
-                    InteractionUtil.slowPrintln("Interesting...\nWell, that does nothing.");
+                    Utils.slowPrintln("Interesting...\nWell, that does nothing.");
                                    
                 break;
 
@@ -129,15 +171,15 @@ public class Player implements Animate{
 
                 System.out.println("Focus...");
                 System.out.print("Speak: ");
-                String spell = InteractionUtil.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
+                String spell = Utils.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
                     
                 if (spell.contains(spellTypes[0]))
                 {
                     spellDamage = 1000;
                     
-                    InteractionUtil.slowPrintln("You release a level " + spellDamage + " Psych Strike spell on all of your foes.");
+                    Utils.slowPrintln("You release a level " + spellDamage + " Psych Strike spell on all of your foes.");
                     if(curRoom.getEnemies().size() == 0)
-                        InteractionUtil.slowPrint("... but you have no enemies! Nothing happens.");
+                        Utils.slowPrint("... but you have no enemies! Nothing happens.");
                     else
                     {
                         for (int j = 0; j < curRoom.getEnemies().size(); j++) 
@@ -166,6 +208,11 @@ public class Player implements Animate{
         return actionDescriptions;
     }
 
+    public void setManager(PlayerManager m)
+    {
+        pm = m;
+    }
+
     private String actionToString(action a)
     {
         switch (a) 
@@ -174,7 +221,7 @@ public class Player implements Animate{
                 return "Do nothing";
             
             case DOOR:
-                return "Try door";
+                return "Try a door";
             
             case INSPECT:
                 return "Inspect your surroundings";
@@ -193,6 +240,11 @@ public class Player implements Animate{
         }
     }
 
+    public Room getCurrentRoom()
+    {//MAKE THIS THE CURRENT ROOM THAT THIS PLAYER IS IN
+        return Environment.r0;
+    }
+
     @Override
     public boolean receiveDamage(int damage, String type) {
         // TODO Auto-generated method stub
@@ -200,9 +252,9 @@ public class Player implements Animate{
     }
 
     @Override
-    public float getHealth() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getHealth'");
+    public float getHealth() 
+    {
+        return health;
     }
 
     @Override

@@ -1,4 +1,4 @@
-public interface Item {
-public String description = "";
-public void action();
+public interface Item 
+{
+    public void action();
 }

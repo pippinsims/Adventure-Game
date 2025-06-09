@@ -1,6 +1,7 @@
 import java.util.Random;
 
-public class Enemy implements Animate{
+public class Enemy implements Unit
+{
     private final int maxHealth = 3;
     private float health;
     private Inventory inv;
@@ -16,15 +17,18 @@ public class Enemy implements Animate{
         inv = i;
         dmg = d;
         wisdom = w;
+        generateName();
     }
+
     public Enemy(int h, Inventory i, int d, int w, String des)
-        {
-            health = h;
-            inv = i;
-            dmg = d;
-            wisdom = w;
-            description = des;
-        }
+    {
+        health = h;
+        inv = i;
+        dmg = d;
+        wisdom = w;
+        description = des;
+        generateName();
+    }
 
     public Enemy(int h)
     {
@@ -85,7 +89,7 @@ public class Enemy implements Animate{
     {
         if (description.equals("Screebling Squabbler"))
         {
-            switch (new Random().nextInt(3)) 
+            switch (new Random().nextInt(4)) 
             {
                 default:
                     return description;
@@ -93,6 +97,8 @@ public class Enemy implements Animate{
                     return "pale man";
                 case 2:
                     return "bllork";
+                case 3:
+                    return "Eck";
             }
         }
         else if (description.equals("Mushroom"))
@@ -178,20 +184,20 @@ public class Enemy implements Animate{
 
     public void pleaResponse()
     {
-        InteractionUtil.slowPrint(getName() + ": ");
+        Utils.slowPrint(getName() + ": ");
         if (description.equals("Screebling Squabbler"))
         {
             switch(new Random().nextInt(3))
             {
                 case 0:
-                    InteractionUtil.slowPrintln("I care not for your pitifulness.");
+                    Utils.slowPrintln("I care not for your pitifulness.");
                     break;
                 case 1:
-                    InteractionUtil.slowPrintln("ok.");
+                    Utils.slowPrintln("ok.");
                     isNotAttacking = true;
                     break;
                 case 2:
-                    InteractionUtil.slowPrintln("[Doesn't React]");
+                    Utils.slowPrintln("[Doesn't React]");
                     break;
                 default:
                     System.err.println("error detected in Enemey.java:pleaResponse()");
@@ -204,13 +210,13 @@ public class Enemy implements Animate{
             switch(new Random().nextInt(3))
             {
                 case 0:
-                    InteractionUtil.slowPrintln("I never wanted to fight...");
+                    Utils.slowPrintln("I never wanted to fight...");
                     break;
                 case 1:
-                    InteractionUtil.slowPrintln("orpelm hur hur");
+                    Utils.slowPrintln("orpelm hur hur");
                     break;
                 case 2:
-                    InteractionUtil.slowPrintln("kubi kubi!");
+                    Utils.slowPrintln("kubi kubi!");
                     break;
                 default:
                     System.err.println("error detected in Enemey.java:pleaResponse()");
@@ -256,7 +262,7 @@ public class Enemy implements Animate{
                 break;
         }
 
-        InteractionUtil.slowPrintln(str);
+        Utils.slowPrintln(str);
 
         return true;
     }

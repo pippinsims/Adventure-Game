@@ -25,7 +25,7 @@ public class Torch implements Interactible {
     @Override
     public void inspectInteractible()
     {
-        InteractionUtil.slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
+        Utils.slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
     }
 
     private String getWall() 

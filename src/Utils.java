@@ -1,9 +1,10 @@
 import java.io.File;
 import java.util.Scanner;
 
-public class InteractionUtil {
+public class Utils {
 
     public static Scanner scanner = new Scanner(System.in);
+    public static int printDelay = 50;
 
     public static String readFile (String fileName)
     {
@@ -23,19 +24,50 @@ public class InteractionUtil {
         return completeString;
     }
 
+    public static String articleOf(String str)
+    {
+        str = str.toLowerCase();
+        char c = str.charAt(0);
+
+        switch(c)
+        {
+            case 'a': case 'e': case 'i': case 'o': case 'u':
+                return "an";
+            case 'y':
+                switch (str.charAt(1)) 
+                {
+                    case 'a': case 'e': case 'i': case 'o': case 'u':
+                        break;
+                
+                    default:
+                        return "an";
+                }
+            
+            default:
+                break;
+        }
+
+        return "a";
+    }
+
     public static void slowPrint(String output)
     {
-        slowPrint(output, 100);
+        slowPrint(output, printDelay);
     }
 
     public static void slowPrintln(String output, int sleepDuration)
     {
-        slowPrint(output+'\n', sleepDuration);
+        slowPrint(output + '\n', sleepDuration);
     }
 
     public static void slowPrintln(String output)
     {
-        slowPrintln(output, 1); //50 for real
+        slowPrintln(output, printDelay); //50 for real
+    }
+
+    public static void slowPrintln()
+    {
+        slowPrintln("", printDelay); //50 for real
     }
 
     public static void slowPrint(String output, int sleepDuration)
@@ -45,7 +77,7 @@ public class InteractionUtil {
             try
             {
                 if(output.charAt(i) == '\n')
-                    Thread.sleep(sleepDuration*5);
+                    Thread.sleep(sleepDuration * 5);
                 Thread.sleep(sleepDuration);
             }
             catch(Exception e) 
@@ -55,6 +87,20 @@ public class InteractionUtil {
 
             System.out.print(output.charAt(i));
         }
+    }
+
+    public static void slowPrintAsList(String msg, int size, int cur)
+    {
+        slowPrint(msg + ((cur < size - 2)  ? ", " :
+                         (cur == size - 2) ? ", and " :
+                                             "."));
+    }
+
+    public static void slowPrintlnAsListWithArticles(String msg, int size, int cur)
+    {
+        slowPrint(articleOf(msg) + " " + msg + ((cur < size - 2)  ? ", " :
+                                                (cur == size - 2) ? ", and " :
+                                                                    ".\n"));
     }
 
     public static void printOptions(String[] options)
@@ -88,10 +134,10 @@ public class InteractionUtil {
         System.out.println(question);
         printOptions(listPrompts);
 
-        return forceInputToInt(scanner.nextLine(), listPrompts);
+        return confirmInput(scanner.nextLine(), listPrompts);
     }
 
-    public static Integer forceInputToInt(String s, String[] options)
+    public static Integer confirmInput(String s, String[] options)
     {    
         Integer inputInt = null;
         do
@@ -99,6 +145,8 @@ public class InteractionUtil {
             try 
             {
                 inputInt = Integer.parseInt(s);
+                if(inputInt - 1 >= options.length || inputInt < 1)
+                    throw new Exception();
             }   
             catch(Exception e)
             {

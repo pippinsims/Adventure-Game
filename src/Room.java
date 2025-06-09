@@ -8,6 +8,8 @@ public class Room {
     private String description = "a bare room";
     private direction[] dirs;
     private String doormsg = "This room has";
+    private boolean isDiscovered = false;
+    private boolean isCurrentRoom = false;
 
     enum direction {
         NORTH,
@@ -29,15 +31,38 @@ public class Room {
         description = des;
     }
 
-    public Room getRoom(int i)
+    public Room getRoom(int i) throws Exception
     {
-        return exits[i];
+        if(i < exits.length)
+            return exits[i];
+        else
+            throw new Exception("trying to get an exit that doesn't exist");
     }
 
     public void setDoor(int i, Room d, direction dir)
     {
         exits[i] = d;
         dirs[i] = dir;
+    }
+
+    public void setIsDiscovered(boolean d)
+    {
+        isDiscovered = d;
+    }
+
+    public boolean getIsDiscovered()
+    {
+        return isDiscovered;
+    }
+
+    public boolean getIsCurrentRoom()
+    {
+        return isCurrentRoom;
+    }
+
+    public void setIsCurrentRoom(boolean c)
+    {
+        isCurrentRoom = c;
     }
 
     public void setDoorMsg(String s)
