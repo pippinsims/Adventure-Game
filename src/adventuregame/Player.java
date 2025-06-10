@@ -1,5 +1,7 @@
 package adventuregame;
 
+import adventuregame.interfaces.Interactible;
+import adventuregame.interfaces.Item;
 // local imports
 import adventuregame.interfaces.Unit;
 import adventuregame.items.*;
@@ -50,6 +52,7 @@ public class Player extends Effectable implements Unit{
         if(curRoom.getInteractibles().size() > 0)
         {
             actions.add(Action.INSPECT);
+            actions.add(Action.INTERACT);
         }
 
         if (curRoom.getEnemies().size() != 0)
@@ -61,7 +64,7 @@ public class Player extends Effectable implements Unit{
         if (true) // Would set to true once Player inspects language. Placeholder DEV true.
         {
             actions.add(Action.CAST);
-        }   
+        }
     }
 
     public boolean performAction(int i)
@@ -102,8 +105,8 @@ public class Player extends Effectable implements Unit{
             to place something
             */
             case FIGHT:
-                String[] attackTypes = new String[]{"Punch", "Bananarang"};
-                Damage attackDamage = new Damage(0, Damage.Type.BASIC);
+                String[] attackTypes = generateAttackTypes(inv);
+                Damage attackDamage;
                 int chosenAttackType = Utils.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
                 
                 int chosenEnemyIndex;
@@ -120,21 +123,17 @@ public class Player extends Effectable implements Unit{
                 else
                     chosenEnemyIndex = 0;
 
-                switch(attackTypes[chosenAttackType])
+                if(attackTypes[chosenAttackType].equals("Punch"))
                 {
-                    case "Punch": 
-                        attackDamage = new Damage(1, Damage.Type.BASIC);
-                        System.out.println("You heave a mighty blow at the " + curRoom.getEnemies().get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + attackDamage + " damage!");
-                        break;
-                    
-                    case "Bananarang":
-                        attackDamage = inv.getItem(0).getDamage();
-                        inv.getItem(0).action();
-                        break;
-
-                    default:
-                        break;
+                    int dmgval = 1;
+                    attackDamage = new Damage(dmgval, Damage.Type.BASIC, "You heave a mighty blow at the " + curRoom.getEnemies().get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + dmgval + " damage!");
                 }
+                else
+                {    //minus 1 for Punch
+                    attackDamage = inv.getItem(chosenAttackType - 1).getDamage();
+                }
+
+                System.out.println(attackDamage.getMessage());
                 
                 Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage);
 
@@ -178,9 +177,9 @@ public class Player extends Effectable implements Unit{
                     
                 if (spell.contains(spellTypes[0]))
                 {
-                    spellDamage = new Damage(1000, Damage.Type.PSYCHIC);
+                    spellDamage = new Damage(1000, Damage.Type.PSYCHIC, "You release a level 1000 Psych Strike spell on all of your foes.");
                     
-                    Utils.slowPrintln("You release a level " + spellDamage.getValue() + " Psych Strike spell on all of your foes.");
+                    Utils.slowPrintln(spellDamage.getMessage());
                     if(curRoom.getEnemies().size() == 0)
                         Utils.slowPrint("... but you have no enemies! Nothing happens.");
                     else
@@ -192,6 +191,20 @@ public class Player extends Effectable implements Unit{
                     }
                 }
                 break;
+            
+            case INTERACT:
+                ArrayList<Interactible> inters = Environment.r0.getInteractibles();
+                String[] descriptions = new String[inters.size()];
+
+                for (int j = 0; j < descriptions.length; j++) 
+                {
+                    descriptions[j] = inters.get(j).getActionDescription();    
+                }    
+
+                int chosen = Utils.promptList("What do you interact with?", descriptions) - 1;
+
+                inters.get(chosen).action(this);
+                break;
 
             default:
                 break;
@@ -199,6 +212,20 @@ public class Player extends Effectable implements Unit{
 
         return true;
     }   
+
+    private String[] generateAttackTypes(Inventory inventory) 
+    {
+        String[] attackTypes = new String[inventory.getSize() + 1];
+        attackTypes[0] = "Punch";
+        for (int i = 0; i < attackTypes.length - 1; i++) 
+        {
+            Item j = inventory.getItem(i);
+            if(j.isWeapon())
+                attackTypes[i + 1] = j.getName();
+        }
+
+        return attackTypes;
+    }
 
     public String[] getActionDescriptions()
     {   
@@ -233,6 +260,9 @@ public class Player extends Effectable implements Unit{
             case CAST:
                 return "Utilize the power of the ancients";
 
+            case INTERACT:
+                return "Interact with a nearby object";
+
             default:
                 return "[Empty Action]";
         }
@@ -244,9 +274,9 @@ public class Player extends Effectable implements Unit{
     }
 
     @Override
-    public Inventory getInventory() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getInventory'");
+    public Inventory getInventory() 
+    {
+        return inv;
     }
 
     @Override

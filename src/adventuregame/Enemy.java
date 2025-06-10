@@ -237,8 +237,8 @@ public class Enemy extends Effectable implements Unit
                 switch (e.getType()) 
                 {
                     case FIRE: case PSYCHSTRIKE:
-                        death();
-                        break;
+                        death(); //death by effect causes comod exception
+                        return;
                 
                     default:
                         break;
@@ -251,9 +251,7 @@ public class Enemy extends Effectable implements Unit
 
     public void death() 
     {
-        Utils.slowPrintln("You murdered " + getName(), 200);
-        Environment.r0.getEnemies().remove(this);
+        Utils.slowPrintln("You ended " + getName(), 200);
+        Environment.deleteEnemy(this);
     }
-
-    
 }

@@ -15,6 +15,7 @@ public class Room implements Describable{
     private String doormsg = "This room has";
     private boolean isDiscovered = false;
     private boolean isCurrentRoom = false;
+    private String name = "Barren";
 
     enum direction {
         NORTH,
@@ -30,10 +31,11 @@ public class Room implements Describable{
         dirs = new direction[0];
     }
 
-    public Room(String des)
+    public Room(String des, String n)
     {
         this();
         description = des;
+        name = n;
     }
 
     public Room getRoom(int i) throws Exception
@@ -280,5 +282,11 @@ public class Room implements Describable{
             default:
                 return direction.NONCARDINAL;
         }
+    }
+
+    @Override
+    public String getName() 
+    {
+        return name;
     }
 }

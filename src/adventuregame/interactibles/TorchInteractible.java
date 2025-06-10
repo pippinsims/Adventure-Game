@@ -1,17 +1,23 @@
 package adventuregame.interactibles;
+import adventuregame.interfaces.Unit;
 import adventuregame.interfaces.WallEntity;
+import adventuregame.items.TorchItem;
+import adventuregame.Room;
 import adventuregame.Utils;
 
 public class TorchInteractible implements WallEntity {
-    private boolean lit;
-    public String description;
+
+    private String description;
+    private String actionDescription = "Take torch from wall.";
+    private Room myRoom;
     private int loc; //1X is floor, 2X is wall, X1 is south, X2 is west, X3 is north, X4 is east
     
-    public TorchInteractible(boolean isLit, int wall)
+    public TorchInteractible(Room r, int wall)
     {
+        myRoom = r;
         description = "flaming stick";
-        lit = isLit;
         loc = 20 + wall;
+        actionDescription = "Take a torch from the " + getWall() + " wall.";
     }
 
     @Override
@@ -48,16 +54,33 @@ public class TorchInteractible implements WallEntity {
         }    
     }
 
-    //TODO: make it so you can take Torch from the wall and then you have a Torch in your Inventory
     @Override
-    public void action()
+    public void action(Unit u)
     {
-        lit = !lit;
+        Utils.slowPrint("You have recieved a Torch!");
+        u.getInventory().addItem(new TorchItem());
+        myRoom.getInteractibles().remove(this);
     }
 
     @Override
     public boolean isWallInteractible() 
     {
         return true;
+    }
+
+    @Override
+    public String getName() {
+        return "Torch";
+    }
+
+    @Override
+    public Room getRoom() {
+        return myRoom;
+    }
+
+    @Override
+    public String getActionDescription() 
+    {
+        return actionDescription;
     }
 }

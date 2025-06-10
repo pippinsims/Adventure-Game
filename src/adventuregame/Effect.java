@@ -13,8 +13,9 @@ public class Effect implements Describable{
     Cooldown cooldown;
     String description;
     int strength;
+    String name;
 
-    public Effect(Type t, Cooldown c, int s) {
+    public Effect(Type t, Cooldown c, int s, String name) {
         type = t;
         cooldown = c;
         strength = s;
@@ -40,6 +41,11 @@ public class Effect implements Describable{
     public String getDescription() 
     {
         return description;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }
 

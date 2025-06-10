@@ -5,13 +5,13 @@ import java.util.Random;
 
 public class Effectable{
     protected ArrayList<Effect> effects = new ArrayList<Effect>();
-    protected int maxHealth = 20;
+    protected int maxHealth = 10;
     protected int health = maxHealth;
     protected boolean isStunned = false; //isStunned makes Enemy units become unstunned as their next action
 
     final public boolean effectUpdate(Effect e)
     {
-        Utils.slowPrintln("You have been effected by " + e.description + ", cooldown: " + e.cooldown + " turns.");
+        Utils.slowPrintln("You have been effected by " + e.description + " for " + e.cooldown.getDuration() + " turns.");
 
         boolean effectResult = false, result = false;
         switch (e.getType()) {
@@ -47,6 +47,11 @@ public class Effectable{
             
             case PSYCHIC:
                 health -= new Random().nextInt(damage + 1);
+                break;
+
+            case FIRE:
+                health -= damage + 1;
+                addEffect(new Effect(Effect.Type.FIRE, new Cooldown(3, Effect.Type.FIRE), damage, "fire effect"));
                 break;
         
             default:

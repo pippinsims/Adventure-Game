@@ -119,10 +119,10 @@ public class Environment extends Utils
     {
         loadEffectDescriptions();   
 
-        r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"");
+        r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
         r0.setDoorMsg("This room is gifted with");       
         
-        Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,");
+        Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,", "Mossy Ruin");
         mossyRuin.setDoorMsg("oh, and this room is cursed with");
         mossyRuin.getEnemies().add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom"));
         
@@ -130,7 +130,7 @@ public class Environment extends Utils
         r0.appendRoom(new Room(), Room.direction.WEST);
         r0.appendRoom(new Room(), Room.direction.EAST);
 
-        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.");
+        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.", "Treasure Room");
         try 
         {
             r0.getRoom(2).appendRoom(treasureRoom, Room.direction.SOUTH);
@@ -145,9 +145,9 @@ public class Environment extends Utils
             r0.getEnemies().add(new Enemy(3));
         }
 
-        r0.getInteractibles().add(new TorchInteractible(true, 2));
-        r0.getInteractibles().add(new TorchInteractible(true, 4));
-        r0.getInteractibles().add(new ViewablePicture("mad_king.txt", 2, "patchwork depiction"));
+        r0.getInteractibles().add(new TorchInteractible(r0, 2));
+        r0.getInteractibles().add(new TorchInteractible(r0, 4));
+        r0.getInteractibles().add(new ViewablePicture("mad_king.txt", 2, "patchwork depiction", "Lord Gareth the Mad"));
 
         //PROBABLY SHOULD MAKE A "WALL ENTITY" FOR DOOR, VIEWABLEPICTURE, WINDOW, ETC...
         //NOT TORCH THOUGH, IT IS JUST AN INANIMATE ENTITY BECAUSE IT CAN BE ON THE FLOOR
@@ -160,10 +160,15 @@ public class Environment extends Utils
 
     public static void playerAttackEnemy(int index, Damage d)
     {
-        if(r0.getEnemies().get(index).receiveDamage(d.getValue(), d.getType()))
+        Enemy e = r0.getEnemies().get(index);
+        if(e.receiveDamage(d.getValue(), d.getType()))
         {
-            slowPrintln("You have murdered the " + r0.getEnemies().get(index).getRandomDescription(), 250); // so unnecessary lol
-            r0.getEnemies().get(index).death();
+            slowPrintln("You have murdered the " + e.getRandomDescription(), 250); // so unnecessary lol
+            e.death();
         }
+    }
+
+    public static void deleteEnemy(Enemy enemy) {
+        r0.getEnemies().remove(enemy);
     }
 }

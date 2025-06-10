@@ -1,23 +1,29 @@
 package adventuregame.interactibles;
+import adventuregame.interfaces.Unit;
 import adventuregame.interfaces.WallEntity;
+import adventuregame.Room;
 import adventuregame.Utils;
 
 public class ViewablePicture implements WallEntity {
     String txtFileName;
     String description;
+    String name;
     private int wall; //1X is floor, 2X is wall, X1 is south, X2 is west, X3 is north, X4 is east
+    private String actionDescription = "Inspect ViewablePicture";
     
-    public ViewablePicture(String fileName, int w, String des)
+    public ViewablePicture(String fileName, int w, String des, String n)
     {
         description = des;
         txtFileName = fileName;
         wall = w;
+        name = n;
+        actionDescription = "Inspect " + description;
     }
 
     @Override
-    public void action() {
-        // TODO Auto-generated method stub
-        
+    public void action(Unit u) 
+    {
+        inspectInteractible();
     }
 
     @Override
@@ -67,5 +73,21 @@ public class ViewablePicture implements WallEntity {
     public boolean isWallInteractible() 
     {
         return true;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Room getRoom() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getRoom'");
+    }
+
+    @Override
+    public String getActionDescription() {
+        return actionDescription;
     }
 }

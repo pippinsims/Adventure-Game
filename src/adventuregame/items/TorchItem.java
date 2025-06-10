@@ -5,6 +5,9 @@ import adventuregame.interfaces.Item;
 
 public class TorchItem implements Item{
 
+    String description = "A burning torch, providing light and warmth!";
+    String name = "Torch";
+
     @Override
     public void action() {
         // TODO Auto-generated method stub
@@ -13,14 +16,23 @@ public class TorchItem implements Item{
 
     @Override
     public String getDescription() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
+        return description;
     }
 
     @Override
-    public Damage getDamage() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDamage'");
+    public Damage getDamage() 
+    {
+        return new Damage(2, Damage.Type.FIRE, "You swing the torch at your enemy!");
     }
 
+    @Override
+    public boolean isWeapon() 
+    {
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
 }
