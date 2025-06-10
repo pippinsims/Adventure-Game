@@ -83,7 +83,7 @@ public class Environment extends Utils
 
         if(!r0.getIsDiscovered())
         {
-            printDelay = 50;
+            currentPrintDelay = MAX_PRINT_DELAY;
             slowPrintln("You're in " + r0.getDescription() + ".");
             r0.setIsDiscovered(true);
         }
@@ -105,7 +105,7 @@ public class Environment extends Utils
 
         if(r0.getIsDiscovered())
         {
-            printDelay = 3;
+            currentPrintDelay = 3;
         }
     }
 

@@ -7,9 +7,8 @@ import adventuregame.items.*;
 // standard imports
 import java.util.*;
 
-//PLAYER NEEDS INTERACTIONUTIL 
 public class Player implements Unit{
-    //TRYING TO SET UP BASE STATS TO CREATE USEFUL STATS SYSTEM
+
     private int maxHealth = 20;
     //private int playerDamage = 1;
     //private int playerWisdom = 2;
@@ -38,25 +37,7 @@ public class Player implements Unit{
 
     public Player(String n)
     {
-        switch(new Random().nextInt(5))
-        {
-            case 0: name = "Bo"; break;
-            case 1: name = "Kua"; break;
-            case 2: name = "An"; break;
-            case 3: name = "Lis"; break;
-            case 4: name = "Yi"; break;
-        }
-
-        switch (new Random().nextInt(7)) 
-        {
-            case 0: name += "sandual"; break;
-            case 1: name += "\'hananah"; break;
-            case 2: name += "mon"; break;
-            case 3: name += "tio"; break;
-            case 4: name += "narsh"; break;
-            case 5: name += "poaf"; break;
-            case 6: name += "duan"; break;
-        }
+        name = Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
     }
 
     public void setActions(Room curRoom)
@@ -109,8 +90,6 @@ public class Player implements Unit{
                 
                 Environment.r0 = curRoom;
 
-                
-                
                 break;
 
             case FIGHT:
@@ -119,8 +98,16 @@ public class Player implements Unit{
                 int chosenAttackType = Utils.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
                 
                 int chosenEnemyIndex;
-                if(curRoom.getEnemies().size() > 1)
-                    chosenEnemyIndex = Utils.promptList("Which fooeeoee meets thine bloodtherstey eyee?", curRoom.getEnemies().size(), "Fight enemy &") - 1;
+                ArrayList<Enemy> ens = curRoom.getEnemies();
+                if(ens.size() > 1)
+                {
+                    String[] prompts = new String[ens.size()];
+                    for(int j = 0; j < ens.size(); j++)
+                    {
+                        prompts[j] = ens.get(j).getName();
+                    }
+                    chosenEnemyIndex = Utils.promptList("Which fooeeoee meets thine bloodtherstey eyee?", prompts) - 1;
+                }
                 else
                     chosenEnemyIndex = 0;
 

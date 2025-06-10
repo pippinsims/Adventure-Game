@@ -5,7 +5,11 @@ import java.util.Scanner;
 public class Utils {
 
     public static Scanner scanner = new Scanner(System.in);
-    public static int printDelay = 50;
+    public static final int MAX_PRINT_DELAY = 1;
+    public static int currentPrintDelay = MAX_PRINT_DELAY;
+
+    public static String[] names1 = new String[]{"Bo","Kua","An","Lis","Yi"};
+    public static String[] names2 = new String[]{"sandual","\'hananah","mon","tio","narsh","poaf","duan"};
 
     public static String readFile (String fileName)
     {
@@ -53,7 +57,7 @@ public class Utils {
 
     public static void slowPrint(String output)
     {
-        slowPrint(output, printDelay);
+        slowPrint(output, currentPrintDelay);
     }
 
     public static void slowPrintln(String output, int sleepDuration)
@@ -63,12 +67,12 @@ public class Utils {
 
     public static void slowPrintln(String output)
     {
-        slowPrintln(output, printDelay); //50 for real
+        slowPrintln(output, currentPrintDelay); //50 for real
     }
 
     public static void slowPrintln()
     {
-        slowPrintln("", printDelay); //50 for real
+        slowPrintln("", currentPrintDelay); //50 for real
     }
 
     public static void slowPrint(String output, int sleepDuration)

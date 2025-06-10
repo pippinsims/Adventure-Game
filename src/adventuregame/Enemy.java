@@ -43,25 +43,7 @@ public class Enemy implements Unit
 
     private void generateName() 
     {
-        switch(new Random().nextInt(5))
-        {
-            case 0: name = "Bo"; break;
-            case 1: name = "Kua"; break;
-            case 2: name = "An"; break;
-            case 3: name = "Lis"; break;
-            case 4: name = "Yi"; break;
-        }
-
-        switch (new Random().nextInt(7)) 
-        {
-            case 0: name += "sandual"; break;
-            case 1: name += "\'hananah"; break;
-            case 2: name += "mon"; break;
-            case 3: name += "tio"; break;
-            case 4: name += "narsh"; break;
-            case 5: name += "poaf"; break;
-            case 6: name += "duan"; break;
-        }
+        name = Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
     }
 
     public String getModifiedDescription(String type)
