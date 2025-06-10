@@ -1,6 +1,6 @@
 package adventuregame.interfaces;
 
-public interface Describable 
+public interface Describable
 {
     public String getDescription(); 
 }

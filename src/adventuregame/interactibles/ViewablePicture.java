@@ -1,15 +1,15 @@
 package adventuregame.interactibles;
-import adventuregame.interfaces.Interactible;
+import adventuregame.interfaces.WallEntity;
 import adventuregame.Utils;
 
-public class ViewablePicture implements Interactible {
+public class ViewablePicture implements WallEntity {
     String txtFileName;
     String description;
     private int wall; //1X is floor, 2X is wall, X1 is south, X2 is west, X3 is north, X4 is east
     
-    public ViewablePicture(String fileName, int w)
+    public ViewablePicture(String fileName, int w, String des)
     {
-        description = "depiction";
+        description = des;
         txtFileName = fileName;
         wall = w;
     }
@@ -42,7 +42,7 @@ public class ViewablePicture implements Interactible {
         Utils.scanner.nextLine();
     }
 
-    private String getWall() 
+    public String getWall() 
     {
         switch (wall) {
             case 1: //Why is south 1 this is so weird

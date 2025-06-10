@@ -12,4 +12,10 @@ public class Bananarang implements Item
         Utils.slowPrint("You wail the bananarang at your enemy with KILLER INSTINCT!");
         Utils.slowPrintln(" It kills him.", 200);
     }
+
+    @Override
+    public String getDescription() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
+    }
 }

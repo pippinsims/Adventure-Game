@@ -1,6 +1,6 @@
 package adventuregame.interfaces;
 
-public interface Item 
+public interface Item extends Describable
 {
     public void action();
 }

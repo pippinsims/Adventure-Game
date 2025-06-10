@@ -1,10 +1,11 @@
 package adventuregame;
 
 import adventuregame.interfaces.Interactible;
+import adventuregame.interfaces.Describable;
 
 import java.util.ArrayList;
 
-public class Room {
+public class Room implements Describable{
 
     private Room[] exits;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();

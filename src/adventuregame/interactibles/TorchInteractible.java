@@ -1,13 +1,13 @@
 package adventuregame.interactibles;
-import adventuregame.interfaces.Interactible;
+import adventuregame.interfaces.WallEntity;
 import adventuregame.Utils;
 
-public class Torch implements Interactible {
+public class TorchInteractible implements WallEntity {
     private boolean lit;
     public String description;
     private int loc; //1X is floor, 2X is wall, X1 is south, X2 is west, X3 is north, X4 is east
     
-    public Torch(boolean isLit, int wall)
+    public TorchInteractible(boolean isLit, int wall)
     {
         description = "flaming stick";
         lit = isLit;
@@ -32,7 +32,7 @@ public class Torch implements Interactible {
         Utils.slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
     }
 
-    private String getWall() 
+    public String getWall() 
     {
         switch (loc % 10) {
             case 1:

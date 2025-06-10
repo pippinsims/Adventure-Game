@@ -138,9 +138,9 @@ public class Environment extends Utils
             r0.getEnemies().add(new Enemy(3));
         }
 
-        r0.getInteractibles().add(new Torch(true, 2));
-        r0.getInteractibles().add(new Torch(true, 4));
-        r0.getInteractibles().add(new ViewablePicture("mad_king.txt", 2));
+        r0.getInteractibles().add(new TorchInteractible(true, 2));
+        r0.getInteractibles().add(new TorchInteractible(true, 4));
+        r0.getInteractibles().add(new ViewablePicture("mad_king.txt", 2, "patchwork depiction"));
 
         //PROBABLY SHOULD MAKE A "WALL ENTITY" FOR DOOR, VIEWABLEPICTURE, WINDOW, ETC...
         //NOT TORCH THOUGH, IT IS JUST AN INANIMATE ENTITY BECAUSE IT CAN BE ON THE FLOOR
