@@ -1,12 +1,13 @@
 package adventuregame.interfaces;
+import adventuregame.Damage;
 import adventuregame.Inventory;
 
 //FOR PLAYER, FOLLOWERS, NPCS, AND ENEMIES
 
-public interface Unit extends Describable
+public interface Unit extends Describable 
 {
-    public boolean performAction(int i);
-    public boolean receiveDamage(int damage, String type);
+    public boolean receiveDamage(int damage, Damage.Type type);
+    public void updateUnit();
     
     public float getHealth();
     public Inventory getInventory();

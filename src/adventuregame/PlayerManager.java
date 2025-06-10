@@ -7,7 +7,6 @@ public class PlayerManager {
     public void addPlayer(Player p)
     {
         players.add(p);
-        p.setManager(this);
     }
 
     public void clearCurrentRooms()

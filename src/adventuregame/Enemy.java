@@ -1,8 +1,9 @@
 package adventuregame;
 import java.util.Random;
+
 import adventuregame.interfaces.Unit;
 
-public class Enemy implements Unit
+public class Enemy extends Effectable implements Unit
 {
     private final int maxHealth = 3;
     private float health;
@@ -10,7 +11,6 @@ public class Enemy implements Unit
     private int dmg;
     private int wisdom;
     private String description = "Screebling Squabbler";
-    private boolean isNotAttacking = false;
     private String name;
 
     public Enemy(int h, Inventory i, int d, int w)
@@ -115,11 +115,6 @@ public class Enemy implements Unit
         return name;
     }
 
-    public float getHealth()
-    {
-        return health;
-    }
-
     public Inventory getInventory()
     {
         return inv;
@@ -135,32 +130,13 @@ public class Enemy implements Unit
         return wisdom;
     }
 
-    public boolean receiveDamage(int damage, String type)
-    {
-        switch (type) {
-            case "basic":
-                health -= damage;
-                break;
-            
-            case "brain aneurysm":
-                health -= new Random().nextInt(2);
-                isNotAttacking = true;
-                break;
-        
-            default:
-                break;
-        }
-        return health <= 0;
-        
-    }
-
     public void chooseAction(Room curRoom)
     {
         //DECISIONMAKING FOR ENEMY
-        if(isNotAttacking)
+        if(isStunned)
         {
             performAction(1);
-            isNotAttacking = false;
+            isStunned = false;
         }
         else
             performAction(2);
@@ -178,7 +154,7 @@ public class Enemy implements Unit
                     break;
                 case 1:
                     Utils.slowPrintln("ok.");
-                    isNotAttacking = true;
+                    isStunned = true;
                     break;
                 case 2:
                     Utils.slowPrintln("[Doesn't React]");
@@ -190,7 +166,7 @@ public class Enemy implements Unit
         }
         else if (description.equals("Mushroom"))
         {
-            isNotAttacking = true;
+            isStunned = true;
             switch(new Random().nextInt(3))
             {
                 case 0:
@@ -209,7 +185,6 @@ public class Enemy implements Unit
         }
     }
 
-    @Override
     public boolean performAction(int i) 
     {
         String str = "";
@@ -250,4 +225,35 @@ public class Enemy implements Unit
 
         return true;
     }
+
+    @Override
+    public void updateUnit() {
+        System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
+        
+        for (Effect e : effects) 
+        {
+            if(effectUpdate(e))
+            {
+                switch (e.getType()) 
+                {
+                    case FIRE: case PSYCHSTRIKE:
+                        death();
+                        break;
+                
+                    default:
+                        break;
+                }
+            }
+        }
+        
+        chooseAction(Environment.r0);
+    }
+
+    public void death() 
+    {
+        Utils.slowPrintln("You murdered " + getName(), 200);
+        Environment.r0.getEnemies().remove(this);
+    }
+
+    
 }

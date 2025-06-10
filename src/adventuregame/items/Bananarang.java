@@ -1,4 +1,5 @@
 package adventuregame.items;
+import adventuregame.Damage;
 import adventuregame.Utils;
 import adventuregame.interfaces.Item;
 
@@ -17,5 +18,11 @@ public class Bananarang implements Item
     public String getDescription() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
+    }
+
+    @Override
+    public Damage getDamage() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDamage'");
     }
 }

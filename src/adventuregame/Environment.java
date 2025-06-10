@@ -5,11 +5,14 @@ import adventuregame.interfaces.Interactible;
 import adventuregame.interfaces.Unit;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Environment extends Utils
 {
     public static Room r0;
     public static PlayerManager pm = new PlayerManager();
+    public static Map<Effect.Type, String> effectDescriptions = new HashMap<>();
 
     // TODO: make a way to play without slow print
     public static void main(String[] args) 
@@ -63,19 +66,21 @@ public class Environment extends Utils
 
     private static void unitUpdate(Unit a)
     {
-        String n = a.getName();
-        System.out.println("--" + n + "'" + (n.charAt(n.length() - 1) != 's' ? "s" : "") + " Turn--");
-        if(a instanceof Enemy e)
-        {
-            e.chooseAction(r0);
-        }
-        else if(a instanceof Player p)
-        {
-            p.setActions(r0);
+        // String n = a.getName();
+        // System.out.println("--" + n + "'" + (n.charAt(n.length() - 1) != 's' ? "s" : "") + " Turn--");
+        // if(a instanceof Enemy e)
+        // {
+        //     e.chooseAction(r0);
+        // }
+        // else if(a instanceof Player p)
+        // {
+        //     p.setActions(r0);
 
-            //lists available actions, lets the player choose, then performs chosen action
-            p.performAction(promptList("You can:", p.getActionDescriptions()) - 1);
-        }
+        //     //lists available actions, lets the player choose, then performs chosen action
+        //     p.performAction(promptList("You can:", p.getActionDescriptions()) - 1);
+        // }
+
+        a.updateUnit();
     }
 
     private static void printInfo()
@@ -112,6 +117,8 @@ public class Environment extends Utils
 
     private static void generateMap()
     {
+        loadEffectDescriptions();   
+
         r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"");
         r0.setDoorMsg("This room is gifted with");       
         
@@ -146,12 +153,17 @@ public class Environment extends Utils
         //NOT TORCH THOUGH, IT IS JUST AN INANIMATE ENTITY BECAUSE IT CAN BE ON THE FLOOR
     }
 
-    public static void playerAttackEnemy(int index, int amount, String type)
+    private static void loadEffectDescriptions() {
+        Effect.effectDescriptions.put(Effect.Type.FIRE, "BURNINGNESS");
+        Effect.effectDescriptions.put(Effect.Type.PSYCHSTRIKE, "strong vexation of mind");
+    }
+
+    public static void playerAttackEnemy(int index, Damage d)
     {
-        if(r0.getEnemies().get(index).receiveDamage(amount, type))
+        if(r0.getEnemies().get(index).receiveDamage(d.getValue(), d.getType()))
         {
-            slowPrintln("You have murdered the " + r0.getEnemies().get(index).getRandomDescription(), 250);
-            r0.getEnemies().remove(index);
+            slowPrintln("You have murdered the " + r0.getEnemies().get(index).getRandomDescription(), 250); // so unnecessary lol
+            r0.getEnemies().get(index).death();
         }
     }
 }

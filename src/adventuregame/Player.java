@@ -7,17 +7,14 @@ import adventuregame.items.*;
 // standard imports
 import java.util.*;
 
-public class Player implements Unit{
-
-    private int maxHealth = 20;
+public class Player extends Effectable implements Unit{
     //private int playerDamage = 1;
     //private int playerWisdom = 2;
-    private int health = maxHealth;
+    
     private String name;
     private Inventory inv = new Inventory(10);
-    //private PlayerManager pm;
 
-    enum action {
+    enum Action {
         NOTHING,
         DOOR,
         INSPECT,
@@ -27,7 +24,7 @@ public class Player implements Unit{
         CAST
     }
 
-    public List<action> actions = new ArrayList<action>();
+    public List<Action> actions = new ArrayList<Action>();
 
     public Player()
     {
@@ -43,27 +40,27 @@ public class Player implements Unit{
     public void setActions(Room curRoom)
     {
         actions.clear();
-        actions.add(action.NOTHING);
+        actions.add(Action.NOTHING);
 
         if (curRoom.getNumExits() != 0)
         {
-            actions.add(action.DOOR);
+            actions.add(Action.DOOR);
         }
 
         if(curRoom.getInteractibles().size() > 0)
         {
-            actions.add(action.INSPECT);
+            actions.add(Action.INSPECT);
         }
 
         if (curRoom.getEnemies().size() != 0)
         {
-            actions.add(action.FIGHT);
+            actions.add(Action.FIGHT);
         }
 
-        actions.add(action.TALK);
+        actions.add(Action.TALK);
         if (true) // Would set to true once Player inspects language. Placeholder DEV true.
         {
-            actions.add(action.CAST);
+            actions.add(Action.CAST);
         }   
     }
 
@@ -106,7 +103,7 @@ public class Player implements Unit{
             */
             case FIGHT:
                 String[] attackTypes = new String[]{"Punch", "Bananarang"};
-                int attackDamage = 0;
+                Damage attackDamage = new Damage(0, Damage.Type.BASIC);
                 int chosenAttackType = Utils.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
                 
                 int chosenEnemyIndex;
@@ -126,12 +123,12 @@ public class Player implements Unit{
                 switch(attackTypes[chosenAttackType])
                 {
                     case "Punch": 
-                        attackDamage = 1;
+                        attackDamage = new Damage(1, Damage.Type.BASIC);
                         System.out.println("You heave a mighty blow at the " + curRoom.getEnemies().get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + attackDamage + " damage!");
                         break;
                     
                     case "Bananarang":
-                        attackDamage = 3;
+                        attackDamage = inv.getItem(0).getDamage();
                         inv.getItem(0).action();
                         break;
 
@@ -139,7 +136,7 @@ public class Player implements Unit{
                         break;
                 }
                 
-                Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage, "basic");
+                Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage);
 
                 break;
 
@@ -173,7 +170,7 @@ public class Player implements Unit{
 
             case CAST:
                 String[] spellTypes = new String[]{"brain aneurysm"};
-                int spellDamage = 0;
+                Damage spellDamage;
 
                 System.out.println("Focus...");
                 System.out.print("Speak: ");
@@ -181,16 +178,16 @@ public class Player implements Unit{
                     
                 if (spell.contains(spellTypes[0]))
                 {
-                    spellDamage = 1000;
+                    spellDamage = new Damage(1000, Damage.Type.PSYCHIC);
                     
-                    Utils.slowPrintln("You release a level " + spellDamage + " Psych Strike spell on all of your foes.");
+                    Utils.slowPrintln("You release a level " + spellDamage.getValue() + " Psych Strike spell on all of your foes.");
                     if(curRoom.getEnemies().size() == 0)
                         Utils.slowPrint("... but you have no enemies! Nothing happens.");
                     else
                     {
                         for (int j = 0; j < curRoom.getEnemies().size(); j++) 
                         {
-                            Environment.playerAttackEnemy(j, spellDamage, spellTypes[0]);
+                            Environment.playerAttackEnemy(j, spellDamage);
                         }
                     }
                 }
@@ -214,12 +211,7 @@ public class Player implements Unit{
         return actionDescriptions;
     }
 
-    public void setManager(PlayerManager m)
-    {
-        //pm = m;
-    }
-
-    private String actionToString(action a)
+    private String actionToString(Action a)
     {
         switch (a) 
         {
@@ -252,18 +244,6 @@ public class Player implements Unit{
     }
 
     @Override
-    public boolean receiveDamage(int damage, String type) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'receiveDamage'");
-    }
-
-    @Override
-    public float getHealth() 
-    {
-        return health;
-    }
-
-    @Override
     public Inventory getInventory() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getInventory'");
@@ -291,5 +271,31 @@ public class Player implements Unit{
     public String getDescription() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
+    }
+
+    @Override
+    public void updateUnit() {
+        System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
+
+        for (Effect e : effects) 
+        {
+            if(effectUpdate(e))
+            {
+                switch (e.getType()) 
+                {
+                    case FIRE: case PSYCHSTRIKE:
+                        Utils.slowPrintln("you died.");
+                        break;
+                
+                    default:
+                        break;
+                }
+            }
+        }
+
+        setActions(Environment.r0);
+
+        //lists available actions, lets the player choose, then performs chosen action
+        performAction(Utils.promptList("You can:", getActionDescriptions()) - 1);
     }
 }
