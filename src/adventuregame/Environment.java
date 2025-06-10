@@ -72,6 +72,7 @@ public class Environment extends Utils
         else if(a instanceof Player p)
         {
             p.setActions(r0);
+
             //lists available actions, lets the player choose, then performs chosen action
             p.performAction(promptList("You can:", p.getActionDescriptions()) - 1);
         }

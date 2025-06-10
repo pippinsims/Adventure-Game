@@ -48,6 +48,7 @@ public class Torch implements Interactible {
         }    
     }
 
+    //TODO: make it so you can take Torch from the wall and then you have a Torch in your Inventory
     @Override
     public void action()
     {

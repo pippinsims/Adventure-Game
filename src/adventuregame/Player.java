@@ -92,6 +92,18 @@ public class Player implements Unit{
 
                 break;
 
+            /*
+            TODO: I think we should make a combat manager, which will become quite advanced, visually represented by a header
+            and also make combat not happen immediately when you enter a room, you always get to do something
+            like it will generate a combat scene based on certain stuff but then everyone would have position and ability, which limit them
+            like if you do something that takes away your right arm of your ability then you can't use right arm, but left is still open,
+            but also you might be far from them
+
+            might even be good to have a positionmanager that tracks kind of where people are the whole time for example if something comes
+            in the door behind you now its behind you, and enemies and objects have original position, maybe even you could make it so you
+            can place objects in positions. Maybe every room has a list of local unique positions, and you get a list of them when you want
+            to place something
+            */
             case FIGHT:
                 String[] attackTypes = new String[]{"Punch", "Bananarang"};
                 int attackDamage = 0;

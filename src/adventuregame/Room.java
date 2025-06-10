@@ -89,6 +89,7 @@ public class Room {
         return exits.length;
     }
 
+    //TODO: add wall material, add a familiar description once it's a familiar room
     public String getDescription()
     {
         String str = description + "\n" + doormsg;
