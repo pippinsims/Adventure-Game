@@ -1,6 +1,9 @@
 package adventuregame;
 
-import adventuregame.interactibles.*;
+import adventuregame.interactibles.WallEntity.Wall;
+import adventuregame.interactibles.wallentities.Door;
+import adventuregame.interactibles.wallentities.TorchInteractible;
+import adventuregame.interactibles.wallentities.ViewablePicture;
 import adventuregame.interfaces.Interactible;
 
 import java.util.ArrayList;
@@ -126,9 +129,13 @@ public class Environment extends Utils
             r0.getEnemies().add(new Enemy(3));
         }
 
-        r0.getInteractibles().add(new TorchInteractible(r0, WallEntity.Wall.EAST));
-        r0.getInteractibles().add(new TorchInteractible(r0, WallEntity.Wall.WEST));
-        r0.getInteractibles().add(new ViewablePicture("mad_king.txt", WallEntity.Wall.WEST, "patchwork depiction", "Lord Gareth the Mad", r0));
+        new TorchInteractible(r0, Wall.EAST);
+        new TorchInteractible(r0, Wall.WEST);
+        new TorchInteractible(r0, Wall.WEST);
+
+        new ViewablePicture(r0, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
+
+        new Door(treasureRoom, mossyRuin, Wall.WEST);
     }
 
     private static void loadEffectDescriptions() {

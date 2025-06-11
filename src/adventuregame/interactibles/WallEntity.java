@@ -1,8 +1,9 @@
-package adventuregame;
+package adventuregame.interactibles;
 
 import java.util.ArrayList;
 
-import adventuregame.interactibles.ViewablePicture;
+import adventuregame.Room;
+import adventuregame.Utils;
 import adventuregame.interfaces.Describable;
 import adventuregame.interfaces.Interactible;
 import adventuregame.interfaces.Unit;
@@ -62,12 +63,23 @@ public class WallEntity implements Interactible{
         NONE;
     }
 
-    public boolean isAlone()
+    protected boolean isAlone()
     {
         for (Interactible i : myRoom.getInteractibles()) 
         {
-            if(this != i && i instanceof ViewablePicture)
+            if(this != i && i.getDescription() == getDescription())
                 return false;
+        }
+        return true;
+    }
+
+    protected boolean isAloneOnWall()
+    {
+        for (Interactible i : myRoom.getInteractibles()) 
+        {
+            if(i instanceof WallEntity)
+                if(this != i && i.getDescription() == getDescription() && ((WallEntity)i).getWall() == getWall())
+                    return false;
         }
         return true;
     }
@@ -82,18 +94,25 @@ public class WallEntity implements Interactible{
         return name;
     }
 
+    protected String actionVerb;
     @Override
     public String getActionDescription() 
     {
-        ArrayList<Describable> arr = new ArrayList<>();
-        for (Interactible i : myRoom.getInteractibles()) { arr.add(i); }
-        return "Take " + Utils.articleOfDescribableInList(arr, this) + " " + getDescription() + (!isAlone() ? " from " + locToString() : "");
+        String article = "the";
+        if(!isAloneOnWall())
+        {
+            ArrayList<Describable> arr = new ArrayList<>();
+            for (Interactible i : myRoom.getInteractibles()) { arr.add(i); }
+            article = Utils.articleOfDescribableInList(arr, this);
+        }
+        return actionVerb + " " + article + " " + getDescription() + (!isAlone() ? " from " + locToString() : "");
     }
 
+    protected String locationConjunction;
     @Override
     public String getExposition()
     {
-        return getDescription() + " on " + locToString();
+        return getDescription() + " " + locationConjunction + " " + locToString();
     }
     
     @Override

@@ -1,19 +1,22 @@
-package adventuregame.interactibles;
+package adventuregame.interactibles.wallentities;
 import adventuregame.interfaces.Unit;
 import adventuregame.items.TorchItem;
 
 import adventuregame.Room;
 import adventuregame.Utils;
-import adventuregame.WallEntity;
+import adventuregame.interactibles.WallEntity;
 
 public class TorchInteractible extends WallEntity {
 
-    public TorchInteractible(Room r, Wall wall)
+    public TorchInteractible(Room room, Wall wall)
     {
-        myRoom = r;
+        myRoom = room;
+        myRoom.getInteractibles().add(this);
         description = "flaming stick";
         loc = wall;
         name = "Torch";
+        locationConjunction = "on";
+        actionVerb = "Take";
     }
 
     @Override
