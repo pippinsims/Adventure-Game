@@ -2,7 +2,6 @@ package adventuregame;
 
 import adventuregame.interactibles.*;
 import adventuregame.interfaces.Interactible;
-import adventuregame.interfaces.Unit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,9 +36,10 @@ public class Environment extends Utils
             
             System.out.println();
 
-            for (Enemy e : r0.getEnemies()) 
+            ArrayList<Enemy> ens = r0.getEnemies();
+            for (int i = ens.size() - 1; i > -1; i--) 
             {
-                e.updateUnit();
+                ens.get(i).updateUnit();
                 System.out.println();
             }
         }
@@ -129,9 +129,6 @@ public class Environment extends Utils
         r0.getInteractibles().add(new TorchInteractible(r0, 2));
         r0.getInteractibles().add(new TorchInteractible(r0, 4));
         r0.getInteractibles().add(new ViewablePicture("mad_king.txt", 2, "patchwork depiction", "Lord Gareth the Mad"));
-
-        //PROBABLY SHOULD MAKE A "WALL ENTITY" FOR DOOR, VIEWABLEPICTURE, WINDOW, ETC...
-        //NOT TORCH THOUGH, IT IS JUST AN INANIMATE ENTITY BECAUSE IT CAN BE ON THE FLOOR
     }
 
     private static void loadEffectDescriptions() {
@@ -141,8 +138,9 @@ public class Environment extends Utils
 
     public static void playerAttackEnemy(int index, Damage d)
     {
+        //MAKE THERE BE DIFFERENT REACTIONS TO BEING ATTACKED
         Enemy e = r0.getEnemies().get(index);
-        if(e.receiveDamage(d.getValue(), d.getType()))
+        if(e.receiveDamage(d.getValue(), d.getType()) == Effectable.EffectUpdateResult.DEATH)
         {
             slowPrintln("You have murdered the " + e.getRandomDescription(), 250); // so unnecessary lol
             e.death();

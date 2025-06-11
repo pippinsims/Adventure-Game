@@ -129,7 +129,7 @@ public class Player extends Effectable implements Unit{
                     attackDamage = new Damage(dmgval, Damage.Type.BASIC, "You heave a mighty blow at the " + curRoom.getEnemies().get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + dmgval + " damage!");
                 }
                 else
-                {    //minus 1 for Punch
+                {   //chosenAttackType - 1 because of Punch
                     attackDamage = inv.getItem(chosenAttackType - 1).getDamage();
                 }
 
@@ -184,7 +184,7 @@ public class Player extends Effectable implements Unit{
                         Utils.slowPrint("... but you have no enemies! Nothing happens.");
                     else
                     {
-                        for (int j = 0; j < curRoom.getEnemies().size(); j++) 
+                        for (int j = Environment.r0.getEnemies().size() - 1; j > -1; j--)
                         {
                             Environment.playerAttackEnemy(j, spellDamage);
                         }
@@ -309,7 +309,7 @@ public class Player extends Effectable implements Unit{
 
         for (Effect e : effects) 
         {
-            if(effectUpdate(e))
+            if(effectUpdate(e) != EffectUpdateResult.NONE)
             {
                 switch (e.getType()) 
                 {

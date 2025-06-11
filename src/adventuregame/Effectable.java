@@ -5,16 +5,25 @@ import java.util.Random;
 
 public class Effectable {
     protected ArrayList<Effect> effects = new ArrayList<Effect>();
-    protected int maxHealth = 10;
-    protected int health = maxHealth;
+    protected float maxHealth = 10;
+    protected float health = maxHealth;
     protected boolean isStunned = false; //isStunned makes Enemy units become unstunned as their next action
 
-    final public boolean effectUpdate(Effect e)
+    public enum EffectUpdateResult
+    {
+        DEATH,
+        VERYHURT,
+        HURT,
+        NONE;
+    }
+
+    final public EffectUpdateResult effectUpdate(Effect e)
     {
         Utils.slowPrint("You have been effected by " + e.name);
         Utils.slowPrintln(", and will be effected by it for " + e.cooldown.getDuration() + " more turns.");
 
-        boolean effectIsOver = false, result = false;
+        boolean effectIsOver = false;
+        EffectUpdateResult result = EffectUpdateResult.NONE;
         switch (e.getType()) {
             case FIRE: //for fire and psychstrike, result is damageresult
                 result = receiveDamage(e.strength, Damage.Type.BASIC);
@@ -42,8 +51,10 @@ public class Effectable {
     }
 
     // returns true if the effectable died
-    final public boolean receiveDamage(int damage, Damage.Type type)
+    final public EffectUpdateResult receiveDamage(int damage, Damage.Type type)
     {
+        float startHealth = health;
+
         switch (type) {
             case BASIC:
                 health -= damage;
@@ -61,7 +72,15 @@ public class Effectable {
             default:
                 break;
         }
-        return health <= 0;
+
+        if(health/startHealth > 0.8)
+        {
+            return EffectUpdateResult.HURT;
+        }
+        else if(health != 0)
+            return EffectUpdateResult.VERYHURT;
+        else
+            return EffectUpdateResult.DEATH;
     }
 
     final public void addEffect(Effect e)

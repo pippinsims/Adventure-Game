@@ -22,7 +22,7 @@ public class TorchItem implements Item{
     @Override
     public Damage getDamage() 
     {
-        return new Damage(2, Damage.Type.FIRE, "You swing the torch at your enemy!");
+        return new Damage(1, Damage.Type.FIRE, "You swing the torch at your enemy!");
     }
 
     @Override

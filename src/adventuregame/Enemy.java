@@ -5,8 +5,6 @@ import adventuregame.interfaces.Unit;
 
 public class Enemy extends Effectable implements Unit
 {
-    private final int maxHealth = 3;
-    private float health;
     private Inventory inv;
     private int dmg;
     private int wisdom;
@@ -15,7 +13,8 @@ public class Enemy extends Effectable implements Unit
 
     public Enemy(int h, Inventory i, int d, int w)
     {
-        health = h;
+        maxHealth = h;
+        health = maxHealth;
         inv = i;
         dmg = d;
         wisdom = w;
@@ -24,7 +23,8 @@ public class Enemy extends Effectable implements Unit
 
     public Enemy(int h, Inventory i, int d, int w, String des)
     {
-        health = h;
+        maxHealth = h;
+        health = maxHealth;
         inv = i;
         dmg = d;
         wisdom = w;
@@ -34,7 +34,8 @@ public class Enemy extends Effectable implements Unit
 
     public Enemy(int h)
     {
-        health = h;
+        maxHealth = h;
+        health = maxHealth;
         inv = new Inventory(5);
         dmg = 2;
         wisdom = 20;
@@ -62,7 +63,7 @@ public class Enemy extends Effectable implements Unit
         }
 
         if(health <= maxHealth / 3)
-            return "now bent double " + type;
+            return " bent double " + type;
         else if(health <= (maxHealth * 2) / 3)
             return "slightly bruised " + type;
         else
@@ -229,13 +230,12 @@ public class Enemy extends Effectable implements Unit
     @Override
     public void updateUnit() {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
-        System.out.println("HP = " + health);
         
         for (int i = effects.size() - 1; i > -1; i--) 
         {
             Effect e = effects.get(i);
             // effectUpdate returns true if the effectable died
-            if(e.isDamaging && effectUpdate(e))
+            if(e.isDamaging && effectUpdate(e) == EffectUpdateResult.DEATH)
             {
                 death();
                 return;
