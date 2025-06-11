@@ -8,7 +8,7 @@ import adventuregame.interfaces.Describable;
 public class Utils {
 
     public static Scanner scanner = new Scanner(System.in);
-    public static final int MAX_PRINT_DELAY = 1;
+    public static final int MAX_PRINT_DELAY = 1; //50 for normal gameplay
     public static int currentPrintDelay = MAX_PRINT_DELAY;
 
     public static String[] names1 = new String[]{"Bo","Kua","An","Lis","Yi"};

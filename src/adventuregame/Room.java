@@ -1,17 +1,18 @@
 package adventuregame;
 
 import adventuregame.interfaces.Interactible;
+import adventuregame.interactibles.WallEntity;
+import adventuregame.interactibles.wallentities.Door;
 import adventuregame.interfaces.Describable;
 
 import java.util.ArrayList;
 
 public class Room implements Describable{
 
-    private Room[] exits;
     private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
     private ArrayList<Interactible> interactibles = new ArrayList<Interactible>();
+    private ArrayList<Door> doors = new ArrayList<>();
     private String description = "a bare room";
-    private direction[] dirs;
     private String doormsg = "This room has";
     private boolean isDiscovered = false;
     private boolean isCurrentRoom = false;
@@ -27,8 +28,7 @@ public class Room implements Describable{
 
     public Room()
     {
-        exits = new Room[0];
-        dirs = new direction[0];
+
     }
 
     public Room(String des, String n)
@@ -36,20 +36,6 @@ public class Room implements Describable{
         this();
         description = des;
         name = n;
-    }
-
-    public Room getRoom(int i) throws Exception
-    {
-        if(i < exits.length)
-            return exits[i];
-        else
-            throw new Exception("trying to get an exit that doesn't exist");
-    }
-
-    public void setDoor(int i, Room d, direction dir)
-    {
-        exits[i] = d;
-        dirs[i] = dir;
     }
 
     public void setIsDiscovered(boolean d)
@@ -87,9 +73,10 @@ public class Room implements Describable{
         return interactibles;
     }
 
-    public int getNumExits()
+    public void addDoor(Door d)
     {
-        return exits.length;
+        doors.add(d);
+        interactibles.add(d);
     }
 
     //TODO: add wall material, add a familiar description once it's a familiar room
@@ -101,18 +88,18 @@ public class Room implements Describable{
 
         for(int i = 0; i < directionCounts.length; i++)
         {
-            directionCounts[i] = countDoors(direction.values()[i]);
+            directionCounts[i] = countDoorsOf(direction.values()[i]);
         }
 
         boolean precursedByZeros = true;
         for (int i = 0; i < directionCounts.length; i++)
         {
             if(directionCounts[i] != 0)
-            {
+            {       
                 if(isFollowedByZeros(directionCounts, i) && !precursedByZeros)
                     str += " and";
-                
-                str += " " + getDirDes(direction.values()[i]);
+
+                str += " " + getDirectionDescription(direction.values()[i]);                
 
                 if (!isFollowedByZeros(directionCounts, i))
                     str += ",";
@@ -140,73 +127,59 @@ public class Room implements Describable{
         return true;
     }
 
-    private direction getDoorDir(int i)
+    private String getDirectionDescription(direction dir)
     {
-        return dirs[i];
+        String article = dirArticle(dir);
+
+        return article + " " + dirToString(dir) + " door" + ((article.charAt(0) == 'a') ? "" : "s");
     }
 
-    public String getDoorDes(int i)
+    private String dirArticle(direction dir)
     {
-        String str = getDoorDesArticle(i);
-        
-        str += " " + dirToString(getDoorDir(i)) + " door";
-
-        return str;
-    }
-
-    public String getDirDes(direction d)
-    {
-        String str = getDoorDesAmount(d);
-        
-        str += " " + dirToString(d) + " door";
-
-        if(countDoors(d) > 1)
-            str += "s";
-
-        return str;
-    }
-
-    private int countDoors(direction d)
-    {
-        int sum = 0;
-        for(int i = 0; i < dirs.length; i++)
+        int count = countDoorsOf(dir);
+        if(count == 1)
         {
-            if(dirs[i] == d)
-                sum++;
-        }
-        return sum;
-    }
-
-    private String getDoorDesArticle(int i)
-    {
-        direction d = getDoorDir(i);
-        if(countDoors(d) == 1)
-            return "the";
-        else
-        {
-            if(getDoorDir(i) == direction.EAST)
-                return "an";
-            else
-                return "a";
-        }
-    }
-
-    private String getDoorDesAmount(direction d)
-    {
-        if(countDoors(d) == 1)
-        {
-            if(d == direction.EAST)
+            if(dir == direction.EAST)
                 return "an";
             else
                 return "a";
         }
         else
-            return countDoors(d) + "";
+            return count + "";
     }
 
-    private String dirToString(direction d)
+    private int countDoorsOf(direction dir)
+    {
+        int count = 0;
+        for (Door door : doors) 
+        {
+            if(wallToDir(door.getWall(this)) == dir)
+                count++;
+        }
+        return count;
+    }
+
+    private direction wallToDir(WallEntity.Wall wall)
+    {
+        switch (wall) {
+            case NORTH:
+                return direction.NORTH;
+            case SOUTH:
+                return direction.SOUTH;
+            case EAST:
+                return direction.EAST;
+            case WEST:
+                return direction.WEST;
+            case NONE:
+                return direction.NONCARDINAL;
+            default:
+                throw new RuntimeException("wallToDir failure");
+        }
+    }
+
+    private String dirToString(direction dir)
     {   
-        switch(d)
+        switch(dir)
         {
             case NORTH:
                 return "north-facing";
@@ -220,67 +193,6 @@ public class Room implements Describable{
                 return "non-cardinally-directed";
             default:
                 throw new AssertionError();
-        }
-    }
-
-    //APPEND ROOM METHOD
-    public void appendRoom(Room room2add, direction d)
-    {
-        //ADD EXIT GOING FROM CURROOM TO ROOM2ADD
-        Room[] newExits = new Room[exits.length + 1];
-        for(int i = 0; i < exits.length; i++)
-        {
-            newExits[i] = exits[i];
-        }
-        exits = newExits;
-        exits[exits.length - 1] = room2add;
-        
-        //ADD DIRECTION OF ROOM2ADD TO CURROOM
-        direction[] newDirs = new direction[dirs.length + 1];
-        for(int i = 0; i < dirs.length; i++)
-        {
-            newDirs[i] = dirs[i];
-        }
-        dirs = newDirs;
-        dirs[dirs.length - 1] = d;
-    
-        //ADD EXIT GOING FROM ROOM2ADD TO CURROOM
-        newExits = new Room[room2add.exits.length + 1];
-        for(int i = 0; i < room2add.exits.length; i++)
-        {
-            newExits[i] = room2add.exits[i];
-        }
-        room2add.exits = newExits;
-        room2add.exits[room2add.exits.length - 1] = this;
-
-        //ADD DIRECTION OF CURROOM TO ROOM2ADD (COMPLEMENT OF FIRST DIRECTION e.g. N <-> S)
-        newDirs = new direction[room2add.dirs.length + 1];
-        for(int i = 0; i < room2add.dirs.length; i++)
-        {
-            newDirs[i] = room2add.dirs[i];
-        }
-        room2add.dirs = newDirs;
-        room2add.dirs[room2add.dirs.length - 1] = complementOf(d);
-    }
-
-    direction complementOf(direction d)
-    {
-        switch (d) 
-        {
-            case SOUTH:
-                return direction.NORTH;
-
-            case WEST:
-                return direction.EAST;
-
-            case NORTH:
-                return direction.SOUTH;
-
-            case EAST:
-                return direction.WEST;
-
-            default:
-                return direction.NONCARDINAL;
         }
     }
 

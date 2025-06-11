@@ -1,5 +1,6 @@
 package adventuregame;
 
+import adventuregame.interactibles.wallentities.Door;
 import adventuregame.interfaces.Interactible;
 import adventuregame.interfaces.Item;
 // local imports
@@ -18,7 +19,6 @@ public class Player extends Effectable implements Unit{
 
     enum Action {
         NOTHING,
-        DOOR,
         INSPECT,
         FIGHT,
         TALK,
@@ -44,11 +44,6 @@ public class Player extends Effectable implements Unit{
         actions.clear();
         actions.add(Action.NOTHING);
 
-        if (curRoom.getNumExits() != 0)
-        {
-            actions.add(Action.DOOR);
-        }
-
         if(curRoom.getInteractibles().size() > 0)
         {
             actions.add(Action.INSPECT);
@@ -72,26 +67,6 @@ public class Player extends Effectable implements Unit{
         Room curRoom = Environment.r0;
         switch(actions.get(i))
         {
-            case DOOR:
-                String[] doornames = new String[curRoom.getNumExits()];
-                for (int j = 0 ; j < doornames.length ; j++)
-                {
-                    doornames[j] = "Door " + (j + 1) + ", " + curRoom.getDoorDes(j) + ".";           
-                }
-                
-                try 
-                {
-                    curRoom = curRoom.getRoom(Utils.promptList("Which door traveler?", doornames) - 1);
-                } 
-                catch (Exception e) 
-                {
-                    System.err.println("trying to get a room that doesn't exist");
-                }
-                
-                Environment.r0 = curRoom;
-
-                break;
-
             /*
             TODO: I think we should make a combat manager, which will become quite advanced, visually represented by a header
             and also make combat not happen immediately when you enter a room, you always get to do something
@@ -140,13 +115,14 @@ public class Player extends Effectable implements Unit{
                 break;
 
             case INSPECT:
-                int n = curRoom.getInteractibles().size();    
+                ArrayList<Interactible> inters = curRoom.getInteractibles();
+                int n = inters.size();    
 
-                String[] interactiblesDescriptions = new String[n];
+                String[] intersDescs = new String[n];
                 for(int j = 0; j < n; j++)
-                    interactiblesDescriptions[j] = curRoom.getInteractibles().get(j).getDescription();
+                    intersDescs[j] = inters.get(j).getDescription();
                 
-                curRoom.getInteractibles().get(Utils.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", interactiblesDescriptions) - 1).inspectInteractible();
+                inters.get(Utils.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", intersDescs) - 1).inspectInteractible();
                 
                 break;
 
@@ -193,17 +169,36 @@ public class Player extends Effectable implements Unit{
                 break;
             
             case INTERACT:
-                ArrayList<Interactible> inters = Environment.r0.getInteractibles();
+                inters = Environment.r0.getInteractibles();
                 String[] descriptions = new String[inters.size()];
+                ArrayList<Interactible> doors = new ArrayList<>();
 
                 for (int j = 0; j < descriptions.length; j++) 
                 {
-                    descriptions[j] = inters.get(j).getActionDescription();    
+                    Interactible cur = inters.get(j);
+                    descriptions[j] = cur.getActionDescription();
+                    if(cur.getName().equals("Door"))
+                        doors.add(cur);
                 }    
 
-                int chosen = Utils.promptList("What do you interact with?", descriptions) - 1;
+                Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions) - 1);
 
-                inters.get(chosen).action(this);
+                chosen.action(this);
+
+                if(chosen.getName().equals("Door"))
+                {             
+                    try 
+                    {
+                        Door door = (Door)chosen;
+                        curRoom = door.getNextRoom(curRoom);
+                    } 
+                    catch (Exception e) 
+                    {
+                        System.err.println("trying to get a room that doesn't exist");
+                    }
+                    
+                    Environment.r0 = curRoom;
+                }
                 break;
 
             default:
@@ -245,9 +240,6 @@ public class Player extends Effectable implements Unit{
             case NOTHING:
                 return "Do nothing";
             
-            case DOOR:
-                return "Try a door";
-            
             case INSPECT:
                 return "Inspect your surroundings";
 
@@ -261,7 +253,7 @@ public class Player extends Effectable implements Unit{
                 return "Utilize the power of the ancients";
 
             case INTERACT:
-                return "Interact with a nearby object";
+                return "Do something";
 
             default:
                 return "[Empty Action]";

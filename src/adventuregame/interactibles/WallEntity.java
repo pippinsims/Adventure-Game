@@ -27,10 +27,10 @@ public class WallEntity implements Interactible{
         if(loc == Wall.NONE)
             return "the floor";
         else
-            return "the " + getWall() + " wall";
+            return "the " + getWallString() + " wall";
     }
 
-    public String getWall()
+    public String getWallString()
     {
         switch (loc) {
             case SOUTH:
@@ -46,6 +46,11 @@ public class WallEntity implements Interactible{
             default:
                 return "error";
         }  
+    }
+
+    public WallEntity.Wall getWall()
+    {
+        return loc;
     }
 
     @Override
@@ -78,7 +83,7 @@ public class WallEntity implements Interactible{
         for (Interactible i : myRoom.getInteractibles()) 
         {
             if(i instanceof WallEntity)
-                if(this != i && i.getDescription() == getDescription() && ((WallEntity)i).getWall() == getWall())
+                if(this != i && i.getDescription() == getDescription() && ((WallEntity)i).getWallString() == getWallString())
                     return false;
         }
         return true;

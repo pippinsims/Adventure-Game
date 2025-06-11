@@ -1,5 +1,7 @@
 package adventuregame.interactibles.wallentities;
 
+import java.util.Random;
+
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.interactibles.WallEntity;
@@ -11,14 +13,49 @@ public class Door extends WallEntity
     public Door(Room room1, Room room2, Wall wall)
     {
         myRoom = room1;
+        myRoom.addDoor(this);
+
         myOtherRoom = room2;
-        myRoom.getInteractibles().add(this);
-        myOtherRoom.getInteractibles().add(this);
-        description = "ordinary ol\' creaky slab o\' wood";
+        myOtherRoom.addDoor(this);
+        
+        generateDescription();
         loc = wall;
         name = "Door";
         locationConjunction = (loc != Wall.NORTH) ? "that leads through" : "of";
         actionVerb = "Use";
+    }
+
+    @Override
+    public Wall getWall()
+    {
+        throw new RuntimeException("Door can't use this method");
+    }
+
+    public Wall getWall(Room room)
+    {
+        if(room.equals(myRoom))
+            return loc;
+        else if(room.equals(myOtherRoom)) 
+            return complementOf(loc);
+        else
+            throw new RuntimeException("urk, you plugged in a room this door wasn't in, in getWall");
+    }
+
+    private Wall complementOf(Wall wall)
+    {
+        switch (wall) {
+            case SOUTH:
+                return Wall.NORTH;
+            case WEST:
+                return Wall.EAST;
+            case NORTH:
+                return Wall.SOUTH;
+            case EAST:
+                return Wall.WEST;
+
+            default:
+                return wall;
+        } 
     }
 
     @Override
@@ -31,5 +68,41 @@ public class Door extends WallEntity
     public void action(Unit u)
     {
         Utils.slowPrint("you used " + getDescription());
+    }
+
+    private void generateDescription()
+    {
+        switch (new Random().nextInt(5)) {
+            case 0:
+                description = "ordinary ol\' creaky slab o\' wood";
+                break;
+            
+            case 1:
+                description = "regular ol\' creaky plank";
+                break;
+            case 2:
+                description = "unassuming, decrepit wooden door";
+                break;
+            case 3:
+                description = "Boris";
+                break;
+
+            case 4:
+                description = "doors";
+                break;
+        
+            default:
+                break;
+        }
+    }
+
+    public Room getNextRoom(Room curRoom)
+    {
+        if(curRoom.equals(myRoom))
+            return myOtherRoom;
+        else if(curRoom.equals(myOtherRoom)) 
+            return myRoom;
+        else
+            throw new RuntimeException("urk, you plugged in a room this door wasn't in");
     }
 }

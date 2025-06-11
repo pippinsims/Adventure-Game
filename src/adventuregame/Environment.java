@@ -16,7 +16,6 @@ public class Environment extends Utils
     public static PlayerManager pm = new PlayerManager();
     public static Map<Effect.Type, String> effectDescriptions = new HashMap<>();
 
-    // TODO: make a way to play without slow print
     public static void main(String[] args) 
     {
         //room r0 is the current room
@@ -110,19 +109,14 @@ public class Environment extends Utils
         mossyRuin.setDoorMsg("oh, and this room is cursed with");
         mossyRuin.getEnemies().add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom"));
         
-        r0.appendRoom(mossyRuin, Room.direction.NORTH);
-        r0.appendRoom(new Room(), Room.direction.WEST);
-        r0.appendRoom(new Room(), Room.direction.EAST);
+        new Door(r0, mossyRuin, Wall.NORTH);
+        new Door(r0, new Room(), Wall.WEST);
+        Room joiner1 = new Room();
+        new Door(r0, joiner1, Wall.EAST);
 
         Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.", "Treasure Room");
-        try 
-        {
-            r0.getRoom(2).appendRoom(treasureRoom, Room.direction.SOUTH);
-        } 
-        catch (Exception e) 
-        {
-            System.err.println("trying to get a room that doesn't exist");
-        }
+        
+        new Door(joiner1, treasureRoom, Wall.SOUTH);
 
         for (int i = 0; i < 4; i++)
         {
@@ -134,11 +128,10 @@ public class Environment extends Utils
         new TorchInteractible(r0, Wall.WEST);
 
         new ViewablePicture(r0, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
-
-        new Door(treasureRoom, mossyRuin, Wall.WEST);
     }
 
-    private static void loadEffectDescriptions() {
+    private static void loadEffectDescriptions() 
+    {
         Effect.effectDescriptions.put(Effect.Type.FIRE, "BURNINGNESS");
         Effect.effectDescriptions.put(Effect.Type.PSYCHSTRIKE, "strong vexation of mind");
     }
