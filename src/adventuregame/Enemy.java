@@ -82,7 +82,7 @@ public class Enemy extends Effectable implements Unit
                 case 2:
                     return "bllork";
                 case 3:
-                    return "Eck";
+                    return "awkward fellow";
             }
         }
         else if (description.equals("Mushroom"))
@@ -229,21 +229,19 @@ public class Enemy extends Effectable implements Unit
     @Override
     public void updateUnit() {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
+        System.out.println("HP = " + health);
         
-        for (Effect e : effects) 
+        for (int i = effects.size() - 1; i > -1; i--) 
         {
-            if(effectUpdate(e))
+            Effect e = effects.get(i);
+            // effectUpdate returns true if the effectable died
+            if(e.isDamaging && effectUpdate(e))
             {
-                switch (e.getType()) 
-                {
-                    case FIRE: case PSYCHSTRIKE:
-                        death(); //death by effect causes comod exception
-                        return;
-                
-                    default:
-                        break;
-                }
+                death();
+                return;
             }
+
+            // else ...
         }
         
         chooseAction(Environment.r0);
@@ -252,6 +250,7 @@ public class Enemy extends Effectable implements Unit
     public void death() 
     {
         Utils.slowPrintln("You ended " + getName(), 200);
-        Environment.deleteEnemy(this);
+        // remove enemy from the current room
+        Environment.r0.getEnemies().remove(this);
     }
 }

@@ -33,13 +33,13 @@ public class Environment extends Utils
 
             System.out.println();
 
-            unitUpdate(player1);
+            player1.updateUnit();
             
             System.out.println();
 
             for (Enemy e : r0.getEnemies()) 
             {
-                unitUpdate(e);
+                e.updateUnit();
                 System.out.println();
             }
         }
@@ -62,25 +62,6 @@ public class Environment extends Utils
         slowPrint(" ", 1000);
         slowPrint("Adventure awaits!", 10);
         slowPrint("\n", 200);
-    }
-
-    private static void unitUpdate(Unit a)
-    {
-        // String n = a.getName();
-        // System.out.println("--" + n + "'" + (n.charAt(n.length() - 1) != 's' ? "s" : "") + " Turn--");
-        // if(a instanceof Enemy e)
-        // {
-        //     e.chooseAction(r0);
-        // }
-        // else if(a instanceof Player p)
-        // {
-        //     p.setActions(r0);
-
-        //     //lists available actions, lets the player choose, then performs chosen action
-        //     p.performAction(promptList("You can:", p.getActionDescriptions()) - 1);
-        // }
-
-        a.updateUnit();
     }
 
     private static void printInfo()
@@ -166,9 +147,5 @@ public class Environment extends Utils
             slowPrintln("You have murdered the " + e.getRandomDescription(), 250); // so unnecessary lol
             e.death();
         }
-    }
-
-    public static void deleteEnemy(Enemy enemy) {
-        r0.getEnemies().remove(enemy);
     }
 }

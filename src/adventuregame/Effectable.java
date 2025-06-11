@@ -3,7 +3,7 @@ package adventuregame;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Effectable{
+public class Effectable {
     protected ArrayList<Effect> effects = new ArrayList<Effect>();
     protected int maxHealth = 10;
     protected int health = maxHealth;
@@ -11,33 +11,37 @@ public class Effectable{
 
     final public boolean effectUpdate(Effect e)
     {
-        Utils.slowPrintln("You have been effected by " + e.description + " for " + e.cooldown.getDuration() + " turns.");
+        Utils.slowPrint("You have been effected by " + e.name);
+        Utils.slowPrintln(", and will be effected by it for " + e.cooldown.getDuration() + " more turns.");
 
-        boolean effectResult = false, result = false;
+        boolean effectIsOver = false, result = false;
         switch (e.getType()) {
             case FIRE: //for fire and psychstrike, result is damageresult
                 result = receiveDamage(e.strength, Damage.Type.BASIC);
-                effectResult = e.cooldown.decrement();
+                effectIsOver = e.cooldown.decrement();
                 break;
 
             case PSYCHSTRIKE:
                 result = receiveDamage(e.strength, Damage.Type.PSYCHIC);
                 isStunned = true;
-                effectResult = e.cooldown.decrement();
+                effectIsOver = e.cooldown.decrement();
                 break;
         
             default:
                 break;
         }
 
-        if(effectResult) 
+        if(effectIsOver)
         {
+            // no .equals is defined for effect and that is what we want because could be multiple
+            // of a certain type of effect (remove by reference is good here)
             effects.remove(e);
         }
 
         return result;
     }
 
+    // returns true if the effectable died
     final public boolean receiveDamage(int damage, Damage.Type type)
     {
         switch (type) {

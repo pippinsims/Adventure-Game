@@ -14,12 +14,24 @@ public class Effect implements Describable{
     String description;
     int strength;
     String name;
+    final boolean isDamaging;
 
     public Effect(Type t, Cooldown c, int s, String name) {
         type = t;
         cooldown = c;
         strength = s;
         description = effectDescriptions.get(type);
+        this.name = name;
+        switch(type) {
+            case FIRE:
+                isDamaging = true;
+                break;
+            case PSYCHSTRIKE:
+                isDamaging = true;
+                break;
+            default:
+                isDamaging = false;
+        }
     }
 
     public enum Type{
