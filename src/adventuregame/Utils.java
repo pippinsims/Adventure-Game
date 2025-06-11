@@ -1,6 +1,9 @@
 package adventuregame;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
+
+import adventuregame.interfaces.Describable;
 
 public class Utils {
 
@@ -140,6 +143,19 @@ public class Utils {
         printOptions(listPrompts);
 
         return confirmInput(scanner.nextLine(), listPrompts);
+    }
+
+    public static String articleOfDescribableInList(ArrayList<Describable> arr, Describable d)
+    {
+        for (Describable describable : arr) 
+        {
+            if(d.getDescription() == describable.getDescription()) 
+            {
+                return articleOf(d.getDescription());    
+            }
+        }
+
+        return "the";
     }
 
     public static Integer confirmInput(String s, String[] options)

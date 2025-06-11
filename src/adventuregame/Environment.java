@@ -126,9 +126,9 @@ public class Environment extends Utils
             r0.getEnemies().add(new Enemy(3));
         }
 
-        r0.getInteractibles().add(new TorchInteractible(r0, 2));
-        r0.getInteractibles().add(new TorchInteractible(r0, 4));
-        r0.getInteractibles().add(new ViewablePicture("mad_king.txt", 2, "patchwork depiction", "Lord Gareth the Mad"));
+        r0.getInteractibles().add(new TorchInteractible(r0, WallEntity.Wall.EAST));
+        r0.getInteractibles().add(new TorchInteractible(r0, WallEntity.Wall.WEST));
+        r0.getInteractibles().add(new ViewablePicture("mad_king.txt", WallEntity.Wall.WEST, "patchwork depiction", "Lord Gareth the Mad", r0));
     }
 
     private static void loadEffectDescriptions() {

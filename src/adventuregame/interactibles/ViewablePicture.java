@@ -1,41 +1,31 @@
 package adventuregame.interactibles;
+import adventuregame.interfaces.Describable;
+import adventuregame.interfaces.Interactible;
 import adventuregame.interfaces.Unit;
-import adventuregame.interfaces.WallEntity;
+
+import java.util.ArrayList;
+
 import adventuregame.Room;
 import adventuregame.Utils;
+import adventuregame.WallEntity;
 
-public class ViewablePicture implements WallEntity {
-    String txtFileName;
-    String description;
-    String name;
-    private int wall; //1X is floor, 2X is wall, X1 is south, X2 is west, X3 is north, X4 is east
-    private String actionDescription = "Inspect ViewablePicture";
+public class ViewablePicture extends WallEntity {
     
-    public ViewablePicture(String fileName, int w, String des, String n)
+    String txtFileName;
+    
+    public ViewablePicture(String fileName, Wall wall, String description, String name, Room room)
     {
-        description = des;
+        this.description = description;
         txtFileName = fileName;
-        wall = w;
-        name = n;
-        actionDescription = "Inspect " + description;
+        this.loc = wall;
+        this.name = name;
+        myRoom = room;
     }
 
     @Override
     public void action(Unit u) 
     {
         inspectInteractible();
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return description;
-    }
-
-    @Override
-    public String getExposition()
-    {
-        return getDescription() + " on the " + getWall() + " wall";
     }
 
     @Override
@@ -48,46 +38,21 @@ public class ViewablePicture implements WallEntity {
         Utils.scanner.nextLine();
     }
 
-    public String getWall() 
-    {
-        switch (wall) {
-            case 1: //Why is south 1 this is so weird
-                return "south";
-            case 2:
-                return "west";
-            case 3:
-                return "north";
-            case 4:
-                return "east";
-            default:
-                return "error";
-        }    
-    }
-
     public String getFileName()
     {
         return txtFileName;
     }
 
     @Override
-    public boolean isWallInteractible() 
+    public String getActionDescription() 
     {
-        return true;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Room getRoom() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRoom'");
-    }
-
-    @Override
-    public String getActionDescription() {
-        return actionDescription;
+        String article = "the";
+        if(!isAlone())
+        {
+            ArrayList<Describable> arr = new ArrayList<>();
+            for (Interactible i : myRoom.getInteractibles()) { arr.add(i); }
+            article = Utils.articleOfDescribableInList(arr, this);
+        }
+        return "Inspect " + article + " " + getDescription() + (!isAlone() ? " from " + locToString() : "");
     }
 }
