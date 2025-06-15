@@ -68,7 +68,7 @@ public class Player extends Effectable implements Unit{
         switch(actions.get(i))
         {
             /*
-            TODO: I think we should make a combat manager, which will become quite advanced, visually represented by a header
+            TODO I think we should make a combat manager, which will become quite advanced, visually represented by a header
             and also make combat not happen immediately when you enter a room, you always get to do something
             like it will generate a combat scene based on certain stuff but then everyone would have position and ability, which limit them
             like if you do something that takes away your right arm of your ability then you can't use right arm, but left is still open,

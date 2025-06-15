@@ -77,7 +77,7 @@ public class Effectable {
         {
             return EffectUpdateResult.HURT;
         }
-        else if(health != 0)
+        else if(health > 0)
             return EffectUpdateResult.VERYHURT;
         else
             return EffectUpdateResult.DEATH;

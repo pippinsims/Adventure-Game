@@ -15,7 +15,7 @@ public class WallEntity implements Interactible{
     protected String description;
     protected String name;
 
-    //TODO: add door (rework door implementation), add window
+    //TODO add window
     @Override
     public boolean isWallInteractible() 
     {
