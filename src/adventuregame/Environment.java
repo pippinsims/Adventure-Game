@@ -1,5 +1,6 @@
 package adventuregame;
 
+import adventuregame.interactibles.GoldenPotInteractible;
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.Door;
 import adventuregame.interactibles.wallentities.TorchInteractible;
@@ -122,6 +123,8 @@ public class Environment extends Utils
         //TODO make Nuel percieve the world in a normal way (rewrite all the output so its normal but save the weird for Laur)
         addPlayer(new Player());
         addPlayer(new Player("Nuel"));
+
+        new GoldenPotInteractible(treasureRoom);
     }
 
     private static void loadEffectDescriptions() 

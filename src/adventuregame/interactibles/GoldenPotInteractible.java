@@ -9,8 +9,9 @@ import adventuregame.items.GoldenPot;
 
 public class GoldenPotInteractible extends Interactible{
 
-    public GoldenPotInteractible()
+    public GoldenPotInteractible(Room room)
     {
+        myRoom = room;
         description = GoldenPot.defaultDescription;
         name = GoldenPot.defaultName;
     }

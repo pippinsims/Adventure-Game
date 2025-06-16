@@ -17,6 +17,7 @@ public class TorchInteractible extends WallEntity {
         name = "Torch";
         locationConjunction = "on";
         actionVerb = "Take";
+        actionLocPreposition = "from";
     }
 
     @Override

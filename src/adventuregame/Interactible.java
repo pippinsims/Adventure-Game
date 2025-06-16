@@ -7,7 +7,7 @@ import adventuregame.interfaces.Unit;
 
 public class Interactible implements Describable
 {
-    protected String name, description, actionVerb;
+    protected String name, description, actionVerb, actionLocPreposition, normalLocPreposition;
     protected Room myRoom;
 
     public void action(Unit u);

@@ -6,7 +6,7 @@ import adventuregame.interfaces.Unit;
 public class WallEntity extends Interactible{
 
     protected Wall wall;
-    protected String locString;
+    protected String locReference;
 
     //TODO add window
     @Override
@@ -15,12 +15,12 @@ public class WallEntity extends Interactible{
         return true;
     }
 
-    protected String locToString()
+    protected String setLocationReference()
     {
         if(wall == Wall.NONE)
-            return "the floor";
+            locReference = "the floor";
         else
-            return "the " + getWallString() + " wall";
+            locReference = "the " + getWallString() + " wall";
     }
 
     public String getWallString()
@@ -66,16 +66,6 @@ public class WallEntity extends Interactible{
         return true;
     }
 
-    public String getDescription() 
-    {
-        return description;
-    }
-
-    public String getName() 
-    {
-        return name;
-    }
-
     @Override
     protected String getArticle()
     {
@@ -92,14 +82,14 @@ public class WallEntity extends Interactible{
     public String getActionDescription() 
     {
         String article = getArticle();
-        return actionVerb + " " + article + " " + getDescription() + (!isAlone() ? " from " + locToString() : "");
+        return actionVerb + " " + article + " " + getDescription() + (!isAlone() ? " from " + locReference : "");
     }
 
     protected String locationConjunction;
     @Override
     public String getExposition()
-    {
-        return getDescription() + " " + locationConjunction + " " + locToString();
+    {//TODO understand locationConjunction and make getExposition usable in Interactible
+        return getDescription() + " " + locationConjunction + " " + locReference;
     }
     
     @Override
