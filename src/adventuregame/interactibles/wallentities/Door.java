@@ -19,9 +19,9 @@ public class Door extends WallEntity
         myOtherRoom.addDoor(this);
         
         generateDescription();
-        loc = wall;
+        this.wall = wall;
         name = "Door";
-        locationConjunction = (loc != Wall.NORTH) ? "that leads through" : "of";
+        locationConjunction = (wall != Wall.NORTH) ? "that leads through" : "of";
         actionVerb = "Use";
     }
 
@@ -34,9 +34,9 @@ public class Door extends WallEntity
     public Wall getWall(Room room)
     {
         if(room.equals(myRoom))
-            return loc;
+            return wall;
         else if(room.equals(myOtherRoom)) 
-            return complementOf(loc);
+            return complementOf(wall);
         else
             throw new RuntimeException("urk, you plugged in a room this door wasn't in, in getWall");
     }

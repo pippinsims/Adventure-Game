@@ -1,7 +1,6 @@
 package adventuregame;
 
 import adventuregame.interactibles.wallentities.Door;
-import adventuregame.interfaces.Interactible;
 import adventuregame.interfaces.Item;
 // local imports
 import adventuregame.interfaces.Unit;

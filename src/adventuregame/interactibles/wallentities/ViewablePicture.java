@@ -13,7 +13,7 @@ public class ViewablePicture extends WallEntity {
     {
         this.description = description;
         txtFileName = fileName;
-        this.loc = wall;
+        this.wall = wall;
         this.name = name;
         myRoom = room;
         myRoom.getInteractibles().add(this);

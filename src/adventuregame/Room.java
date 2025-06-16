@@ -1,6 +1,5 @@
 package adventuregame;
 
-import adventuregame.interfaces.Interactible;
 import adventuregame.interactibles.WallEntity;
 import adventuregame.interactibles.wallentities.Door;
 import adventuregame.interfaces.Describable;

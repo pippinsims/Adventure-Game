@@ -13,7 +13,7 @@ public class TorchInteractible extends WallEntity {
         myRoom = room;
         myRoom.getInteractibles().add(this);
         description = "flaming stick";
-        loc = wall;
+        this.wall = wall;
         name = "Torch";
         locationConjunction = "on";
         actionVerb = "Take";

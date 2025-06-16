@@ -3,19 +3,20 @@ package adventuregame;
 public class Damage {
 
     private int value;
-    private Type t;
+    private Type type;
     private String message;
     
     public enum Type{
         BASIC,
         FIRE,
-        PSYCHIC;
+        PSYCHIC,
+        BLUNT;
     }
 
-    public Damage(int v, Type ty, String msg)
+    public Damage(int value, Type type, String msg)
     {
-        value = v;
-        t = ty;
+        this.value = value;
+        this.type = type;
         message = msg;
     }
 
@@ -26,7 +27,7 @@ public class Damage {
 
     public Type getType()
     {
-        return t;
+        return type;
     }
 
     public String getMessage()

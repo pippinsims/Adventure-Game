@@ -1,19 +1,12 @@
 package adventuregame.interactibles;
 
-import java.util.ArrayList;
-
-import adventuregame.Room;
-import adventuregame.Utils;
-import adventuregame.interfaces.Describable;
-import adventuregame.interfaces.Interactible;
+import adventuregame.Interactible;
 import adventuregame.interfaces.Unit;
 
-public class WallEntity implements Interactible{
+public class WallEntity extends Interactible{
 
-    protected Room myRoom;
-    protected Wall loc;
-    protected String description;
-    protected String name;
+    protected Wall wall;
+    protected String locString;
 
     //TODO add window
     @Override
@@ -24,7 +17,7 @@ public class WallEntity implements Interactible{
 
     protected String locToString()
     {
-        if(loc == Wall.NONE)
+        if(wall == Wall.NONE)
             return "the floor";
         else
             return "the " + getWallString() + " wall";
@@ -32,7 +25,7 @@ public class WallEntity implements Interactible{
 
     public String getWallString()
     {
-        switch (loc) {
+        switch (wall) {
             case SOUTH:
                 return "south";
             case WEST:
@@ -50,13 +43,7 @@ public class WallEntity implements Interactible{
 
     public WallEntity.Wall getWall()
     {
-        return loc;
-    }
-
-    @Override
-    public Room getRoom()
-    {
-        return myRoom;
+        return wall;
     }
 
     public enum Wall
@@ -66,16 +53,6 @@ public class WallEntity implements Interactible{
         EAST,
         WEST,
         NONE;
-    }
-
-    protected boolean isAlone()
-    {
-        for (Interactible i : myRoom.getInteractibles()) 
-        {
-            if(this != i && i.getDescription() == getDescription())
-                return false;
-        }
-        return true;
     }
 
     protected boolean isAloneOnWall()
@@ -99,17 +76,22 @@ public class WallEntity implements Interactible{
         return name;
     }
 
-    protected String actionVerb;
+    @Override
+    protected String getArticle()
+    {
+        String a = "the";
+        if(!isAloneOnWall())
+        {
+            a = super.getArticle();
+        }
+
+        return a;
+    }
+
     @Override
     public String getActionDescription() 
     {
-        String article = "the";
-        if(!isAloneOnWall())
-        {
-            ArrayList<Describable> arr = new ArrayList<>();
-            for (Interactible i : myRoom.getInteractibles()) { arr.add(i); }
-            article = Utils.articleOfDescribableInList(arr, this);
-        }
+        String article = getArticle();
         return actionVerb + " " + article + " " + getDescription() + (!isAlone() ? " from " + locToString() : "");
     }
 
@@ -130,11 +112,5 @@ public class WallEntity implements Interactible{
     public void inspectInteractible() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
-    }
-
-    @Override
-    public boolean isDoor() 
-    {
-        return false;
     }
 }
