@@ -40,6 +40,7 @@ public class Player extends Effectable implements Unit{
     {
         name = n;
         myRoom = Environment.r0;
+        inv.addItem(new GoldenPot());
     }
 
     public Player(boolean genName)
