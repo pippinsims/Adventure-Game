@@ -7,10 +7,12 @@ import adventuregame.interfaces.Describable;
 
 import java.util.ArrayList;
 
-public class Room implements Describable{
+public class Room implements Describable
+{
 
-    private ArrayList<Enemy> enemies = new ArrayList<Enemy>();
-    private ArrayList<Interactible> interactibles = new ArrayList<Interactible>();
+    ArrayList<Enemy> enemies = new ArrayList<>();
+    ArrayList<Player> players = new ArrayList<>();
+    private ArrayList<Interactible> interactibles = new ArrayList<>();
     private ArrayList<Door> doors = new ArrayList<>();
     private String description = "a bare room";
     private String doormsg = "This room has";
@@ -61,11 +63,6 @@ public class Room implements Describable{
     public void setDoorMsg(String s)
     {
         doormsg = s;
-    }
-
-    public ArrayList<Enemy> getEnemies()
-    {
-        return enemies;
     }
 
     public ArrayList<Interactible> getInteractibles()

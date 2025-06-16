@@ -105,4 +105,10 @@ public class Door extends WallEntity
         else
             throw new RuntimeException("urk, you plugged in a room this door wasn't in");
     }
+
+    @Override
+    public boolean isDoor()
+    {
+        return true;
+    }
 }

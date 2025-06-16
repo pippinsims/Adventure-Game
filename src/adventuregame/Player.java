@@ -16,6 +16,7 @@ public class Player extends Effectable implements Unit{
     
     private String name;
     private Inventory inv = new Inventory(10);
+    private Room myRoom;
 
     enum Action {
         NOTHING,
@@ -31,26 +32,34 @@ public class Player extends Effectable implements Unit{
     public Player()
     {
         name = "Laur";
+        myRoom = Environment.r0;
         inv.addItem(new Bananarang());
     }
 
     public Player(String n)
     {
-        name = Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
+        name = n;
+        myRoom = Environment.r0;
     }
 
-    public void setActions(Room curRoom)
+    public Player(boolean genName)
+    {
+        name = Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
+        myRoom = Environment.r0;
+    }
+
+    public void setActions()
     {
         actions.clear();
         actions.add(Action.NOTHING);
 
-        if(curRoom.getInteractibles().size() > 0)
+        if(myRoom.getInteractibles().size() > 0)
         {
             actions.add(Action.INSPECT);
             actions.add(Action.INTERACT);
         }
 
-        if (curRoom.getEnemies().size() != 0)
+        if (myRoom.enemies.size() != 0)
         {
             actions.add(Action.FIGHT);
         }
@@ -62,177 +71,35 @@ public class Player extends Effectable implements Unit{
         }
     }
 
-    public boolean performAction(int i)
+    public void performAction(int i)
     {   
-        Room curRoom = Environment.r0;
         switch(actions.get(i))
         {
-            /*
-            TODO I think we should make a combat manager, which will become quite advanced, visually represented by a header
-            and also make combat not happen immediately when you enter a room, you always get to do something
-            like it will generate a combat scene based on certain stuff but then everyone would have position and ability, which limit them
-            like if you do something that takes away your right arm of your ability then you can't use right arm, but left is still open,
-            but also you might be far from them
-
-            might even be good to have a positionmanager that tracks kind of where people are the whole time for example if something comes
-            in the door behind you now its behind you, and enemies and objects have original position, maybe even you could make it so you
-            can place objects in positions. Maybe every room has a list of local unique positions, and you get a list of them when you want
-            to place something
-            */
             case FIGHT:
-                String[] attackTypes = generateAttackTypes(inv);
-                Damage attackDamage;
-                int chosenAttackType = Utils.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
-                
-                int chosenEnemyIndex;
-                ArrayList<Enemy> ens = curRoom.getEnemies();
-                if(ens.size() > 1)
-                {
-                    String[] prompts = new String[ens.size()];
-                    for(int j = 0; j < ens.size(); j++)
-                    {
-                        prompts[j] = ens.get(j).getName();
-                    }
-                    chosenEnemyIndex = Utils.promptList("Which fooeeoee meets thine bloodtherstey eyee?", prompts) - 1;
-                }
-                else
-                    chosenEnemyIndex = 0;
-
-                if(attackTypes[chosenAttackType].equals("Punch"))
-                {
-                    int dmgval = 1;
-                    attackDamage = new Damage(dmgval, Damage.Type.BASIC, "You heave a mighty blow at the " + curRoom.getEnemies().get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + dmgval + " damage!");
-                }
-                else
-                {   //chosenAttackType - 1 because of Punch
-                    attackDamage = inv.getItem(chosenAttackType - 1).getDamage();
-                }
-
-                System.out.println(attackDamage.getMessage());
-                
-                Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage);
-
+                Fight();
                 break;
 
             case INSPECT:
-                ArrayList<Interactible> inters = curRoom.getInteractibles();
-                int n = inters.size();    
-
-                String[] intersDescs = new String[n];
-                for(int j = 0; j < n; j++)
-                    intersDescs[j] = inters.get(j).getDescription();
-                
-                inters.get(Utils.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", intersDescs) - 1).inspectInteractible();
-                
+                Inspect();
                 break;
 
             case TALK:
-                System.out.println("What do you say?");
-                String s = Utils.scanner.nextLine();
-                if(s.equals("Quit."))
-                    return false;
-                else if(s.contains("stop"))
-                {
-                    for (Enemy e : curRoom.getEnemies()) 
-                    {
-                        e.pleaResponse();
-                    }
-                }
-                else
-                    Utils.slowPrintln("Interesting...\nWell, that does nothing.");
-                                   
+                Talk();         
                 break;
 
             case CAST:
-                String[] spellTypes = new String[]{"brain aneurysm"};
-                Damage spellDamage;
-
-                System.out.println("Focus...");
-                System.out.print("Speak: ");
-                String spell = Utils.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
-                    
-                if (spell.contains(spellTypes[0]))
-                {
-                    spellDamage = new Damage(1000, Damage.Type.PSYCHIC, "You release a level 1000 Psych Strike spell on all of your foes.");
-                    
-                    Utils.slowPrintln(spellDamage.getMessage());
-                    if(curRoom.getEnemies().size() == 0)
-                        Utils.slowPrint("... but you have no enemies! Nothing happens.");
-                    else
-                    {
-                        for (int j = Environment.r0.getEnemies().size() - 1; j > -1; j--)
-                        {
-                            Environment.playerAttackEnemy(j, spellDamage);
-                        }
-                    }
-                }
+                CastSpell();
                 break;
             
             case INTERACT:
-                inters = Environment.r0.getInteractibles();
-                String[] descriptions = new String[inters.size()];
-                ArrayList<Interactible> doors = new ArrayList<>();
-
-                for (int j = 0; j < descriptions.length; j++) 
-                {
-                    Interactible cur = inters.get(j);
-                    descriptions[j] = cur.getActionDescription();
-                    if(cur.getName().equals("Door"))
-                        doors.add(cur);
-                }    
-
-                Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions) - 1);
-
-                chosen.action(this);
-
-                if(chosen.getName().equals("Door"))
-                {             
-                    try 
-                    {
-                        Door door = (Door)chosen;
-                        curRoom = door.getNextRoom(curRoom);
-                    } 
-                    catch (Exception e) 
-                    {
-                        System.err.println("trying to get a room that doesn't exist");
-                    }
-                    
-                    Environment.r0 = curRoom;
-                }
+                Interact();
                 break;
 
             default:
                 break;
         }
-
-        return true;
-    }   
-
-    private String[] generateAttackTypes(Inventory inventory) 
-    {
-        String[] attackTypes = new String[inventory.getSize() + 1];
-        attackTypes[0] = "Punch";
-        for (int i = 0; i < attackTypes.length - 1; i++) 
-        {
-            Item j = inventory.getItem(i);
-            if(j.isWeapon())
-                attackTypes[i + 1] = j.getName();
-        }
-
-        return attackTypes;
     }
-
-    public String[] getActionDescriptions()
-    {   
-        String[] actionDescriptions = new String[actions.size()];
-       
-        for(int i = 0; i < actionDescriptions.length; i++)
-        {
-            actionDescriptions[i] = actionToString(actions.get(i));
-        }
-        return actionDescriptions;
-    }
-
+    
     private String actionToString(Action a)
     {
         switch (a) 
@@ -259,10 +126,168 @@ public class Player extends Effectable implements Unit{
                 return "[Empty Action]";
         }
     }
+    
+    /*
+    TODO I think we should make a combat manager, which will become quite advanced, visually represented by a header
+    and also make combat not happen immediately when you enter a room, you always get to do something
+    like it will generate a combat scene based on certain stuff but then everyone would have position and ability, which limit them
+    like if you do something that takes away your right arm of your ability then you can't use right arm, but left is still open,
+    but also you might be far from them
 
-    public Room getCurrentRoom()
-    {//MAKE THIS THE CURRENT ROOM THAT THIS PLAYER IS IN
-        return Environment.r0;
+    might even be good to have a positionmanager that tracks kind of where people are the whole time for example if something comes
+    in the door behind you now its behind you, and enemies and objects have original position, maybe even you could make it so you
+    can place objects in positions. Maybe every room has a list of local unique positions, and you get a list of them when you want
+    to place something
+    */
+    private void Fight()
+    {
+        ArrayList<Enemy> ens = myRoom.enemies;
+        if(ens.size() > 0)
+        {
+            String[] attackTypes = getAttackTypes(inv);
+            Damage attackDamage;
+            int chosenAttackType = Utils.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
+            
+            int chosenEnemyIndex = 0;
+            if(ens.size() > 1)
+            {
+                String[] prompts = new String[ens.size()];
+                for(int j = 0; j < ens.size(); j++)
+                {
+                    prompts[j] = ens.get(j).getName();
+                }
+                chosenEnemyIndex = Utils.promptList("Which fooeeoee meets thine bloodtherstey eyee?", prompts) - 1;
+            }
+
+            if(attackTypes[chosenAttackType].equals("Punch"))
+            {
+                int dmgval = 1;
+                attackDamage = new Damage(dmgval, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + dmgval + " damage!");
+            }
+            else
+            {                            //chosenAttackType - 1 because of Punch
+                attackDamage = inv.getItem(chosenAttackType - 1).getDamage();
+            }
+
+            System.out.println(attackDamage.getMessage());
+            
+            Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage);
+        }
+        else
+            System.out.println("No enemies.");
+    }
+
+    private void Inspect()
+    {
+        ArrayList<Interactible> inters = myRoom.getInteractibles();
+        int n = inters.size();    
+
+        String[] intersDescs = new String[n];
+        for(int j = 0; j < n; j++)
+            intersDescs[j] = inters.get(j).getDescription();
+        
+        inters.get(Utils.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", intersDescs) - 1).inspectInteractible();
+    }
+
+    private void Talk()
+    {
+        System.out.println("What do you say?");
+        String s = Utils.scanner.nextLine();
+        if(s.contains("stop"))
+        {
+            for (Enemy e : myRoom.enemies)
+            {
+                e.pleaResponse();
+            }
+        }
+        else
+            Utils.slowPrintln("Interesting...\nWell, that does nothing.");
+    }
+
+    private void CastSpell()
+    {
+        String[] spellTypes = new String[]{"brain aneurysm"};
+        Damage spellDamage;
+
+        System.out.println("Focus...");
+        System.out.print("Speak: ");
+        String spell = Utils.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
+            
+        if (spell.contains(spellTypes[0]))
+        {
+            spellDamage = new Damage(1000, Damage.Type.PSYCHIC, "You release a level 1000 Psych Strike spell on all of your foes.");
+            
+            Utils.slowPrintln(spellDamage.getMessage());
+            int s = myRoom.enemies.size();
+            if(s == 0)
+                Utils.slowPrint("... but you have no enemies! Nothing happens.");
+            else
+            {
+                for (int i = s - 1; i > -1; i--)
+                {
+                    Environment.playerAttackEnemy(i, spellDamage);
+                }
+            }
+        }
+    }
+
+    private void Interact()
+    {
+        ArrayList<Interactible> inters = myRoom.getInteractibles();
+        String[] descriptions = new String[inters.size()];
+        ArrayList<Interactible> doors = new ArrayList<>();
+
+        for (int j = 0; j < descriptions.length; j++) 
+        {
+            Interactible cur = inters.get(j);
+            descriptions[j] = cur.getActionDescription();
+            if(cur.isDoor())
+                doors.add(cur);
+        }    
+
+        Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions) - 1);
+
+        chosen.action(this);
+
+        if(chosen.isDoor())
+        {             
+            try 
+            {
+                Door door = (Door)chosen;
+                myRoom.players.remove(this);
+                myRoom = door.getNextRoom(myRoom);
+                myRoom.players.add(this);
+            } 
+            catch (Exception e) 
+            {
+                System.err.println("trying to use a door from a room that doesnt have that door!");
+            }
+        }
+    }
+
+    private String[] getAttackTypes(Inventory inventory) 
+    {
+        String[] attackTypes = new String[inventory.getSize() + 1];
+        attackTypes[0] = "Punch";
+        for (int i = 1; i < attackTypes.length - 1; i++) 
+        {
+            Item it = inventory.getItem(i - 1);
+            if(it.isWeapon())
+                attackTypes[i] = it.getName();
+        }
+
+        return attackTypes;
+    }
+
+    public String[] getActionDescriptions()
+    {   
+        String[] actionDescriptions = new String[actions.size()];
+       
+        for(int i = 0; i < actionDescriptions.length; i++)
+        {
+            actionDescriptions[i] = actionToString(actions.get(i));
+        }
+        return actionDescriptions;
     }
 
     @Override
@@ -299,6 +324,12 @@ public class Player extends Effectable implements Unit{
     public void updateUnit() {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
 
+        System.out.println();
+
+        printInfo();
+
+        System.out.println();
+        
         for (Effect e : effects) 
         {
             if(effectUpdate(e) != EffectUpdateResult.NONE)
@@ -315,9 +346,47 @@ public class Player extends Effectable implements Unit{
             }
         }
 
-        setActions(Environment.r0);
+        setActions();
 
         //lists available actions, lets the player choose, then performs chosen action
         performAction(Utils.promptList("You can:", getActionDescriptions()) - 1);
+    }
+
+    @Override
+    public Room getRoom() 
+    {
+        return myRoom;
+    }
+
+    private void printInfo()
+    {
+        System.out.println("--Info--");
+
+        if(!myRoom.getIsDiscovered())
+        {
+            Environment.currentPrintDelay = Utils.MAX_PRINT_DELAY;
+            Utils.slowPrintln("You're in " + myRoom.getDescription() + ".");
+            myRoom.setIsDiscovered(true);
+        }
+
+        ArrayList<Interactible> inters = myRoom.getInteractibles();
+        ArrayList<Enemy> ens = myRoom.enemies;
+        int num = inters.size();
+        for(int i = 0; i < num + ens.size(); i++)
+        {
+            //TODO what if there are two of the exact same interactible, make it say "There are thirteen diamond rakes and two shovels"
+            if(i == 0 || i == num)
+                Utils.slowPrint("There is ");
+
+            if(i < num)
+                Utils.slowPrintlnAsListWithArticles(inters.get(i).getExposition(), num, i);
+            else
+                Utils.slowPrintlnAsListWithArticles(ens.get(i - num).getRandomDescription(), ens.size(), i - num);
+        }
+
+        if(myRoom.getIsDiscovered())
+        {
+            Environment.currentPrintDelay = 3;
+        }
     }
 }

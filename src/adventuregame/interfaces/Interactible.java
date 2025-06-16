@@ -10,4 +10,5 @@ public interface Interactible extends Describable
     public String getExposition();
     public void inspectInteractible();
     public boolean isWallInteractible();
+    public boolean isDoor();
 }

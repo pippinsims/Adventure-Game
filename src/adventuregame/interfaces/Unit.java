@@ -2,6 +2,7 @@ package adventuregame.interfaces;
 import adventuregame.Damage;
 import adventuregame.Effectable;
 import adventuregame.Inventory;
+import adventuregame.Room;
 
 //FOR PLAYER, FOLLOWERS, NPCS, AND ENEMIES
 
@@ -15,4 +16,5 @@ public interface Unit extends Describable
     public int getAttackDamage();
     public int getWisdom();
     public String getName();
+    public Room getRoom();
 }

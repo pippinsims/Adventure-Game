@@ -131,4 +131,10 @@ public class WallEntity implements Interactible{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
     }
+
+    @Override
+    public boolean isDoor() 
+    {
+        return false;
+    }
 }

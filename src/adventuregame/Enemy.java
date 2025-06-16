@@ -10,6 +10,7 @@ public class Enemy extends Effectable implements Unit
     private int wisdom;
     private String description = "Screebling Squabbler";
     private String name;
+    private Room myRoom;
 
     public Enemy(int h, Inventory i, int d, int w)
     {
@@ -251,6 +252,12 @@ public class Enemy extends Effectable implements Unit
     {
         Utils.slowPrintln("You ended " + getName(), 200);
         // remove enemy from the current room
-        Environment.r0.getEnemies().remove(this);
+        Environment.r0.enemies.remove(this);
+    }
+
+    @Override
+    public Room getRoom() 
+    {
+        return myRoom;
     }
 }
