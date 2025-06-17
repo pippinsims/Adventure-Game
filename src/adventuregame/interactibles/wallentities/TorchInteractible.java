@@ -1,6 +1,9 @@
 package adventuregame.interactibles.wallentities;
 import adventuregame.items.TorchItem;
 
+import java.util.Random;
+
+import adventuregame.Environment;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
@@ -12,19 +15,40 @@ public class TorchInteractible extends WallEntity {
     {
         myRoom = room;
         myRoom.getInteractibles().add(this);
-        description = "flaming stick";
+        description = "torch";
         this.wall = wall;
         name = "Torch";
         normLocPrep = "on";
         actLocPrep = "from";
         actionVerb = "Take";
+        pluralDescription = "torches";
+        randomDescription = getRandomDescription();
         setLocationReference();
+    }
+
+    @Override
+    protected String getRandomDescription()
+    {
+        String[] names = new String[]{"flaming stick",
+                                      "blazing rod",
+                                      "burny ol\' chunk o\' lumber"};
+        
+        return names[new Random().nextInt(names.length)];
+    }
+
+    @Override
+    public String getDescription()
+    {
+        if(Environment.curPlayer.getName().equals("Laur"))
+            return randomDescription;
+        else
+            return description;
     }
 
     @Override
     public void inspectInteractible()
     {
-        Utils.slowPrintln("You take a closer look at this flaming stick and you notice that it is a burning torch, providing light and warmth!");
+        Utils.slowPrintln("You take a closer look at this torch and notice nothing new. It's hot, I guess");
     }
 
     @Override
@@ -33,11 +57,5 @@ public class TorchInteractible extends WallEntity {
         Utils.slowPrint("You have recieved a Torch!");
         u.getInventory().addItem(new TorchItem());
         myRoom.getInteractibles().remove(this);
-    }
-
-    @Override
-    public String getPluralDescription()
-    {
-        return "torches";
     }
 }

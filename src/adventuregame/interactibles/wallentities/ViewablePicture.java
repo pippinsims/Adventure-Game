@@ -1,4 +1,5 @@
 package adventuregame.interactibles.wallentities;
+
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
@@ -19,6 +20,7 @@ public class ViewablePicture extends WallEntity {
         normLocPrep = "on";
         actionVerb = "Inspect";
         actLocPrep = normLocPrep;
+        randomDescription = description;
         setLocationReference();
     }
 

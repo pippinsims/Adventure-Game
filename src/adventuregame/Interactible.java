@@ -86,4 +86,9 @@ public class Interactible extends Describable
     {
         throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
     }
+
+    protected String getRandomDescription()
+    {
+        return description;
+    }
 }

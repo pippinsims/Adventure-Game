@@ -10,7 +10,7 @@ import adventuregame.interactibles.WallEntity;
 public class Door extends WallEntity
 {
     Room myOtherRoom;
-    String pDes;
+    String rPDes;
 
     public Door(Room room1, Room room2, Wall wall)
     {
@@ -20,13 +20,32 @@ public class Door extends WallEntity
         myOtherRoom = room2;
         myOtherRoom.addDoor(this);
         
-        generateDescription();
+        description = "door";
+        pluralDescription = description + "s";
+        randomDescription = getRandomDescription();
         this.wall = wall;
         name = "Door";
-        normLocPrep = (wall != Wall.NORTH) ? "that leads through" : "of";
+        normLocPrep = "that leads through";
         actLocPrep = normLocPrep;
         actionVerb = "Use";
         setLocationReference();
+    }
+
+    protected String getRandomDescription()
+    {
+        String[] names = new String[]{"ordinary ol\' creaky slab o\' wood",
+                                      "regular ol\' creaky plank",
+                                      "unassuming, decrepit wooden door",
+                                      "Boris",
+                                      "doors"};
+        String[] plurals = new String[]{"ordinary ol\' creaky slabs o\' wood",
+                                        names[1]+"s",
+                                        names[2]+"s",
+                                        names[3]+"es",
+                                        names[4]+"es"};
+        int r = new Random().nextInt(names.length);
+        rPDes = plurals[r];
+        return names[r];
     }
 
     public Wall getWall(Room room)
@@ -68,37 +87,6 @@ public class Door extends WallEntity
         Utils.slowPrint("you used " + getDescription());
     }
 
-    private void generateDescription()
-    {
-        switch (new Random().nextInt(5)) {
-            case 0:
-                description = "ordinary ol\' creaky slab o\' wood";
-                pDes = "ordinary ol\' creaky slabs o\' wood";
-                break;
-            
-            case 1:
-                description = "regular ol\' creaky plank";
-                pDes = description + "s";
-                break;
-            case 2:
-                description = "unassuming, decrepit wooden door";
-                pDes = description + "s";
-                break;
-            case 3:
-                description = "Boris";
-                pDes = description + "es";
-                break;
-
-            case 4:
-                description = "doors";
-                pDes = description + "es";
-                break;
-        
-            default:
-                break;
-        }
-    }
-
     public Room getNextRoom(Room curRoom)
     {
         if(curRoom.equals(myRoom))
@@ -118,6 +106,6 @@ public class Door extends WallEntity
     @Override
     public String getPluralDescription()
     {
-        return pDes;
+        return pluralDescription;
     }
 }

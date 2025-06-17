@@ -1,5 +1,6 @@
 package adventuregame.interactibles;
 
+import adventuregame.Environment;
 import adventuregame.Interactible;
 import adventuregame.abstractclasses.Unit;
 
@@ -7,6 +8,8 @@ public class WallEntity extends Interactible{
 
     protected Wall wall;
     protected String locReference;
+    protected String pluralDescription;
+    protected String randomDescription;
 
     //TODO add window
     @Override
@@ -88,7 +91,22 @@ public class WallEntity extends Interactible{
     @Override
     public String getExposition()
     {
-        return description + " " + normLocPrep + " " + locReference;
+        String locPrep = normLocPrep;
+        if(Environment.curPlayer.getName().equals("Laur") && wall == Wall.NORTH)
+            locPrep = "of";
+        return locPrep + " " + locReference;
+    }
+
+    @Override
+    public String getPluralDescription()
+    {
+        return pluralDescription + " " + getExposition();
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return description + " " + getExposition();
     }
     
     @Override

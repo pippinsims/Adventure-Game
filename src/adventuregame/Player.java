@@ -324,6 +324,15 @@ public class Player extends Unit{
     {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
 
+        if(name == "Laur")
+        {
+            for (Enemy e : myRoom.enemies) 
+            {
+                e.Randomize();    
+            }
+        }
+        
+
         System.out.println();
 
         printInfo();

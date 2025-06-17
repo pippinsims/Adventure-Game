@@ -8,11 +8,11 @@ public class Enemy extends Unit
     private Inventory inv;
     private int dmg;
     private int wisdom;
-    private String description;
+    private String description, randomDescription;
     private String name;
     private Room myRoom;
 
-    public static String pluralOf(String description)
+    public String pluralOf(String description)
     {
         switch (description) {
             case "Screebling Squabbler": case "Mushroom": case "bllork": case "awkward fellow": case "Shroomie": case "Delicious Fun Guy": case "Knower of Forest Beds and Roots":
@@ -101,7 +101,10 @@ public class Enemy extends Unit
 
     public String getDescription()
     {
-        return description; //description = getRandomDescription(); when it's Laur's turn
+        if(Environment.curPlayer.getName() == "Laur")
+            return randomDescription;
+        else
+            return description; //description = getRandomDescription(); when it's Laur's turn
     }
 
     public String getName()
@@ -254,7 +257,16 @@ public class Enemy extends Unit
     }
 
     @Override
-    public String getPluralDescription() {
-        return pluralOf(description);
+    public String getPluralDescription() 
+    {
+        if(Environment.curPlayer.getName() == "Laur")
+            return pluralOf(randomDescription);
+        else
+            return pluralOf(description);
+    }
+
+    public void Randomize() 
+    {
+        randomDescription = getRandomDescription();
     }
 }
