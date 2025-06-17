@@ -1,9 +1,11 @@
 package adventuregame;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-import adventuregame.interfaces.Describable;
+import adventuregame.abstractclasses.Describable;
 
 public class Utils {
 
@@ -32,30 +34,57 @@ public class Utils {
         return completeString;
     }
 
+    private static boolean isVowel(char c)
+    {
+        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+    }
+
     public static String articleOf(String str)
     {
         str = str.toLowerCase();
         char c = str.charAt(0);
 
-        switch(c)
+        //if first is vowel, or if first is y and second isn't vowel
+        if(isVowel(c) || (c == 'y' && !isVowel(str.charAt(1))))
+            return "an";
+        else
+            return "a";
+    }
+
+    public static void slowPrintDescList(ArrayList<Describable> arr)
+    {
+        Map<Describable, Integer> m = genDescMap(arr);
+
+        int i = 0;
+        String a, d;
+        for (Map.Entry<Describable, Integer> e : m.entrySet())
         {
-            case 'a': case 'e': case 'i': case 'o': case 'u':
-                return "an";
-            case 'y':
-                switch (str.charAt(1)) 
-                {
-                    case 'a': case 'e': case 'i': case 'o': case 'u':
-                        break;
-                
-                    default:
-                        return "an";
-                }
-            
-            default:
-                break;
+            if(e.getValue() > 1)
+            {
+                d = e.getKey().getPluralDescription();
+                a = ((i == 0) ? "There are " : "") + e.getValue();
+            }
+            else
+            { 
+                d = e.getKey().getDescription();
+                a = ((i == 0) ? "There is " : "") + Utils.articleOf(d);
+            }
+       
+            Utils.slowPrintlnAsListEntry(a + " " + d, m.size(), i);
+
+            i++;
+        }
+    }
+
+    private static Map<Describable, Integer> genDescMap(ArrayList<Describable> arr)
+    {
+        Map<Describable, Integer> m = new HashMap<>();
+        for (Describable d : arr) 
+        {
+            m.put(d, m.getOrDefault(d, 0) + 1);
         }
 
-        return "a";
+        return m;
     }
 
     public static void slowPrint(String output)
@@ -104,11 +133,18 @@ public class Utils {
                                              "."));
     }
 
-    public static void slowPrintlnAsListWithArticles(String msg, int size, int cur)
+    public static void slowPrintlnAsListEntryWithArticles(String msg, int size, int cur)
     {
         slowPrint(articleOf(msg) + " " + msg + ((cur < size - 2)  ? ", " :
                                                 (cur == size - 2) ? ", and " :
                                                                     ".\n"));
+    }
+
+    public static void slowPrintlnAsListEntry(String msg, int size, int cur)
+    {
+        slowPrint(msg + ((cur < size - 2)  ? ", " :
+                         (cur == size - 2) ? ", and " :
+                                             ".\n"));
     }
 
     public static void printOptions(String[] options)

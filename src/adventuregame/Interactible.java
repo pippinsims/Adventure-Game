@@ -2,10 +2,10 @@ package adventuregame;
 
 import java.util.ArrayList;
 
-import adventuregame.interfaces.Describable;
-import adventuregame.interfaces.Unit;
+import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Unit;
 
-public class Interactible implements Describable
+public class Interactible extends Describable
 {
     protected String name, description, actionVerb, actLocPrep, normLocPrep, locReference;
     protected Room myRoom;
@@ -25,6 +25,11 @@ public class Interactible implements Describable
     {
         String article = getArticle();
         return article + " " + description + " " + normLocPrep + " " + locReference;
+    }
+
+    public String getPluralDescription()
+    {
+        throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
     }
 
     protected String getArticle() 

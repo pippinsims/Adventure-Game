@@ -1,8 +1,8 @@
 package adventuregame.items;
 import adventuregame.Damage;
-import adventuregame.interfaces.Item;
+import adventuregame.abstractclasses.Item;
 
-public class Bananarang implements Item 
+public class Bananarang extends Item 
 {
     String description = "A boomerang made of a potassium rich biotic material.";
     String name = "Bananarang";
@@ -34,5 +34,10 @@ public class Bananarang implements Item
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getPluralDescription() {
+        return "bananarangs";
     }
 }

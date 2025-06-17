@@ -14,6 +14,7 @@ public class Environment extends Utils
 {
     public static Room r0;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
+    public static Player curPlayer;
     public static Map<Effect.Type, String> effectDescriptions = new HashMap<>();
     private static ArrayList<Room> playerRooms = new ArrayList<>();
 
@@ -42,6 +43,7 @@ public class Environment extends Utils
                 ArrayList<Player> ps = r0.players;
                 for (int i = ps.size() - 1; i > -1; i--) 
                 {
+                    curPlayer = ps.get(i);
                     ps.get(i).updateUnit();
                     System.out.println();
                 }
@@ -135,7 +137,7 @@ public class Environment extends Utils
 
     public static void playerAttackEnemy(int index, Damage d)
     {
-        //MAKE THERE BE DIFFERENT REACTIONS TO BEING ATTACKED
+        //TODO MAKE THERE BE DIFFERENT REACTIONS TO BEING ATTACKED
         Enemy e = r0.enemies.get(index);
         if(e.receiveDamage(d.getValue(), d.getType()) == Effectable.EffectUpdateResult.DEATH)
         {

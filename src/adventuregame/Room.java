@@ -1,17 +1,17 @@
 package adventuregame;
 
+import adventuregame.abstractclasses.Describable;
 import adventuregame.interactibles.WallEntity;
 import adventuregame.interactibles.wallentities.Door;
-import adventuregame.interfaces.Describable;
 
 import java.util.ArrayList;
 
-public class Room implements Describable
+public class Room extends Describable
 {
 
     ArrayList<Enemy> enemies = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
-    private ArrayList<Interactible> interactibles = new ArrayList<>();
+    ArrayList<Interactible> interactibles = new ArrayList<>();
     private ArrayList<Door> doors = new ArrayList<>();
     private String description = "a bare room";
     private String doormsg = "This room has";
@@ -196,5 +196,11 @@ public class Room implements Describable
     public String getName() 
     {
         return name;
+    }
+
+    @Override
+    public String getPluralDescription() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
     }
 }

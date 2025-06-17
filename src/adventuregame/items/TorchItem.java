@@ -1,9 +1,9 @@
 package adventuregame.items;
 
 import adventuregame.Damage;
-import adventuregame.interfaces.Item;
+import adventuregame.abstractclasses.Item;
 
-public class TorchItem implements Item{
+public class TorchItem extends Item{
 
     String description = "A burning torch, providing light and warmth!";
     String name = "Torch";
@@ -17,6 +17,12 @@ public class TorchItem implements Item{
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getPluralDescription()
+    {
+        return "torches";
     }
 
     @Override

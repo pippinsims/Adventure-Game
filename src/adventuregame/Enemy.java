@@ -1,16 +1,31 @@
 package adventuregame;
 import java.util.Random;
 
-import adventuregame.interfaces.Unit;
+import adventuregame.abstractclasses.Unit;
 
-public class Enemy extends Effectable implements Unit
+public class Enemy extends Unit
 {
     private Inventory inv;
     private int dmg;
     private int wisdom;
-    private String description = "Screebling Squabbler";
+    private String description;
     private String name;
     private Room myRoom;
+
+    public static String pluralOf(String description)
+    {
+        switch (description) {
+            case "Screebling Squabbler": case "Mushroom": case "bllork": case "awkward fellow": case "Shroomie": case "Delicious Fun Guy": case "Knower of Forest Beds and Roots":
+                return description + 's';
+            case "pale man" : 
+                return "pale men";
+            case "Those-Who-Feast":
+                return description;
+
+            default:
+                throw new UnsupportedOperationException("Used an impossible description for Enemy");
+        }
+    }
 
     public Enemy(int h, Inventory i, int d, int w)
     {
@@ -20,15 +35,16 @@ public class Enemy extends Effectable implements Unit
         dmg = d;
         wisdom = w;
         generateName();
+        description = "Screebling Squabbler";
     }
 
-    public Enemy(int h, Inventory i, int d, int w, String des)
+    public Enemy(int health, Inventory inv, int dmg, int wis, String des)
     {
-        maxHealth = h;
-        health = maxHealth;
-        inv = i;
-        dmg = d;
-        wisdom = w;
+        maxHealth = health;
+        this.health = maxHealth;
+        this.inv = inv;
+        this.dmg = dmg;
+        wisdom = wis;
         description = des;
         generateName();
     }
@@ -41,6 +57,7 @@ public class Enemy extends Effectable implements Unit
         dmg = 2;
         wisdom = 20;
         generateName();
+        description = "Screebling Squabbler";
     }
 
     private void generateName() 
@@ -73,43 +90,18 @@ public class Enemy extends Effectable implements Unit
 
     public String getRandomDescription()
     {
+        String[] names = new String[]{description};
         if (description.equals("Screebling Squabbler"))
-        {
-            switch (new Random().nextInt(4)) 
-            {
-                default:
-                    return description;
-                case 1:
-                    return "pale man";
-                case 2:
-                    return "bllork";
-                case 3:
-                    return "awkward fellow";
-            }
-        }
+            names = new String[]{description, "pale man", "bllork", "awkward fellow"};
         else if (description.equals("Mushroom"))
-            {
-                switch (new Random().nextInt(5))
-                {
-                    default:
-                        return description;
-                    case 1:
-                        return "Shroomie";
-                    case 2:
-                        return "Delicious Fun Guy";
-                    case 3:
-                        return "Those-Who-Feast";
-                    case 4:
-                        return "Knower of Forest Beds and Roots";
-                }
-            }
-        else
-            return "???";
+            names = new String[]{description,"Shroomie", "Delicious Fun Guy", "Those-Who-Feast", "Knower of Forest Beds and Roots"};
+
+        return names[new Random().nextInt(names.length)];
     }
 
     public String getDescription()
     {
-        return description;
+        return description; //description = getRandomDescription(); when it's Laur's turn
     }
 
     public String getName()
@@ -259,5 +251,10 @@ public class Enemy extends Effectable implements Unit
     public Room getRoom() 
     {
         return myRoom;
+    }
+
+    @Override
+    public String getPluralDescription() {
+        return pluralOf(description);
     }
 }

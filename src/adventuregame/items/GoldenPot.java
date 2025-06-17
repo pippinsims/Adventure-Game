@@ -1,9 +1,9 @@
 package adventuregame.items;
 
 import adventuregame.Damage;
-import adventuregame.interfaces.Item;
+import adventuregame.abstractclasses.Item;
 
-public class GoldenPot implements Item{
+public class GoldenPot extends Item{
 
     public static final String defaultDescription = "a smooth, curvaceous golden pot. It has a spherical base which curves into a neck that widens at the mouth.";
     public static final String defaultName = "Golden Pot";
@@ -33,4 +33,8 @@ public class GoldenPot implements Item{
         return name;
     }
 
+    @Override
+    public String getPluralDescription() {
+        return "golden pots";
+    }
 }

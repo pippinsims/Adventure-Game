@@ -5,7 +5,7 @@ import java.util.Random;
 import adventuregame.Interactible;
 import adventuregame.Room;
 import adventuregame.Utils;
-import adventuregame.interfaces.Unit;
+import adventuregame.abstractclasses.Unit;
 import adventuregame.items.GoldenPot;
 
 public class GoldenPotInteractible extends Interactible{

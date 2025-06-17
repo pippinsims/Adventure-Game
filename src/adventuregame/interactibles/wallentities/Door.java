@@ -4,12 +4,14 @@ import java.util.Random;
 
 import adventuregame.Room;
 import adventuregame.Utils;
+import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallEntity;
-import adventuregame.interfaces.Unit;
 
 public class Door extends WallEntity
 {
     Room myOtherRoom;
+    String pDes;
+
     public Door(Room room1, Room room2, Wall wall)
     {
         myRoom = room1;
@@ -25,12 +27,6 @@ public class Door extends WallEntity
         actLocPrep = normLocPrep;
         actionVerb = "Use";
         setLocationReference();
-    }
-
-    @Override
-    public Wall getWall()
-    {
-        throw new RuntimeException("Door can't use this method");
     }
 
     public Wall getWall(Room room)
@@ -77,20 +73,25 @@ public class Door extends WallEntity
         switch (new Random().nextInt(5)) {
             case 0:
                 description = "ordinary ol\' creaky slab o\' wood";
+                pDes = "ordinary ol\' creaky slabs o\' wood";
                 break;
             
             case 1:
                 description = "regular ol\' creaky plank";
+                pDes = description + "s";
                 break;
             case 2:
                 description = "unassuming, decrepit wooden door";
+                pDes = description + "s";
                 break;
             case 3:
                 description = "Boris";
+                pDes = description + "es";
                 break;
 
             case 4:
                 description = "doors";
+                pDes = description + "es";
                 break;
         
             default:
@@ -112,5 +113,11 @@ public class Door extends WallEntity
     public boolean isDoor()
     {
         return true;
+    }
+
+    @Override
+    public String getPluralDescription()
+    {
+        return pDes;
     }
 }

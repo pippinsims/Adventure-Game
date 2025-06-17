@@ -1,7 +1,7 @@
 package adventuregame.interactibles;
 
 import adventuregame.Interactible;
-import adventuregame.interfaces.Unit;
+import adventuregame.abstractclasses.Unit;
 
 public class WallEntity extends Interactible{
 

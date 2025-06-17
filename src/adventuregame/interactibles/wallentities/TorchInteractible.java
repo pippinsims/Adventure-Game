@@ -1,9 +1,9 @@
 package adventuregame.interactibles.wallentities;
-import adventuregame.interfaces.Unit;
 import adventuregame.items.TorchItem;
 
 import adventuregame.Room;
 import adventuregame.Utils;
+import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallEntity;
 
 public class TorchInteractible extends WallEntity {
@@ -33,5 +33,11 @@ public class TorchInteractible extends WallEntity {
         Utils.slowPrint("You have recieved a Torch!");
         u.getInventory().addItem(new TorchItem());
         myRoom.getInteractibles().remove(this);
+    }
+
+    @Override
+    public String getPluralDescription()
+    {
+        return "torches";
     }
 }

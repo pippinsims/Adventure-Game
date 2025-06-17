@@ -1,15 +1,15 @@
 package adventuregame;
 
+import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.wallentities.Door;
-import adventuregame.interfaces.Item;
-// local imports
-import adventuregame.interfaces.Unit;
 import adventuregame.items.*;
 
 // standard imports
 import java.util.*;
 
-public class Player extends Effectable implements Unit{
+public class Player extends Unit{
     //private int playerDamage = 1;
     //private int playerWisdom = 2;
     
@@ -320,7 +320,8 @@ public class Player extends Effectable implements Unit{
     }
 
     @Override
-    public void updateUnit() {
+    public void updateUnit() 
+    {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
 
         System.out.println();
@@ -368,32 +369,27 @@ public class Player extends Effectable implements Unit{
             myRoom.setIsDiscovered(true);
         }
 
-        ArrayList<Interactible> inters = myRoom.getInteractibles();
         ArrayList<Enemy> ens = myRoom.enemies;
-        // Map<Enemy,Integer> m = new HashMap<>();
-        // for (Enemy enemy : ens) {
-        //     m.put(enemy, m.getOrDefault(m, 0) + 1);
-        // }
-        // for (Map.Entry<Enemy,Integer> e : m.entrySet()) 
-        // {
-        //     Utils.slowPrintlnAsListWithArticles(e.getValue() + e.getKey().getDescription(), );
-        // }
-        int num = inters.size();
-        for(int i = 0; i < num + ens.size(); i++)
-        {
-            //TODO what if there are two of the exact same interactible, make it say "There are thirteen diamond rakes and two shovels"
-            if(i == 0 || i == num)
-                Utils.slowPrint("There is ");
+        ArrayList<Describable> dess = new ArrayList<>();
+        for (Enemy e : ens) { dess.add(e); }
+        
+        Utils.slowPrintDescList(dess);
 
-            if(i < num)
-                Utils.slowPrintlnAsListWithArticles(inters.get(i).getExposition(), num, i);
-            else
-                Utils.slowPrintlnAsListWithArticles(ens.get(i - num).getRandomDescription(), ens.size(), i - num);
-        }
+        dess.clear();
+        ArrayList<Interactible> inters = myRoom.interactibles;
+        for (Interactible i : inters) { dess.add(i); }
+        
+        Utils.slowPrintDescList(dess);
 
         if(myRoom.getIsDiscovered())
         {
             Environment.currentPrintDelay = 3;
         }
+    }
+
+    @Override
+    public String getPluralDescription() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
     }
 }

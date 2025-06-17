@@ -3,7 +3,9 @@ package adventuregame;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Effectable {
+import adventuregame.abstractclasses.Describable;
+
+public class Effectable extends Describable{
     protected ArrayList<Effect> effects = new ArrayList<Effect>();
     protected float maxHealth = 10;
     protected float health = maxHealth;
@@ -42,9 +44,14 @@ public class Effectable {
 
         if(effectIsOver)
         {
-            // no .equals is defined for effect and that is what we want because could be multiple
-            // of a certain type of effect (remove by reference is good here)
-            effects.remove(e);
+            for(int i = 0; i < effects.size(); i++)
+            {
+                if(effects.get(i) == e)
+                {
+                    effects.remove(i);
+                    break;
+                }
+            }
         }
 
         return result;
@@ -91,5 +98,23 @@ public class Effectable {
     final public float getHealth()
     {
         return health;
+    }
+
+    @Override
+    public String getPluralDescription() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
+    }
+
+    @Override
+    public String getDescription() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
 }

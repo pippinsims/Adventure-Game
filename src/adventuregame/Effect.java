@@ -1,11 +1,11 @@
 package adventuregame;
 
-import adventuregame.interfaces.Describable;
-
 import java.util.HashMap;
 import java.util.Map;
 
-public class Effect implements Describable{
+import adventuregame.abstractclasses.Describable;
+
+public class Effect extends Describable{
     
     // fill map at start of Environment.main() using file
     static Map<Type,String> effectDescriptions = new HashMap<>();
@@ -58,6 +58,11 @@ public class Effect implements Describable{
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getPluralDescription() {
+        return description + " effects";
     }
 }
 

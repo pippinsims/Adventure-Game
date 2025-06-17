@@ -1,8 +1,8 @@
 package adventuregame;
 
-import adventuregame.interfaces.Item;
-
 import java.util.ArrayList;
+
+import adventuregame.abstractclasses.Item;
 
 public class Inventory {
     private ArrayList<ItemStack> items = new ArrayList<ItemStack>();

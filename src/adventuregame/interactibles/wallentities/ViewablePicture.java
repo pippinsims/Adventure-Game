@@ -1,8 +1,7 @@
 package adventuregame.interactibles.wallentities;
-import adventuregame.interfaces.Unit;
-
 import adventuregame.Room;
 import adventuregame.Utils;
+import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallEntity;
 
 public class ViewablePicture extends WallEntity {
@@ -38,5 +37,11 @@ public class ViewablePicture extends WallEntity {
         System.out.println("\"" + name + "\"");
         System.out.println("Press enter to continue");
         Utils.scanner.nextLine();
+    }
+
+    @Override
+    public String getPluralDescription()
+    {
+        return "depictions";
     }
 }
