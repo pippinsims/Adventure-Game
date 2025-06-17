@@ -370,6 +370,14 @@ public class Player extends Effectable implements Unit{
 
         ArrayList<Interactible> inters = myRoom.getInteractibles();
         ArrayList<Enemy> ens = myRoom.enemies;
+        // Map<Enemy,Integer> m = new HashMap<>();
+        // for (Enemy enemy : ens) {
+        //     m.put(enemy, m.getOrDefault(m, 0) + 1);
+        // }
+        // for (Map.Entry<Enemy,Integer> e : m.entrySet()) 
+        // {
+        //     Utils.slowPrintlnAsListWithArticles(e.getValue() + e.getKey().getDescription(), );
+        // }
         int num = inters.size();
         for(int i = 0; i < num + ens.size(); i++)
         {

@@ -4,6 +4,7 @@ import java.util.Random;
 
 import adventuregame.Interactible;
 import adventuregame.Room;
+import adventuregame.Utils;
 import adventuregame.interfaces.Unit;
 import adventuregame.items.GoldenPot;
 
@@ -14,6 +15,19 @@ public class GoldenPotInteractible extends Interactible{
         myRoom = room;
         description = GoldenPot.defaultDescription;
         name = GoldenPot.defaultName;
+        actionVerb = "Kick";
+
+        if(new Random().nextInt(2) == 1)
+        {
+            normLocPrep = "on";
+            locReference = "the floor";
+        }
+        else
+        {
+            normLocPrep = "in";
+            locReference = "the corner";
+        }
+        actLocPrep = normLocPrep; 
     }
 
     @Override
@@ -42,15 +56,9 @@ public class GoldenPotInteractible extends Interactible{
     }
 
     @Override
-    public String getExposition() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getExposition'");
-    }
-
-    @Override
-    public void inspectInteractible() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
+    public void inspectInteractible() 
+    {
+        Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
     }
 
     @Override

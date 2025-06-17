@@ -7,10 +7,9 @@ import adventuregame.interfaces.Unit;
 
 public class Interactible implements Describable
 {
-    protected String name, description, actionVerb, actionLocPreposition, normalLocPreposition;
+    protected String name, description, actionVerb, actLocPrep, normLocPrep, locReference;
     protected Room myRoom;
 
-    public void action(Unit u);
     public Room getRoom()
     {
         return myRoom;
@@ -19,8 +18,13 @@ public class Interactible implements Describable
     public String getActionDescription()
     {
         String article = getArticle();
-        //TODO check if getArticle works, and work on LOCATIONS
-        return actionVerb + " " + article + " " + description + ((!isAlone()) ? locToString() : ""); 
+        return actionVerb + " " + article + " " + description + ((!isAlone()) ? " that is " + actLocPrep + " " + locReference : ""); 
+    }
+
+    public String getExposition()
+    {
+        String article = getArticle();
+        return article + " " + description + " " + normLocPrep + " " + locReference;
     }
 
     protected String getArticle() 
@@ -36,12 +40,6 @@ public class Interactible implements Describable
         return a;
     }
 
-    private String locToString()
-    {
-        //from the wall, on the wall, in the corner, under the table
-        throw new UnsupportedOperationException("Unimplemented method 'locToString'");
-    }
-
     protected boolean isAlone()
     {
         for (Interactible i : myRoom.getInteractibles()) 
@@ -51,9 +49,6 @@ public class Interactible implements Describable
         }
         return true;
     }
-
-    public String getExposition();
-    public void inspectInteractible();
     
     public boolean isWallInteractible() 
     { 
@@ -75,5 +70,15 @@ public class Interactible implements Describable
     public String getName() 
     {
         return name;
+    }
+
+    public void action(Unit u)
+    {
+        throw new UnsupportedOperationException("Unimplemented method 'action'");
+    }
+
+    public void inspectInteractible()
+    {
+        throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
     }
 }

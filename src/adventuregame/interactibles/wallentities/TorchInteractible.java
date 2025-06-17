@@ -15,9 +15,10 @@ public class TorchInteractible extends WallEntity {
         description = "flaming stick";
         this.wall = wall;
         name = "Torch";
-        locationConjunction = "on";
+        normLocPrep = "on";
+        actLocPrep = "from";
         actionVerb = "Take";
-        actionLocPreposition = "from";
+        setLocationReference();
     }
 
     @Override

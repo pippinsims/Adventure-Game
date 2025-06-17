@@ -21,8 +21,10 @@ public class Door extends WallEntity
         generateDescription();
         this.wall = wall;
         name = "Door";
-        locationConjunction = (wall != Wall.NORTH) ? "that leads through" : "of";
+        normLocPrep = (wall != Wall.NORTH) ? "that leads through" : "of";
+        actLocPrep = normLocPrep;
         actionVerb = "Use";
+        setLocationReference();
     }
 
     @Override

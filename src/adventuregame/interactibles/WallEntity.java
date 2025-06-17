@@ -15,7 +15,7 @@ public class WallEntity extends Interactible{
         return true;
     }
 
-    protected String setLocationReference()
+    protected void setLocationReference()
     {
         if(wall == Wall.NONE)
             locReference = "the floor";
@@ -85,11 +85,10 @@ public class WallEntity extends Interactible{
         return actionVerb + " " + article + " " + getDescription() + (!isAlone() ? " from " + locReference : "");
     }
 
-    protected String locationConjunction;
     @Override
     public String getExposition()
-    {//TODO understand locationConjunction and make getExposition usable in Interactible
-        return getDescription() + " " + locationConjunction + " " + locReference;
+    {
+        return description + " " + normLocPrep + " " + locReference;
     }
     
     @Override

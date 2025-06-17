@@ -17,8 +17,10 @@ public class ViewablePicture extends WallEntity {
         this.name = name;
         myRoom = room;
         myRoom.getInteractibles().add(this);
-        locationConjunction = "on";
+        normLocPrep = "on";
         actionVerb = "Inspect";
+        actLocPrep = normLocPrep;
+        setLocationReference();
     }
 
     @Override
