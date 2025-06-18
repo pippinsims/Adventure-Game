@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Random;
 
 import adventuregame.abstractclasses.Describable;
 
 public class Utils {
 
+    public static Random rand = new Random();
     public static Scanner scanner = new Scanner(System.in);
     public static final int MAX_PRINT_DELAY = 1; //50 for normal gameplay
     public static int currentPrintDelay = MAX_PRINT_DELAY;
@@ -113,7 +115,7 @@ public class Utils {
         {   
             try
             {
-                if(output.charAt(i) == '\n')
+                if(output.charAt(i) == '\n' || output.charAt(i) == '.')
                     Thread.sleep(sleepDuration * 5);
                 Thread.sleep(sleepDuration);
             }

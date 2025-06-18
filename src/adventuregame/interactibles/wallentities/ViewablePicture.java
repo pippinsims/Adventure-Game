@@ -7,7 +7,7 @@ import adventuregame.interactibles.WallEntity;
 
 public class ViewablePicture extends WallEntity {
     
-    String txtFileName;
+    private String txtFileName;
     
     public ViewablePicture(Room room, String fileName, Wall wall, String description, String name)
     {

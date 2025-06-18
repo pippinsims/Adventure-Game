@@ -24,7 +24,6 @@ public class Room extends Describable
 
     public Room(String des, String n)
     {
-        this();
         description = des;
         name = n;
     }

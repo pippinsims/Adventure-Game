@@ -10,8 +10,7 @@ public class TorchItem extends Item{
 
     @Override
     public void action() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'action'");
+        System.out.println("The torch is fiery... You stare deeply into the flames.");
     }
 
     @Override

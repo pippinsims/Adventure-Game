@@ -16,7 +16,7 @@ public class Effectable extends Describable{
         DEATH,
         VERYHURT,
         HURT,
-        NONE;
+        NONE
     }
 
     final public EffectUpdateResult effectUpdate(Effect e)

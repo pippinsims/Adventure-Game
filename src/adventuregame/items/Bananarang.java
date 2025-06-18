@@ -10,8 +10,7 @@ public class Bananarang extends Item
     @Override
     public void action() 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'action'");
+        System.out.println("You go to take a bite... but then... you probably shouldn't");
     }
 
     @Override

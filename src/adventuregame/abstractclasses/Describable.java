@@ -4,7 +4,7 @@ public abstract class Describable
 {
     public abstract String getPluralDescription();
     public abstract String getDescription();
-    public abstract  String getName();
+    public abstract String getName();
 
     @Override
     public int hashCode() 
