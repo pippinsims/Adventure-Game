@@ -270,6 +270,7 @@ public class Player extends Unit{
         return attackTypes;
     }
 
+    //TODO revamp this so that it doesn't list multiple of the same thing
     public String[] getActionDescriptions()
     {   
         String[] actionDescriptions = new String[actions.size()];
