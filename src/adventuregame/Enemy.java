@@ -15,7 +15,7 @@ public class Enemy extends Unit
     public String pluralOf(String description)
     {
         switch (description) {
-            case "Screebling Squabbler": case "Mushroom": case "bllork": case "awkward fellow": case "Shroomie": case "Delicious Fun Guy": case "Knower of Forest Beds and Roots":
+            case "goblin": case "Screebling Squabbler": case "Mushroom": case "bllork": case "awkward fellow": case "Shroomie": case "Delicious Fun Guy": case "Knower of Forest Beds and Roots":
                 return description + 's';
             case "pale man" : 
                 return "pale men";
@@ -35,7 +35,7 @@ public class Enemy extends Unit
         dmg = d;
         wisdom = w;
         generateName();
-        description = "Screebling Squabbler";
+        description = "goblin";
     }
 
     public Enemy(int health, Inventory inv, int dmg, int wis, String des)
@@ -57,7 +57,7 @@ public class Enemy extends Unit
         dmg = 2;
         wisdom = 20;
         generateName();
-        description = "Screebling Squabbler";
+        description = "goblin";
     }
 
     private void generateName() 
@@ -81,7 +81,7 @@ public class Enemy extends Unit
         }
 
         if(health <= maxHealth / 3)
-            return " bent double " + type;
+            return "bent double " + type;
         else if(health <= (maxHealth * 2) / 3)
             return "slightly bruised " + type;
         else
@@ -91,10 +91,10 @@ public class Enemy extends Unit
     public String getRandomDescription()
     {
         String[] names = new String[]{description};
-        if (description.equals("Screebling Squabbler"))
-            names = new String[]{description, "pale man", "bllork", "awkward fellow"};
-        else if (description.equals("Mushroom"))
-            names = new String[]{description,"Shroomie", "Delicious Fun Guy", "Those-Who-Feast", "Knower of Forest Beds and Roots"};
+        if (description.equals("goblin"))
+            names = new String[]{"Screebling Squabbler", "pale man", "bllork", "awkward fellow"};
+        else if (description.equals("Mushroom Monster"))
+            names = new String[]{"Mushroom","Shroomie", "Delicious Fun Guy", "Those-Who-Feast", "Knower of Forest Beds and Roots"};
 
         return names[new Random().nextInt(names.length)];
     }
@@ -142,12 +142,12 @@ public class Enemy extends Unit
     public void pleaResponse()
     {
         Utils.slowPrint(getName() + ": ");
-        if (description.equals("Screebling Squabbler"))
+        if (description.equals("goblin"))
         {
             switch(new Random().nextInt(3))
             {
                 case 0:
-                    Utils.slowPrintln("I care not for your pitifulness.");
+                    Utils.slowPrintln("I pity thee not.");
                     break;
                 case 1:
                     Utils.slowPrintln("ok.");
@@ -161,7 +161,7 @@ public class Enemy extends Unit
                     break;
             }
         }
-        else if (description.equals("Mushroom"))
+        else if (description.equals("Mushroom Monster"))
         {
             isStunned = true;
             switch(new Random().nextInt(3))
@@ -188,7 +188,7 @@ public class Enemy extends Unit
         
         switch (description) 
         {
-            case "Screebling Squabbler":
+            case "goblin":
                 switch(i)
                 {
                     case 1: //DO NOTHING
@@ -204,7 +204,7 @@ public class Enemy extends Unit
                 }
                 break;
 
-            case "Mushroom":
+            case "Mushroom Monster":
                 switch(i) 
                 {
                     case 1:

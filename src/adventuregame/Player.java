@@ -1,6 +1,5 @@
 package adventuregame;
 
-import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.wallentities.Door;
@@ -261,7 +260,7 @@ public class Player extends Unit{
     {
         String[] attackTypes = new String[inventory.getSize() + 1];
         attackTypes[0] = "Punch";
-        for (int i = 1; i < attackTypes.length - 1; i++) 
+        for (int i = 1; i < attackTypes.length; i++) 
         {
             Item it = inventory.getItem(i - 1);
             if(it.isWeapon())
@@ -323,7 +322,7 @@ public class Player extends Unit{
 
         System.out.println();
 
-        printInfo();
+        Environment.printInfo();
 
         System.out.println();
         
@@ -353,35 +352,6 @@ public class Player extends Unit{
     public Room getRoom() 
     {
         return myRoom;
-    }
-
-    private void printInfo()
-    {
-        System.out.println("--Info--");
-
-        if(!myRoom.getIsDiscovered())
-        {
-            Environment.currentPrintDelay = Utils.MAX_PRINT_DELAY;
-            Utils.slowPrintln("You're in " + myRoom.getDescription() + ".");
-            myRoom.setIsDiscovered(true);
-        }
-
-        ArrayList<Enemy> ens = myRoom.enemies;
-        ArrayList<Describable> dess = new ArrayList<>();
-        for (Enemy e : ens) { dess.add(e); }
-        
-        Utils.slowPrintDescList(dess);
-
-        dess.clear();
-        ArrayList<Interactible> inters = myRoom.interactibles;
-        for (Interactible i : inters) { dess.add(i); }
-        
-        Utils.slowPrintDescList(dess);
-
-        if(myRoom.getIsDiscovered())
-        {
-            Environment.currentPrintDelay = 3;
-        }
     }
 
     @Override

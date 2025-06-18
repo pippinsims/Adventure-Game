@@ -1,5 +1,6 @@
 package adventuregame;
 
+import adventuregame.abstractclasses.Describable;
 import adventuregame.interactibles.GoldenPotInteractible;
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.Door;
@@ -98,7 +99,7 @@ public class Environment extends Utils
         r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,", "Mossy Ruin");
-        mossyRuin.enemies.add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom"));
+        mossyRuin.enemies.add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster"));
         
         new Door(r0, mossyRuin, Wall.NORTH);
         new Door(r0, new Room(), Wall.WEST);
@@ -141,6 +142,33 @@ public class Environment extends Utils
         {
             slowPrintln("You have murdered the " + e.getRandomDescription(), 250); // so unnecessary lol
             e.death();
+        }
+    }
+
+    public static void printInfo()
+    {
+        System.out.println("--Info--");
+
+        if(!r0.getIsDiscovered())
+        {
+            currentPrintDelay = MAX_PRINT_DELAY;
+            slowPrintln("You're in " + r0.getDescription() + ".");
+            r0.setIsDiscovered(true);
+        }
+
+        ArrayList<Describable> dess = new ArrayList<>();
+        ArrayList<Interactible> inters = r0.interactibles;
+        for (Interactible i : inters) { dess.add(i); }
+        Utils.slowPrintDescList(dess);
+
+        dess.clear();
+        ArrayList<Enemy> ens = r0.enemies;
+        for (Enemy e : ens) { dess.add(e); }
+        Utils.slowPrintDescList(dess);
+
+        if(r0.getIsDiscovered())
+        {
+            currentPrintDelay = 3;
         }
     }
 }
