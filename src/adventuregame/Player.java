@@ -11,7 +11,11 @@ import java.util.*;
 public class Player extends Unit{
     //private int playerDamage = 1;
     //private int playerWisdom = 2;
-    
+
+    private float chanceOfPtolomy = .0f;
+    private boolean ptolomyIsPresent = false;
+    private int ptolomyPrintLength;
+
     private String name;
     private Inventory inv = new Inventory(10);
     private Room myRoom;
@@ -22,7 +26,8 @@ public class Player extends Unit{
         FIGHT,
         TALK,
         INTERACT,
-        CAST
+        CAST,
+        COMMUNE
     }
 
     public List<Action> actions = new ArrayList<Action>();
@@ -32,6 +37,10 @@ public class Player extends Unit{
         name = "Laur";
         myRoom = Environment.r0;
         inv.addItem(new Bananarang());
+
+        chanceOfPtolomy = 1f;
+        ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
+        ptolomyPrintLength = 50;
     }
 
     public Player(String n)
@@ -42,7 +51,7 @@ public class Player extends Unit{
 
     public Player(boolean genName)
     {
-        name = Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
+        name = Utils.names1[Utils.rand.nextInt(Utils.names1.length)] + Utils.names2[Utils.rand.nextInt(Utils.names2.length)];
         myRoom = Environment.r0;
     }
 
@@ -66,6 +75,11 @@ public class Player extends Unit{
         if (true) // Would set to true once Player inspects language. Placeholder DEV true.
         {
             actions.add(Action.CAST);
+        }
+
+        if (this.name.equalsIgnoreCase("Laur"))
+        {
+            actions.add(Action.COMMUNE);
         }
     }
 
@@ -92,6 +106,10 @@ public class Player extends Unit{
             
             case INTERACT:
                 Interact();
+                break;
+
+            case COMMUNE:
+                commune();
                 break;
 
             default:
@@ -121,9 +139,17 @@ public class Player extends Unit{
             case INTERACT:
                 return "Do something";
 
+            case COMMUNE:
+                return "Commune with Ptolomy's spirit";
+
+
             default:
                 return "[Empty Action]";
         }
+    }
+
+    public boolean getPtolomyIsPresent() {
+        return ptolomyIsPresent;
     }
     
     /*
@@ -140,6 +166,9 @@ public class Player extends Unit{
     */
     private void Fight()
     {
+        if(ptolomyIsPresent)
+            ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
+
         ArrayList<Enemy> ens = myRoom.enemies;
         if(ens.size() > 0)
         {
@@ -188,6 +217,34 @@ public class Player extends Unit{
         inters.get(Utils.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", intersDescs) - 1).inspectInteractible();
     }
 
+    private void commune()
+    {
+        System.out.println();
+
+        System.out.println("What do you say to Ptolomy's spirit?\n");
+        Utils.scanner.nextLine();
+
+        System.out.println();
+        System.out.print("The reply: ");
+
+        switch(Utils.rand.nextInt(10)) {
+            case 0:
+                Utils.slowPrint("Stench OFF!!!",75);
+                break;
+            case 1:
+                Utils.slowPrint("Careful... lest I smite thee",75);
+                break;
+            case 2:
+                Utils.slowPrint("You little... cannabis plant!!!!",75);
+                break;
+            default:
+                Utils.slowPrintln("Ptolomy smiles... like this: =)",75);
+                break;
+        }
+
+        System.out.println();
+    }
+
     private void Talk()
     {
         System.out.println("What do you say?");
@@ -200,7 +257,16 @@ public class Player extends Unit{
             }
         }
         else
-            Utils.slowPrintln("Interesting...\nWell, that does nothing.");
+            Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.",ptolomyPrintLength);
+    }
+
+    public void ptolomyDoesSomething(String[] possibilities) {
+        if(possibilities.length == 2) {
+            Utils.slowPrintln("Ptolomy's spirit... " + (Utils.rand.nextFloat() <= .5 ? possibilities[0] : possibilities[1]),ptolomyPrintLength + '\n');
+        }
+        else {
+
+        }
     }
 
     private void CastSpell()
@@ -211,6 +277,8 @@ public class Player extends Unit{
         System.out.println("Focus...");
         System.out.print("Speak: ");
         String spell = Utils.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
+        
+        if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
             
         if (spell.contains(spellTypes[0]))
         {
@@ -237,6 +305,9 @@ public class Player extends Unit{
         String[] descriptions = getIntersActionDescriptions(inters);
 
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions) - 1);
+
+        if(ptolomyIsPresent)
+            ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
         chosen.action(this);
 
@@ -339,6 +410,14 @@ public class Player extends Unit{
         }
 
         setActions();
+ 
+        if(ptolomyIsPresent)
+        {
+
+            Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly",ptolomyPrintLength);
+
+            System.out.println();
+        }
 
         //lists available actions, lets the player choose, then performs chosen action
         performAction(Utils.promptList("You can:", getPlayerActionDescriptions()) - 1);
