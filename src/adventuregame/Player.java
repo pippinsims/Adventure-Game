@@ -229,7 +229,7 @@ public class Player extends Unit{
 
         switch(Utils.rand.nextInt(10)) {
             case 0:
-                Utils.slowPrint("Stench OFF!!!",75);
+                Utils.slowPrint("You anger ME!!!",75);
                 break;
             case 1:
                 Utils.slowPrint("Careful... lest I smite thee",75);
