@@ -22,7 +22,7 @@ public class Door extends WallEntity
         
         description = "door";
         pluralDescription = description + "s";
-        randomDescription = getRandomDescription();
+        genRandomDescription();
         this.wall = wall;
         name = "Door";
         normLocPrep = "that leads through";
@@ -31,7 +31,7 @@ public class Door extends WallEntity
         setLocationReference();
     }
 
-    protected String getRandomDescription()
+    protected void genRandomDescription()
     {
         String[] names = new String[]{"ordinary ol\' creaky slab o\' wood",
                                       "regular ol\' creaky plank",
@@ -45,14 +45,14 @@ public class Door extends WallEntity
                                         names[4]+"es"};
         int r = new Random().nextInt(names.length);
         rPDes = plurals[r];
-        return names[r];
+        randomDescription = names[r];
     }
 
     public Wall getWall(Room room)
     {
-        if(room.equals(myRoom))
+        if(room == myRoom)
             return wall;
-        else if(room.equals(myOtherRoom)) 
+        else if(room == myOtherRoom) 
             return complementOf(wall);
         else
             throw new RuntimeException("urk, you plugged in a room this door wasn't in, in getWall");
@@ -89,9 +89,9 @@ public class Door extends WallEntity
 
     public Room getNextRoom(Room curRoom)
     {
-        if(curRoom.equals(myRoom))
+        if(curRoom == myRoom)
             return myOtherRoom;
-        else if(curRoom.equals(myOtherRoom)) 
+        else if(curRoom == myOtherRoom) 
             return myRoom;
         else
             throw new RuntimeException("urk, you plugged in a room this door wasn't in");

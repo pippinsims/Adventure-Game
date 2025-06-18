@@ -3,7 +3,6 @@ import adventuregame.items.TorchItem;
 
 import java.util.Random;
 
-import adventuregame.Environment;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
@@ -34,15 +33,6 @@ public class TorchInteractible extends WallEntity {
                                       "burny ol\' chunk o\' lumber"};
         
         return names[new Random().nextInt(names.length)];
-    }
-
-    @Override
-    public String getDescription()
-    {
-        if(Environment.curPlayer.getName().equals("Laur"))
-            return randomDescription;
-        else
-            return description;
     }
 
     @Override

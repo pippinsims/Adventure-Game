@@ -18,7 +18,7 @@ public class WallEntity extends Interactible{
         return true;
     }
 
-    protected void setLocationReference()
+    public void setLocationReference()
     {
         if(wall == Wall.NONE)
             locReference = "the floor";
@@ -106,7 +106,10 @@ public class WallEntity extends Interactible{
     @Override
     public String getDescription()
     {
-        return description + " " + getExposition();
+        if(Environment.curPlayer.getName().equals("Laur"))
+            return randomDescription + " " + getExposition();
+        else
+            return description + " " + getExposition();
     }
     
     @Override

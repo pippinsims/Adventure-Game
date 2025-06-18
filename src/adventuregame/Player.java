@@ -332,6 +332,7 @@ public class Player extends Unit{
             }
         }
         
+        myRoom.updateDoors();
 
         System.out.println();
 

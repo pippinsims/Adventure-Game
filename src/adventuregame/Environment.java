@@ -96,10 +96,8 @@ public class Environment extends Utils
         loadEffectDescriptions();   
 
         r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
-        r0.setDoorMsg("This room is gifted with");       
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,", "Mossy Ruin");
-        mossyRuin.setDoorMsg("oh, and this room is cursed with");
         mossyRuin.enemies.add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom"));
         
         new Door(r0, mossyRuin, Wall.NORTH);

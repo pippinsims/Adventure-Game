@@ -25,7 +25,7 @@ public class Inventory {
 
     public Item getItem(int i)
     {
-        return items.get(i).getType();
+        return items.get(i).getItem();
     }
 
     public boolean addItem(Item i)
@@ -34,7 +34,7 @@ public class Inventory {
 
         for (ItemStack itemStack : items) 
         {
-            if(itemStack.getType() == i)
+            if(itemStack.getItem() == i)
             {
                 itemStack.inc();
                 found = true;
@@ -62,12 +62,12 @@ public class Inventory {
 
 class ItemStack
 {
-    Item type;
+    Item i;
     int count;
 
     ItemStack(Item t, int num)
     {
-        type = t;
+        i = t;
         count = num;
     }
 
@@ -84,9 +84,9 @@ class ItemStack
         return count == 0;
     }
 
-    Item getType()
+    Item getItem()
     {
-        return type;
+        return i;
     }
 
     int count()
