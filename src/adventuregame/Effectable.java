@@ -88,7 +88,7 @@ public class Effectable extends Describable{
         }
         else if(health > 0)
             return EffectUpdateResult.VERYHURT;
-        else
+        else //TODO sometimes enemies still will survive a psychstrike and then not die from burn???
             return EffectUpdateResult.DEATH;
     }
 
@@ -102,21 +102,22 @@ public class Effectable extends Describable{
         return health;
     }
 
+    //TODO these are just here because they have to be, idk what to do with them and i don't feel like we'd ever use them
     @Override
-    public String getPluralDescription() {
-        // TODO Auto-generated method stub
+    public String getPluralDescription() 
+    {
         throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
     }
 
     @Override
-    public String getDescription() {
-        // TODO Auto-generated method stub
+    public String getDescription() 
+    {
         throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
     }
 
     @Override
-    public String getName() {
-        // TODO Auto-generated method stub
+    public String getName() 
+    {
         throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
 }

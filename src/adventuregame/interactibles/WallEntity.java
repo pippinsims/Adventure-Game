@@ -2,7 +2,6 @@ package adventuregame.interactibles;
 
 import adventuregame.Environment;
 import adventuregame.Interactible;
-import adventuregame.abstractclasses.Unit;
 
 public class WallEntity extends Interactible{
 
@@ -103,17 +102,5 @@ public class WallEntity extends Interactible{
             return randomDescription + " " + getExposition();
         else
             return description + " " + getExposition();
-    }
-    
-    @Override
-    public void action(Unit u) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'action'");
-    }
-
-    @Override
-    public void inspectInteractible() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
     }
 }

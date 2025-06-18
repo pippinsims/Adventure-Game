@@ -351,14 +351,16 @@ public class Player extends Unit{
     }
 
     @Override
-    public int getAttackDamage() {
-        // TODO Auto-generated method stub
+    public int getAttackDamage() 
+    {
+        //TODO will be used in combat manager I assume, to get attack damage at that time for the enemy decisionmaking
         throw new UnsupportedOperationException("Unimplemented method 'getAttackDamage'");
     }
 
     @Override
-    public int getWisdom() {
-        // TODO Auto-generated method stub
+    public int getWisdom() 
+    {
+        // TODO create a use for wisdom
         throw new UnsupportedOperationException("Unimplemented method 'getWisdom'");
     }
 
@@ -375,13 +377,8 @@ public class Player extends Unit{
     }
 
     @Override
-    public String getPluralDescription() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
-    }
-
-    @Override
-    public String getDescription() {
+    public String getDescription() 
+    {
         return "My name is " + name;
     }
 }

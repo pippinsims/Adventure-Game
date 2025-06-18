@@ -36,7 +36,7 @@ public class Environment extends Utils
                     playerRooms.add(p.getRoom());    
             }
 
-            //TODO i don't like all these weird backwards forloops, but they are there to stop concurrentmodification errors
+            //TODO i don't like all these weird backwards forloops, they mess with player order, but they are there to stop concurrentmodification errors
             for (int j = playerRooms.size() - 1; j > -1; j--) 
             {
                 r0 = playerRooms.get(j);

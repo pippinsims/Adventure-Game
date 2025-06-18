@@ -54,7 +54,7 @@ public class Room extends Describable
         interactibles.add(d);
     }
 
-    //TODO: add wall material, add a familiar description once it's a familiar room
+    //TODO add wall material, add a familiar description once it's a familiar room
     public String getDescription()
     {
         return description;
@@ -74,9 +74,11 @@ public class Room extends Describable
         return name;
     }
 
+    
+    // TODO just here because it has to be, I don't know if there'd ever be a case for describing multiple of the exact same room
     @Override
-    public String getPluralDescription() {
-        // TODO Auto-generated method stub
+    public String getPluralDescription() 
+    {
         throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
     }
 }
