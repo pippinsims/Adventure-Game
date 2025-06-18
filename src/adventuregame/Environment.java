@@ -125,7 +125,7 @@ public class Environment extends Utils
         addPlayer(new Player());
         addPlayer(new Player("Nuel"));
 
-        new GoldenPotInteractible(treasureRoom);
+        treasureRoom.interactibles.add(new GoldenPotInteractible(treasureRoom));
     }
 
     private static void loadEffectDescriptions() 

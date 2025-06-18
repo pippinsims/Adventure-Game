@@ -60,7 +60,7 @@ public class WallEntity extends Interactible{
 
     protected boolean isAloneOnWall()
     {
-        for (Interactible i : myRoom.getInteractibles()) 
+        for (Interactible i : myRoom.interactibles) 
         {
             if(i instanceof WallEntity)
                 if(this != i && i.getDescription() == getDescription() && ((WallEntity)i).getWallString() == getWallString())

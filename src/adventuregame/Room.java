@@ -10,7 +10,7 @@ public class Room extends Describable
 
     ArrayList<Enemy> enemies = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
-    ArrayList<Interactible> interactibles = new ArrayList<>();
+    public ArrayList<Interactible> interactibles = new ArrayList<>();
     private ArrayList<Door> doors = new ArrayList<>();
     private String description = "a bare room";
     private boolean isDiscovered = false;
@@ -47,11 +47,6 @@ public class Room extends Describable
     public void setIsCurrentRoom(boolean c)
     {
         isCurrentRoom = c;
-    }
-
-    public ArrayList<Interactible> getInteractibles()
-    {
-        return interactibles;
     }
 
     public void addDoor(Door d)

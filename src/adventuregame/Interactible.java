@@ -36,20 +36,18 @@ public class Interactible extends Describable
     {
         String a = "the";
         ArrayList<Describable> arr = new ArrayList<>();
-        for (Interactible i : myRoom.getInteractibles()) 
-        { 
-            arr.add(i);
-        }
-        a = Utils.articleOfDescribableInList(arr, this);
+        for (Interactible i : myRoom.interactibles) { arr.add(i); }
+        if(!isAlone())
+            a = Utils.articleOfDescribableInList(arr, this);
 
         return a;
     }
 
     protected boolean isAlone()
     {
-        for (Interactible i : myRoom.getInteractibles()) 
+        for (Interactible i : myRoom.interactibles) 
         {
-            if(this != i && i.getDescription() == getDescription())
+            if(this != i && this.equals(i))
                 return false;
         }
         return true;

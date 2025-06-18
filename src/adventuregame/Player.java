@@ -51,7 +51,7 @@ public class Player extends Unit{
         actions.clear();
         actions.add(Action.NOTHING);
 
-        if(myRoom.getInteractibles().size() > 0)
+        if(myRoom.interactibles.size() > 0)
         {
             actions.add(Action.INSPECT);
             actions.add(Action.INTERACT);
@@ -177,7 +177,7 @@ public class Player extends Unit{
 
     private void Inspect()
     {
-        ArrayList<Interactible> inters = myRoom.getInteractibles();
+        ArrayList<Interactible> inters = myRoom.interactibles;
         int n = inters.size();    
 
         String[] intersDescs = new String[n];
@@ -231,7 +231,7 @@ public class Player extends Unit{
 
     private void Interact()
     {
-        ArrayList<Interactible> inters = myRoom.getInteractibles();
+        ArrayList<Interactible> inters = myRoom.interactibles;
         String[] descriptions = new String[inters.size()];
         ArrayList<Interactible> doors = new ArrayList<>();
 
