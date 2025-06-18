@@ -58,6 +58,21 @@ public class Door extends WallEntity
             throw new RuntimeException("urk, you plugged in a room this door wasn't in, in getWall");
     }
 
+    public void setWall(Room room)
+    {
+        if(room == myOtherRoom)
+        {
+            Room temp = myRoom;
+            myRoom = myOtherRoom;
+            myOtherRoom = temp;
+
+            wall = complementOf(wall);
+            setLocationReference();
+        }
+        else if(room != myRoom)
+            throw new RuntimeException("urk, you plugged in a room this door wasn't in, in getWall");
+    }
+
     private Wall complementOf(Wall wall)
     {
         switch (wall) {

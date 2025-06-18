@@ -250,17 +250,10 @@ public class Player extends Unit{
 
         if(chosen.isDoor())
         {             
-            try 
-            {
-                Door door = (Door)chosen;
-                myRoom.players.remove(this);
-                myRoom = door.getNextRoom(myRoom);
-                myRoom.players.add(this);
-            } 
-            catch (Exception e) 
-            {
-                System.err.println("trying to use a door from a room that doesnt have that door!");
-            }
+            Door door = (Door)chosen;
+            myRoom.players.remove(this);
+            myRoom = door.getNextRoom(myRoom);
+            myRoom.players.add(this);
         }
     }
 
@@ -311,12 +304,6 @@ public class Player extends Unit{
     public String getName() 
     {
         return name;        
-    }
-
-    @Override
-    public String getDescription() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
     }
 
     @Override
@@ -401,5 +388,10 @@ public class Player extends Unit{
     public String getPluralDescription() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
+    }
+
+    @Override
+    public String getDescription() {
+        return "My name is " + name;
     }
 }

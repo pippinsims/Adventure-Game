@@ -66,12 +66,12 @@ public class Room extends Describable
         return description;
     }
 
-    //TODO make it so that after this all the doors in the room have their walls set for this room, regardless of if its myRoom or myOtherRoom in the doors
+    //TODO make it so that after this, all the doors in the room have their walls set for this room, regardless of if its myRoom or myOtherRoom in the doors
     public void updateDoors()
     {
         for (Door door : doors) 
         {
-            //door.setWall(this);
+            door.setWall(this);
         }
     }
 
