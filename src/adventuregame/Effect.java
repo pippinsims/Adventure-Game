@@ -70,9 +70,9 @@ class Cooldown{
     private int duration;
     private Effect.Type type;
 
-    public Cooldown(int d, Effect.Type t)
+    public Cooldown(int duration, Effect.Type t)
     {
-        duration = d;
+        this.duration = duration;
         type = t;
     }
 

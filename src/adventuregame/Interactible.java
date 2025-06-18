@@ -1,7 +1,5 @@
 package adventuregame;
 
-import java.util.ArrayList;
-
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
 
@@ -34,15 +32,13 @@ public class Interactible extends Describable
 
     protected String getArticle() 
     {
-        String a = "the";
-        ArrayList<Describable> arr = new ArrayList<>();
-        for (Interactible i : myRoom.interactibles) { arr.add(i); }
-        if(!isAlone())
-            a = Utils.articleOfDescribableInList(arr, this);
-
-        return a;
+        return isAlone() ? "the" : Utils.articleOf(getDescription());
     }
 
+    /**
+     * Check whether this interactible is the only of it's kind
+     * @return true if there are no other interactibles in myRoom that have the same description
+     */
     protected boolean isAlone()
     {
         for (Interactible i : myRoom.interactibles) 

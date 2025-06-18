@@ -187,9 +187,9 @@ public class Utils {
     {
         for (Describable describable : arr) 
         {
-            if(d.getDescription() == describable.getDescription()) 
+            if(d.equals(describable)) //compare by description
             {
-                return articleOf(d.getDescription());    
+                return articleOf(d.getDescription());
             }
         }
 

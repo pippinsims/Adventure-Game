@@ -7,7 +7,6 @@ import adventuregame.abstractclasses.Unit;
 public class WallEntity extends Interactible{
 
     protected Wall wall;
-    protected String locReference;
     protected String pluralDescription;
     protected String randomDescription;
 
@@ -63,7 +62,7 @@ public class WallEntity extends Interactible{
         for (Interactible i : myRoom.interactibles) 
         {
             if(i instanceof WallEntity)
-                if(this != i && i.getDescription() == getDescription() && ((WallEntity)i).getWallString() == getWallString())
+                if(this != i && this.equals(i) && ((WallEntity)i).getWallString().equals(getWallString()))
                     return false;
         }
         return true;
@@ -72,13 +71,7 @@ public class WallEntity extends Interactible{
     @Override
     protected String getArticle()
     {
-        String a = "the";
-        if(!isAloneOnWall())
-        {
-            a = super.getArticle();
-        }
-
-        return a;
+        return isAloneOnWall() ? "the" : super.getArticle();
     }
 
     @Override

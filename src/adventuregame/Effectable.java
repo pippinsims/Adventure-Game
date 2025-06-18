@@ -26,7 +26,8 @@ public class Effectable extends Describable{
 
         boolean effectIsOver = false;
         EffectUpdateResult result = EffectUpdateResult.NONE;
-        switch (e.getType()) {
+        switch (e.getType()) 
+        {
             case FIRE: //for fire and psychstrike, result is damageresult
                 result = receiveDamage(e.strength, Damage.Type.BASIC);
                 effectIsOver = e.cooldown.decrement();
@@ -68,7 +69,8 @@ public class Effectable extends Describable{
                 break;
             
             case PSYCHIC:
-                health -= new Random().nextInt(damage + 1);
+                health -= new Random().nextInt(damage + 1); //from 0 to damage
+                addEffect(new Effect(Effect.Type.PSYCHSTRIKE, new Cooldown(1, Effect.Type.PSYCHSTRIKE), damage, "psychstrike effect"));
                 break;
 
             case FIRE:

@@ -121,7 +121,6 @@ public class Environment extends Utils
 
         new ViewablePicture(r0, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
 
-        //TODO make Nuel percieve the world in a normal way (rewrite all the output so its normal but save the weird for Laur)
         addPlayer(new Player());
         addPlayer(new Player("Nuel"));
 

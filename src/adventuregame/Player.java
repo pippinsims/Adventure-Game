@@ -11,11 +11,7 @@ import java.util.*;
 public class Player extends Unit{
     //private int playerDamage = 1;
     //private int playerWisdom = 2;
-
-    private float chanceOfPtolomy = .0f;
-    private boolean ptolomyIsPresent = false;
-    private int ptolomyPrintLength;
-
+    
     private String name;
     private Inventory inv = new Inventory(10);
     private Room myRoom;
@@ -26,8 +22,7 @@ public class Player extends Unit{
         FIGHT,
         TALK,
         INTERACT,
-        CAST,
-        COMMUNE
+        CAST
     }
 
     public List<Action> actions = new ArrayList<Action>();
@@ -37,10 +32,6 @@ public class Player extends Unit{
         name = "Laur";
         myRoom = Environment.r0;
         inv.addItem(new Bananarang());
-        
-        chanceOfPtolomy = 1f;
-        ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
-        ptolomyPrintLength = 50;
     }
 
     public Player(String n)
@@ -51,7 +42,7 @@ public class Player extends Unit{
 
     public Player(boolean genName)
     {
-        name = Utils.names1[Utils.rand.nextInt(Utils.names1.length)] + Utils.names2[Utils.rand.nextInt(Utils.names2.length)];
+        name = Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
         myRoom = Environment.r0;
     }
 
@@ -76,13 +67,9 @@ public class Player extends Unit{
         {
             actions.add(Action.CAST);
         }
-
-        if (this.name.equalsIgnoreCase("Laur"))
-        {
-            actions.add(Action.COMMUNE);
-        }
     }
 
+    //TODO what if we combined performAction and actionToString?! actionToString use case makes it so we could make them have the same argument
     public void performAction(int i)
     {   
         switch(actions.get(i))
@@ -105,10 +92,6 @@ public class Player extends Unit{
             
             case INTERACT:
                 Interact();
-                break;
-
-            case COMMUNE:
-                commune();
                 break;
 
             default:
@@ -138,18 +121,11 @@ public class Player extends Unit{
             case INTERACT:
                 return "Do something";
 
-            case COMMUNE:
-                return "Commune with Ptolomy's spirit";
-
             default:
                 return "[Empty Action]";
         }
     }
     
-    public boolean getPtolomyIsPresent() {
-        return ptolomyIsPresent;
-    }
-
     /*
     TODO I think we should make a combat manager, which will become quite advanced, visually represented by a header
     and also make combat not happen immediately when you enter a room, you always get to do something
@@ -164,9 +140,6 @@ public class Player extends Unit{
     */
     private void Fight()
     {
-        if(ptolomyIsPresent)
-            ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
-
         ArrayList<Enemy> ens = myRoom.enemies;
         if(ens.size() > 0)
         {
@@ -215,34 +188,6 @@ public class Player extends Unit{
         inters.get(Utils.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", intersDescs) - 1).inspectInteractible();
     }
 
-    private void commune()
-    {
-        System.out.println();
-
-        System.out.println("What do you say to Ptolomy's spirit?\n");
-        Utils.scanner.nextLine();
-
-        System.out.println();
-        System.out.print("The reply: ");
-
-        switch(Utils.rand.nextInt(10)) {
-            case 0:
-                Utils.slowPrint("Stench OFF!!!",75);
-                break;
-            case 1:
-                Utils.slowPrint("Careful... lest I smite thee",75);
-                break;
-            case 2:
-                Utils.slowPrint("You little... cannabis plant!!!!",75);
-                break;
-            default:
-                Utils.slowPrintln("Ptolomy smiles... like this: =)",75);
-                break;
-        }
-
-        System.out.println();
-    }
-
     private void Talk()
     {
         System.out.println("What do you say?");
@@ -255,16 +200,7 @@ public class Player extends Unit{
             }
         }
         else
-            Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.",ptolomyPrintLength);
-    }
-
-    public void ptolomyDoesSomething(String[] possibilities) {
-        if(possibilities.length == 2) {
-            Utils.slowPrintln("Ptolomy's spirit... " + (Utils.rand.nextFloat() <= .5 ? possibilities[0] : possibilities[1]),ptolomyPrintLength + '\n');
-        }
-        else {
-
-        }
+            Utils.slowPrintln("Interesting...\nWell, that does nothing.");
     }
 
     private void CastSpell()
@@ -276,11 +212,10 @@ public class Player extends Unit{
         System.out.print("Speak: ");
         String spell = Utils.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
             
-        if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
-
         if (spell.contains(spellTypes[0]))
         {
-            spellDamage = new Damage(1000, Damage.Type.PSYCHIC, "You release a level 1000 Psych Strike spell on all of your foes.");
+            int lvl = 1000;
+            spellDamage = new Damage(lvl, Damage.Type.PSYCHIC, "You release a level " + lvl + " Psych Strike spell on all of your foes.");
             
             Utils.slowPrintln(spellDamage.getMessage());
             int s = myRoom.enemies.size();
@@ -298,22 +233,10 @@ public class Player extends Unit{
 
     private void Interact()
     {
-        ArrayList<Interactible> inters = myRoom.interactibles;
-        String[] descriptions = new String[inters.size()];
-        ArrayList<Interactible> doors = new ArrayList<>();
-
-        for (int j = 0; j < descriptions.length; j++)
-        {
-            Interactible cur = inters.get(j);
-            descriptions[j] = cur.getActionDescription();
-            if(cur.isDoor())
-                doors.add(cur);
-        }    
+        ArrayList<Interactible> inters = getIntersBuckets();
+        String[] descriptions = getIntersActionDescriptions(inters);
 
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions) - 1);
-
-        if(ptolomyIsPresent)
-            ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
         chosen.action(this);
 
@@ -340,8 +263,7 @@ public class Player extends Unit{
         return attackTypes;
     }
 
-    //TODO revamp this so that it doesn't list multiple of the same thing
-    public String[] getActionDescriptions()
+    private String[] getPlayerActionDescriptions()
     {   
         String[] actionDescriptions = new String[actions.size()];
        
@@ -352,28 +274,31 @@ public class Player extends Unit{
         return actionDescriptions;
     }
 
-    @Override
-    public Inventory getInventory() 
+    private ArrayList<Interactible> getIntersBuckets()
     {
-        return inv;
+        ArrayList<Interactible> inters = new ArrayList<>();
+
+        for (Interactible interactible : myRoom.interactibles) 
+        {
+            if(!inters.contains(interactible)) //will compare by description
+                inters.add(interactible);
+        }
+
+        return inters;
     }
 
-    @Override
-    public int getAttackDamage() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAttackDamage'");
-    }
-
-    @Override
-    public int getWisdom() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getWisdom'");
-    }
-
-    @Override
-    public String getName() 
+    private String[] getIntersActionDescriptions(ArrayList<Interactible> inters)
     {
-        return name;        
+        String[] d = new String[inters.size()];
+
+        int j = 0;
+        for (Interactible i : inters) 
+        {
+            d[j] = i.getActionDescription();
+            j++;
+        }
+
+        return d;
     }
 
     @Override
@@ -415,16 +340,32 @@ public class Player extends Unit{
 
         setActions();
 
-        if(ptolomyIsPresent)
-        {
-
-            Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly",ptolomyPrintLength);
-
-            System.out.println();
-        }
-
         //lists available actions, lets the player choose, then performs chosen action
-        performAction(Utils.promptList("You can:", getActionDescriptions()) - 1);
+        performAction(Utils.promptList("You can:", getPlayerActionDescriptions()) - 1);
+    }
+
+    @Override
+    public Inventory getInventory() 
+    {
+        return inv;
+    }
+
+    @Override
+    public int getAttackDamage() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAttackDamage'");
+    }
+
+    @Override
+    public int getWisdom() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getWisdom'");
+    }
+
+    @Override
+    public String getName() 
+    {
+        return name;        
     }
 
     @Override
