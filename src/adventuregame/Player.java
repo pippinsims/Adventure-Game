@@ -8,7 +8,8 @@ import adventuregame.items.*;
 // standard imports
 import java.util.*;
 
-public class Player extends Unit{
+public class Player extends Unit
+{
     //private int playerDamage = 1;
     //private int playerWisdom = 2;
 
@@ -20,7 +21,9 @@ public class Player extends Unit{
     private Inventory inv = new Inventory(10);
     private Room myRoom;
 
-    enum Action {
+    //FOR EACH ENUM, MAKE A MAP ENTRY
+    enum Action 
+    {
         NOTHING,
         INSPECT,
         FIGHT,
@@ -29,6 +32,14 @@ public class Player extends Unit{
         CAST,
         COMMUNE
     }
+    
+    private final Map<Action, String> actionTypes = Map.ofEntries(Map.entry(Action.NOTHING,  "Do nothing."),
+                                                                  Map.entry(Action.INSPECT,  "Inspect your surroundings"),
+                                                                  Map.entry(Action.FIGHT,    "Combat"),
+                                                                  Map.entry(Action.TALK,     "Say something"),
+                                                                  Map.entry(Action.INTERACT, "Do something"),
+                                                                  Map.entry(Action.CAST,     "Utilize the power of the ancients"),
+                                                                  Map.entry(Action.COMMUNE,  "Commune with Ptolomy's spirit"));
 
     public List<Action> actions = new ArrayList<Action>();
 
@@ -83,68 +94,17 @@ public class Player extends Unit{
         }
     }
 
-    //TODO what if we combined performAction and actionToString?! actionToString use case makes it so we could make them have the same argument
     public void performAction(int i)
     {   
         switch(actions.get(i))
         {
-            case FIGHT:
-                Fight();
-                break;
-
-            case INSPECT:
-                Inspect();
-                break;
-
-            case TALK:
-                Talk();         
-                break;
-
-            case CAST:
-                CastSpell();
-                break;
-            
-            case INTERACT:
-                Interact();
-                break;
-
-            case COMMUNE:
-                commune();
-                break;
-
-            default:
-                break;
-        }
-    }
-    
-    private String actionToString(Action a)
-    {
-        switch (a) 
-        {
-            case NOTHING:
-                return "Do nothing";
-            
-            case INSPECT:
-                return "Inspect your surroundings";
-
-            case FIGHT:
-                return "It's kill or be killed.";
-
-            case TALK:
-                return "Say something";
-                
-            case CAST:
-                return "Utilize the power of the ancients";
-
-            case INTERACT:
-                return "Do something";
-
-            case COMMUNE:
-                return "Commune with Ptolomy's spirit";
-
-
-            default:
-                return "[Empty Action]";
+            case FIGHT: Fight(); break;
+            case INSPECT: Inspect(); break;
+            case TALK: Talk(); break;
+            case CAST: CastSpell(); break;
+            case INTERACT: Interact(); break;
+            case COMMUNE: commune(); break;
+            default: break;
         }
     }
 
@@ -171,11 +131,7 @@ public class Player extends Unit{
 
         ArrayList<Enemy> ens = myRoom.enemies;
         if(ens.size() > 0)
-        {
-            String[] attackTypes = getAttackTypes(inv);
-            Damage attackDamage;
-            int chosenAttackType = Utils.promptList("How will you vanquish yoerer foeee??", attackTypes) - 1;
-            
+        {       
             int chosenEnemyIndex = 0;
             if(ens.size() > 1)
             {
@@ -184,10 +140,14 @@ public class Player extends Unit{
                 {
                     prompts[j] = ens.get(j).getName();
                 }
-                chosenEnemyIndex = Utils.promptList("Which fooeeoee meets thine bloodtherstey eyee?", prompts) - 1;
+                chosenEnemyIndex = Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", prompts) - 1;
             }
 
-            if(attackTypes[chosenAttackType].equals("Punch"))
+            String[] attackTypes = getAttackTypes(inv);
+            int chosenAttackType = attackTypes.length > 1? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) - 1 : 0;
+
+            Damage attackDamage;
+            if(chosenAttackType == 0)
             {
                 int dmgval = 1;
                 attackDamage = new Damage(dmgval, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + dmgval + " damage!");
@@ -272,7 +232,8 @@ public class Player extends Unit{
     private void CastSpell()
     {
         String[] spellTypes = new String[]{"brain aneurysm"};
-        Damage spellDamage;
+        int lvl = 1000;
+        Damage spellDamage = new Damage(lvl, Damage.Type.PSYCHIC, "You release a level " + lvl + " Psych Strike spell on all of your foes.");
 
         System.out.println("Focus...");
         System.out.print("Speak: ");
@@ -282,16 +243,13 @@ public class Player extends Unit{
             
         if (spell.contains(spellTypes[0]))
         {
-            int lvl = 1000;
-            spellDamage = new Damage(lvl, Damage.Type.PSYCHIC, "You release a level " + lvl + " Psych Strike spell on all of your foes.");
-            
             Utils.slowPrintln(spellDamage.getMessage());
             int s = myRoom.enemies.size();
             if(s == 0)
                 Utils.slowPrint("... but you have no enemies! Nothing happens.");
             else
             {
-                for (int i = s - 1; i > -1; i--)
+                for (int i = s - 1; i > -1; i--) //TODO weird backwards for to account for removals
                 {
                     Environment.playerAttackEnemy(i, spellDamage);
                 }
@@ -340,7 +298,9 @@ public class Player extends Unit{
        
         for(int i = 0; i < actionDescriptions.length; i++)
         {
-            actionDescriptions[i] = actionToString(actions.get(i));
+             actionDescriptions[i] = !(actions.get(i) == Action.FIGHT && name.equals("Laur")) 
+                ? actionTypes.get(actions.get(i))
+                : "It's kill or be killed." ;
         }
         return actionDescriptions;
     }
@@ -386,11 +346,9 @@ public class Player extends Unit{
         }
         
         myRoom.updateDoors();
-
         System.out.println();
 
         Environment.printInfo();
-
         System.out.println();
         
         for (Effect e : effects) 
@@ -415,7 +373,6 @@ public class Player extends Unit{
         {
 
             Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly",ptolomyPrintLength);
-
             System.out.println();
         }
 

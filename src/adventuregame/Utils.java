@@ -8,7 +8,7 @@ import java.util.Random;
 
 import adventuregame.abstractclasses.Describable;
 
-public class Utils {
+public abstract class Utils {
 
     public static Random rand = new Random();
     public static Scanner scanner = new Scanner(System.in);

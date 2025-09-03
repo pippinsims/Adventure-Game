@@ -42,7 +42,7 @@ public class Environment extends Utils
                 r0 = playerRooms.get(j);
 
                 ArrayList<Player> ps = r0.players;
-                for (int i = ps.size() - 1; i > -1; i--) 
+                for (int i = ps.size() - 1; i > -1; i--) //TODO weird backwards to account for removals
                 {
                     curPlayer = ps.get(i);
                     ps.get(i).updateUnit();
@@ -56,7 +56,7 @@ public class Environment extends Utils
                 }
                 
                 ArrayList<Enemy> ens = r0.enemies;
-                for (int i = ens.size() - 1; i > -1; i--) 
+                for (int i = ens.size() - 1; i > -1; i--) //TODO weird backwards to account for removals
                 {
                     ens.get(i).updateUnit();
                     System.out.println();
