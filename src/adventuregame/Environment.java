@@ -8,7 +8,6 @@ import adventuregame.interactibles.wallentities.TorchInteractible;
 import adventuregame.interactibles.wallentities.ViewablePicture;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Environment extends Utils
@@ -16,8 +15,8 @@ public class Environment extends Utils
     public static Room r0;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static Player curPlayer;
-    public static Map<Effect.Type, String> effectDescriptions = new HashMap<>();
-    private static ArrayList<Room> playerRooms = new ArrayList<>();
+    public static Map<Effect.Type, String> effectDescriptions = Map.ofEntries(Map.entry(Effect.Type.FIRE, "BURNINGNESS"),
+                                                                              Map.entry(Effect.Type.PSYCHSTRIKE, "strong vexation of mind"));
 
     public static void main(String[] args) 
     {
@@ -25,24 +24,24 @@ public class Environment extends Utils
         generateMap();
 
         printIntroduction();
-
         System.out.println();
 
+        ArrayList<Room> playerRooms = new ArrayList<>();
         while(!allPlayers.isEmpty())
         {
+            
             for (Player p : allPlayers) 
             {
                 if(!playerRooms.contains(p.getRoom()))
                     playerRooms.add(p.getRoom());    
             }
 
-            //TODO i don't like all these weird backwards forloops, they mess with player order, but they are there to stop concurrentmodification errors
-            for (int j = playerRooms.size() - 1; j >= 0; j--) 
+            for (int j = 0; j < playerRooms.size(); j++)
             {
                 r0 = playerRooms.get(j);
 
                 ArrayList<Player> ps = r0.players;
-                for (int i = ps.size() - 1; i >= 0; i--) //TODO weird backwards to account for removals
+                for (int i = ps.size() - 1; i >= 0; i--) //TODO the fact that this is descending messes up player order, fix it
                 {
                     curPlayer = ps.get(i);
                     ps.get(i).updateUnit();
@@ -52,11 +51,12 @@ public class Environment extends Utils
                 if(r0.players.isEmpty())
                 {
                     playerRooms.remove(r0);
+                    j--;
                     continue;
                 }
                 
                 ArrayList<Enemy> ens = r0.enemies;
-                for (int i = ens.size() - 1; i >= 0; i--) //TODO weird backwards to account for removals
+                for (int i = ens.size() - 1; i >= 0; i--) //backwards to account for removals if an enemy dies
                 {
                     ens.get(i).updateUnit();
                     System.out.println();
@@ -94,8 +94,6 @@ public class Environment extends Utils
 
     private static void generateMap()
     {
-        loadEffectDescriptions();   
-
         r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,", "Mossy Ruin");
@@ -125,12 +123,6 @@ public class Environment extends Utils
         addPlayer(new Player("Nuel"));
 
         treasureRoom.interactibles.add(new GoldenPotInteractible(treasureRoom));
-    }
-
-    private static void loadEffectDescriptions() 
-    {
-        Effect.effectDescriptions.put(Effect.Type.FIRE, "BURNINGNESS");
-        Effect.effectDescriptions.put(Effect.Type.PSYCHSTRIKE, "strong vexation of mind");
     }
 
     public static void playerAttackEnemy(int index, Damage d)
