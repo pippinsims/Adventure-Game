@@ -249,7 +249,7 @@ public class Player extends Unit
                 Utils.slowPrint("... but you have no enemies! Nothing happens.");
             else
             {
-                for (int i = s - 1; i > -1; i--) //TODO weird backwards for to account for removals
+                for (int i = s - 1; i >= 0; i--) //TODO weird backwards for to account for removals
                 {
                     Environment.playerAttackEnemy(i, spellDamage);
                 }
@@ -351,19 +351,17 @@ public class Player extends Unit
         Environment.printInfo();
         System.out.println();
         
-        for (Effect e : effects) 
+        for (int i = effects.size() - 1; i >= 0; i--) //TODO this has a mirror image in Enemy
         {
-            if(effectUpdate(e) != EffectUpdateResult.NONE)
+            Effect e = effects.get(i);
+            switch (effectUpdate(e))
             {
-                switch (e.getType()) 
-                {
-                    case FIRE: case PSYCHSTRIKE:
-                        Utils.slowPrintln("you died.");
-                        break;
-                
-                    default:
-                        break;
-                }
+                case DEATH:
+                    Utils.slowPrintln("you died.");
+                    break;
+            
+                default:
+                    break;
             }
         }
 

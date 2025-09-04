@@ -37,12 +37,12 @@ public class Environment extends Utils
             }
 
             //TODO i don't like all these weird backwards forloops, they mess with player order, but they are there to stop concurrentmodification errors
-            for (int j = playerRooms.size() - 1; j > -1; j--) 
+            for (int j = playerRooms.size() - 1; j >= 0; j--) 
             {
                 r0 = playerRooms.get(j);
 
                 ArrayList<Player> ps = r0.players;
-                for (int i = ps.size() - 1; i > -1; i--) //TODO weird backwards to account for removals
+                for (int i = ps.size() - 1; i >= 0; i--) //TODO weird backwards to account for removals
                 {
                     curPlayer = ps.get(i);
                     ps.get(i).updateUnit();
@@ -56,7 +56,7 @@ public class Environment extends Utils
                 }
                 
                 ArrayList<Enemy> ens = r0.enemies;
-                for (int i = ens.size() - 1; i > -1; i--) //TODO weird backwards to account for removals
+                for (int i = ens.size() - 1; i >= 0; i--) //TODO weird backwards to account for removals
                 {
                     ens.get(i).updateUnit();
                     System.out.println();

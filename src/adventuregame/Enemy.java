@@ -227,17 +227,18 @@ public class Enemy extends Unit
     public void updateUnit() {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
         
-        for (int i = effects.size() - 1; i > -1; i--) //TODO weird backwards for to account for removals
+        for (int i = effects.size() - 1; i >= 0; i--) //TODO this has a mirror image in Player
         {
             Effect e = effects.get(i);
-            // effectUpdate returns true if the effectable died
-            if(e.isDamaging && effectUpdate(e) == EffectUpdateResult.DEATH)
+            switch(effectUpdate(e))
             {
-                death();
-                return;
-            }
+                case DEATH: 
+                    death(); 
+                    return;
 
-            // else ...
+                default: 
+                    break;
+            }
         }
         
         chooseAction(Environment.r0);

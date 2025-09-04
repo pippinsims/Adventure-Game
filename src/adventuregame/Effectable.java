@@ -28,7 +28,7 @@ public class Effectable extends Describable{
         EffectUpdateResult result = EffectUpdateResult.NONE;
         switch (e.getType()) 
         {
-            case FIRE: //for fire and psychstrike, result is damageresult
+            case FIRE: //for fire and psychstrike, result is the recieveDamage result
                 result = receiveDamage(e.strength, Damage.Type.BASIC);
                 effectIsOver = e.cooldown.decrement();
                 break;
