@@ -88,7 +88,7 @@ public class Player extends Unit
             actions.add(Action.CAST);
         }
 
-        if (this.name.equalsIgnoreCase("Laur"))
+        if (name.equals("Laur"))
         {
             actions.add(Action.COMMUNE);
         }
@@ -98,17 +98,18 @@ public class Player extends Unit
     {   
         switch(actions.get(i))
         {
-            case FIGHT: Fight(); break;
-            case INSPECT: Inspect(); break;
+            case FIGHT: fight(); break;
+            case INSPECT: inspect(); break;
             case TALK: Talk(); break;
-            case CAST: CastSpell(); break;
-            case INTERACT: Interact(); break;
+            case CAST: castSpell(); break;
+            case INTERACT: interact(); break;
             case COMMUNE: commune(); break;
             default: break;
         }
     }
 
-    public boolean getPtolomyIsPresent() {
+    public boolean getPtolomyIsPresent() 
+    {
         return ptolomyIsPresent;
     }
     
@@ -124,7 +125,7 @@ public class Player extends Unit
     can place objects in positions. Maybe every room has a list of local unique positions, and you get a list of them when you want
     to place something
     */
-    private void Fight()
+    private void fight()
     {
         if(ptolomyIsPresent)
             ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
@@ -144,7 +145,7 @@ public class Player extends Unit
             }
 
             String[] attackTypes = getAttackTypes(inv);
-            int chosenAttackType = attackTypes.length > 1? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) - 1 : 0;
+            int chosenAttackType = attackTypes.length > 1 ? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) - 1 : 0;
 
             Damage attackDamage;
             if(chosenAttackType == 0)
@@ -165,7 +166,7 @@ public class Player extends Unit
             System.out.println("No enemies.");
     }
 
-    private void Inspect()
+    private void inspect()
     {
         ArrayList<Interactible> inters = myRoom.interactibles;
         int n = inters.size();    
@@ -174,7 +175,7 @@ public class Player extends Unit
         for(int j = 0; j < n; j++)
             intersDescs[j] = inters.get(j).getDescription();
         
-        inters.get(Utils.promptList("There " + ((n == 1)? "is an object" : "are a few objects") + " in the room:", intersDescs) - 1).inspectInteractible();
+        inters.get(Utils.promptList("There " + ((n == 1) ? "is an object" : "are a few objects") + " in the room:", intersDescs) - 1).inspectInteractible();
     }
 
     private void commune()
@@ -189,16 +190,16 @@ public class Player extends Unit
 
         switch(Utils.rand.nextInt(10)) {
             case 0:
-                Utils.slowPrint("You anger ME!!!",75);
+                Utils.slowPrint("You anger ME!!!", 75);
                 break;
             case 1:
-                Utils.slowPrint("Careful... lest I smite thee",75);
+                Utils.slowPrint("Careful... lest I smite thee", 75);
                 break;
             case 2:
-                Utils.slowPrint("You little... cannabis plant!!!!",75);
+                Utils.slowPrint("You little... cannabis plant!!!!", 75);
                 break;
             default:
-                Utils.slowPrintln("Ptolomy smiles... like this: =)",75);
+                Utils.slowPrintln("Ptolomy smiles... like this: =)", 75);
                 break;
         }
 
@@ -217,19 +218,22 @@ public class Player extends Unit
             }
         }
         else
-            Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.",ptolomyPrintLength);
+            Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
     }
 
-    public void ptolomyDoesSomething(String[] possibilities) {
-        if(possibilities.length == 2) {
-            Utils.slowPrintln("Ptolomy's spirit... " + (Utils.rand.nextFloat() <= .5 ? possibilities[0] : possibilities[1]),ptolomyPrintLength + '\n');
+    public void ptolomyDoesSomething(String[] possibilities) 
+    {
+        if(possibilities.length == 2) 
+        {
+            Utils.slowPrintln("Ptolomy's spirit... " + (Utils.rand.nextFloat() <= .5 ? possibilities[0] : possibilities[1]), ptolomyPrintLength + '\n');
         }
-        else {
+        else 
+        {
 
         }
     }
 
-    private void CastSpell()
+    private void castSpell()
     {
         String[] spellTypes = new String[]{"brain aneurysm"};
         int lvl = 1000;
@@ -257,15 +261,14 @@ public class Player extends Unit
         }
     }
 
-    private void Interact()
+    private void interact()
     {
         ArrayList<Interactible> inters = getIntersBuckets();
         String[] descriptions = getIntersActionDescriptions(inters);
 
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions) - 1);
 
-        if(ptolomyIsPresent)
-            ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
+        if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
         chosen.action(this);
 
@@ -311,7 +314,7 @@ public class Player extends Unit
 
         for (Interactible interactible : myRoom.interactibles) 
         {
-            if(!inters.contains(interactible)) //will compare by description
+            if(!inters.contains(interactible)) //This compares by description
                 inters.add(interactible);
         }
 
@@ -370,7 +373,7 @@ public class Player extends Unit
         if(ptolomyIsPresent)
         {
 
-            Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly",ptolomyPrintLength);
+            Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
             System.out.println();
         }
 
