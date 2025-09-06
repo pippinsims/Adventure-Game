@@ -175,6 +175,12 @@ public abstract class Utils {
         return promptList(question, options);
     }
 
+    /**
+     * Prints {@code question}, then prints {@code listPrompts} using {@link #printOptions}. Returns the index of the chosen answer from the list.
+     * @param question The question for the player
+     * @param listPrompts The list of answers to said {@code question}
+     * @return An {@code int}, the output of {@link #confirmInput}, denoting which prompt was chosen, 1-based.
+     */
     public static int promptList(String question, String[] listPrompts)
     {
         System.out.println(question);
@@ -196,27 +202,32 @@ public abstract class Utils {
         return "the";
     }
 
-    public static Integer confirmInput(String s, String[] options)
+    /**
+     * Forces valid user input with an error-trapped while-loop, re-prompting on bad input. Valid input is an {@code int} that is in {@code options} bounds, 1-based
+     * @param inputString The string to check
+     * @param options The list to use for bounds check, and re-prompt
+     * @return A valid {@code int} once the user inputs one
+     */
+    public static Integer confirmInput(String inputString, String[] options)
     {    
         Integer inputInt = null;
         do
         {
             try 
             {
-                inputInt = Integer.parseInt(s);
-                if(inputInt - 1 >= options.length || inputInt < 1)
+                inputInt = Integer.parseInt(inputString);
+                if(inputInt > options.length || inputInt < 1)
                     throw new Exception();
             }   
             catch(Exception e)
             {
-                String question = "[Incorrect input!]";
-                if (s.contains("fuck"))             
-                    question = "Yeah okay fuck you too man, I'm just trying to do my job."; 
+                inputInt = null;
+                String question = "Incorrect input! Please input a given answer number.";
 
                 System.out.println(question);
                 printOptions(options);
 
-                s = scanner.nextLine();
+                inputString = scanner.nextLine();
             } 
         } while(inputInt == null);
         return inputInt;
