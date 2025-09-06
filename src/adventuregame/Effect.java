@@ -1,42 +1,37 @@
 package adventuregame;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import adventuregame.abstractclasses.Describable;
 
 public class Effect extends Describable{
     
-    // fill map at start of Environment.main() using file
-    static Map<Type,String> effectDescriptions = new HashMap<>();
+    //TODO fill descriptions map at start of Environment.main() using file
     Type type;
     Cooldown cooldown;
     String description;
     int strength;
     String name;
-    final boolean isDamaging;
 
-    public Effect(Type t, Cooldown c, int s, String name) {
+    public Effect(Type t, int duration, int strength)
+    {
         type = t;
-        cooldown = c;
-        strength = s;
-        description = effectDescriptions.get(type);
+        cooldown = new Cooldown(duration, t);
+        this.strength = strength;
+        description = Environment.effectDescriptions.get(type).t2();
+        this.name = Environment.effectDescriptions.get(type).t1();
+    }
+
+    public Effect(Type t, int duration, int strength, String name) 
+    {
+        type = t;
+        cooldown = new Cooldown(duration, t);
+        this.strength = strength;
+        description = Environment.effectDescriptions.get(type).t2();
         this.name = name;
-        switch(type) {
-            case FIRE:
-                isDamaging = true;
-                break;
-            case PSYCHSTRIKE:
-                isDamaging = true;
-                break;
-            default:
-                isDamaging = false;
-        }
     }
 
     public enum Type{
         FIRE,
-        PSYCHSTRIKE;
+        PSYCHSTRIKE
     }
 
     public Type getType()

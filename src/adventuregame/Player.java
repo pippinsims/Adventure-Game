@@ -18,7 +18,7 @@ public class Player extends Unit
     private int ptolomyPrintLength;
 
     private String name;
-    private Inventory inv = new Inventory(10);
+    private Inventory inv = new Inventory(10); //TODO make inventories accessible!
     private Room myRoom;
 
     //FOR EACH ENUM, MAKE A MAP ENTRY
@@ -94,13 +94,13 @@ public class Player extends Unit
         }
     }
 
-    public void performAction(int i)
+    public void performAction(int i) throws Exception
     {   
         switch(actions.get(i))
         {
             case FIGHT: fight(); break;
             case INSPECT: inspect(); break;
-            case TALK: Talk(); break;
+            case TALK: talk(); break;
             case CAST: castSpell(); break;
             case INTERACT: interact(); break;
             case COMMUNE: commune(); break;
@@ -125,7 +125,7 @@ public class Player extends Unit
     can place objects in positions. Maybe every room has a list of local unique positions, and you get a list of them when you want
     to place something
     */
-    private void fight()
+    private void fight() throws Exception
     {
         if(ptolomyIsPresent)
             ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
@@ -160,7 +160,7 @@ public class Player extends Unit
 
             System.out.println(attackDamage.getMessage());
             
-            Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage);
+            Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage); //TODO change this implementation so environment knows which player so "you've murdered" only happens to Laur
         }
         else
             System.out.println("No enemies.");
@@ -189,24 +189,16 @@ public class Player extends Unit
         System.out.print("The reply: ");
 
         switch(Utils.rand.nextInt(10)) {
-            case 0:
-                Utils.slowPrint("You anger ME!!!", 75);
-                break;
-            case 1:
-                Utils.slowPrint("Careful... lest I smite thee", 75);
-                break;
-            case 2:
-                Utils.slowPrint("You little... cannabis plant!!!!", 75);
-                break;
-            default:
-                Utils.slowPrintln("Ptolomy smiles... like this: =)", 75);
-                break;
+            case 0: Utils.slowPrint("You anger ME!!!", 75); break;
+            case 1: Utils.slowPrint("Careful... lest I smite thee", 75); break;
+            case 2: Utils.slowPrint("You little... cannabis plant!!!!", 75); break;
+            default: Utils.slowPrintln("Ptolomy smiles... like this: =)", 75); break;
         }
 
         System.out.println();
     }
 
-    private void Talk()
+    private void talk()
     {
         System.out.println("What do you say?");
         String s = Utils.scanner.nextLine();
@@ -233,11 +225,11 @@ public class Player extends Unit
         }
     }
 
-    private void castSpell()
+    private void castSpell() throws Exception
     {
         String[] spellTypes = new String[]{"brain aneurysm"};
         int lvl = 1000;
-        Damage spellDamage = new Damage(lvl, Damage.Type.PSYCHIC, "You release a level " + lvl + " Psych Strike spell on all of your foes.");
+        String message = "You release a level " + lvl + " Psych Strike spell on all of your foes.";
 
         System.out.println("Focus...");
         System.out.print("Speak: ");
@@ -247,7 +239,7 @@ public class Player extends Unit
             
         if (spell.contains(spellTypes[0]))
         {
-            Utils.slowPrintln(spellDamage.getMessage());
+            Utils.slowPrintln(message);
             int s = myRoom.enemies.size();
             if(s == 0)
                 Utils.slowPrint("... but you have no enemies! Nothing happens.");
@@ -255,7 +247,7 @@ public class Player extends Unit
             {
                 for (int i = s - 1; i >= 0; i--) //TODO weird backwards for to account for removals
                 {
-                    Environment.playerAttackEnemy(i, spellDamage);
+                    Environment.playerAttackEnemy(i, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), message));
                 }
             }
         }
@@ -336,7 +328,7 @@ public class Player extends Unit
     }
 
     @Override
-    public void updateUnit() 
+    public void updateUnit() throws Exception 
     {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
 

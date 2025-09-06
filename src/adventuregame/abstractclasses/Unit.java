@@ -7,7 +7,7 @@ import adventuregame.Room;
 
 public abstract class Unit extends Effectable
 {
-    public abstract void updateUnit();
+    public abstract void updateUnit() throws Exception;
     
     public abstract Inventory getInventory();
     public abstract int getAttackDamage();

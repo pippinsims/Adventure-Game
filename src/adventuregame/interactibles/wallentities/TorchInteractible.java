@@ -44,7 +44,7 @@ public class TorchInteractible extends WallEntity {
     @Override
     public void action(Unit u)
     {
-        Utils.slowPrint("You have recieved a Torch!");
+        Utils.slowPrint("You have received a Torch!");
         u.getInventory().addItem(new TorchItem());
         myRoom.interactibles.remove(this);
     }

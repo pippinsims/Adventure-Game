@@ -15,10 +15,10 @@ public class Environment extends Utils
     public static Room r0;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static Player curPlayer;
-    public static Map<Effect.Type, String> effectDescriptions = Map.ofEntries(Map.entry(Effect.Type.FIRE, "BURNINGNESS"),
-                                                                              Map.entry(Effect.Type.PSYCHSTRIKE, "strong vexation of mind"));
+    public static Map<Effect.Type, Tuple<String, String>> effectDescriptions = Map.ofEntries(Map.entry(Effect.Type.FIRE, new Tuple<String, String>("fire effect", "BURNINGNESS")),
+                                                                                             Map.entry(Effect.Type.PSYCHSTRIKE, new Tuple<String, String>("psychstrike effect","strong vexation of mind")));
 
-    public static void main(String[] args) 
+    public static void main(String[] args) throws Exception 
     {
         //room r0 is the current room
         generateMap();
@@ -129,9 +129,9 @@ public class Environment extends Utils
     {
         //TODO MAKE THERE BE DIFFERENT REACTIONS TO BEING ATTACKED
         Enemy e = r0.enemies.get(index);
-        if(e.receiveDamage(d.getValue(), d.getType()) == Effectable.EffectUpdateResult.DEATH)
+        if(e.receiveDamage(d) == Effectable.EffectUpdateResult.DEATH)
         {
-            slowPrintln("You have murdered the " + e.getRandomDescription(), 250); // so unnecessary lol
+            slowPrintln("You have murdered the " + e.getRandomDescription(), 1/*250*/); // so unnecessary lol
             e.death();
         }
     }

@@ -9,7 +9,7 @@ public class Effectable extends Describable{
     protected ArrayList<Effect> effects = new ArrayList<Effect>();
     protected float maxHealth = 10;
     protected float health = maxHealth;
-    protected boolean isStunned = false; //isStunned makes Enemy units become unstunned as their next action
+    protected boolean isStunned = false; //isStunned makes Enemy units become unstunned as their next action, instead of attacking
 
     public enum EffectUpdateResult
     {
@@ -19,22 +19,24 @@ public class Effectable extends Describable{
         NONE
     }
 
-    final public EffectUpdateResult effectUpdate(Effect e)
+    final public EffectUpdateResult effectUpdate(Effect e) throws Exception
     {
         Utils.slowPrint("You have been effected by " + e.name);
-        Utils.slowPrintln(", and will be effected by it for " + e.cooldown.getDuration() + " more turns.");
+        int dur = e.cooldown.getDuration();
+        Utils.slowPrintln(", and will be effected by it for " + dur + " more turn" + (dur == 1 ? "" : "s") + ".");
+        //System.out.println("Health: " + health + " (temporary println)");
 
         boolean effectIsOver = false;
         EffectUpdateResult result = EffectUpdateResult.NONE;
         switch (e.getType()) 
         {
-            case FIRE: //for fire and psychstrike, result is the recieveDamage result
-                result = receiveDamage(e.strength, Damage.Type.BASIC);
+            case FIRE: //for fire and psychstrike, result is the receiveDamage result
+                result = receiveDamage(new Damage(e.strength, Damage.Type.FIRE, e, "You're burned by fire"));
                 effectIsOver = e.cooldown.decrement();
                 break;
 
             case PSYCHSTRIKE:
-                result = receiveDamage(e.strength, Damage.Type.PSYCHIC);
+                result = receiveDamage(new Damage(e.strength, Damage.Type.PSYCHIC, e, "You're mind is vexed of the psychic strike"));
                 isStunned = true;
                 effectIsOver = e.cooldown.decrement();
                 break;
@@ -58,37 +60,36 @@ public class Effectable extends Describable{
         return result;
     }
 
-    // returns true if the effectable died
-    final public EffectUpdateResult receiveDamage(int damage, Damage.Type type)
+    final public EffectUpdateResult receiveDamage(Damage damage)
     {
-        float startHealth = health;
-
-        switch (type) {
+        switch (damage.getType()) {
             case BASIC:
-                health -= damage;
+                health -= damage.getValue();
                 break;
             
             case PSYCHIC:
-                health -= new Random().nextInt(damage + 1); //from 0 to damage
-                addEffect(new Effect(Effect.Type.PSYCHSTRIKE, new Cooldown(1, Effect.Type.PSYCHSTRIKE), damage, "psychstrike effect"));
+                health -= new Random().nextInt(damage.getValue() + 1); //from 0 to damage
                 break;
 
             case FIRE:
-                health -= damage + 1;
-                addEffect(new Effect(Effect.Type.FIRE, new Cooldown(3, Effect.Type.FIRE), damage, "fire effect"));
+                if(damage.getMode() == Damage.Mode.EFFECT && damage.hasEffect())
+                    health -= damage.getEffect().strength;
+                else
+                    health -= damage.getValue() + 1;
                 break;
         
             default:
                 break;
         }
 
-        if(health/startHealth > 0.8)
-        {
+        if(damage.getMode() == Damage.Mode.INFLICTEFFECT && damage.hasEffect())
+            addEffect(damage.getEffect());
+
+        if(health/maxHealth > 0.8)
             return EffectUpdateResult.HURT;
-        }
         else if(health > 0)
             return EffectUpdateResult.VERYHURT;
-        else //TODO sometimes enemies still will survive a psychstrike and then not die from burn???
+        else
             return EffectUpdateResult.DEATH;
     }
 
@@ -119,5 +120,14 @@ public class Effectable extends Describable{
     public String getName() 
     {
         throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    }
+
+    //MARK: for testing
+    public void updateAllEffectsWithoutResult() throws Exception
+    {
+        for (int i = effects.size() - 1; i >= 0; i--)
+        {
+            effectUpdate(effects.get(i));
+        }
     }
 }

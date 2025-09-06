@@ -1,6 +1,7 @@
 package adventuregame.items;
 
 import adventuregame.Damage;
+import adventuregame.Effect;
 import adventuregame.abstractclasses.Item;
 
 public class TorchItem extends Item{
@@ -25,9 +26,9 @@ public class TorchItem extends Item{
     }
 
     @Override
-    public Damage getDamage() 
+    public Damage getDamage() throws Exception 
     {
-        return new Damage(1, Damage.Type.FIRE, "You swing the torch at your enemy!");
+        return new Damage(1, Damage.Type.FIRE, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.FIRE, 3, 1), "You swing the torch at your enemy!");
     }
 
     @Override

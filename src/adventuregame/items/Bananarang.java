@@ -4,7 +4,7 @@ import adventuregame.abstractclasses.Item;
 
 public class Bananarang extends Item 
 {
-    String description = "A boomerang made of a potassium rich biotic material.";
+    String description = "A boomerang made of a potassium rich, biotic material.";
     String name = "Bananarang";
 
     @Override

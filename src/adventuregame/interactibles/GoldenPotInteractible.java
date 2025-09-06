@@ -75,7 +75,7 @@ public class GoldenPotInteractible extends Interactible{
                 break;
 
             case 2:
-                Utils.slowPrint("You have recieved a Golden Pot!");
+                Utils.slowPrint("You have received a Golden Pot!");
                 u.getInventory().addItem(new GoldenPot(dmg));
                 myRoom.interactibles.remove(this);
                         

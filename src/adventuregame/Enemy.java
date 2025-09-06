@@ -224,7 +224,7 @@ public class Enemy extends Unit
     }
 
     @Override
-    public void updateUnit() {
+    public void updateUnit() throws Exception {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
         
         for (int i = effects.size() - 1; i >= 0; i--) //TODO this has a mirror image in Player
@@ -246,7 +246,7 @@ public class Enemy extends Unit
 
     public void death() 
     {
-        Utils.slowPrintln("You ended " + getName(), 200);
+        Utils.slowPrintln("You ended " + getName(), 0/*200*/);
         // remove enemy from the current room
         Environment.r0.enemies.remove(this);
     }
