@@ -245,10 +245,12 @@ public class Player extends Unit
                 Utils.slowPrint("... but you have no enemies! Nothing happens.");
             else
             {
-                for (int i = s - 1; i >= 0; i--) //TODO weird backwards for to account for removals
+                Collections.reverse(myRoom.enemies);
+                for (int i = s - 1; i >= 0; i--)
                 {
                     Environment.playerAttackEnemy(i, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), message));
                 }
+                Collections.reverse(myRoom.enemies);
             }
         }
     }

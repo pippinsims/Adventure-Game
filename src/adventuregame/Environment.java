@@ -3,11 +3,9 @@ package adventuregame;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.interactibles.GoldenPotInteractible;
 import adventuregame.interactibles.WallEntity.Wall;
-import adventuregame.interactibles.wallentities.Door;
-import adventuregame.interactibles.wallentities.TorchInteractible;
-import adventuregame.interactibles.wallentities.ViewablePicture;
-
+import adventuregame.interactibles.wallentities.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 public class Environment extends Utils
@@ -41,12 +39,14 @@ public class Environment extends Utils
                 r0 = playerRooms.get(j);
 
                 ArrayList<Player> ps = r0.players;
-                for (int i = ps.size() - 1; i >= 0; i--) //TODO the fact that this is descending messes up player order, fix it
+                Collections.reverse(ps);
+                for (int i = ps.size() - 1; i >= 0; i--)
                 {
                     curPlayer = ps.get(i);
                     ps.get(i).updateUnit();
                     System.out.println();
                 }
+                Collections.reverse(ps);
 
                 if(r0.players.isEmpty())
                 {
@@ -56,11 +56,13 @@ public class Environment extends Utils
                 }
                 
                 ArrayList<Enemy> ens = r0.enemies;
-                for (int i = ens.size() - 1; i >= 0; i--) //backwards to account for removals if an enemy dies
+                Collections.reverse(ens);
+                for (int i = ens.size() - 1; i >= 0; i--)
                 {
                     ens.get(i).updateUnit();
                     System.out.println();
                 }
+                Collections.reverse(ens);
             }
 
             System.out.println("--Round End--");

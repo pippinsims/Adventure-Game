@@ -15,7 +15,7 @@ public class GoldenPotInteractible extends Interactible{
     public GoldenPotInteractible(Room room)
     {
         myRoom = room;
-        description = GoldenPot.defaultDescription;
+        description = GoldenPot.descriptions[0];
         name = GoldenPot.defaultName;
         actionVerb = "Interact with";
 
@@ -59,18 +59,13 @@ public class GoldenPotInteractible extends Interactible{
                         {
                             dmg--;
                             Utils.slowPrintln("It seems oddly smoother than before.");
-                        }
-
-                        if(dmg > 0)
                             Utils.slowPrintln("It falls over because it is badly damaged.");
+                        }
                         
                         break;
                 }
 
-                if(dmg > 0)
-                    description = GoldenPot.damageDescriptions[dmg];
-                else 
-                    description = GoldenPot.defaultDescription;
+                description = GoldenPot.descriptions[dmg];
 
                 break;
 

@@ -1,6 +1,5 @@
 package adventuregame;
 
-
 public class Damage {
 
     private int value;
