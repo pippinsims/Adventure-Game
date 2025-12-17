@@ -30,7 +30,8 @@ public class Player extends Unit
         TALK,
         INTERACT,
         CAST,
-        COMMUNE
+        COMMUNE,
+        INVENTORY
     }
     
     private final Map<Action, String> actionTypes = Map.ofEntries(Map.entry(Action.NOTHING,  "Do nothing."),
@@ -39,7 +40,8 @@ public class Player extends Unit
                                                                   Map.entry(Action.TALK,     "Say something"),
                                                                   Map.entry(Action.INTERACT, "Do something"),
                                                                   Map.entry(Action.CAST,     "Utilize the power of the ancients"),
-                                                                  Map.entry(Action.COMMUNE,  "Commune with Ptolomy's spirit"));
+                                                                  Map.entry(Action.COMMUNE,  "Commune with Ptolomy's spirit"),
+                                                                  Map.entry(Action.INVENTORY,"Inventory"));
 
     public List<Action> actions = new ArrayList<Action>();
 
@@ -77,21 +79,17 @@ public class Player extends Unit
             actions.add(Action.INTERACT);
         }
 
-        if (myRoom.enemies.size() != 0)
-        {
-            actions.add(Action.FIGHT);
-        }
+        if(myRoom.enemies.size() != 0) actions.add(Action.FIGHT);
 
         actions.add(Action.TALK);
-        if (true) // Would set to true once Player inspects language. Placeholder DEV true.
+        if(true) // Would set to true once Player inspects language. Placeholder DEV true.
         {
             actions.add(Action.CAST);
         }
 
-        if (name.equals("Laur"))
-        {
-            actions.add(Action.COMMUNE);
-        }
+        if(name.equals("Laur")) actions.add(Action.COMMUNE);
+
+        if(inv.getSize() > 0) actions.add(Action.INVENTORY); //TODO IMPLEMENT Action.INVENTORY
     }
 
     public void performAction(int i) throws Exception
@@ -290,15 +288,16 @@ public class Player extends Unit
     }
 
     private String[] getPlayerActionDescriptions()
-    {   
+    {
         String[] actionDescriptions = new String[actions.size()];
        
-        for(int i = 0; i < actionDescriptions.length; i++)
+        for(int i = 0; i < actions.size(); i++)
         {
              actionDescriptions[i] = !(actions.get(i) == Action.FIGHT && name.equals("Laur")) 
                 ? actionTypes.get(actions.get(i))
                 : "It's kill or be killed." ;
         }
+
         return actionDescriptions;
     }
 

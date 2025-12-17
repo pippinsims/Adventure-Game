@@ -28,6 +28,13 @@ public class Inventory {
         return items.get(i).getItem();
     }
 
+    public ArrayList<Item> getItems()
+    {
+        ArrayList<Item> items = new ArrayList<>();
+        for(ItemStack i : this.items) items.add(i.getItem());
+        return items;
+    }
+
     public boolean addItem(Item i)
     {
         boolean found = false;

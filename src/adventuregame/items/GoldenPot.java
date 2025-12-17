@@ -15,10 +15,7 @@ public class GoldenPot extends Item{
     public GoldenPot(int dmg)
     {
         this.dmg = dmg;
-        if(this.dmg > 0)
-            description = descriptions[this.dmg];
-        else
-            description = descriptions[0];
+        description = descriptions[this.dmg];
     }
 
     @Override
