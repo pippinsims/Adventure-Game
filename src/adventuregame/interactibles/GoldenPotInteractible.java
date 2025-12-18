@@ -37,7 +37,7 @@ public class GoldenPotInteractible extends Interactible{
     {
         switch(Utils.promptList("How do you interact?", new String[]{"Kick","Take"}))
         {
-            case 1:
+            case 0:
                 Utils.slowPrint("You kick the pot and it ");
 
                 switch (new Random().nextInt(3)) 
@@ -69,9 +69,9 @@ public class GoldenPotInteractible extends Interactible{
 
                 break;
 
-            case 2:
+            case 1:
                 Utils.slowPrint("You have received a Golden Pot!");
-                u.getInventory().addItem(new GoldenPot(dmg));
+                u.getInventory().add(new GoldenPot(dmg));
                 myRoom.interactibles.remove(this);
                         
                 break;

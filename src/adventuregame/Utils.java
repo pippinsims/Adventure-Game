@@ -53,7 +53,7 @@ public abstract class Utils {
             return "a";
     }
 
-    public static void slowPrintDescList(ArrayList<Describable> arr)
+    public static void slowPrintDescList(ArrayList<? extends Describable> arr)
     {
         Map<Describable, Integer> m = genDescMap(arr);
 
@@ -78,7 +78,7 @@ public abstract class Utils {
         }
     }
 
-    private static Map<Describable, Integer> genDescMap(ArrayList<Describable> arr)
+    private static Map<Describable, Integer> genDescMap(ArrayList<? extends Describable> arr)
     {
         Map<Describable, Integer> m = new HashMap<>();
         for (Describable d : arr) 
@@ -157,6 +157,22 @@ public abstract class Utils {
         }
     }
 
+    public static String[] descriptionsOf(ArrayList<? extends Describable> d)
+    {
+        int s = d.size();
+        String[] strings = new String[s];
+        for(int i = 0; i < s; i++) strings[i] = d.get(i).getDescription();
+        return strings;
+    }
+
+    public static String[] namesOf(ArrayList<? extends Describable> d)
+    {
+        int s = d.size();
+        String[] strings = new String[s];
+        for(int i = 0; i < s; i++) strings[i] = d.get(i).getName();
+        return strings;
+    }
+
     public static int promptList(String question, int listSize, String listPrompts)
     {        
         String[] options = new String[listSize];
@@ -186,10 +202,10 @@ public abstract class Utils {
         System.out.println(question);
         printOptions(listPrompts);
 
-        return confirmInput(scanner.nextLine(), listPrompts);
+        return confirmInput(scanner.nextLine(), listPrompts) - 1;
     }
 
-    public static String articleOfDescribableInList(ArrayList<Describable> arr, Describable d)
+    public static String articleOfDescribableInList(ArrayList<? extends Describable> arr, Describable d)
     {
         for (Describable describable : arr) 
         {

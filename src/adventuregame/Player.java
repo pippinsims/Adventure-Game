@@ -49,7 +49,7 @@ public class Player extends Unit
     {
         name = "Laur";
         myRoom = Environment.r0;
-        inv.addItem(new Bananarang());
+        inv.add(new Bananarang());
 
         chanceOfPtolomy = 1f;
         ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
@@ -89,7 +89,7 @@ public class Player extends Unit
 
         if(name.equals("Laur")) actions.add(Action.COMMUNE);
 
-        if(inv.getSize() > 0) actions.add(Action.INVENTORY); //TODO IMPLEMENT Action.INVENTORY
+        if(inv.size() > 0) actions.add(Action.INVENTORY);
     }
 
     public void performAction(int i) throws Exception
@@ -102,6 +102,7 @@ public class Player extends Unit
             case CAST: castSpell(); break;
             case INTERACT: interact(); break;
             case COMMUNE: commune(); break;
+            case INVENTORY: inventory(); break;
             default: break;
         }
     }
@@ -125,25 +126,17 @@ public class Player extends Unit
     */
     private void fight() throws Exception
     {
-        if(ptolomyIsPresent)
-            ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
+        if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
 
         ArrayList<Enemy> ens = myRoom.enemies;
         if(ens.size() > 0)
         {       
             int chosenEnemyIndex = 0;
             if(ens.size() > 1)
-            {
-                String[] prompts = new String[ens.size()];
-                for(int j = 0; j < ens.size(); j++)
-                {
-                    prompts[j] = ens.get(j).getName();
-                }
-                chosenEnemyIndex = Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", prompts) - 1;
-            }
+                chosenEnemyIndex = Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens));
 
             String[] attackTypes = getAttackTypes(inv);
-            int chosenAttackType = attackTypes.length > 1 ? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) - 1 : 0;
+            int chosenAttackType = attackTypes.length > 1 ? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) : 0;
 
             Damage attackDamage;
             if(chosenAttackType == 0)
@@ -153,7 +146,7 @@ public class Player extends Unit
             }
             else
             {                            //chosenAttackType - 1 because of Punch
-                attackDamage = inv.getItem(chosenAttackType - 1).getDamage();
+                attackDamage = inv.at(chosenAttackType - 1).getDamage();
             }
 
             System.out.println(attackDamage.getMessage());
@@ -167,13 +160,7 @@ public class Player extends Unit
     private void inspect()
     {
         ArrayList<Interactible> inters = myRoom.interactibles;
-        int n = inters.size();    
-
-        String[] intersDescs = new String[n];
-        for(int j = 0; j < n; j++)
-            intersDescs[j] = inters.get(j).getDescription();
-        
-        inters.get(Utils.promptList("There " + ((n == 1) ? "is an object" : "are a few objects") + " in the room:", intersDescs) - 1).inspectInteractible();
+        inters.get(Utils.promptList("There " + ((inters.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.descriptionsOf(inters))).inspectInteractible();
     }
 
     private void commune()
@@ -255,10 +242,10 @@ public class Player extends Unit
 
     private void interact()
     {
-        ArrayList<Interactible> inters = getIntersBuckets();
+        ArrayList<Interactible> inters = getIntersByUniqueDesc();
         String[] descriptions = getIntersActionDescriptions(inters);
 
-        Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions) - 1);
+        Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions));
 
         if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
@@ -273,13 +260,23 @@ public class Player extends Unit
         }
     }
 
+    private void inventory()
+    {
+        String[] ns = Utils.namesOf(inv.getItems());
+        String[] ds = Utils.descriptionsOf(inv.getItems());
+        String[] prompts = new String[inv.size()];
+        for(int i = 0; i < prompts.length; i++) prompts[i] = ns[i] + ": " + ds[i];
+
+        inv.at(Utils.promptList("Which item?", prompts)).action();
+    }
+
     private String[] getAttackTypes(Inventory inventory) 
     {
-        String[] attackTypes = new String[inventory.getSize() + 1];
+        String[] attackTypes = new String[inventory.size() + 1];
         attackTypes[0] = "Punch";
         for (int i = 1; i < attackTypes.length; i++) 
         {
-            Item it = inventory.getItem(i - 1);
+            Item it = inventory.at(i - 1);
             if(it.isWeapon())
                 attackTypes[i] = it.getName();
         }
@@ -295,20 +292,20 @@ public class Player extends Unit
         {
              actionDescriptions[i] = !(actions.get(i) == Action.FIGHT && name.equals("Laur")) 
                 ? actionTypes.get(actions.get(i))
-                : "It's kill or be killed." ;
+                : "It's kill or be killed.";
         }
 
         return actionDescriptions;
     }
 
-    private ArrayList<Interactible> getIntersBuckets()
+    private ArrayList<Interactible> getIntersByUniqueDesc()
     {
         ArrayList<Interactible> inters = new ArrayList<>();
 
-        for (Interactible interactible : myRoom.interactibles) 
+        for (Interactible i : myRoom.interactibles) 
         {
-            if(!inters.contains(interactible)) //This compares by description
-                inters.add(interactible);
+            if(!inters.contains(i)) //This compares by description
+                inters.add(i);
         }
 
         return inters;
@@ -318,12 +315,7 @@ public class Player extends Unit
     {
         String[] d = new String[inters.size()];
 
-        int j = 0;
-        for (Interactible i : inters) 
-        {
-            d[j] = i.getActionDescription();
-            j++;
-        }
+        for(int i = 0; i < d.length; i++) d[i] = inters.get(i).getActionDescription();
 
         return d;
     }
@@ -371,7 +363,7 @@ public class Player extends Unit
         }
 
         //lists available actions, lets the player choose, then performs chosen action
-        performAction(Utils.promptList("You can:", getPlayerActionDescriptions()) - 1);
+        performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
     }
 
     @Override

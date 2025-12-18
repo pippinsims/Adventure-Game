@@ -1,14 +1,15 @@
 package adventuregame;
 
-import adventuregame.abstractclasses.Describable;
 import adventuregame.interactibles.GoldenPotInteractible;
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.*;
+import adventuregame.Utils.Tuple;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
-public class Environment extends Utils
+public class Environment
 {
     public static Room r0;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
@@ -27,16 +28,15 @@ public class Environment extends Utils
         ArrayList<Room> playerRooms = new ArrayList<>();
         while(!allPlayers.isEmpty())
         {
-            
             for (Player p : allPlayers) 
             {
                 if(!playerRooms.contains(p.getRoom()))
                     playerRooms.add(p.getRoom());    
             }
 
-            for (int j = 0; j < playerRooms.size(); j++)
+            for (int r = 0; r < playerRooms.size(); r++)
             {
-                r0 = playerRooms.get(j);
+                r0 = playerRooms.get(r);
 
                 ArrayList<Player> ps = r0.players;
                 Collections.reverse(ps);
@@ -51,7 +51,7 @@ public class Environment extends Utils
                 if(r0.players.isEmpty())
                 {
                     playerRooms.remove(r0);
-                    j--;
+                    r--;
                     continue;
                 }
                 
@@ -68,24 +68,24 @@ public class Environment extends Utils
             System.out.println("--Round End--");
         }
         
-        scanner.close();
+        Utils.scanner.close();
     }
 
     private static void printIntroduction()
     {
-        slowPrint("In this land, you're known as ");
+        Utils.slowPrint("In this land, you're known as ");
         if(allPlayers.size() > 0)
         {
             int num = allPlayers.size();
             
             for(int i = 0; i < num; i++)
             {
-                slowPrintAsList(allPlayers.get(i).getName(), num, i);
+                Utils.slowPrintAsList(allPlayers.get(i).getName(), num, i);
             }
         }
-        slowPrint(" ", 1000);
-        slowPrint("Adventure awaits!", 10);
-        slowPrint("\n", 200);
+        Utils.slowPrint(" ", 1000);
+        Utils.slowPrint("Adventure awaits!", 10);
+        Utils.slowPrint("\n", 200);
     }
 
     private static void addPlayer(Player p)
@@ -133,7 +133,7 @@ public class Environment extends Utils
         Enemy e = r0.enemies.get(index);
         if(e.receiveDamage(d) == Effectable.EffectUpdateResult.DEATH)
         {
-            slowPrintln("You have murdered the " + e.getRandomDescription(), 1/*250*/); // so unnecessary lol
+            Utils.slowPrintln("You have murdered the " + e.getRandomDescription(), 1/*250*/); // so unnecessary lol
             e.death();
         }
     }
@@ -144,24 +144,18 @@ public class Environment extends Utils
 
         if(!r0.getIsDiscovered())
         {
-            currentPrintDelay = MAX_PRINT_DELAY;
-            slowPrintln("You're in " + r0.getDescription() + ".");
+            Utils.currentPrintDelay = Utils.MAX_PRINT_DELAY;
+            Utils.slowPrintln("You're in " + r0.getDescription() + ".");
             r0.setIsDiscovered(true);
         }
 
-        ArrayList<Describable> dess = new ArrayList<>();
-        ArrayList<Interactible> inters = r0.interactibles;
-        for (Interactible i : inters) { dess.add(i); }
-        Utils.slowPrintDescList(dess);
+        Utils.slowPrintDescList(r0.interactibles);
 
-        dess.clear();
-        ArrayList<Enemy> ens = r0.enemies;
-        for (Enemy e : ens) { dess.add(e); }
-        Utils.slowPrintDescList(dess);
+        Utils.slowPrintDescList(r0.enemies);
 
         if(r0.getIsDiscovered())
         {
-            currentPrintDelay = 3;
+            Utils.currentPrintDelay = 3;
         }
     }
 }
