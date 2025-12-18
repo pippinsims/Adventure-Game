@@ -1,10 +1,6 @@
 package adventuregame;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Random;
+import java.util.*;
 
 import adventuregame.abstractclasses.Describable;
 
@@ -38,7 +34,7 @@ public abstract class Utils {
 
     private static boolean isVowel(char c)
     {
-        return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+        return "aeiou".indexOf(c) > -1;
     }
 
     public static String articleOf(String str)
@@ -81,11 +77,7 @@ public abstract class Utils {
     private static Map<Describable, Integer> genDescMap(ArrayList<? extends Describable> arr)
     {
         Map<Describable, Integer> m = new HashMap<>();
-        for (Describable d : arr) 
-        {
-            m.put(d, m.getOrDefault(d, 0) + 1);
-        }
-
+        for (Describable d : arr) m.put(d, m.getOrDefault(d, 0) + 1);
         return m;
     }
 
@@ -101,12 +93,12 @@ public abstract class Utils {
 
     public static void slowPrintln(String output)
     {
-        slowPrintln(output, currentPrintDelay); //50 for real
+        slowPrintln(output, currentPrintDelay);
     }
 
     public static void slowPrintln()
     {
-        slowPrintln("", currentPrintDelay); //50 for real
+        slowPrintln("", currentPrintDelay);
     }
 
     public static void slowPrint(String output, int sleepDuration)
@@ -130,14 +122,14 @@ public abstract class Utils {
 
     public static void slowPrintAsList(String msg, int size, int cur)
     {
-        slowPrint(msg + ((cur < size - 2)  ? ", " :
+        slowPrint(msg + ((cur <  size - 2) ? ", "     :
                          (cur == size - 2) ? ", and " :
                                              "."));
     }
 
     public static void slowPrintlnAsListEntryWithArticles(String msg, int size, int cur)
     {
-        slowPrint(articleOf(msg) + " " + msg + ((cur < size - 2)  ? ", " :
+        slowPrint(articleOf(msg) + " " + msg + ((cur <  size - 2) ? ", "     :
                                                 (cur == size - 2) ? ", and " :
                                                                     ".\n"));
     }
@@ -238,7 +230,7 @@ public abstract class Utils {
             catch(Exception e)
             {
                 inputInt = null;
-                String question = "Incorrect input! Please input a given answer number.";
+                String question = "Incorrect input! Please input a given answer number."; //TODO: maybe "b" for back, "l" for last, "f" for first, and allow stringing them together?
 
                 System.out.println(question);
                 printOptions(options);
