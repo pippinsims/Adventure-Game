@@ -4,9 +4,9 @@ public class Damage {
 
     private int value;
     private Type type;
-    private Mode mode;
+    private Mode mode = Mode.DEFAULT;
     private String message;
-    private Effect damageEffect;
+    private Effect damageEffect = null;
 
     public static enum Type
     {
@@ -23,13 +23,18 @@ public class Damage {
         EFFECT
     }
 
+    public Damage(int value)
+    {
+        this.value = value;
+        this.type = Type.BASIC;
+        message = "normal damage";
+    }
+
     public Damage(int value, Type type, String msg)
     {
         this.value = value;
         this.type = type;
-        this.mode = Mode.DEFAULT;
         message = msg;
-        damageEffect = null;
     }
 
     public Damage(int value, Type type, Mode mode, String msg) throws Exception

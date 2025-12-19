@@ -19,7 +19,7 @@ public class Player extends Unit
 
     private String name;
     private Inventory inv = new Inventory(10); //TODO make inventories accessible!
-    private Room myRoom;
+    private Room myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
 
     //FOR EACH ENUM, MAKE A MAP ENTRY
     enum Action 
@@ -54,18 +54,19 @@ public class Player extends Unit
         chanceOfPtolomy = 1f;
         ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
         ptolomyPrintLength = 50;
+        deathMsg = name + " died.";
     }
 
     public Player(String n)
     {
         name = n;
-        myRoom = Environment.r0;
+        deathMsg = name + " died.";
     }
 
     public Player(boolean genName)
     {
         name = Utils.names1[Utils.rand.nextInt(Utils.names1.length)] + Utils.names2[Utils.rand.nextInt(Utils.names2.length)];
-        myRoom = Environment.r0;
+        deathMsg = name + " died.";
     }
 
     public void setActions()
@@ -148,10 +149,8 @@ public class Player extends Unit
             {                            //chosenAttackType - 1 because of Punch
                 attackDamage = inv.at(chosenAttackType - 1).getDamage();
             }
-
-            System.out.println(attackDamage.getMessage());
             
-            Environment.playerAttackEnemy(chosenEnemyIndex, attackDamage); //TODO change this implementation so environment knows which player so "you've murdered" only happens to Laur
+            this.attack(myRoom.enemies.get(chosenEnemyIndex), attackDamage);
         }
         else
             System.out.println("No enemies.");
@@ -230,10 +229,10 @@ public class Player extends Unit
                 Utils.slowPrint("... but you have no enemies! Nothing happens.");
             else
             {
-                Collections.reverse(myRoom.enemies);
+                Collections.reverse(myRoom.enemies); //TODO: feels like there's a better way to go about this than reverse, backwards, reverse
                 for (int i = s - 1; i >= 0; i--)
                 {
-                    Environment.playerAttackEnemy(i, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), message));
+                    this.attack(myRoom.enemies.get(i), new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
                 }
                 Collections.reverse(myRoom.enemies);
             }
@@ -243,9 +242,8 @@ public class Player extends Unit
     private void interact()
     {
         ArrayList<Interactible> inters = getIntersByUniqueDesc();
-        String[] descriptions = getIntersActionDescriptions(inters);
 
-        Interactible chosen = inters.get(Utils.promptList("What do you interact with?", descriptions));
+        Interactible chosen = inters.get(Utils.promptList("What do you interact with?", actionDescsOf(inters)));
 
         if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
@@ -311,7 +309,7 @@ public class Player extends Unit
         return inters;
     }
 
-    private String[] getIntersActionDescriptions(ArrayList<Interactible> inters)
+    private String[] actionDescsOf(ArrayList<Interactible> inters)
     {
         String[] d = new String[inters.size()];
 
@@ -345,7 +343,7 @@ public class Player extends Unit
             switch (effectUpdate(e))
             {
                 case DEATH:
-                    Utils.slowPrintln("you died.");
+                    Environment.kill(this);
                     break;
             
                 default:
@@ -373,7 +371,7 @@ public class Player extends Unit
     }
 
     @Override
-    public int getAttackDamage() 
+    public Damage getAttackDamage() 
     {
         //TODO will be used in combat manager I assume, to get attack damage at that time for the enemy decisionmaking
         throw new UnsupportedOperationException("Unimplemented method 'getAttackDamage'");
@@ -402,5 +400,11 @@ public class Player extends Unit
     public String getDescription() 
     {
         return "My name is " + name;
+    }
+
+    @Override
+    public void attack(Unit targ, Damage d) {
+        //TODO change this implementation so Environment knows which player so "you've murdered" only happens to Laur
+        targ.receiveDamage(d); //TODO: mirror image in Enemy, also this only exists for readability
     }
 }

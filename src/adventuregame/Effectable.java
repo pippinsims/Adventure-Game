@@ -90,7 +90,10 @@ public class Effectable extends Describable{
         else if(health > 0)
             return EffectUpdateResult.VERYHURT;
         else
+        {
+            Environment.kill(this);
             return EffectUpdateResult.DEATH;
+        }
     }
 
     final public void addEffect(Effect e)

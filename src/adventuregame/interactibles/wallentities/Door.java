@@ -15,10 +15,10 @@ public class Door extends WallEntity
     public Door(Room room1, Room room2, Wall wall)
     {
         myRoom = room1;
-        myRoom.addDoor(this);
+        myRoom.add(this);
 
         myOtherRoom = room2;
-        myOtherRoom.addDoor(this);
+        myOtherRoom.add(this);
         
         description = "door";
         pluralDescription = description + "s";

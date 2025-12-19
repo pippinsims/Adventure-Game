@@ -48,10 +48,15 @@ public class Room extends Describable
         isCurrentRoom = c;
     }
 
-    public void addDoor(Door d)
+    public void add(Door d)
     {
         doors.add(d);
         interactibles.add(d);
+    }
+
+    public void add(Enemy e)
+    {
+        enemies.add(e);
     }
 
     //TODO add wall material, add a familiar description once it's a familiar room

@@ -6,7 +6,7 @@ import adventuregame.abstractclasses.Unit;
 public class Enemy extends Unit
 {
     private Inventory inv;
-    private int dmg;
+    private Damage dmg;
     private int wisdom;
     private String description, randomDescription;
     private String name;
@@ -27,37 +27,45 @@ public class Enemy extends Unit
         }
     }
 
-    public Enemy(int h, Inventory i, int d, int w)
+    public Enemy(int h, Room r, Inventory i, int d, int w)
     {
         maxHealth = h;
+        myRoom = r;
         health = maxHealth;
         inv = i;
-        dmg = d;
+        dmg = new Damage(d);
         wisdom = w;
         generateName();
         description = "goblin";
+        deathMsg = "You ended " + getName();
     }
 
-    public Enemy(int health, Inventory inv, int dmg, int wis, String des)
+    public Enemy(int health, Room r, Inventory inv, int damage, int wis, String des)
     {
         maxHealth = health;
         this.health = maxHealth;
+        myRoom = r;
+        
         this.inv = inv;
-        this.dmg = dmg;
+        dmg = new Damage(damage);
         wisdom = wis;
         description = des;
         generateName();
+        deathMsg = "You ended " + getName();
     }
 
-    public Enemy(int h)
+    public Enemy(int health, Room r)
     {
-        maxHealth = h;
-        health = maxHealth;
+        maxHealth = health;
+        this.health = maxHealth;
+        myRoom = r;
+
         inv = new Inventory(5);
-        dmg = 2;
+        dmg = new Damage(4);
         wisdom = 20;
         generateName();
         description = "goblin";
+        deathMsg = "You ended " + getName();
     }
 
     private void generateName() 
@@ -117,7 +125,7 @@ public class Enemy extends Unit
         return inv;
     }
 
-    public int getAttackDamage()
+    public Damage getAttackDamage()
     {
         return dmg;
     }
@@ -219,8 +227,15 @@ public class Enemy extends Unit
         }
 
         Utils.slowPrintln(str);
-
+        if(i == 2) this.attack(myRoom.players.get(0), getAttackDamage());
+            
         return true;
+    }
+
+    @Override
+    public void attack(Unit targ, Damage d)
+    {
+        targ.receiveDamage(d); //TODO this has a mirror image in Player
     }
 
     @Override
@@ -233,7 +248,7 @@ public class Enemy extends Unit
             switch(effectUpdate(e))
             {
                 case DEATH: 
-                    death(); 
+                    Environment.kill(this);
                     return;
 
                 default: 
@@ -242,13 +257,6 @@ public class Enemy extends Unit
         }
         
         chooseAction(Environment.r0);
-    }
-
-    public void death() 
-    {
-        Utils.slowPrintln("You ended " + getName(), 0/*200*/);
-        // remove enemy from the current room
-        Environment.r0.enemies.remove(this);
     }
 
     @Override

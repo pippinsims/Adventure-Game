@@ -4,6 +4,7 @@ import adventuregame.interactibles.GoldenPotInteractible;
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.*;
 import adventuregame.Utils.Tuple;
+import adventuregame.abstractclasses.Unit;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -99,7 +100,7 @@ public class Environment
         r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,", "Mossy Ruin");
-        mossyRuin.enemies.add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster"));
+        mossyRuin.add(new Enemy(2, mossyRuin, new Inventory(2), 1, 99999, "Mushroom Monster")); //TODO: i wish there was a way to just set Enemy.myRoom when they're added to a room, instead of a reference in the constructor that MUST be that same as the room they're added to
         
         new Door(r0, mossyRuin, Wall.NORTH);
         new Door(r0, new Room(), Wall.WEST);
@@ -112,7 +113,7 @@ public class Environment
 
         for (int i = 0; i < 4; i++)
         {
-            r0.enemies.add(new Enemy(3));
+            r0.add(new Enemy(3, r0));
         }
 
         new TorchInteractible(r0, Wall.EAST);
@@ -125,17 +126,6 @@ public class Environment
         addPlayer(new Player("Nuel"));
 
         treasureRoom.interactibles.add(new GoldenPotInteractible(treasureRoom));
-    }
-
-    public static void playerAttackEnemy(int index, Damage d)
-    {
-        //TODO MAKE THERE BE DIFFERENT REACTIONS TO BEING ATTACKED
-        Enemy e = r0.enemies.get(index);
-        if(e.receiveDamage(d) == Effectable.EffectUpdateResult.DEATH)
-        {
-            Utils.slowPrintln("You have murdered the " + e.getRandomDescription(), 1/*250*/); // so unnecessary lol
-            e.death();
-        }
     }
 
     public static void printInfo()
@@ -157,5 +147,22 @@ public class Environment
         {
             Utils.currentPrintDelay = 3;
         }
+    }
+
+    public static void kill(Effectable e)
+    {
+        if(e instanceof Enemy)
+        {
+            ArrayList<Enemy> all = ((Enemy)e).getRoom().enemies;
+            for(int i = 0; i < all.size(); i++) if(all.get(i) == e) all.remove(i); //normal remove method compares by description
+        }
+        else if(e instanceof Player)
+        {
+            Utils.slowPrintln("you died.");
+            ((Player)e).getRoom().players.remove(e);
+            allPlayers.remove(e);
+        }
+
+        Utils.slowPrintln(((Unit)e).getDeathMessage() + "------", 0/*200*/);
     }
 }
