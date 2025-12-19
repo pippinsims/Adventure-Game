@@ -233,12 +233,6 @@ public class Enemy extends Unit
     }
 
     @Override
-    public void attack(Unit targ, Damage d)
-    {
-        targ.receiveDamage(d); //TODO this has a mirror image in Player
-    }
-
-    @Override
     public void updateUnit() throws Exception {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
         

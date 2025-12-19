@@ -62,6 +62,7 @@ public class Effectable extends Describable{
 
     final public EffectUpdateResult receiveDamage(Damage damage)
     {
+        Utils.slowPrintln(getName() + " is hit by " + damage.getMessage());
         switch (damage.getType()) {
             case BASIC:
                 health -= damage.getValue();

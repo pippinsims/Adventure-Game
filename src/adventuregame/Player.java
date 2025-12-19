@@ -131,12 +131,14 @@ public class Player extends Unit
 
         ArrayList<Enemy> ens = myRoom.enemies;
         if(ens.size() > 0)
-        {       
+        {    
+
+            //MAKE THIS MORE LIFELIKE, MAKE THE GUARDS BE GUARDS, YOU BE A PRISONER, AND OUTFITTED AS SUCH, THIS IS THE FIRST TRIAL
             int chosenEnemyIndex = 0;
             if(ens.size() > 1)
                 chosenEnemyIndex = Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens));
 
-            String[] attackTypes = getAttackTypes(inv);
+            String[] attackTypes = getAttackTypes();
             int chosenAttackType = attackTypes.length > 1 ? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) : 0;
 
             Damage attackDamage;
@@ -211,31 +213,35 @@ public class Player extends Unit
 
     private void castSpell() throws Exception
     {
-        String[] spellTypes = new String[]{"brain aneurysm"};
-        int lvl = 1000;
-        String message = "You release a level " + lvl + " Psych Strike spell on all of your foes.";
-
+        String[] spellTypes = new String[]{"brain aneurysm", "FERDINAND'S FLAMBERGE"};
+        
         System.out.println("Focus...");
         System.out.print("Speak: ");
-        String spell = Utils.scanner.nextLine(); //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
+        String input = Utils.scanner.nextLine();
         
         if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
-            
-        if (spell.contains(spellTypes[0]))
+        
+        switch(Utils.linearFind(spellTypes, input)) //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
         {
-            Utils.slowPrintln(message);
-            int s = myRoom.enemies.size();
-            if(s == 0)
-                Utils.slowPrint("... but you have no enemies! Nothing happens.");
-            else
-            {
-                Collections.reverse(myRoom.enemies); //TODO: feels like there's a better way to go about this than reverse, backwards, reverse
-                for (int i = s - 1; i >= 0; i--)
+            case 0:
+                int lvl = 1000;
+                String message = "a level " + lvl + " Psych Strike spell";
+                Utils.slowPrintln("You release " + message + " on all of your foes.");
+                int s = myRoom.enemies.size();
+                if(s == 0)
+                    Utils.slowPrint("... but you have no enemies! Nothing happens.");
+                else
                 {
-                    this.attack(myRoom.enemies.get(i), new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
+                    Collections.reverse(myRoom.enemies); //TODO: feels like there's a better way to go about this than reverse, backwards, reverse
+                    for (int i = s - 1; i >= 0; i--)
+                    {
+                        this.attack(myRoom.enemies.get(i), new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
+                    }
+                    Collections.reverse(myRoom.enemies);
                 }
-                Collections.reverse(myRoom.enemies);
-            }
+            case 1:
+                Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
+            break;
         }
     }
 
@@ -268,15 +274,14 @@ public class Player extends Unit
         inv.at(Utils.promptList("Which item?", prompts)).action();
     }
 
-    private String[] getAttackTypes(Inventory inventory) 
+    private String[] getAttackTypes() 
     {
-        String[] attackTypes = new String[inventory.size() + 1];
+        String[] attackTypes = new String[inv.size() + 1];
         attackTypes[0] = "Punch";
-        for (int i = 1; i < attackTypes.length; i++) 
+        for (int idx = 1; idx < attackTypes.length; idx++) 
         {
-            Item it = inventory.at(i - 1);
-            if(it.isWeapon())
-                attackTypes[i] = it.getName();
+            Item i = inv.at(idx - 1);
+            if(i.isWeapon()) attackTypes[idx] = i.getName();
         }
 
         return attackTypes;
@@ -400,11 +405,5 @@ public class Player extends Unit
     public String getDescription() 
     {
         return "My name is " + name;
-    }
-
-    @Override
-    public void attack(Unit targ, Damage d) {
-        //TODO change this implementation so Environment knows which player so "you've murdered" only happens to Laur
-        targ.receiveDamage(d); //TODO: mirror image in Enemy, also this only exists for readability
     }
 }

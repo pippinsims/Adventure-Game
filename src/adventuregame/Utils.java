@@ -273,4 +273,10 @@ public abstract class Utils {
             return t1.equals(t.t1) && t2.equals(t.t2);
         }
     }
+
+    public static int linearFind(String[] arr, String s)
+    {
+        for(int i = 0; i < arr.length; i++) if(arr[i].equals(s)) return i;
+        return -1;
+    }
 }
