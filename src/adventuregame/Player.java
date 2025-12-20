@@ -5,20 +5,16 @@ import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.wallentities.Door;
 import adventuregame.items.*;
 
-// standard imports
 import java.util.*;
 
 public class Player extends Unit
 {
-    //private int playerDamage = 1;
-    //private int playerWisdom = 2;
-
     private float chanceOfPtolomy = .0f;
     private boolean ptolomyIsPresent = false;
     private int ptolomyPrintLength;
 
     private String name;
-    private Inventory inv = new Inventory(10); //TODO make inventories accessible!
+    private Inventory inv = new Inventory(10);
     private Room myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
 
     //FOR EACH ENUM, MAKE A MAP ENTRY
@@ -131,8 +127,7 @@ public class Player extends Unit
 
         ArrayList<Enemy> ens = myRoom.enemies;
         if(ens.size() > 0)
-        {    
-
+        {   
             //MAKE THIS MORE LIFELIKE, MAKE THE GUARDS BE GUARDS, YOU BE A PRISONER, AND OUTFITTED AS SUCH, THIS IS THE FIRST TRIAL
             int chosenEnemyIndex = 0;
             if(ens.size() > 1)
@@ -235,10 +230,11 @@ public class Player extends Unit
                     Collections.reverse(myRoom.enemies); //TODO: feels like there's a better way to go about this than reverse, backwards, reverse
                     for (int i = s - 1; i >= 0; i--)
                     {
-                        this.attack(myRoom.enemies.get(i), new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
+                        this.attack(myRoom.enemies.get(i), new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), "2"+message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
                     }
                     Collections.reverse(myRoom.enemies);
                 }
+            break;
             case 1:
                 Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
             break;
@@ -328,13 +324,7 @@ public class Player extends Unit
     {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
 
-        if(name == "Laur")
-        {
-            for (Enemy e : myRoom.enemies) 
-            {
-                e.Randomize();    
-            }
-        }
+        if(name == "Laur") for (Enemy e : myRoom.enemies) e.randomizeDesc();
         
         myRoom.updateDoors();
         System.out.println();
@@ -345,22 +335,13 @@ public class Player extends Unit
         for (int i = effects.size() - 1; i >= 0; i--) //TODO this has a mirror image in Enemy
         {
             Effect e = effects.get(i);
-            switch (effectUpdate(e))
-            {
-                case DEATH:
-                    Environment.kill(this);
-                    break;
-            
-                default:
-                    break;
-            }
+            effectUpdate(e);
         }
 
         setActions();
  
         if(ptolomyIsPresent)
         {
-
             Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
             System.out.println();
         }

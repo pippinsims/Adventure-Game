@@ -36,7 +36,7 @@ public class Effectable extends Describable{
                 break;
 
             case PSYCHSTRIKE:
-                result = receiveDamage(new Damage(e.strength, Damage.Type.PSYCHIC, e, "You're mind is vexed of the psychic strike"));
+                result = receiveDamage(new Damage(e.strength, Damage.Type.PSYCHIC, e, "Your mind is vexed of the psychic strike"));
                 isStunned = true;
                 effectIsOver = e.cooldown.decrement();
                 break;
@@ -60,9 +60,10 @@ public class Effectable extends Describable{
         return result;
     }
 
-    final public EffectUpdateResult receiveDamage(Damage damage)
+    final public EffectUpdateResult receiveDamage(Damage damage, String message)
     {
-        Utils.slowPrintln(getName() + " is hit by " + damage.getMessage());
+        if(message == null) Utils.slowPrintln(damage.getMessage());
+        else Utils.slowPrintln(getName() + " is hit by " + message);
         switch (damage.getType()) {
             case BASIC:
                 health -= damage.getValue();
@@ -95,6 +96,12 @@ public class Effectable extends Describable{
             Environment.kill(this);
             return EffectUpdateResult.DEATH;
         }
+    }
+
+    final public EffectUpdateResult receiveDamage(Damage damage)
+    {
+        if(damage.getMessage().charAt(0) != '2') return receiveDamage(damage, null);
+        else return receiveDamage(damage, damage.getMessage().substring(1));
     }
 
     final public void addEffect(Effect e)

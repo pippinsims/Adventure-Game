@@ -230,7 +230,7 @@ public abstract class Utils {
             catch(Exception e)
             {
                 inputInt = null;
-                String question = "Incorrect input! Please input a given answer number."; //TODO: maybe "b" for back, "l" for last, "f" for first, and allow stringing them together?
+                String question = "Incorrect input! Please input a given answer number."; //TODO: maybe "b" for back, "l" for last, "f" for first, maybe chars for specific commands like ("i" for Inventory) and allow stringing them together?
 
                 System.out.println(question);
                 printOptions(options);

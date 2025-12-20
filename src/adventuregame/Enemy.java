@@ -138,7 +138,7 @@ public class Enemy extends Unit
     public void chooseAction(Room curRoom)
     {
         //DECISIONMAKING FOR ENEMY
-        if(isStunned)
+        if(isStunned || curRoom.players.isEmpty())
         {
             performAction(1);
             isStunned = false;
@@ -239,15 +239,7 @@ public class Enemy extends Unit
         for (int i = effects.size() - 1; i >= 0; i--) //TODO this has a mirror image in Player
         {
             Effect e = effects.get(i);
-            switch(effectUpdate(e))
-            {
-                case DEATH: 
-                    Environment.kill(this);
-                    return;
-
-                default: 
-                    break;
-            }
+            if(effectUpdate(e) == EffectUpdateResult.DEATH) return;
         }
         
         chooseAction(Environment.r0);
@@ -268,7 +260,7 @@ public class Enemy extends Unit
             return pluralOf(description);
     }
 
-    public void Randomize() 
+    public void randomizeDesc() 
     {
         randomDescription = getRandomDescription();
     }

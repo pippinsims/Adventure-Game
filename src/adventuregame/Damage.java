@@ -27,7 +27,7 @@ public class Damage {
     {
         this.value = value;
         this.type = Type.BASIC;
-        message = "normal damage";
+        message = "2normal damage";
     }
 
     public Damage(int value, Type type, String msg)

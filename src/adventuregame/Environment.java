@@ -163,6 +163,7 @@ public class Environment
             allPlayers.remove(e);
         }
 
+        //prints twice on effect death
         Utils.slowPrintln(((Unit)e).getDeathMessage() + "------", 0/*200*/);
     }
 }
