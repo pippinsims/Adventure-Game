@@ -44,6 +44,7 @@ public class Player extends Unit
     public Player()
     {
         name = "Laur";
+        
         myRoom = Environment.r0;
         inv.add(new Bananarang());
 
@@ -385,6 +386,13 @@ public class Player extends Unit
     @Override
     public String getDescription() 
     {
-        return "My name is " + name;
+        switch(name)
+        {
+            case "Laur": return "a strange-looking man with grimy fingernails";
+            case "Nuel": return "a tallish impolite man with a perminent sneer";
+            case "Valeent": return "a perilous-looking woman with anger issues";
+            case "Veili": return "a consternated woman with a bewildered look and a horrendous scar across her forehead";
+            default: return "a person";
+        }
     }
 }

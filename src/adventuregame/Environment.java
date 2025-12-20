@@ -124,6 +124,8 @@ public class Environment
 
         addPlayer(new Player());
         addPlayer(new Player("Nuel"));
+        addPlayer(new Player("Valeent"));
+        addPlayer(new Player("Veili"));
 
         treasureRoom.interactibles.add(new GoldenPotInteractible(treasureRoom));
     }
