@@ -97,34 +97,45 @@ public class Environment
 
     private static void generateMap()
     {
-        r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
+        Room end = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,", "Mossy Ruin");
         mossyRuin.add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster"));
         
-        new Door(r0, mossyRuin, Wall.NORTH);
-        new Door(r0, new Room(), Wall.WEST);
+        new Door(end, mossyRuin, Wall.NORTH);
+        new Door(end, new Room(), Wall.WEST);
         Room joiner1 = new Room();
-        new Door(r0, joiner1, Wall.EAST);
+        new Door(end, joiner1, Wall.EAST);
 
         Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.", "Treasure Room");
-        
+        treasureRoom.add(new GoldenPotInteractible(treasureRoom));
+
         new Door(joiner1, treasureRoom, Wall.SOUTH);
 
-        for (int i = 0; i < 4; i++) r0.add(new Enemy(3));
+        for (int i = 0; i < 4; i++) end.add(new Enemy(3));
 
-        new TorchInteractible(r0, Wall.EAST);
-        new TorchInteractible(r0, Wall.WEST);
-        new TorchInteractible(r0, Wall.WEST);
+        new TorchInteractible(end, Wall.EAST);
+        new TorchInteractible(end, Wall.WEST);
+        new TorchInteractible(end, Wall.WEST);
 
-        new ViewablePicture(r0, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
+        new ViewablePicture(end, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
+        
+        Room hall = new Room("A long hall with many cells", "PrisonHall");
+        String celld = "A barren, empty, disgusting prison cell", celln = "Cell";
+        r0 = new Room(celld, celln);
+        for (int i = 0; i < 7; i++) //TODO DOOR DESCRIPTIONS JUST ABSOLUTELY DON'T WORK WHEN TOO MANY DOORS
+        {
+            new Door(hall, new Room(celld, celln), Wall.EAST);
+            if(i == 0) new Door(hall, r0, Wall.WEST);
+            else new Door(hall, new Room(celld, celln), Wall.WEST);
+        }
+
+        new Door(hall, end, Wall.NORTH);
 
         addPlayer(new Player());
         addPlayer(new Player("Nuel"));
         addPlayer(new Player("Valeent"));
         addPlayer(new Player("Veili"));
-
-        treasureRoom.add(new GoldenPotInteractible(treasureRoom));
     }
 
     public static void printInfo()
