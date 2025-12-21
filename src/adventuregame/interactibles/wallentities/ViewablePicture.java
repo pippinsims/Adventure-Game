@@ -27,11 +27,11 @@ public class ViewablePicture extends WallEntity {
     @Override
     public void action(Unit u) 
     {
-        inspectInteractible();
+        inspect();
     }
 
     @Override
-    public void inspectInteractible()
+    public void inspect()
     {
         Utils.slowPrintln("You take a closer look at the depiction:\n");
         String s = Utils.readFile(txtFileName);

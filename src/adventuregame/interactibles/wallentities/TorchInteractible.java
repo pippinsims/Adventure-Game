@@ -36,7 +36,7 @@ public class TorchInteractible extends WallEntity {
     }
 
     @Override
-    public void inspectInteractible()
+    public void inspect()
     {
         Utils.slowPrintln("You take a closer look at this torch and notice nothing new. It's hot, I guess");
     }

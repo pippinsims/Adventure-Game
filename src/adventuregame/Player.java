@@ -157,12 +157,11 @@ public class Player extends Unit
 
     private void inspect()
     {
-        ArrayList<Describable> descs = new ArrayList<>();
-        descs.addAll(myRoom.interactibles);
+        ArrayList<Describable> descs = new ArrayList<>(myRoom.interactibles);
         descs.addAll(myRoom.players);
         descs.remove(this);
-        Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectsOf(descs)));
-        if(d instanceof Interactible) ((Interactible)d).inspectInteractible();
+        Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
+        if(d instanceof Interactible) ((Interactible)d).inspect();
         else Utils.slowPrintln(d.getDescription());
     }
 

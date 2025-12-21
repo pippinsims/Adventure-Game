@@ -165,7 +165,7 @@ public abstract class Utils {
         return strings;
     }
 
-    public static String[] inspectsOf(ArrayList<Describable> all)
+    public static String[] inspectTitlesOf(ArrayList<Describable> all) //just because the interactibles' descriptions are so fun
     {
         String[] strings = new String[all.size()];
         for(int i = 0; i < strings.length; i++)
@@ -248,7 +248,7 @@ public abstract class Utils {
             catch(Exception e)
             {
                 inputInt = null;
-                String question = "Incorrect input! Please input a given answer number."; //TODO: maybe "b" for back, "l" for last, "f" for first, maybe chars for specific commands like ("i" for Inventory) and allow stringing them together?
+                String question = "Incorrect input! Please input a given answer number."; //TODO: maybe "b" for back (yeah that'd be hard to add but also great), "l" for last, "f" for first, maybe chars for specific commands like ("i" for Inventory) and allow stringing them together?
 
                 System.out.println(question);
                 printOptions(options);

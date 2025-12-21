@@ -85,7 +85,7 @@ public class GoldenPotInteractible extends Interactible{
     }
 
     @Override
-    public void inspectInteractible() 
+    public void inspect() 
     {
         Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
     }
