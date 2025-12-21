@@ -2,7 +2,6 @@ package adventuregame;
 
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
-import adventuregame.interactibles.wallentities.Door;
 import adventuregame.items.*;
 
 import java.util.*;
@@ -251,14 +250,6 @@ public class Player extends Unit
         if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
         chosen.action(this);
-
-        if(chosen.isDoor())
-        {             
-            Door door = (Door)chosen;
-            myRoom.players.remove(this);
-            myRoom = door.getNextRoom(myRoom);
-            myRoom.players.add(this);
-        }
     }
 
     private void inventory()
@@ -371,12 +362,6 @@ public class Player extends Unit
     public String getName() 
     {
         return name;        
-    }
-
-    @Override
-    public Room getRoom() 
-    {
-        return myRoom;
     }
 
     @Override

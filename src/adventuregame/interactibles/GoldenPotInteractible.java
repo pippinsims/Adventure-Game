@@ -89,9 +89,4 @@ public class GoldenPotInteractible extends Interactible{
     {
         Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
     }
-
-    @Override
-    public boolean isDoor() {
-        return false;
-    }
 }

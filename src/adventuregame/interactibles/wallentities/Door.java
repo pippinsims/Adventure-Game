@@ -100,6 +100,11 @@ public class Door extends WallEntity
     public void action(Unit u)
     {
         Utils.slowPrint("you used " + getDescription());
+        
+        Room r = u.getRoom();
+        r.remove(u);
+        u.setRoom(getNextRoom(r));
+        u.getRoom().add(u);
     }
 
     public Room getNextRoom(Room curRoom)
@@ -110,12 +115,6 @@ public class Door extends WallEntity
             return myRoom;
         else
             throw new RuntimeException("urk, you plugged in a room this door wasn't in");
-    }
-
-    @Override
-    public boolean isDoor()
-    {
-        return true;
     }
 
     @Override

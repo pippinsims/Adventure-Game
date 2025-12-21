@@ -242,12 +242,6 @@ public class Enemy extends Unit
     }
 
     @Override
-    public Room getRoom() 
-    {
-        return myRoom;
-    }
-
-    @Override
     public String getPluralDescription() 
     {
         if(Environment.curPlayer.getName() == "Laur")

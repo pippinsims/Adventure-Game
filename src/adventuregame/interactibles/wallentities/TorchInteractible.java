@@ -13,7 +13,7 @@ public class TorchInteractible extends WallEntity {
     public TorchInteractible(Room room, Wall wall)
     {
         myRoom = room;
-        myRoom.interactibles.add(this);
+        myRoom.add(this);
         description = "torch";
         this.wall = wall;
         name = "Torch";

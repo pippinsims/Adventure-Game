@@ -53,11 +53,6 @@ public class Interactible extends Describable
     { 
         return false; 
     }
-
-    public boolean isDoor() 
-    { 
-        return false; 
-    }
     
     @Override
     public String getDescription() 

@@ -14,7 +14,10 @@ public abstract class Unit extends Effectable
     public abstract Damage getAttackDamage();
     public abstract int getWisdom();
     public abstract String getName();
-    public abstract Room getRoom();
+
+    private Room myRoom;
+    public Room getRoom() { return myRoom; }
+    public void setRoom(Room r) { myRoom = r; }
     public void attack(Unit targ, Damage d) { targ.receiveDamage(d); }//TODO change this implementation so Environment knows which player so "you've murdered" only happens to Laur
 
     public String deathMsg;

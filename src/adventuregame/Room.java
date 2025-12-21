@@ -1,6 +1,7 @@
 package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.wallentities.Door;
 
 import java.util.ArrayList;
@@ -47,15 +48,26 @@ public class Room extends Describable
         isCurrentRoom = c;
     }
 
-    public void add(Door d)
+    public void add(Interactible i)
     {
-        doors.add(d);
-        interactibles.add(d);
+        if(i instanceof Door) doors.add((Door)i);
+        interactibles.add(i);
     }
 
-    public void add(Enemy e)
+    public boolean remove(Interactible i)
     {
-        enemies.add(e);
+        return interactibles.remove(i);
+    }
+
+    public void add(Unit u)
+    {
+        if(u instanceof Player) players.add((Player)u);
+        else enemies.add((Enemy)u);
+    }
+
+    public boolean remove(Unit u)
+    {
+        return u instanceof Player ? players.remove((Player)u) : enemies.remove((Enemy)u);
     }
 
     //TODO add wall material, add a familiar description once it's a familiar room
@@ -66,10 +78,7 @@ public class Room extends Describable
 
     public void updateDoors()
     {
-        for (Door door : doors) 
-        {
-            door.setWall(this);
-        }
+        for (Door door : doors) door.setWall(this);
     }
 
     @Override

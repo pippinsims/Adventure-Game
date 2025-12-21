@@ -16,7 +16,7 @@ public class ViewablePicture extends WallEntity {
         this.wall = wall;
         this.name = name;
         myRoom = room;
-        myRoom.interactibles.add(this);
+        myRoom.add(this);
         normLocPrep = "on";
         actionVerb = "Inspect";
         actLocPrep = normLocPrep;
