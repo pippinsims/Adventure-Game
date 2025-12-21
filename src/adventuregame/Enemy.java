@@ -236,11 +236,7 @@ public class Enemy extends Unit
     public void updateUnit() throws Exception {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
         
-        for (int i = effects.size() - 1; i >= 0; i--) //TODO this has a mirror image in Player
-        {
-            Effect e = effects.get(i);
-            if(effectUpdate(e) == EffectUpdateResult.DEATH) return;
-        }
+        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return; //TODO this has a mirror image in Player
         
         chooseAction(Environment.r0);
     }

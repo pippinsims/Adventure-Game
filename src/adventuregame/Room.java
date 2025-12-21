@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 public class Room extends Describable
 {
-
     ArrayList<Enemy> enemies = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
     public ArrayList<Interactible> interactibles = new ArrayList<>();

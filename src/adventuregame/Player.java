@@ -235,10 +235,10 @@ public class Player extends Unit
                     }
                     Collections.reverse(myRoom.enemies);
                 }
-            break;
+                break;
             case 1:
                 Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
-            break;
+                break;
         }
     }
 
@@ -333,11 +333,7 @@ public class Player extends Unit
         Environment.printInfo();
         System.out.println();
         
-        for (int i = effects.size() - 1; i >= 0; i--) //TODO this has a mirror image in Enemy
-        {
-            Effect e = effects.get(i);
-            effectUpdate(e);
-        }
+        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return; //TODO this has a mirror image in Enemy
 
         setActions();
  
