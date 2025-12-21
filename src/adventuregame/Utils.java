@@ -176,6 +176,13 @@ public abstract class Utils {
         return strings;
     }
 
+    public static String[] actionDescsOf(ArrayList<Interactible> inters)
+    {
+        String[] d = new String[inters.size()];
+        for(int i = 0; i < d.length; i++) d[i] = inters.get(i).getActionDescription();
+        return d;
+    }
+
     public static int promptList(String question, int listSize, String listPrompts)
     {        
         String[] options = new String[listSize];

@@ -58,18 +58,25 @@ public class Room extends Describable
         enemies.add(e);
     }
 
-    //TODO add wall material, add a familiar description once it's a familiar room
-    public String getDescription()
-    {
-        return description;
-    }
-
     public void updateDoors()
     {
         for (Door door : doors) 
         {
             door.setWall(this);
         }
+    }
+
+    //TODO add wall material, add a familiar description once it's a familiar room
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public ArrayList<Interactible> getIntersByUniqueDesc()
+    {
+        ArrayList<Interactible> inters = new ArrayList<>();
+        for (Interactible i : interactibles) if(!inters.contains(i)) inters.add(i); //This compares by description
+        return inters;
     }
 
     @Override
