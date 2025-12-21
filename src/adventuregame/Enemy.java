@@ -10,7 +10,6 @@ public class Enemy extends Unit
     private int wisdom;
     private String description, randomDescription;
     private String name;
-    private Room myRoom;
 
     public String pluralOf(String description)
     {
@@ -27,10 +26,9 @@ public class Enemy extends Unit
         }
     }
 
-    public Enemy(int h, Room r, Inventory i, int d, int w)
+    public Enemy(int h, Inventory i, int d, int w)
     {
         maxHealth = h;
-        myRoom = r;
         health = maxHealth;
         inv = i;
         dmg = new Damage(d);
@@ -40,11 +38,10 @@ public class Enemy extends Unit
         deathMsg = "You ended " + getName();
     }
 
-    public Enemy(int health, Room r, Inventory inv, int damage, int wis, String des)
+    public Enemy(int health, Inventory inv, int damage, int wis, String des)
     {
         maxHealth = health;
         this.health = maxHealth;
-        myRoom = r;
         
         this.inv = inv;
         dmg = new Damage(damage);
@@ -54,11 +51,10 @@ public class Enemy extends Unit
         deathMsg = "You ended " + getName();
     }
 
-    public Enemy(int health, Room r)
+    public Enemy(int health)
     {
         maxHealth = health;
         this.health = maxHealth;
-        myRoom = r;
 
         inv = new Inventory(5);
         dmg = new Damage(4);

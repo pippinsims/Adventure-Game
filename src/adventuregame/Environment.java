@@ -32,7 +32,7 @@ public class Environment
             for (Player p : allPlayers) 
             {
                 if(!playerRooms.contains(p.getRoom()))
-                    playerRooms.add(p.getRoom());    
+                    playerRooms.add(p.getRoom());
             }
 
             for (int r = 0; r < playerRooms.size(); r++)
@@ -100,7 +100,7 @@ public class Environment
         r0 = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,", "Mossy Ruin");
-        mossyRuin.add(new Enemy(2, mossyRuin, new Inventory(2), 1, 99999, "Mushroom Monster")); //TODO: i wish there was a way to just set Enemy.myRoom when they're added to a room, instead of a reference in the constructor that MUST be that same as the room they're added to
+        mossyRuin.add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster"));
         
         new Door(r0, mossyRuin, Wall.NORTH);
         new Door(r0, new Room(), Wall.WEST);
@@ -111,10 +111,7 @@ public class Environment
         
         new Door(joiner1, treasureRoom, Wall.SOUTH);
 
-        for (int i = 0; i < 4; i++)
-        {
-            r0.add(new Enemy(3, r0));
-        }
+        for (int i = 0; i < 4; i++) r0.add(new Enemy(3));
 
         new TorchInteractible(r0, Wall.EAST);
         new TorchInteractible(r0, Wall.WEST);

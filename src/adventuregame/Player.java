@@ -14,7 +14,6 @@ public class Player extends Unit
 
     private String name;
     private Inventory inv = new Inventory(10);
-    private Room myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
 
     //FOR EACH ENUM, MAKE A MAP ENTRY
     enum Action 
@@ -42,9 +41,9 @@ public class Player extends Unit
 
     public Player()
     {
+        myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = "Laur";
         
-        myRoom = Environment.r0;
         inv.add(new Bananarang());
         inv.add(new GoldenPot(0));
 
@@ -56,12 +55,14 @@ public class Player extends Unit
 
     public Player(String n)
     {
-        name = n;
+        myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
+        name = n;        
         deathMsg = name + " died.";
     }
 
     public Player(boolean genName)
     {
+        myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = Utils.names1[Utils.rand.nextInt(Utils.names1.length)] + Utils.names2[Utils.rand.nextInt(Utils.names2.length)];
         deathMsg = name + " died.";
     }

@@ -62,7 +62,11 @@ public class Room extends Describable
     public void add(Unit u)
     {
         if(u instanceof Player) players.add((Player)u);
-        else enemies.add((Enemy)u);
+        else 
+        {
+            enemies.add((Enemy)u);
+            u.setRoom(this);
+        }
     }
 
     public boolean remove(Unit u)
