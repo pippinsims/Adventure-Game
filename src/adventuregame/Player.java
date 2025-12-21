@@ -1,6 +1,6 @@
 package adventuregame;
 
-import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.items.*;
 
@@ -46,6 +46,7 @@ public class Player extends Unit
         
         myRoom = Environment.r0;
         inv.add(new Bananarang());
+        inv.add(new GoldenPot(0));
 
         chanceOfPtolomy = 1f;
         ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
@@ -143,7 +144,7 @@ public class Player extends Unit
                 attackDamage = new Damage(dmgval, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + dmgval + " damage!");
             }
             else
-            {                            //chosenAttackType - 1 because of Punch
+            {//chosenAttackType - 1 because of Punch
                 attackDamage = inv.at(chosenAttackType - 1).getDamage();
             }
             
@@ -155,8 +156,12 @@ public class Player extends Unit
 
     private void inspect()
     {
-        ArrayList<Interactible> inters = myRoom.interactibles;
-        inters.get(Utils.promptList("There " + ((inters.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.descriptionsOf(inters))).inspectInteractible();
+        ArrayList<Describable> descs = new ArrayList<>(myRoom.interactibles);
+        descs.addAll(myRoom.players);
+        descs.remove(this);
+        Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
+        if(d instanceof Interactible) ((Interactible)d).inspect();
+        else Utils.slowPrintln(d.getDescription());
     }
 
     private void commune()
@@ -243,9 +248,9 @@ public class Player extends Unit
 
     private void interact()
     {
-        ArrayList<Interactible> inters = getIntersByUniqueDesc();
+        ArrayList<Interactible> inters = myRoom.getIntersByUniqueDesc();
 
-        Interactible chosen = inters.get(Utils.promptList("What do you interact with?", actionDescsOf(inters)));
+        Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
 
         if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
@@ -254,10 +259,10 @@ public class Player extends Unit
 
     private void inventory()
     {
-        String[] ns = Utils.namesOf(inv.getItems());
-        String[] ds = Utils.descriptionsOf(inv.getItems());
+        String[] n = Utils.namesOf(inv.getItems());
+        String[] d = Utils.descriptionsOf(inv.getItems());
         String[] prompts = new String[inv.size()];
-        for(int i = 0; i < prompts.length; i++) prompts[i] = ns[i] + ": " + ds[i];
+        for(int i = 0; i < prompts.length; i++) prompts[i] = n[i] + ": " + d[i];
 
         inv.at(Utils.promptList("Which item?", prompts)).action();
     }
@@ -266,49 +271,23 @@ public class Player extends Unit
     {
         String[] attackTypes = new String[inv.size() + 1];
         attackTypes[0] = "Punch";
-        for (int idx = 1; idx < attackTypes.length; idx++) 
-        {
-            Item i = inv.at(idx - 1);
-            if(i.isWeapon()) attackTypes[idx] = i.getName();
-        }
+        for (int idx = 1; idx < attackTypes.length; idx++) attackTypes[idx] = inv.at(idx - 1).getName(); //TODO make this use the isWeapon() method
 
         return attackTypes;
     }
 
-    private String[] getPlayerActionDescriptions()
+    private String[] getActionDescriptions()
     {
         String[] actionDescriptions = new String[actions.size()];
        
         for(int i = 0; i < actions.size(); i++)
         {
-             actionDescriptions[i] = !(actions.get(i) == Action.FIGHT && name.equals("Laur")) 
-                ? actionTypes.get(actions.get(i))
-                : "It's kill or be killed.";
+            actionDescriptions[i] = actions.get(i) == Action.FIGHT && name.equals("Laur") 
+                ? "It's kill or be killed."
+                : actionTypes.get(actions.get(i));
         }
 
         return actionDescriptions;
-    }
-
-    private ArrayList<Interactible> getIntersByUniqueDesc()
-    {
-        ArrayList<Interactible> inters = new ArrayList<>();
-
-        for (Interactible i : myRoom.interactibles) 
-        {
-            if(!inters.contains(i)) //This compares by description
-                inters.add(i);
-        }
-
-        return inters;
-    }
-
-    private String[] actionDescsOf(ArrayList<Interactible> inters)
-    {
-        String[] d = new String[inters.size()];
-
-        for(int i = 0; i < d.length; i++) d[i] = inters.get(i).getActionDescription();
-
-        return d;
     }
 
     @Override
@@ -335,7 +314,7 @@ public class Player extends Unit
         }
 
         //lists available actions, lets the player choose, then performs chosen action
-        performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
+        performAction(Utils.promptList("You can:", getActionDescriptions()));
     }
 
     @Override
@@ -369,11 +348,11 @@ public class Player extends Unit
     {
         switch(name)
         {
-            case "Laur": return "a strange-looking man with grimy fingernails";
-            case "Nuel": return "a tallish impolite man with a perminent sneer";
-            case "Valeent": return "a perilous-looking woman with anger issues";
-            case "Veili": return "a consternated woman with a bewildered look and a horrendous scar across her forehead";
-            default: return "a person";
+            case "Laur": return "He is a strange-looking man with grimy fingernails";
+            case "Nuel": return "He is a tallish impolite man with a perminent sneer";
+            case "Valeent": return "She is a perilous-looking woman with anger issues";
+            case "Veili": return "She is a consternated woman with a bewildered look and a horrendous scar across her forehead";
+            default: return "They are a person";
         }
     }
 }

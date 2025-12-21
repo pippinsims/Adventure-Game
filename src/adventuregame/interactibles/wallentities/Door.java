@@ -91,7 +91,7 @@ public class Door extends WallEntity
     }
 
     @Override
-    public void inspectInteractible()
+    public void inspect()
     {
         Utils.slowPrintln("You take a closer look at this gate-esque object and you notice that it is made of poplar wood, and has marks in it, as if from a sword.");
     }

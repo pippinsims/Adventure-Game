@@ -71,7 +71,7 @@ public class Interactible extends Describable
         throw new UnsupportedOperationException("Unimplemented method 'action'");
     }
 
-    public void inspectInteractible()
+    public void inspect()
     {
         throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
     }

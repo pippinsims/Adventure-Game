@@ -70,15 +70,22 @@ public class Room extends Describable
         return u instanceof Player ? players.remove((Player)u) : enemies.remove((Enemy)u);
     }
 
+    public void updateDoors()
+    {
+        for (Door door : doors) door.setWall(this);
+    }
+
     //TODO add wall material, add a familiar description once it's a familiar room
     public String getDescription()
     {
         return description;
     }
 
-    public void updateDoors()
+    public ArrayList<Interactible> getIntersByUniqueDesc()
     {
-        for (Door door : doors) door.setWall(this);
+        ArrayList<Interactible> inters = new ArrayList<>();
+        for (Interactible i : interactibles) if(!inters.contains(i)) inters.add(i); //This compares by description
+        return inters;
     }
 
     @Override

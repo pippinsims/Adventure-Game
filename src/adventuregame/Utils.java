@@ -165,6 +165,24 @@ public abstract class Utils {
         return strings;
     }
 
+    public static String[] inspectTitlesOf(ArrayList<Describable> all) //just because the interactibles' descriptions are so fun
+    {
+        String[] strings = new String[all.size()];
+        for(int i = 0; i < strings.length; i++)
+        {
+            Describable d = all.get(i);
+            strings[i] = d instanceof Player ? d.getName() : d.getDescription();
+        }
+        return strings;
+    }
+
+    public static String[] actionDescsOf(ArrayList<Interactible> inters)
+    {
+        String[] d = new String[inters.size()];
+        for(int i = 0; i < d.length; i++) d[i] = inters.get(i).getActionDescription();
+        return d;
+    }
+
     public static int promptList(String question, int listSize, String listPrompts)
     {        
         String[] options = new String[listSize];
@@ -230,7 +248,7 @@ public abstract class Utils {
             catch(Exception e)
             {
                 inputInt = null;
-                String question = "Incorrect input! Please input a given answer number."; //TODO: maybe "b" for back, "l" for last, "f" for first, maybe chars for specific commands like ("i" for Inventory) and allow stringing them together?
+                String question = "Incorrect input! Please input a given answer number."; //TODO: maybe "b" for back (yeah that'd be hard to add but also great), "l" for last, "f" for first, maybe chars for specific commands like ("i" for Inventory) and allow stringing them together?
 
                 System.out.println(question);
                 printOptions(options);

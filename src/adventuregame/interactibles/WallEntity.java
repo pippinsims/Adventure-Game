@@ -84,8 +84,7 @@ public class WallEntity extends Interactible{
     public String getExposition()
     {
         String locPrep = normLocPrep;
-        if(Environment.curPlayer.getName().equals("Laur") && wall == Wall.NORTH)
-            locPrep = "of";
+        if(Environment.curPlayer.getName().equals("Laur") && wall == Wall.NORTH) locPrep = "of";
         return locPrep + " " + locReference;
     }
 
