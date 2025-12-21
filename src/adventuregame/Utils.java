@@ -165,6 +165,17 @@ public abstract class Utils {
         return strings;
     }
 
+    public static String[] inspectsOf(ArrayList<Describable> all)
+    {
+        String[] strings = new String[all.size()];
+        for(int i = 0; i < strings.length; i++)
+        {
+            Describable d = all.get(i);
+            strings[i] = d instanceof Player ? d.getName() : d.getDescription();
+        }
+        return strings;
+    }
+
     public static int promptList(String question, int listSize, String listPrompts)
     {        
         String[] options = new String[listSize];

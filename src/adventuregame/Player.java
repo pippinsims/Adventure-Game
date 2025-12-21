@@ -1,5 +1,6 @@
 package adventuregame;
 
+import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.wallentities.Door;
@@ -144,7 +145,7 @@ public class Player extends Unit
                 attackDamage = new Damage(dmgval, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + dmgval + " damage!");
             }
             else
-            {                            //chosenAttackType - 1 because of Punch
+            {//chosenAttackType - 1 because of Punch
                 attackDamage = inv.at(chosenAttackType - 1).getDamage();
             }
             
@@ -156,8 +157,13 @@ public class Player extends Unit
 
     private void inspect()
     {
-        ArrayList<Interactible> inters = myRoom.interactibles;
-        inters.get(Utils.promptList("There " + ((inters.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.descriptionsOf(inters))).inspectInteractible();
+        ArrayList<Describable> descs = new ArrayList<>();
+        descs.addAll(myRoom.interactibles);
+        descs.addAll(myRoom.players);
+        descs.remove(this);
+        Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectsOf(descs)));
+        if(d instanceof Interactible) ((Interactible)d).inspectInteractible();
+        else Utils.slowPrintln(d.getDescription());
     }
 
     private void commune()
