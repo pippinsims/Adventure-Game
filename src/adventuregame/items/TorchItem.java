@@ -3,6 +3,7 @@ package adventuregame.items;
 import adventuregame.Damage;
 import adventuregame.Effect;
 import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Unit;
 
 public class TorchItem extends Item{
 
@@ -10,7 +11,7 @@ public class TorchItem extends Item{
     String name = "Torch";
 
     @Override
-    public void action() {
+    public void action(Unit u) {
         System.out.println("The torch is fiery... You stare deeply into the flames.");
     }
 

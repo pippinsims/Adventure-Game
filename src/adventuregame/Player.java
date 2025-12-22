@@ -265,7 +265,7 @@ public class Player extends Unit
         String[] prompts = new String[inv.size()];
         for(int i = 0; i < prompts.length; i++) prompts[i] = n[i] + ": " + d[i];
 
-        inv.at(Utils.promptList("Which item?", prompts)).action();
+        inv.at(Utils.promptList("Which item?", prompts)).action(this);
     }
 
     private String[] getAttackTypes() 
@@ -350,9 +350,10 @@ public class Player extends Unit
         switch(name)
         {
             case "Laur": return "He is a strange-looking man with grimy fingernails";
-            case "Nuel": return "He is a tallish impolite man with a perminent sneer";
-            case "Valeent": return "She is a perilous-looking woman with anger issues";
-            case "Veili": return "She is a consternated woman with a bewildered look and a horrendous scar across her forehead";
+            case "Nuel": return "He is a tallish impolite man with a perminent sneer"; // He can pick locks
+            case "Valeent": return "She is a perilous-looking woman with anger issues"; // Notes on Valeent, skill where she randomly increments her place in the turn order by 1
+            case "Peili": return "She is a consternated woman with a bewildered look and a horrendous scar across her forehead"; // Lodestones in her baggage
+            case "Dormaah": return "He is a stout fish of a man, knows wild things";
             default: return "They are a person";
         }
     }

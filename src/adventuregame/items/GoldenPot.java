@@ -1,7 +1,10 @@
 package adventuregame.items;
 
 import adventuregame.Damage;
+import adventuregame.Utils;
 import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Unit;
+import adventuregame.interactibles.GoldenPotInteractible;
 
 public class GoldenPot extends Item{
 
@@ -24,9 +27,15 @@ public class GoldenPot extends Item{
     }
 
     @Override
-    public void action() 
+    public void action(Unit u) 
     {
-        System.out.print("You hold this pot.");
+        System.out.print("You hold this pot. ");
+        if(Utils.promptList("Do you want to place it on the ground?", new String[] {"Yes", "No"}) == 0)
+        {
+            u.getRoom().add(new GoldenPotInteractible(u.getRoom(), dmg));
+            u.getInventory().remove(this);
+        }
+
     }
 
     @Override

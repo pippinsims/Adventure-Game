@@ -12,8 +12,9 @@ public class GoldenPotInteractible extends Interactible{
 
     private int dmg = 0;
 
-    public GoldenPotInteractible(Room room)
+    public GoldenPotInteractible(Room room, int dmg)
     {
+        this.dmg = dmg;
         myRoom = room;
         description = GoldenPot.descriptions[0];
         name = GoldenPot.defaultName;
@@ -88,5 +89,10 @@ public class GoldenPotInteractible extends Interactible{
     public void inspect() 
     {
         Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
+    }
+
+    @Override
+    public String getPluralDescription() {
+        return "golden pots";
     }
 }

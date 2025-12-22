@@ -1,6 +1,7 @@
 package adventuregame.items;
 import adventuregame.Damage;
 import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Unit;
 
 public class Bananarang extends Item 
 {
@@ -8,7 +9,7 @@ public class Bananarang extends Item
     String name = "Bananarang";
 
     @Override
-    public void action() 
+    public void action(Unit u) 
     {
         System.out.println("You go to take a bite... but then... you probably shouldn't");
     }
