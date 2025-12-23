@@ -5,7 +5,7 @@ import adventuregame.abstractclasses.Unit;
 
 public class Interactible extends Describable
 {
-    protected String name, description, actionVerb, actLocPrep, normLocPrep, locReference;
+    protected String name, description, actionVerb, actLocPrep, plurLocPrep, normLocPrep, locReference;
     protected Room myRoom;
 
     public Room getRoom()

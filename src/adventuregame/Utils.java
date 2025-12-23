@@ -3,6 +3,7 @@ import java.io.File;
 import java.util.*;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.interactibles.wallentities.Door;
 
 public class Utils {
 
@@ -59,14 +60,15 @@ public class Utils {
         {
             if(e.getValue() > 1)
             {
-                d = e.getKey().getPluralDescription();
-                a = ((i == 0) ? "There are " : "") + e.getValue();
+                Describable k = e.getKey();
+                d = k.getPluralDescription();
+                if(k instanceof Door) d += " " + ((Door)k).plurLocPrep + " " + ((Door)k).locReference;
+                a = (i == 0 ? "There are " : "") + e.getValue();
             }
             else
             {
                 d = e.getKey().getDescription();
-                
-                a = ((i == 0) ? "There is " : "") + Utils.articleOf(d);
+                a = (i == 0 ? "There is " : "") + Utils.articleOf(d);
             }
        
             Utils.slowPrintlnAsListEntry(a + " " + d, m.size(), i);

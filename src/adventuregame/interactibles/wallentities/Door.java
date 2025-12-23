@@ -26,6 +26,7 @@ public class Door extends WallEntity
         this.wall = wall;
         name = "Door";
         normLocPrep = "that leads through";
+        plurLocPrep = "that lead through";
         actLocPrep = normLocPrep;
         actionVerb = "Use";
         setLocationReference();
