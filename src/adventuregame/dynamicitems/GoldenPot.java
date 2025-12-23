@@ -1,7 +1,7 @@
 package adventuregame.dynamicitems;
 
-import adventuregame.DynamicItem;
 import adventuregame.Room;
+import adventuregame.abstractclasses.DynamicItem;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.GoldenPotInteractible;
 import adventuregame.items.GoldenPotItem;

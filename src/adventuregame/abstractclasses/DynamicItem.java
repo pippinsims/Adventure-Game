@@ -1,8 +1,7 @@
-package adventuregame;
+package adventuregame.abstractclasses;
 
-import adventuregame.abstractclasses.Describable;
-import adventuregame.abstractclasses.Item;
-import adventuregame.abstractclasses.Unit;
+import adventuregame.Interactible;
+import adventuregame.Room;
 
 public abstract class DynamicItem extends Describable {
     protected Item it;
