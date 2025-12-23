@@ -1,7 +1,5 @@
 package adventuregame.interactibles.wallentities;
 
-import java.util.Random;
-
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
@@ -10,7 +8,6 @@ import adventuregame.interactibles.WallEntity;
 public class Door extends WallEntity
 {
     Room myOtherRoom;
-    String rPDes;
 
     public Door(Room room1, Room room2, Wall wall)
     {
@@ -20,33 +17,21 @@ public class Door extends WallEntity
         myOtherRoom = room2;
         myOtherRoom.add(this);
         
-        description = "door";
-        pluralDescription = description + "s";
-        genRandomDescription();
         this.wall = wall;
-        name = "Door";
-        normLocPrep = "that leads through";
-        plurLocPrep = "that lead through";
-        actLocPrep = normLocPrep;
-        actionVerb = "Use";
-        setLocationReference();
-    }
 
-    protected void genRandomDescription()
-    {
-        String[] names = new String[]{"ordinary ol\' creaky slab o\' wood",
-                                      "regular ol\' creaky plank",
-                                      "unassuming, decrepit wooden door",
-                                      "Boris",
-                                      "doors"};
-        String[] plurals = new String[]{"ordinary ol\' creaky slabs o\' wood",
-                                        names[1]+"s",
-                                        names[2]+"s",
-                                        names[3]+"es",
-                                        names[4]+"es"};
-        int r = new Random().nextInt(names.length);
-        rPDes = plurals[r];
-        randomDescription = names[r];
+        setDefaults(
+            "Door", 
+            "door", 
+            "that leads through",
+            "doors", 
+            "that lead through", 
+            "Use",
+            "",
+            new String[]{"ordinary ol\' creaky slab o\' wood" , "regular ol\' creaky plank" , "unassuming, decrepit wooden door" , "Boris"  , "doors"},
+            new String[]{"ordinary ol\' creaky slabs o\' wood", "regular ol\' creaky planks", "unassuming, decrepit wooden doors", "Borises", "doorses"}
+        );
+
+        setLocationReference();
     }
 
     public Wall getWall(Room room)
@@ -76,18 +61,13 @@ public class Door extends WallEntity
 
     private Wall complementOf(Wall wall)
     {
-        switch (wall) {
-            case SOUTH:
-                return Wall.NORTH;
-            case WEST:
-                return Wall.EAST;
-            case NORTH:
-                return Wall.SOUTH;
-            case EAST:
-                return Wall.WEST;
-
-            default:
-                return wall;
+        switch (wall) 
+        {
+            case SOUTH: return Wall.NORTH;
+            case WEST : return Wall.EAST;
+            case NORTH: return Wall.SOUTH;
+            case EAST : return Wall.WEST;
+            default   : return wall;
         } 
     }
 
@@ -116,11 +96,5 @@ public class Door extends WallEntity
             return myRoom;
         else
             return null;
-    }
-
-    @Override
-    public String getPluralDescription()
-    {
-        return pluralDescription;
     }
 }

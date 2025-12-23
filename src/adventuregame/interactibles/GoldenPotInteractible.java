@@ -15,22 +15,31 @@ public class GoldenPotInteractible extends Interactible {
     public GoldenPotInteractible(GoldenPot self, Room room)
     {
         this.self = self;
-        name = self.name;
-        description = self.getDescription();
         myRoom = room;
-        actionVerb = "Interact with";
 
+        String prep;
         if(new Random().nextInt(2) == 1)
         {
-            normLocPrep = "on";
+            prep = "on";
             locReference = "the floor";
         }
         else
         {
-            normLocPrep = "in";
+            prep = "in";
             locReference = "the corner";
         }
-        actLocPrep = normLocPrep; 
+
+        setDefaults(
+            self.name, 
+            self.getDescription(),
+            prep,
+            self.getPluralDescription(),
+            "",
+            "Interact with",
+            "",
+            new String[0],
+            new String[0]
+        );
     }
 
     @Override
@@ -82,6 +91,4 @@ public class GoldenPotInteractible extends Interactible {
     {
         Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
     }
-
-    @Override public String getPluralDescription() { return self.getPluralDescription(); }
 }

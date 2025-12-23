@@ -27,7 +27,7 @@ public class Torch extends DynamicItem {
 
     @Override public String getPluralDescription() { return "torches"; }
 
-    @Override public String getDescription() { return "A burning torch, providing light and warmth!"; }
+    @Override public String getDescription() { return "burning torch, providing light and warmth"; }
 
     @Override public String getName() { return name; }
 }

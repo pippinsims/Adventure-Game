@@ -1,12 +1,49 @@
 package adventuregame;
 
+import java.util.Random;
+
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
 
 public class Interactible extends Describable
 {
-    protected String name, description, actionVerb, actLocPrep, plurLocPrep, normLocPrep, locReference;
+    public String name;
+    protected String description;
+    public String normalLocPrep;
+    protected String pluralDescription;
+    public String plurLocPrep; 
+    public String actionVerb; 
+    public String actLocPrep;
+    protected String randomDescription;
+    protected String randomPluralDescription;
+    public String locReference;
     protected Room myRoom;
+
+    protected void setDefaults(String n, String d, String prep, String pd, String pprep, String a, String aprep, String rd, String rpd)
+    {
+        if(aprep.isEmpty()) aprep = prep;
+        if(pprep.isEmpty()) pprep = prep;
+
+        name                    = n;
+        description             = d;
+        normalLocPrep           = prep;
+        pluralDescription       = pd;
+        plurLocPrep             = pprep;
+        actionVerb              = a;
+        actLocPrep              = aprep;
+        randomDescription       = rd;
+        randomPluralDescription = rpd;
+    }
+
+    protected void setDefaults(String n, String d, String prep, String pd, String pprep, String a, String aprep, String[] rd, String[] rpd)
+    {
+        if(rd.length == 0)      setDefaults(n, d, prep, pd, pprep, a, aprep, d, pd);
+        else {
+            int r = new Random().nextInt(rd.length);
+            if(rpd.length == 0) setDefaults(n, d, prep, pd, pprep, a, aprep, rd[r], pd);
+            else                setDefaults(n, d, prep, pd, pprep, a, aprep, rd[r], rpd[r]);
+        }
+    }
 
     public Room getRoom()
     {
@@ -20,13 +57,7 @@ public class Interactible extends Describable
     
     public String getActionDescription()
     {
-        String article = getArticle();
-        return actionVerb + " " + article + " " + description + ((!isAlone()) ? " that is " + actLocPrep + " " + locReference : ""); 
-    }
-
-    public String getPluralDescription()
-    {
-        throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
+        return actionVerb + " " + getArticle() + " " + getDescription() + " " + actLocPrep + " " + locReference; 
     }
 
     protected String getArticle() 
@@ -44,15 +75,19 @@ public class Interactible extends Describable
         return true;
     }
     
-    public boolean isWallInteractible() 
-    { 
-        return false; 
-    }
-    
     @Override
-    public String getDescription() 
+    public String getPluralDescription()
     {
-        return description;
+        if(Environment.curPlayer.getName().equals("Laur")) return randomPluralDescription;
+        else return pluralDescription;
+        
+    }
+
+    @Override
+    public String getDescription()
+    {
+        if(Environment.curPlayer.getName().equals("Laur")) return randomDescription;
+        else return description;
     }
 
     @Override
@@ -69,10 +104,5 @@ public class Interactible extends Describable
     public void inspect()
     {
         throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
-    }
-
-    protected String getRandomDescription()
-    {
-        return description;
     }
 }

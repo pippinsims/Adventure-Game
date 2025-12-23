@@ -11,16 +11,23 @@ public class ViewablePicture extends WallEntity {
     
     public ViewablePicture(Room room, String fileName, Wall wall, String description, String name)
     {
-        this.description = description;
-        txtFileName = fileName;
-        this.wall = wall;
-        this.name = name;
         myRoom = room;
         myRoom.add(this);
-        normLocPrep = "on";
-        actionVerb = "Inspect";
-        actLocPrep = normLocPrep;
-        randomDescription = description;
+        this.wall = wall;
+        txtFileName = fileName;
+
+        setDefaults(
+            name, 
+            description, 
+            "on", 
+            "depictions", 
+            "", 
+            "Inspect",
+            "",
+            "",
+            "scrawlings"
+        );
+        
         setLocationReference();
     }
 
@@ -39,11 +46,5 @@ public class ViewablePicture extends WallEntity {
         System.out.println("\"" + name + "\"");
         System.out.println("Press enter to continue");
         Utils.scanner.nextLine();
-    }
-
-    @Override
-    public String getPluralDescription()
-    {
-        return "depictions";
     }
 }

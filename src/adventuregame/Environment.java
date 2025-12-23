@@ -117,20 +117,15 @@ public class Environment
         Room hall = new Room("A long hall with many cells", "PrisonHall");
         String celld = "A barren, empty, disgusting prison cell", celln = "Cell";
         r0 = new Room(celld, celln);
-        new Door(r0, hall, Wall.WEST);
-        for (int i = 1; i < 14; i++) //TODO make Doors more discrete when there are multiple in the same direction (maybe a destination String??)
-        {
-            if(i < 7) new Door(hall, new Room(celld, celln), Wall.EAST);
-            else new Door(hall, new Room(celld, celln), Wall.WEST);
-        }
-
+        new Door(r0, hall, Wall.EAST);
+        for (int i = 1; i < 14; i++) new Door(new Room(celld, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
         new Door(hall, end, Wall.NORTH);
 
-        // addPlayer(new Player());
+        addPlayer(new Player());
         addPlayer(new Player("Nuel"));
-        // addPlayer(new Player("Valeent"));
-        // addPlayer(new Player("Peili"));
-        // addPlayer(new Player("Dormaah"));
+        addPlayer(new Player("Valeent"));
+        addPlayer(new Player("Peili"));
+        addPlayer(new Player("Dormaah"));
     }
 
     public static void printInfo()
@@ -156,7 +151,7 @@ public class Environment
         if(e instanceof Enemy)
         {
             ArrayList<Enemy> all = ((Enemy)e).getRoom().enemies;
-            for(int i = 0; i < all.size(); i++) if(all.get(i) == e) all.remove(i); //normal remove method compares by description
+            for(int i = 0; i < all.size(); i++) if(all.get(i) == e) all.remove(i); //normal remove method compares by description (.equals())
         }
         else if(e instanceof Player)
         {

@@ -40,9 +40,7 @@ public class GoldenPot extends DynamicItem {
     }
 
     @Override
-    public String getDescription() {
-        return descriptions[dmg];
-    }
+    public String getDescription() { return descriptions[dmg]; }
 
     @Override
     public String getName() {

@@ -3,7 +3,6 @@ import java.io.File;
 import java.util.*;
 
 import adventuregame.abstractclasses.Describable;
-import adventuregame.interactibles.wallentities.Door;
 
 public class Utils {
 
@@ -58,16 +57,17 @@ public class Utils {
         String a, d;
         for (Map.Entry<Describable, Integer> e : m.entrySet())
         {
+            Interactible k = e.getKey() instanceof Interactible ? (Interactible)e.getKey() : null;
             if(e.getValue() > 1)
             {
-                Describable k = e.getKey();
-                d = k.getPluralDescription();
-                if(k instanceof Door) d += " " + ((Door)k).plurLocPrep + " " + ((Door)k).locReference;
+                d = e.getKey().getPluralDescription();
+                if(k != null) d += " " + k.plurLocPrep + " " + k.locReference;
                 a = (i == 0 ? "There are " : "") + e.getValue();
             }
             else
             {
                 d = e.getKey().getDescription();
+                if(k != null) d += " " + k.normalLocPrep + " " + k.locReference;
                 a = (i == 0 ? "There is " : "") + Utils.articleOf(d);
             }
        
@@ -139,33 +139,38 @@ public class Utils {
 
     public static void slowPrintlnAsListEntry(String msg, int size, int cur)
     {
-        slowPrint(msg + ((cur < size - 2)  ? ", " :
+        slowPrint(msg + ((cur <  size - 2) ? ", " :
                          (cur == size - 2) ? ", and " :
                                              ".\n"));
     }
 
     public static void printOptions(String[] options)
     {
-        for(int i = 0; i < options.length; i++) 
+        //TODO use commas if not in a row
+        String cur = "";
+        int min = 0;
+        for(int i = 0; i < options.length + 1; i++) if(i == options.length || !cur.equals(options[i]))
         {
-            System.out.println("(" + (i + 1) + ") " + options[i]);
+            if(!cur.isEmpty()) System.out.println("(" + (i - min > 1 ? min + 1 + "-" : "") + i + ") " + cur);
+            min = i;
+            cur = options[i % options.length];
         }
     }
 
     public static String[] descriptionsOf(ArrayList<? extends Describable> d)
     {
         int s = d.size();
-        String[] strings = new String[s];
-        for(int i = 0; i < s; i++) strings[i] = d.get(i).getDescription();
-        return strings;
+        String[] strs = new String[s];
+        for(int i = 0; i < s; i++) strs[i] = d.get(i).getDescription();
+        return strs;
     }
 
     public static String[] namesOf(ArrayList<? extends Describable> d)
     {
         int s = d.size();
-        String[] strings = new String[s];
-        for(int i = 0; i < s; i++) strings[i] = d.get(i).getName();
-        return strings;
+        String[] strs = new String[s];
+        for(int i = 0; i < s; i++) strs[i] = d.get(i).getName();
+        return strs;
     }
 
     public static String[] inspectTitlesOf(ArrayList<Describable> all) //just because the interactibles' descriptions are so fun
@@ -220,14 +225,7 @@ public class Utils {
 
     public static String articleOfDescribableInList(ArrayList<? extends Describable> arr, Describable d)
     {
-        for (Describable describable : arr) 
-        {
-            if(d.equals(describable)) //compare by description
-            {
-                return articleOf(d.getDescription());
-            }
-        }
-
+        for (Describable d1 : arr) if(d.equals(d1)) return articleOf(d.getDescription()); //compare by description
         return "the";
     }
 

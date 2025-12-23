@@ -263,7 +263,7 @@ public class Player extends Unit
         return attackTypes;
     }
 
-    private String[] getActionDescriptions()
+    private String[] getPlayerActionDescriptions()
     {
         String[] actionDescriptions = new String[actions.size()];
        
@@ -301,7 +301,7 @@ public class Player extends Unit
         }
 
         //lists available actions, lets the player choose, then performs chosen action
-        performAction(Utils.promptList("You can:", getActionDescriptions()));
+        performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
     }
 
     @Override

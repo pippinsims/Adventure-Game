@@ -1,21 +1,12 @@
 package adventuregame.interactibles;
 
-import adventuregame.Environment;
 import adventuregame.Interactible;
 
 public class WallEntity extends Interactible{
 
     protected Wall wall;
-    protected String pluralDescription;
-    protected String randomDescription;
 
     //TODO add window
-    @Override
-    public boolean isWallInteractible() 
-    {
-        return true;
-    }
-
     public void setLocationReference()
     {
         if(wall == Wall.NONE)
@@ -67,13 +58,6 @@ public class WallEntity extends Interactible{
         return true;
     }
 
-    private String exposition()
-    {
-        String locPrep = normLocPrep;
-        if(Environment.curPlayer.getName().equals("Laur") && wall == Wall.NORTH) locPrep = "of";
-        return locPrep + " " + locReference;
-    }
-
     @Override
     protected String getArticle()
     {
@@ -81,24 +65,13 @@ public class WallEntity extends Interactible{
     }
 
     @Override
-    public String getActionDescription() 
+    public boolean equals(Object obj)
     {
-        String article = getArticle();
-        return actionVerb + " " + article + " " + getDescription() + (!isAlone() ? " from " + locReference : "");
-    }
+        if(this == obj) return true;
 
-    @Override
-    public String getPluralDescription()
-    {
-        return pluralDescription + " " + exposition();
-    }
+        if(obj == null || getClass() != obj.getClass()) return false;
 
-    @Override
-    public String getDescription()
-    {
-        if(Environment.curPlayer.getName().equals("Laur"))
-            return randomDescription + " " + exposition();
-        else
-            return description + " " + exposition();
+        WallEntity w = (WallEntity) obj;
+        return this.getDescription().equals(w.getDescription()) && this.locReference.equals(w.locReference);
     }
 }
