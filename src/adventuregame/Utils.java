@@ -63,8 +63,9 @@ public class Utils {
                 a = ((i == 0) ? "There are " : "") + e.getValue();
             }
             else
-            { 
+            {
                 d = e.getKey().getDescription();
+                
                 a = ((i == 0) ? "There is " : "") + Utils.articleOf(d);
             }
        

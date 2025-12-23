@@ -24,12 +24,6 @@ public class Interactible extends Describable
         return actionVerb + " " + article + " " + description + ((!isAlone()) ? " that is " + actLocPrep + " " + locReference : ""); 
     }
 
-    public String getExposition()
-    {
-        String article = getArticle();
-        return article + " " + description + " " + normLocPrep + " " + locReference;
-    }
-
     public String getPluralDescription()
     {
         throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
@@ -46,11 +40,7 @@ public class Interactible extends Describable
      */
     protected boolean isAlone()
     {
-        for (Interactible i : myRoom.interactibles) 
-        {
-            if(this != i && this.equals(i))
-                return false;
-        }
+        for (Interactible i : myRoom.interactibles) if(this != i && this.equals(i)) return false;
         return true;
     }
     

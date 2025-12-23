@@ -67,6 +67,13 @@ public class WallEntity extends Interactible{
         return true;
     }
 
+    private String exposition()
+    {
+        String locPrep = normLocPrep;
+        if(Environment.curPlayer.getName().equals("Laur") && wall == Wall.NORTH) locPrep = "of";
+        return locPrep + " " + locReference;
+    }
+
     @Override
     protected String getArticle()
     {
@@ -81,25 +88,17 @@ public class WallEntity extends Interactible{
     }
 
     @Override
-    public String getExposition()
-    {
-        String locPrep = normLocPrep;
-        if(Environment.curPlayer.getName().equals("Laur") && wall == Wall.NORTH) locPrep = "of";
-        return locPrep + " " + locReference;
-    }
-
-    @Override
     public String getPluralDescription()
     {
-        return pluralDescription + " " + getExposition();
+        return pluralDescription + " " + exposition();
     }
 
     @Override
     public String getDescription()
     {
         if(Environment.curPlayer.getName().equals("Laur"))
-            return randomDescription + " " + getExposition();
+            return randomDescription + " " + exposition();
         else
-            return description + " " + getExposition();
+            return description + " " + exposition();
     }
 }
