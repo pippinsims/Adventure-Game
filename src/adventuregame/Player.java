@@ -225,18 +225,8 @@ public class Player extends Unit
                 int lvl = 1000;
                 String message = "a level " + lvl + " Psych Strike spell";
                 Utils.slowPrintln("You release " + message + " on all of your foes.");
-                int s = myRoom.enemies.size();
-                if(s == 0)
-                    Utils.slowPrint("... but you have no enemies! Nothing happens.");
-                else
-                {
-                    Collections.reverse(myRoom.enemies); //TODO: feels like there's a better way to go about this than reverse, backwards, reverse
-                    for (int i = s - 1; i >= 0; i--)
-                    {
-                        this.attack(myRoom.enemies.get(i), new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), "2"+message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
-                    }
-                    Collections.reverse(myRoom.enemies);
-                }
+                if(myRoom.enemies.size() == 0) Utils.slowPrint("... but you have no enemies! Nothing happens.");
+                else for (Enemy e : new ArrayList<>(myRoom.enemies)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), "2"+message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
                 break;
             case 1:
                 Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");

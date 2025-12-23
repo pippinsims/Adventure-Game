@@ -8,7 +8,6 @@ import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.dynamicitems.Torch;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 
 public class Environment
@@ -40,15 +39,12 @@ public class Environment
             {
                 r0 = playerRooms.get(r);
 
-                ArrayList<Player> ps = r0.players;
-                Collections.reverse(ps);
-                for (int i = ps.size() - 1; i >= 0; i--)
+                for (Player p : new ArrayList<>(r0.players))
                 {
-                    curPlayer = ps.get(i);
-                    ps.get(i).updateUnit();
+                    curPlayer = p;
+                    p.updateUnit();
                     System.out.println();
                 }
-                Collections.reverse(ps);
 
                 if(r0.players.isEmpty())
                 {
@@ -57,14 +53,11 @@ public class Environment
                     continue;
                 }
                 
-                ArrayList<Enemy> ens = r0.enemies;
-                Collections.reverse(ens);
-                for (int i = ens.size() - 1; i >= 0; i--)
+                for(Enemy e : new ArrayList<>(r0.enemies))
                 {
-                    ens.get(i).updateUnit();
+                    e.updateUnit();
                     System.out.println();
                 }
-                Collections.reverse(ens);
             }
 
             System.out.println("--Round End--");
@@ -134,10 +127,10 @@ public class Environment
         // new Door(hall, end, Wall.NORTH);
 
         addPlayer(new Player());
-        // addPlayer(new Player("Nuel"));
-        // addPlayer(new Player("Valeent"));
-        // addPlayer(new Player("Peili"));
-        // addPlayer(new Player("Dormaah"));
+        addPlayer(new Player("Nuel"));
+        addPlayer(new Player("Valeent"));
+        addPlayer(new Player("Peili"));
+        addPlayer(new Player("Dormaah"));
     }
 
     public static void printInfo()
