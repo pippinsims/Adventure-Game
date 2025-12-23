@@ -236,7 +236,7 @@ public class Player extends Unit
 
     private void interact()
     {
-        ArrayList<Interactible> inters = myRoom.getIntersByUniqueDesc();
+        ArrayList<Interactible> inters = myRoom.getUniqueInters();
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
 
         ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});

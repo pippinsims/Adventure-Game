@@ -117,10 +117,10 @@ public class Environment
         Room hall = new Room("A long hall with many cells", "PrisonHall");
         String celld = "A barren, empty, disgusting prison cell", celln = "Cell";
         r0 = new Room(celld, celln);
-        for (int i = 0; i < 7; i++) //TODO DOOR DESCRIPTIONS JUST ABSOLUTELY DON'T WORK WHEN TOO MANY DOORS
+        new Door(r0, hall, Wall.WEST);
+        for (int i = 1; i < 14; i++) //TODO make Doors more discrete when there are multiple in the same direction (maybe a destination String??)
         {
-            new Door(hall, new Room(celld, celln), Wall.EAST);
-            if(i == 0) new Door(hall, r0, Wall.WEST);
+            if(i < 7) new Door(hall, new Room(celld, celln), Wall.EAST);
             else new Door(hall, new Room(celld, celln), Wall.WEST);
         }
 

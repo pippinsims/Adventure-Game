@@ -30,7 +30,6 @@ public class GoldenPotInteractible extends Interactible {
             normLocPrep = "in";
             locReference = "the corner";
         }
-        System.out.println(normLocPrep + " " + locReference);
         actLocPrep = normLocPrep; 
     }
 

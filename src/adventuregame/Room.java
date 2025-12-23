@@ -85,19 +85,25 @@ public class Room extends Describable
         return description;
     }
 
-    public ArrayList<Interactible> getIntersByUniqueDesc()
+    public ArrayList<Interactible> getUniqueInters()
     {
         ArrayList<Interactible> inters = new ArrayList<>();
-        for (Interactible i : interactibles) if(!inters.contains(i)) inters.add(i); //This compares by description
+        for (Interactible i : interactibles) if(!contains(inters, i)) inters.add(i); 
+        
         return inters;
     }
 
-    @Override
-    public String getName() 
+    private boolean contains(ArrayList<? extends Interactible> arr, Interactible i)
     {
-        return name;
+        if(!(i instanceof Door)) return arr.contains(i); //This compares by description
+        Door d = (Door)i;
+
+        //if the doors have same from room and to room TODO .equals() should just compare by reference again, but i don't know what that'd break
+        for(Interactible i1 : arr) if(i1 instanceof Door && ((Door)i1).getRoom() == d.getRoom() && ((Door)i1).getNextRoom(d.getRoom()) == d.getNextRoom(d.getRoom())) return true;
+        return false;
     }
 
+    @Override public String getName() { return name; }
     
     // TODO just here because it has to be, I don't know if there'd ever be a case for describing multiple of the exact same room
     @Override

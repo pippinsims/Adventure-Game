@@ -115,7 +115,7 @@ public class Door extends WallEntity
         else if(curRoom == myOtherRoom) 
             return myRoom;
         else
-            throw new RuntimeException("urk, you plugged in a room this door wasn't in");
+            return null;
     }
 
     @Override
