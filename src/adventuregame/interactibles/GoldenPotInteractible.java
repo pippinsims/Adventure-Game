@@ -6,18 +6,18 @@ import adventuregame.Interactible;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
-import adventuregame.items.GoldenPot;
+import adventuregame.dynamicitems.GoldenPot;
 
-public class GoldenPotInteractible extends Interactible{
+public class GoldenPotInteractible extends Interactible {
 
-    private int dmg = 0;
+    private GoldenPot self;
 
-    public GoldenPotInteractible(Room room, int dmg)
+    public GoldenPotInteractible(GoldenPot self, Room room)
     {
-        this.dmg = dmg;
+        this.self = self;
+        name = self.name;
+        description = self.getDescription();
         myRoom = room;
-        description = GoldenPot.descriptions[0];
-        name = GoldenPot.defaultName;
         actionVerb = "Interact with";
 
         if(new Random().nextInt(2) == 1)
@@ -30,6 +30,7 @@ public class GoldenPotInteractible extends Interactible{
             normLocPrep = "in";
             locReference = "the corner";
         }
+        System.out.println(normLocPrep + " " + locReference);
         actLocPrep = normLocPrep; 
     }
 
@@ -45,8 +46,8 @@ public class GoldenPotInteractible extends Interactible{
                 {
                     default:
                         Utils.slowPrintln("goes clattering against the wall.");
-                        if(dmg < 3)
-                            dmg++;
+                        if(self.dmg < 3)
+                            self.dmg++;
                         break;
 
                     case 1:
@@ -56,33 +57,25 @@ public class GoldenPotInteractible extends Interactible{
                     case 2:
                         Utils.slowPrintln("tumbles, but magically teleports to it's original position, vibrating back into place.");
                         
-                        if(dmg > 0)
+                        if(self.dmg > 0)
                         {
-                            dmg--;
-                            Utils.slowPrintln("It seems oddly smoother than before.");
-                            Utils.slowPrintln("It falls over because it is badly damaged.");
+                            self.dmg--;
+                            Utils.slowPrint("It seems oddly smoother than before.");
+                            if(self.dmg != 0) Utils.slowPrintln(" It falls over because it is badly damaged.");
                         }
                         
                         break;
                 }
 
-                description = GoldenPot.descriptions[dmg];
-
+                description = self.getDescription();
                 break;
 
             case 1:
                 Utils.slowPrint("You have received a Golden Pot!");
-                u.getInventory().add(new GoldenPot(dmg));
-                myRoom.interactibles.remove(this);
+                self.collectItem(u);
                         
                 break;
         }
-    }
-
-    @Override
-    public Room getRoom() 
-    {
-        return myRoom;
     }
 
     @Override
@@ -91,8 +84,5 @@ public class GoldenPotInteractible extends Interactible{
         Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
     }
 
-    @Override
-    public String getPluralDescription() {
-        return "golden pots";
-    }
+    @Override public String getPluralDescription() { return self.getPluralDescription(); }
 }

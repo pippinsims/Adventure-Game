@@ -36,7 +36,7 @@ public class testReceiveDamage {
     {
         Effectable k = new Effectable();
         float h = k.getHealth();
-        TorchItem t = new TorchItem();
+        TorchItem t = new TorchItem(null);
 
         k.receiveDamage(t.getDamage());
         for(int i = 0; i < 10; i++)

@@ -12,6 +12,11 @@ public class Interactible extends Describable
     {
         return myRoom;
     }
+
+    public void setRoom(Room room)
+    {
+        myRoom = room;
+    }
     
     public String getActionDescription()
     {

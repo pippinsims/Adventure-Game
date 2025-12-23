@@ -2,6 +2,7 @@ package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.items.*;
 
 import java.util.*;
@@ -45,11 +46,11 @@ public class Player extends Unit
         name = "Laur";
         
         inv.add(new Bananarang());
-        inv.add(new GoldenPot(0));
+        new GoldenPot(this);
 
         chanceOfPtolomy = 1f;
         ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
-        ptolomyPrintLength = 50;
+        ptolomyPrintLength = 0;//50;
         deathMsg = name + " died.";
     }
 
@@ -125,7 +126,7 @@ public class Player extends Unit
     */
     private void fight() throws Exception
     {
-        if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
+        ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
 
         ArrayList<Enemy> ens = myRoom.enemies;
         if(ens.size() > 0)
@@ -189,26 +190,22 @@ public class Player extends Unit
     {
         System.out.println("What do you say?");
         String s = Utils.scanner.nextLine();
-        if(s.contains("stop"))
-        {
-            for (Enemy e : myRoom.enemies)
-            {
-                e.pleaResponse();
-            }
-        }
-        else
-            Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
+        if(s.contains("stop")) for (Enemy e : myRoom.enemies) e.pleaResponse();
+        else Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
     }
 
     public void ptolomyDoesSomething(String[] possibilities) 
     {
-        if(possibilities.length == 2) 
+        if(ptolomyIsPresent)
         {
-            Utils.slowPrintln("Ptolomy's spirit... " + (Utils.rand.nextFloat() <= .5 ? possibilities[0] : possibilities[1]), ptolomyPrintLength + '\n');
-        }
-        else 
-        {
+            if(possibilities.length == 2) 
+            {
+                Utils.slowPrintln("Ptolomy's spirit... " + (Utils.rand.nextFloat() <= .5 ? possibilities[0] : possibilities[1]), ptolomyPrintLength + '\n');
+            }
+            else 
+            {
 
+            }
         }
     }
 
@@ -220,7 +217,7 @@ public class Player extends Unit
         System.out.print("Speak: ");
         String input = Utils.scanner.nextLine();
         
-        if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
+        ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
         
         switch(Utils.linearFind(spellTypes, input)) //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
         {
@@ -250,22 +247,21 @@ public class Player extends Unit
     private void interact()
     {
         ArrayList<Interactible> inters = myRoom.getIntersByUniqueDesc();
-
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
 
-        if(ptolomyIsPresent) ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
+        ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
         chosen.action(this);
     }
 
     private void inventory()
     {
-        String[] n = Utils.namesOf(inv.getItems());
-        String[] d = Utils.descriptionsOf(inv.getItems());
-        String[] prompts = new String[inv.size()];
+        String[] n = Utils.namesOf(inv.getItems()),
+                 d = Utils.descriptionsOf(inv.getItems()),
+                 prompts = new String[inv.size()];
         for(int i = 0; i < prompts.length; i++) prompts[i] = n[i] + ": " + d[i];
 
-        inv.at(Utils.promptList("Which item?", prompts)).action(this);
+        inv.at(Utils.promptList("Which item do you choose? (This is your inventory, you can hold " + inv.max() + " items total)", prompts)).action(this);
     }
 
     private String[] getAttackTypes() 

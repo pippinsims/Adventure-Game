@@ -51,7 +51,7 @@ public abstract class Utils {
 
     public static void slowPrintDescList(ArrayList<? extends Describable> arr)
     {
-        Map<Describable, Integer> m = genDescMap(arr);
+        Map<Describable, Integer> m = countsOf(arr);
 
         int i = 0;
         String a, d;
@@ -74,7 +74,7 @@ public abstract class Utils {
         }
     }
 
-    private static Map<Describable, Integer> genDescMap(ArrayList<? extends Describable> arr)
+    private static Map<Describable, Integer> countsOf(ArrayList<? extends Describable> arr)
     {
         Map<Describable, Integer> m = new HashMap<>();
         for (Describable d : arr) m.put(d, m.getOrDefault(d, 0) + 1);

@@ -1,26 +1,27 @@
 package adventuregame.interactibles.wallentities;
-import adventuregame.items.TorchItem;
 
 import java.util.Random;
 
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.dynamicitems.Torch;
 import adventuregame.interactibles.WallEntity;
 
 public class TorchInteractible extends WallEntity {
 
-    public TorchInteractible(Room room, Wall wall)
+    Torch self;
+
+    public TorchInteractible(Torch self, Room room, Wall wall)
     {
+        this.self = self;
+        name = self.name;
+        description = self.getDescription();
         myRoom = room;
-        myRoom.add(this);
-        description = "torch";
         this.wall = wall;
-        name = "Torch";
-        normLocPrep = "on";
-        actLocPrep = "from";
         actionVerb = "Take";
-        pluralDescription = "torches";
+        actLocPrep = "from";
+        normLocPrep = "on";
         randomDescription = getRandomDescription();
         setLocationReference();
     }
@@ -36,16 +37,17 @@ public class TorchInteractible extends WallEntity {
     }
 
     @Override
+    public void action(Unit u)
+    {
+        self.collectItem(u);
+        Utils.slowPrint("You have received a Torch!");
+    }
+
+    @Override
     public void inspect()
     {
         Utils.slowPrintln("You take a closer look at this torch and notice nothing new. It's hot, I guess");
     }
 
-    @Override
-    public void action(Unit u)
-    {
-        Utils.slowPrint("You have received a Torch!");
-        u.getInventory().add(new TorchItem());
-        myRoom.interactibles.remove(this);
-    }
+    @Override public String getPluralDescription() { return self.getPluralDescription(); }
 }

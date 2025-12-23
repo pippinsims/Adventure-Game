@@ -1,10 +1,11 @@
 package adventuregame;
 
-import adventuregame.interactibles.GoldenPotInteractible;
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.*;
 import adventuregame.Utils.Tuple;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.dynamicitems.GoldenPot;
+import adventuregame.dynamicitems.Torch;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,15 +109,15 @@ public class Environment
         new Door(r0, joiner1, Wall.EAST);
 
         Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.", "Treasure Room");
-        treasureRoom.add(new GoldenPotInteractible(treasureRoom, 0));
+        new GoldenPot(treasureRoom);
 
         new Door(joiner1, treasureRoom, Wall.SOUTH);
 
         for (int i = 0; i < 4; i++) r0.add(new Enemy(3));
 
-        new TorchInteractible(r0, Wall.EAST);
-        new TorchInteractible(r0, Wall.WEST);
-        new TorchInteractible(r0, Wall.WEST);
+        new Torch(r0, Wall.EAST);
+        new Torch(r0, Wall.WEST);
+        new Torch(r0, Wall.WEST);
 
         new ViewablePicture(r0, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
@@ -147,17 +148,15 @@ public class Environment
         {
             Utils.currentPrintDelay = Utils.MAX_PRINT_DELAY;
             Utils.slowPrintln("You're in " + r0.getDescription() + ".");
-            r0.setIsDiscovered(true);
+            
         }
 
         Utils.slowPrintDescList(r0.interactibles);
 
         Utils.slowPrintDescList(r0.enemies);
-
-        if(r0.getIsDiscovered())
-        {
-            Utils.currentPrintDelay = 3;
-        }
+        
+        r0.setIsDiscovered(true);
+        Utils.currentPrintDelay = 3;
     }
 
     public static void kill(Effectable e)
