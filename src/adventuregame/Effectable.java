@@ -5,7 +5,7 @@ import java.util.Random;
 
 import adventuregame.abstractclasses.Describable;
 
-public class Effectable extends Describable{
+public abstract class Effectable extends Describable{
     protected ArrayList<Effect> effects = new ArrayList<Effect>();
     protected float maxHealth = 10;
     protected float health = maxHealth;
@@ -112,25 +112,6 @@ public class Effectable extends Describable{
     final public float getHealth()
     {
         return health;
-    }
-
-    //TODO these are just here because they have to be, idk what to do with them and i don't feel like we'd ever use them
-    @Override
-    public String getPluralDescription() 
-    {
-        throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
-    }
-
-    @Override
-    public String getDescription() 
-    {
-        throw new UnsupportedOperationException("Unimplemented method 'getDescription'");
-    }
-
-    @Override
-    public String getName() 
-    {
-        throw new UnsupportedOperationException("Unimplemented method 'getName'");
     }
 
     //MARK: for testing

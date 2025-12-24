@@ -15,6 +15,7 @@ public class Environment
     public static Room r0;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static Player curPlayer;
+    public static boolean isLaur;
     public static Map<Effect.Type, Tuple<String, String>> effectDescriptions = Map.ofEntries(Map.entry(Effect.Type.FIRE, new Tuple<String, String>("fire effect", "BURNINGNESS")),
                                                                                              Map.entry(Effect.Type.PSYCHSTRIKE, new Tuple<String, String>("psychstrike effect","strong vexation of mind")));
 
@@ -42,6 +43,7 @@ public class Environment
                 for (Player p : new ArrayList<>(r0.players))
                 {
                     curPlayer = p;
+                    isLaur = curPlayer.getName().equals("Laur");
                     p.updateUnit();
                     System.out.println();
                 }
@@ -114,53 +116,60 @@ public class Environment
 
         new ViewablePicture(end, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
-        Room hall = new Room("A long hall with many cells", "PrisonHall");
-        String celld = "A barren, empty, disgusting prison cell", celln = "Cell";
-        r0 = new Room(celld, celln);
+        Room hall = new Room("a long hall with many cells", "PrisonHall");
+        //average narwhal weight is 1.425 tons
+        String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
+        r0 = new Room(celld, celll, cellf, celln);
         new Door(r0, hall, Wall.EAST);
-        for (int i = 1; i < 14; i++) new Door(new Room(celld, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
         new Door(hall, end, Wall.NORTH);
+        new Window(r0, "a gloomy landscape through the tight, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
         addPlayer(new Player());
-        addPlayer(new Player("Nuel"));
-        addPlayer(new Player("Valeent"));
+        // addPlayer(new Player("Nuel"));
+        // addPlayer(new Player("Valeent"));
         addPlayer(new Player("Peili"));
-        addPlayer(new Player("Dormaah"));
+        // addPlayer(new Player("Dormaah"));
     }
 
     public static void printInfo()
     {
         System.out.println("--Info--");
 
-        if(!r0.getIsDiscovered())
+        if(!r0.getIsFamiliar())
         {
             Utils.currentPrintDelay = Utils.MAX_PRINT_DELAY;
             Utils.slowPrintln("You're in " + r0.getDescription() + ".");
+        }
+        else
+        {
+            Utils.slowPrintln(r0.getDescription());
         }
 
         Utils.slowPrintDescList(r0.interactibles);
 
         Utils.slowPrintDescList(r0.enemies);
         
-        r0.setIsDiscovered(true);
+        r0.discover();
         Utils.currentPrintDelay = 3;
     }
 
     public static void kill(Effectable e)
     {
-        if(e instanceof Enemy)
+        Unit u = (Unit)e;
+        if(u instanceof Enemy)
         {
-            ArrayList<Enemy> all = ((Enemy)e).getRoom().enemies;
-            for(int i = 0; i < all.size(); i++) if(all.get(i) == e) all.remove(i); //normal remove method compares by description (.equals())
+            ArrayList<Enemy> all = u.getRoom().enemies;
+            for(int i = 0; i < all.size(); i++) if(all.get(i) == u) all.remove(i); //normal remove method compares by description (.equals())
+            if(curPlayer.getName().equals("Laur")) Utils.slowPrintln("You've murdered " + u.getName(), 0/*200*/);
         }
-        else if(e instanceof Player)
+        else if(u instanceof Player)
         {
             Utils.slowPrintln("you died.");
-            ((Player)e).getRoom().players.remove(e);
-            allPlayers.remove(e);
+            u.getRoom().players.remove(u);
+            allPlayers.remove(u);
         }
 
-        //prints twice on effect death
-        Utils.slowPrintln(((Unit)e).getDeathMessage() + "------", 0/*200*/);
+        Utils.slowPrintln(u.getDeathMessage() + "------", 0/*200*/);
     }
 }

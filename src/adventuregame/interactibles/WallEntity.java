@@ -6,7 +6,6 @@ public class WallEntity extends Interactible{
 
     protected Wall wall;
 
-    //TODO add window
     public void setLocationReference()
     {
         if(wall == Wall.NONE)

@@ -232,7 +232,7 @@ public class Enemy extends Unit
     public void updateUnit() throws Exception {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
         
-        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return; //TODO this has a mirror image in Player
+        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
         
         chooseAction(Environment.r0);
     }
@@ -246,8 +246,5 @@ public class Enemy extends Unit
             return pluralOf(description);
     }
 
-    public void randomizeDesc() 
-    {
-        randomDescription = getRandomDescription();
-    }
+    public void randomizeDesc() { randomDescription = getRandomDescription(); }
 }

@@ -146,7 +146,6 @@ public class Utils {
 
     public static void printOptions(String[] options)
     {
-        //TODO use commas if not in a row
         String cur = "";
         int min = 0;
         for(int i = 0; i < options.length + 1; i++) if(i == options.length || !cur.equals(options[i]))
@@ -155,6 +154,27 @@ public class Utils {
             min = i;
             cur = options[i % options.length];
         }
+        //TODO use commas if not in a row, check each arraylist for adjacent numbers, then print all items, singles or ranges, separated by commas
+        // Map<String, ArrayList<Integer>> grouped = new LinkedHashMap<>(); //preserves insertion order
+        // for (int i = 0; i < options.length; i++) {
+        //     if(!grouped.containsKey(options[i])) grouped.put(options[i], new ArrayList<>());
+        //     grouped.get(options[i]).add(i);
+        // }
+        // String cur = "";
+        // int min = 0;
+        // for(Map.Entry<String,ArrayList<Integer>> ent : grouped.entrySet())
+        // {
+        //     ArrayList<Integer> arr = ent.getValue();
+        //     for(int i = 1; i < arr.size() + 1; i++)
+        //     {
+        //         if(i == arr.size() || arr.get(i) != arr.get(i - 1) + 1)
+        //         {
+        //         }
+        //         if(!cur.isEmpty()) System.out.println("(" + (i - min > 1 ? min + 1 + "-" : "") + i + ") " + cur);
+        //         min = i;
+        //         cur = options[i % options.length];
+        //     }
+        // }
     }
 
     public static String[] descriptionsOf(ArrayList<? extends Describable> d)

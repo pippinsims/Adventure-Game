@@ -13,8 +13,9 @@ public class Room extends Describable
     public ArrayList<Interactible> interactibles = new ArrayList<>();
     private ArrayList<Door> doors = new ArrayList<>();
     private String description = "a bare room";
-    private boolean isDiscovered = false;
-    private boolean isCurrentRoom = false;
+    private String laurDescription = "an... empty place";
+    private String familiarDescription = "";
+    private ArrayList<Player> familiars = new ArrayList<>();
     private String name = "Barren";
 
     public Room()
@@ -22,41 +23,31 @@ public class Room extends Describable
 
     }
 
-    public Room(String des, String n)
+    public Room(String description, String name)
     {
-        description = des;
+        this.description = description;
+        this.name = name;
+    }
+
+    public Room(String d, String l, String f, String n)
+    {
+        description = d;
+        laurDescription = l;
+        familiarDescription = f;
         name = n;
     }
 
-    public void setIsDiscovered(boolean d)
+    public void discover()
     {
-        isDiscovered = d;
+        if(!familiars.contains(Environment.curPlayer)) familiars.add(Environment.curPlayer);
     }
 
-    public boolean getIsDiscovered()
-    {
-        return isDiscovered;
-    }
-
-    public boolean getIsCurrentRoom()
-    {
-        return isCurrentRoom;
-    }
-
-    public void setIsCurrentRoom(boolean c)
-    {
-        isCurrentRoom = c;
-    }
+    public boolean getIsFamiliar() { return familiars.contains(Environment.curPlayer); }
 
     public void add(Interactible i)
     {
         if(i instanceof Door) doors.add((Door)i);
         interactibles.add(i);
-    }
-
-    public boolean remove(Interactible i)
-    {
-        return interactibles.remove(i);
     }
 
     public void add(Unit u)
@@ -69,6 +60,11 @@ public class Room extends Describable
         }
     }
 
+    public boolean remove(Interactible i)
+    {
+        return interactibles.remove(i);
+    }
+
     public boolean remove(Unit u)
     {
         return u instanceof Player ? players.remove((Player)u) : enemies.remove((Enemy)u);
@@ -79,9 +75,10 @@ public class Room extends Describable
         for (Door door : doors) door.setWall(this);
     }
 
-    //TODO add wall material, add a familiar description once it's a familiar room
     public String getDescription()
     {
+        if(getIsFamiliar()) return familiarDescription;
+        if(Environment.isLaur) return laurDescription;
         return description;
     }
 

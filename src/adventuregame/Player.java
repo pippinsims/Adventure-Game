@@ -290,15 +290,11 @@ public class Player extends Unit
         Environment.printInfo();
         System.out.println();
         
-        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return; //TODO this has a mirror image in Enemy
+        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
         setActions();
  
-        if(ptolomyIsPresent)
-        {
-            Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
-            System.out.println();
-        }
+        if(ptolomyIsPresent) Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
 
         //lists available actions, lets the player choose, then performs chosen action
         performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
@@ -324,23 +320,21 @@ public class Player extends Unit
         throw new UnsupportedOperationException("Unimplemented method 'getWisdom'");
     }
 
-    @Override
-    public String getName() 
-    {
-        return name;        
-    }
+    @Override public String getPluralDescription() { return getName() + "s"; }
 
     @Override
     public String getDescription() 
     {
         switch(name)
         {
-            case "Laur": return "He is a strange-looking man with grimy fingernails";
-            case "Nuel": return "He is a tallish impolite man with a perminent sneer"; // He can pick locks
+            case "Laur"   : return "He is a strange-looking man with grimy fingernails";
+            case "Nuel"   : return "He is a tallish impolite man with a perminent sneer"; // He can pick locks
             case "Valeent": return "She is a perilous-looking woman with anger issues"; // Notes on Valeent, skill where she randomly increments her place in the turn order by 1
-            case "Peili": return "She is a consternated woman with a bewildered look and a horrendous scar across her forehead"; // Lodestones in her baggage
+            case "Peili"  : return "She is a consternated woman with a bewildered look and a horrendous scar across her forehead"; // Lodestones in her baggage
             case "Dormaah": return "He is a stout fish of a man, knows wild things";
-            default: return "They are a person";
+            default       : return "They are a person";
         }
     }
+
+    @Override public String getName() { return name; }
 }
