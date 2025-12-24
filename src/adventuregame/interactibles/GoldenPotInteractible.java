@@ -30,10 +30,10 @@ public class GoldenPotInteractible extends Interactible {
         }
 
         setDefaults(
-            self.name, 
-            self.getDescription(),
+            "", 
+            "",
             prep,
-            self.getPluralDescription(),
+            "",
             "",
             "Interact with",
             "",
@@ -91,4 +91,10 @@ public class GoldenPotInteractible extends Interactible {
     {
         Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
     }
+
+    @Override public String getPluralDescription() { return self.getPluralDescription(); }
+
+    @Override public String getDescription() { return self.getDescription(); }
+
+    @Override public String getName() { return self.getName(); }
 }

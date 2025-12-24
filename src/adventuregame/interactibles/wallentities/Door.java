@@ -80,7 +80,7 @@ public class Door extends WallEntity
     @Override
     public void action(Unit u)
     {
-        Utils.slowPrint("you used " + getDescription());
+        Utils.slowPrint("you used the " + getDescription());
         
         Room r = u.getRoom();
         r.remove(u);

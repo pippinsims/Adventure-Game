@@ -119,17 +119,17 @@ public class Environment
         Room hall = new Room("a long hall with many cells", "PrisonHall");
         //average narwhal weight is 1.425 tons
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
-        r0 = new Room(celld, celll, cellf, celln);
+        r0 = new Room(celld, celll, cellf, celln, null);
         new Door(r0, hall, Wall.EAST);
-        for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln, null), hall, i < 7 ? Wall.EAST : Wall.WEST);
         new Door(hall, end, Wall.NORTH);
         new Window(r0, "a gloomy landscape through the tight, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
         addPlayer(new Player());
-        // addPlayer(new Player("Nuel"));
-        // addPlayer(new Player("Valeent"));
+        addPlayer(new Player("Nuel"));
+        addPlayer(new Player("Valeent"));
         addPlayer(new Player("Peili"));
-        // addPlayer(new Player("Dormaah"));
+        addPlayer(new Player("Dormaah"));
     }
 
     public static void printInfo()

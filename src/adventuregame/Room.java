@@ -8,33 +8,41 @@ import java.util.ArrayList;
 
 public class Room extends Describable
 {
-    ArrayList<Enemy> enemies = new ArrayList<>();
-    ArrayList<Player> players = new ArrayList<>();
-    public ArrayList<Interactible> interactibles = new ArrayList<>();
-    private ArrayList<Door> doors = new ArrayList<>();
-    private String description = "a bare room";
-    private String laurDescription = "an... empty place";
-    private String familiarDescription = "";
-    private ArrayList<Player> familiars = new ArrayList<>();
-    private String name = "Barren";
+    public  ArrayList<Enemy>        enemies       = new ArrayList<>();
+    public  ArrayList<Player>       players       = new ArrayList<>();
+    public  ArrayList<Interactible> interactibles = new ArrayList<>();
+    public  ArrayList<Dialogue>     dialogues                        ;
+    private ArrayList<Door>         doors         = new ArrayList<>();
+    private ArrayList<Player>       familiars     = new ArrayList<>();
+    private String name;
+    private String description;
+    private String laurDescription;
+    private String familiarDescription;
+    
 
     public Room()
     {
-
+        name = "Bare";
+        description = "a bare room";
+        laurDescription = "an... empty place";
+        familiarDescription = "";
     }
 
     public Room(String description, String name)
     {
-        this.description = description;
         this.name = name;
+        this.description = description;
+        laurDescription = description;
+        familiarDescription = "";
     }
 
-    public Room(String d, String l, String f, String n)
+    public Room(String d, String l, String f, String n, ArrayList<Dialogue> dias)
     {
         description = d;
         laurDescription = l;
         familiarDescription = f;
         name = n;
+        dialogues = dias;
     }
 
     public void discover()

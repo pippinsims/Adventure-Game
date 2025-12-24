@@ -34,16 +34,9 @@ public class GoldenPot extends DynamicItem {
         placeInteractible(room);
     }
 
-    @Override
-    public String getPluralDescription() {
-        return pluralDescs[dmg];
-    }
+    @Override public String getPluralDescription() { return pluralDescs[dmg]; }
 
-    @Override
-    public String getDescription() { return descriptions[dmg]; }
+    @Override public String getDescription() { return descriptions[dmg]; }
 
-    @Override
-    public String getName() {
-        return name;
-    }
+    @Override public String getName() { return name; }
 }

@@ -11,62 +11,59 @@ public class Enemy extends Unit
     private String description, randomDescription;
     private String name;
 
-    public String pluralOf(String description)
+    public String pluralOf(String str)
     {
-        switch (description) {
-            case "goblin": case "Screebling Squabbler": case "Mushroom": case "bllork": case "awkward fellow": case "Shroomie": case "Delicious Fun Guy": case "Knower of Forest Beds and Roots":
-                return description + 's';
-            case "pale man" : 
-                return "pale men";
+        switch (str) {
+            case "goblin": 
+            case "Screebling Squabbler": 
+            case "Mushroom": 
+            case "bllork": 
+            case "awkward fellow": 
+            case "Shroomie": 
+            case "Delicious Fun Guy": 
+                return str + 's';
             case "Those-Who-Feast":
-                return description;
-
+                return str;
+            case "pale man": 
+                return "pale men";
+            case "Knower of Forest Beds and Roots":
+                return "Knowers of Forest Beds and Roots";
+            
             default:
-                throw new UnsupportedOperationException("Used an impossible description for Enemy");
+                throw new UnsupportedOperationException("No plural for '"+str+"'");
         }
     }
 
-    public Enemy(int h, Inventory i, int d, int w)
+    private void setDefaults(int m, Inventory i, int dmg, int w, String des)
     {
-        maxHealth = h;
+        maxHealth = m;
         health = maxHealth;
         inv = i;
-        dmg = new Damage(d);
+        this.dmg = new Damage(dmg);
         wisdom = w;
-        generateName();
-        description = "goblin";
-        deathMsg = "You ended " + getName();
-    }
-
-    public Enemy(int health, Inventory inv, int damage, int wis, String des)
-    {
-        maxHealth = health;
-        this.health = maxHealth;
-        
-        this.inv = inv;
-        dmg = new Damage(damage);
-        wisdom = wis;
         description = des;
-        generateName();
+        name = generateName();
         deathMsg = "You ended " + getName();
     }
 
     public Enemy(int health)
     {
-        maxHealth = health;
-        this.health = maxHealth;
-
-        inv = new Inventory(5);
-        dmg = new Damage(4);
-        wisdom = 20;
-        generateName();
-        description = "goblin";
-        deathMsg = "You ended " + getName();
+        setDefaults(health, new Inventory(5), 4, 20, "goblin");
     }
 
-    private void generateName() 
+    public Enemy(int health, Inventory inventory, int damage, int wisdom)
     {
-        name = Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
+        setDefaults(health, inventory, damage, wisdom, "goblin");
+    }
+
+    public Enemy(int health, Inventory inventory, int damage, int wisdom, String description)
+    {
+        setDefaults(health, inventory, damage, wisdom, description);
+    }
+
+    private String generateName() 
+    {
+        return Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
     }
 
     public String getModifiedDescription(String type)
@@ -160,9 +157,6 @@ public class Enemy extends Unit
                 case 2:
                     Utils.slowPrintln("[Doesn't React]");
                     break;
-                default:
-                    System.err.println("error detected in Enemey.java:pleaResponse()");
-                    break;
             }
         }
         else if (description.equals("Mushroom Monster"))
@@ -178,9 +172,6 @@ public class Enemy extends Unit
                     break;
                 case 2:
                     Utils.slowPrintln("kubi kubi!");
-                    break;
-                default:
-                    System.err.println("error detected in Enemey.java:pleaResponse()");
                     break;
             }
         }
