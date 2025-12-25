@@ -230,16 +230,17 @@ public class Utils {
     }
 
     /**
-     * Prints {@code question}, then prints {@code listPrompts} using {@link #printOptions}. Returns the index of the chosen answer from the list.
+     * Prints {@code question}, then, if provided, prints {@code listPrompts} using {@link #printOptions}. Returns the index of the chosen answer from the list.
      * @param question The question for the player
      * @param listPrompts The list of answers to said {@code question}
-     * @return An {@code int}, the output of {@link #confirmInput}, denoting which prompt was chosen, 1-based.
+     * @return An {@code int}, the output of {@link #confirmInput}, the index of the chosen prompt, -1 if none provided.
      */
     public static int promptList(String question, String[] listPrompts)
     {
         System.out.println(question);
+        if(listPrompts == null) return -1;
+        
         printOptions(listPrompts);
-
         return confirmInput(scanner.nextLine(), listPrompts) - 1;
     }
 

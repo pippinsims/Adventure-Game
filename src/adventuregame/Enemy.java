@@ -17,13 +17,14 @@ public class Enemy extends Unit
             case "goblin": 
             case "Screebling Squabbler": 
             case "Mushroom": 
-            case "bllork": 
-            case "awkward fellow": 
+            case "bllork":
             case "Shroomie": 
             case "Delicious Fun Guy": 
                 return str + 's';
             case "Those-Who-Feast":
                 return str;
+            case "awkward fellow":
+                return "awkward fellas";
             case "pale man": 
                 return "pale men";
             case "Knower of Forest Beds and Roots":
@@ -102,7 +103,7 @@ public class Enemy extends Unit
 
     public String getDescription()
     {
-        if(Environment.curPlayer.getName() == "Laur")
+        if(Environment.isLaur)
             return randomDescription;
         else
             return description; //description = getRandomDescription(); when it's Laur's turn
@@ -222,16 +223,41 @@ public class Enemy extends Unit
     @Override
     public void updateUnit() throws Exception {
         System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
-        
+
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
-        
-        chooseAction(Environment.r0);
+
+        //TODO WEIRD SPOT FOR THIS, JUST PUT IT HERE CUZ THIS IS WHEN IT'S SUPPOSED TO HAPPEN
+        if(!myRoom.dialogues.isEmpty())
+            for(Dialogue d : myRoom.dialogues) 
+                if(d.getCurrentActor() == this) 
+                {
+                    d.next();
+                    switch(d.current.out)
+                    {
+                        case NONE: break;
+                        case ROOM:
+                            System.out.println("All players in " + Environment.curPlayer.getName() + "'s room moved back to " + d.current.outRoom.getName());
+                            for(Player p : Environment.r0.players) d.current.outRoom.add(p);
+                            Environment.r0.players.clear();
+                            break;
+                        case EFFECTONE:
+                            System.out.println("Effect '" + d.current.outEffect.getName() + "' added to " + Environment.curPlayer.getName());
+                            Environment.curPlayer.addEffect(d.current.outEffect);
+                            break;
+                        case EFFECTALL:
+                            System.out.println("Effect '" + d.current.outEffect.getName() + "' added to all in " + Environment.curPlayer.getName() + "'s room");
+                            for(Player p : Environment.r0.players) p.addEffect(new Effect(d.current.outEffect));
+                            break;
+                    }
+                }
+        else 
+            chooseAction(myRoom);
     }
 
     @Override
     public String getPluralDescription() 
     {
-        if(Environment.curPlayer.getName() == "Laur")
+        if(Environment.isLaur)
             return pluralOf(randomDescription);
         else
             return pluralOf(description);

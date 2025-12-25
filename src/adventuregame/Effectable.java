@@ -35,6 +35,11 @@ public abstract class Effectable extends Describable{
                 effectIsOver = e.cooldown.decrement();
                 break;
 
+            case POISON:
+                result = receiveDamage(new Damage(e.strength, Damage.Type.BLUNT, e, "You're pierced through with poison"));
+                effectIsOver = e.cooldown.decrement();
+                break;
+
             case PSYCHSTRIKE:
                 result = receiveDamage(new Damage(e.strength, Damage.Type.PSYCHIC, e, "Your mind is vexed of the psychic strike"));
                 isStunned = true;
@@ -65,7 +70,7 @@ public abstract class Effectable extends Describable{
         if(message == null) Utils.slowPrintln(damage.getMessage());
         else Utils.slowPrintln(getName() + " is hit by " + message);
         switch (damage.getType()) {
-            case BASIC:
+            case BASIC: case BLUNT:
                 health -= damage.getValue();
                 break;
             

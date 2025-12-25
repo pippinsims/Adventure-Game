@@ -11,6 +11,15 @@ public class Effect extends Describable{
     int strength;
     String name;
 
+    public Effect(Effect e)
+    {
+        type = e.type;
+        cooldown = new Cooldown(e.cooldown.getDuration(), e.cooldown.getType());
+        description = new String(e.description);
+        strength = e.strength;
+        name = e.name;
+    }
+
     public Effect(Type t, int duration, int strength)
     {
         type = t;
@@ -31,6 +40,7 @@ public class Effect extends Describable{
 
     public enum Type{
         FIRE,
+        POISON,
         PSYCHSTRIKE
     }
 

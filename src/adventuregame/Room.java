@@ -18,31 +18,42 @@ public class Room extends Describable
     private String description;
     private String laurDescription;
     private String familiarDescription;
-    
+    private boolean forceDialogue = false;
 
     public Room()
     {
         name = "Bare";
         description = "a bare room";
         laurDescription = "an... empty place";
-        familiarDescription = "";
+        familiarDescription = "Bare room.";
     }
 
-    public Room(String description, String name)
-    {
-        this.name = name;
-        this.description = description;
-        laurDescription = description;
-        familiarDescription = "";
-    }
-
-    public Room(String d, String l, String f, String n, ArrayList<Dialogue> dias)
+    public Room(String d, String l, String f, String n, ArrayList<Dialogue> dias, boolean forceDialogue)
     {
         description = d;
         laurDescription = l;
         familiarDescription = f;
         name = n;
         dialogues = dias;
+        this.forceDialogue = forceDialogue;
+    }
+
+    public Room(String d, String f, String n, ArrayList<Dialogue> dias, boolean forceDialogue)
+    {
+        description = d;
+        laurDescription = d;
+        familiarDescription = f;
+        name = n;
+        dialogues = dias;
+        this.forceDialogue = forceDialogue;
+    }
+
+    public Room(String d, String n)
+    {
+        description = d;
+        laurDescription = d;
+        familiarDescription = n + ".";
+        name = n;
     }
 
     public void discover()
@@ -51,6 +62,7 @@ public class Room extends Describable
     }
 
     public boolean getIsFamiliar() { return familiars.contains(Environment.curPlayer); }
+    public boolean getDialogueForced() { return forceDialogue; }
 
     public void add(Interactible i)
     {
@@ -60,12 +72,8 @@ public class Room extends Describable
 
     public void add(Unit u)
     {
-        if(u instanceof Player) players.add((Player)u);
-        else 
-        {
-            enemies.add((Enemy)u);
-            u.setRoom(this);
-        }
+        if(u instanceof Player) players.add((Player)u); else enemies.add((Enemy)u);
+        u.setRoom(this);
     }
 
     public boolean remove(Interactible i)

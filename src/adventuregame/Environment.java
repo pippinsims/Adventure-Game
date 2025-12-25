@@ -8,6 +8,7 @@ import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.dynamicitems.Torch;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Environment
@@ -16,8 +17,9 @@ public class Environment
     public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static Player curPlayer;
     public static boolean isLaur;
-    public static Map<Effect.Type, Tuple<String, String>> effectDescriptions = Map.ofEntries(Map.entry(Effect.Type.FIRE, new Tuple<String, String>("fire effect", "BURNINGNESS")),
-                                                                                             Map.entry(Effect.Type.PSYCHSTRIKE, new Tuple<String, String>("psychstrike effect","strong vexation of mind")));
+    public static Map<Effect.Type, Tuple<String, String>> effectDescriptions = Map.ofEntries(Map.entry(Effect.Type.FIRE       , new Tuple<String,String>("fire effect", "BURNINGNESS")),
+                                                                                             Map.entry(Effect.Type.PSYCHSTRIKE, new Tuple<String,String>("psychstrike effect","strong vexation of mind")),
+                                                                                             Map.entry(Effect.Type.POISON     , new Tuple<String,String>("poison", "an ill feeling in thy body")));
 
     public static void main(String[] args) throws Exception 
     {
@@ -30,15 +32,11 @@ public class Environment
         ArrayList<Room> playerRooms = new ArrayList<>();
         while(!allPlayers.isEmpty())
         {
-            for (Player p : allPlayers) 
+            for(Player p : allPlayers) if(!playerRooms.contains(p.getRoom())) playerRooms.add(p.getRoom());
+            
+            for(Room r : new ArrayList<>(playerRooms))
             {
-                if(!playerRooms.contains(p.getRoom()))
-                    playerRooms.add(p.getRoom());
-            }
-
-            for (int r = 0; r < playerRooms.size(); r++)
-            {
-                r0 = playerRooms.get(r);
+                r0 = r;
 
                 for (Player p : new ArrayList<>(r0.players))
                 {
@@ -48,18 +46,17 @@ public class Environment
                     System.out.println();
                 }
 
-                if(r0.players.isEmpty())
-                {
-                    playerRooms.remove(r0);
-                    r--;
-                    continue;
-                }
+                if(r0.players.isEmpty()) playerRooms.remove(r0);
+                if(r0.players.isEmpty()) break;
                 
                 for(Enemy e : new ArrayList<>(r0.enemies))
                 {
                     e.updateUnit();
                     System.out.println();
+                    if(r0.players.isEmpty()) break;
                 }
+
+                if(r0.players.isEmpty()) playerRooms.remove(r0);
             }
 
             System.out.println("--Round End--");
@@ -93,43 +90,72 @@ public class Environment
 
     private static void generateMap()
     {
-        Room end = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"", "Chamber");
-        
-        Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,", "Mossy Ruin");
-        mossyRuin.add(new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster"));
-        
-        new Door(end, mossyRuin, Wall.NORTH);
-        new Door(end, new Room(), Wall.WEST);
-        Room joiner1 = new Room();
-        new Door(end, joiner1, Wall.EAST);
-
-        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.", "Treasure Room");
-        new GoldenPot(treasureRoom);
-
-        new Door(joiner1, treasureRoom, Wall.SOUTH);
-
-        for (int i = 0; i < 4; i++) end.add(new Enemy(3));
-
-        new Torch(end, Wall.EAST);
-        new Torch(end, Wall.WEST);
-        new Torch(end, Wall.WEST);
-
-        new ViewablePicture(end, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
-        
-        Room hall = new Room("a long hall with many cells", "PrisonHall");
+        Room hall = new Room("a long hall with many cells","Prison hallway");
         //average narwhal weight is 1.425 tons
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
-        r0 = new Room(celld, celll, cellf, celln, null);
+        r0 = new Room(celld, celll, cellf, celln, null, false);
         new Door(r0, hall, Wall.EAST);
-        for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln, null), hall, i < 7 ? Wall.EAST : Wall.WEST);
-        new Door(hall, end, Wall.NORTH);
         new Window(r0, "a gloomy landscape through the tight, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
+        for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln, null, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
+
+        ArrayList<Enemy> ens = new ArrayList<>(List.of(new Enemy(3), new Enemy(3), new Enemy(3)));
+        Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    
+                            "The Chamber.",
+                            "Chamber",
+                            new ArrayList<>(List.of(new Dialogue(new ArrayList<>(ens), 
+                                                                 new Dialogue.Node(0, "You're not supposed to be out'n'about!", new String[]{"Well... we are!",
+                                                                                                                                                           "Uh, ok. What should we do?",
+                                                                                                                                                           "Thou shalt not oppose ME."}, new Dialogue.Node[]
+                                                                    {
+                                                                        new Dialogue.Node(0,"Get the *BLORCK* back in your cell!", new String[] {"No.", 
+                                                                                                                                                            "Fine.",
+                                                                                                                                                            "Ok!"}, new Dialogue.Node[] 
+                                                                        {
+                                                                            new Dialogue.Node(0, "Then you die.", Dialogue.Node.Out.NONE, null),
+                                                                            new Dialogue.Node(0, "And don't you dare leave again...", Dialogue.Node.Out.ROOM, r0),
+                                                                            new Dialogue.Node(Dialogue.Node.Out.ROOM, r0)
+                                                                        }),
+                                                                        new Dialogue.Node(0, "You shold shut that trap and gloink back into your cell is what!", Dialogue.Node.Out.ROOM, r0),
+                                                                        new Dialogue.Node(Dialogue.Node.Out.ROOM, r0)
+                                                                    })
+                                                                )
+                                                    )
+                                            ),
+                            true);
+        for(Enemy e : ens) chamber.add(e);
+        new Door(hall, chamber, Wall.NORTH);
+        
+        Enemy shroomie = new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster");
+        Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,",
+                                  "Shroom Room.",
+                                  "Mossy Ruin",
+                                  new ArrayList<>(List.of(new Dialogue(new ArrayList<>(List.of(shroomie)), new Dialogue.Node(0, "I see you.", new String[]{"Hello?", "Uh, ok.", "Die."}, Dialogue.Node.Out.EFFECTALL, new Effect(Effect.Type.POISON, 1, 1))))),
+                                  true);
+        mossyRuin.add(shroomie);
+        
+        Room joiner1 = new Room();
+
+        new Door(chamber, mossyRuin, Wall.NORTH);
+        new Door(chamber, new Room(), Wall.WEST);
+        new Door(chamber, joiner1, Wall.EAST);
+
+        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.",
+                                     "Treasure Room");
+        new GoldenPot(treasureRoom);
+        new Door(joiner1, treasureRoom, Wall.SOUTH);
+
+        new Torch(chamber, Wall.EAST);
+        new Torch(chamber, Wall.WEST);
+        new Torch(chamber, Wall.WEST);
+
+        new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
+        
         addPlayer(new Player());
-        addPlayer(new Player("Nuel"));
-        addPlayer(new Player("Valeent"));
-        addPlayer(new Player("Peili"));
-        addPlayer(new Player("Dormaah"));
+        // addPlayer(new Player("Nuel"));
+        // addPlayer(new Player("Valeent"));
+        // addPlayer(new Player("Peili"));
+        // addPlayer(new Player("Dormaah"));
     }
 
     public static void printInfo()

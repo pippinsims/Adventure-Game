@@ -188,10 +188,14 @@ public class Player extends Unit
 
     private void talk()
     {
-        System.out.println("What do you say?");
-        String s = Utils.scanner.nextLine();
-        if(s.contains("stop")) for (Enemy e : myRoom.enemies) e.pleaResponse();
-        else Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
+        if(myRoom.getDialogueForced()) myRoom.dialogues.getFirst().next();
+        else
+        {
+            System.out.println("What do you say?");
+            String s = Utils.scanner.nextLine();
+            if(s.contains("stop")) for (Enemy e : myRoom.enemies) e.pleaResponse();
+        }
+        Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
     }
 
     public void ptolomyDoesSomething(String[] possibilities) 

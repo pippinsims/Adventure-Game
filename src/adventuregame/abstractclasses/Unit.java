@@ -17,7 +17,7 @@ public abstract class Unit extends Effectable
 
     protected Room myRoom;
     public Room getRoom() { return myRoom; }
-    public void setRoom(Room r) { myRoom = r; }
+    public void setRoom(Room r) { myRoom = r; } //don't use this, it is called in Room.add(Unit)
     public void attack(Unit targ, Damage d) { targ.receiveDamage(d); }
 
     protected String deathMsg;

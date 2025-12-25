@@ -1,5 +1,6 @@
 package adventuregame.interactibles.wallentities;
 
+import adventuregame.Environment;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
@@ -80,12 +81,11 @@ public class Door extends WallEntity
     @Override
     public void action(Unit u)
     {
-        Utils.slowPrint("you used the " + getDescription());
+        Utils.slowPrint("you used " + (Environment.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
         
         Room r = u.getRoom();
         r.remove(u);
-        u.setRoom(getNextRoom(r));
-        u.getRoom().add(u);
+        getNextRoom(r).add(u);
     }
 
     public Room getNextRoom(Room curRoom)
