@@ -11,7 +11,7 @@ public class Room extends Describable
     public  ArrayList<Enemy>        enemies       = new ArrayList<>();
     public  ArrayList<Player>       players       = new ArrayList<>();
     public  ArrayList<Interactible> interactibles = new ArrayList<>();
-    public  ArrayList<Dialogue>     dialogues                        ;
+    public  ArrayList<Dialogue>     dialogues     = new ArrayList<>();
     private ArrayList<Door>         doors         = new ArrayList<>();
     private ArrayList<Player>       familiars     = new ArrayList<>();
     private String name;
@@ -28,23 +28,21 @@ public class Room extends Describable
         familiarDescription = "Bare room.";
     }
 
-    public Room(String d, String l, String f, String n, ArrayList<Dialogue> dias, boolean forceDialogue)
+    public Room(String d, String l, String f, String n, boolean forceDialogue)
     {
         description = d;
         laurDescription = l;
         familiarDescription = f;
         name = n;
-        dialogues = dias;
         this.forceDialogue = forceDialogue;
     }
 
-    public Room(String d, String f, String n, ArrayList<Dialogue> dias, boolean forceDialogue)
+    public Room(String d, String f, String n, boolean forceDialogue)
     {
         description = d;
         laurDescription = d;
         familiarDescription = f;
         name = n;
-        dialogues = dias;
         this.forceDialogue = forceDialogue;
     }
 
@@ -62,7 +60,7 @@ public class Room extends Describable
     }
 
     public boolean getIsFamiliar() { return familiars.contains(Environment.curPlayer); }
-    public boolean getDialogueForced() { return forceDialogue; }
+    public boolean getDialogueForced() { return forceDialogue; } //TODO janky to the max, not very useful structure, eventually we want Dialogues that run off a cue which could be just they enter the room for the first time
 
     public void add(Interactible i)
     {
@@ -74,6 +72,11 @@ public class Room extends Describable
     {
         if(u instanceof Player) players.add((Player)u); else enemies.add((Enemy)u);
         u.setRoom(this);
+    }
+
+    public void add(Dialogue d)
+    {
+        dialogues.add(d);
     }
 
     public boolean remove(Interactible i)

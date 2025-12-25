@@ -13,6 +13,12 @@ public class GoldenPot extends DynamicItem {
     public String name = "Golden Pot";
     public int dmg = 0;
 
+    public GoldenPot()
+    {
+        it = new GoldenPotItem(this);
+        in = new GoldenPotInteractible(this, null);
+    }
+
     public GoldenPot(int dmg)
     {
         this.dmg = dmg;

@@ -226,32 +226,8 @@ public class Enemy extends Unit
 
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
-        //TODO WEIRD SPOT FOR THIS, JUST PUT IT HERE CUZ THIS IS WHEN IT'S SUPPOSED TO HAPPEN
-        if(!myRoom.dialogues.isEmpty())
-            for(Dialogue d : myRoom.dialogues) 
-                if(d.getCurrentActor() == this) 
-                {
-                    d.next();
-                    switch(d.current.out)
-                    {
-                        case NONE: break;
-                        case ROOM:
-                            System.out.println("All players in " + Environment.curPlayer.getName() + "'s room moved back to " + d.current.outRoom.getName());
-                            for(Player p : Environment.r0.players) d.current.outRoom.add(p);
-                            Environment.r0.players.clear();
-                            break;
-                        case EFFECTONE:
-                            System.out.println("Effect '" + d.current.outEffect.getName() + "' added to " + Environment.curPlayer.getName());
-                            Environment.curPlayer.addEffect(d.current.outEffect);
-                            break;
-                        case EFFECTALL:
-                            System.out.println("Effect '" + d.current.outEffect.getName() + "' added to all in " + Environment.curPlayer.getName() + "'s room");
-                            for(Player p : Environment.r0.players) p.addEffect(new Effect(d.current.outEffect));
-                            break;
-                    }
-                }
-        else 
-            chooseAction(myRoom);
+        if(!myRoom.dialogues.isEmpty()) for(Dialogue d : myRoom.dialogues) if(d.getCurrentActor() == this) { d.next(); Dialogue.processNode(d.current); }
+        else chooseAction(myRoom);
     }
 
     @Override

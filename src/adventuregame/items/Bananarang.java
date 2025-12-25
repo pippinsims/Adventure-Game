@@ -40,4 +40,6 @@ public class Bananarang extends Item
     public String getPluralDescription() {
         return "bananarangs";
     }
+
+    @Override public Item clone() { return new Bananarang(); }
 }

@@ -23,4 +23,7 @@ public abstract class DynamicItem extends Describable {
         currentOwner = unit;
         currentOwner.getInventory().add(it);
     }
+
+    public Item item() { return it; }
+    public Interactible interactible() { return in; }
 }

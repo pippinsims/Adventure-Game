@@ -42,7 +42,7 @@ public class Player extends Unit
 
     public Player()
     {
-        myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
+        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = "Laur";
         
         inv.add(new Bananarang());
@@ -56,14 +56,14 @@ public class Player extends Unit
 
     public Player(String n)
     {
-        myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
+        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = n;        
         deathMsg = name + " died.";
     }
 
     public Player(boolean genName)
     {
-        myRoom = Environment.r0; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
+        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = Utils.names1[Utils.rand.nextInt(Utils.names1.length)] + Utils.names2[Utils.rand.nextInt(Utils.names2.length)];
         deathMsg = name + " died.";
     }
@@ -215,7 +215,49 @@ public class Player extends Unit
 
     private void castSpell() throws Exception
     {
-        String[] spellTypes = new String[]{"brain aneurysm", "FERDINAND'S FLAMBERGE"};
+        //TODO make a simple language generator
+        /*
+            Get the latin sentence of the sentence, then change the words and endings with a new auto-generated set and let em try and figure that out.
+            For further obfuscation, use 4 alphabet cases: Superupper, upper, lower, sublower
+            superupper is just greek uppercase, sublower is just greek lowercase
+            weird case rules (make a bunch and mix and match so that there are a ton of permutations):
+                1. first x.length/4 letters of proper noun x equally descend in case, sublowering the rest, examples:
+                    Laur -> ΛAuρ
+                    Michaelangelo -> MIΓHAElanγελο
+                    Appalachian -> APPAlaγηιαν
+                    Ferdinand -> ΦΕRDinανδ (i think?? but you get the point, just use the table below)
+
+                    Α α   A         "a" as in father/apple                 
+                    Β β   B         "b" as in book (sometimes "v")         
+                    Γ γ   G   add C "g" as in game (sometimes "y" sound)    
+                    Δ δ   D         "d" as in dog (sometimes "th" in "the")
+                    Ε ε   E         "e" as in bet                          
+                    Ζ ζ   Z         "z" as in zoo                          
+                    Η η   H         "e" as in bee (long 'e')               
+                    Θ θ   Th        "th" as in think                       
+                    Ι ι   I         "i" as in machine (long 'e')           
+                    Κ κ   K   add Q "k" as in kite                         
+                    Λ λ   L         "l" as in log                          
+                    Μ μ   M         "m" as in man                          
+                    Ν ν   N         "n" as in not                          
+                    Ξ ξ   X   add J "x" as in box (or 'ks')                
+                    Ο ο   O         "o" as in lot                          
+                    Π π   P         "p" as in pet                          
+                    Ρ ρ   R         "r" (rolled)                           
+                    Σ σ/ς S         "s" as in sap (ς at end of word)       
+                    Τ τ   T         "t" as in top                          
+                    Υ υ   U/Y add W "u" as in put (or 'ü' sound)           
+                    Φ φ   Ph  add V "f" (or "ph")                          
+                    Χ χ   Kh        "ch" as in Scottish loch               
+                    Ψ ψ   Ps        "ps" as in lapse                       
+                    Ω ω   O         "o" as in boat (long 'o')
+                2. First and last letters of any word that isn't the 3rd word are sublower, 
+                unless it's a verb, then they're superupper, if the first letter of the en-
+                glish word would be capital, just make the second so.
+                    The quick brown fox jumps over the lazy dog.
+                    τHε κuicκ brown φoξ ΞumpΣ οveρ τhε λazυ δoγ.
+        */
+        String[] spellTypes = new String[]{"mind death all foes", "FERDINAND'S FLAMBERGE"};
         
         System.out.println("Focus...");
         System.out.print("Speak: ");
@@ -223,7 +265,7 @@ public class Player extends Unit
         
         ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
         
-        switch(Utils.linearFind(spellTypes, input)) //MAYBE INPUT SUBSTRING PARSE METHOD LATER DOWN THE LINE
+        switch(Utils.linearFind(spellTypes, input)) //TODO INPUT SUBSTRING PARSE METHOD (i.g. if second-to-last word "all", and last word "foes", apply to all Enemys)
         {
             case 0:
                 int lvl = 1000;
@@ -296,8 +338,10 @@ public class Player extends Unit
         
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
+        if(!myRoom.dialogues.isEmpty() && myRoom.getDialogueForced()) for(Dialogue d : new ArrayList<>(myRoom.dialogues)) { d.next(); Dialogue.processNode(d.current); }
+        
         setActions();
- 
+
         if(ptolomyIsPresent) Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
 
         //lists available actions, lets the player choose, then performs chosen action

@@ -30,7 +30,7 @@ public abstract class Effectable extends Describable{
         EffectUpdateResult result = EffectUpdateResult.NONE;
         switch (e.getType()) 
         {
-            case FIRE: //for fire and psychstrike, result is the receiveDamage result
+            case FIRE: //for fire, poison, and psychstrike, result is the receiveDamage result
                 result = receiveDamage(new Damage(e.strength, Damage.Type.FIRE, e, "You're burned by fire"));
                 effectIsOver = e.cooldown.decrement();
                 break;
@@ -50,16 +50,10 @@ public abstract class Effectable extends Describable{
                 break;
         }
 
-        if(effectIsOver)
+        if(effectIsOver) for(Effect check : new ArrayList<>(effects)) if(check == e)
         {
-            for(int i = 0; i < effects.size(); i++)
-            {
-                if(effects.get(i) == e)
-                {
-                    effects.remove(i);
-                    break;
-                }
-            }
+            effects.remove(e);
+            break;
         }
 
         return result;

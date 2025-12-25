@@ -1,8 +1,15 @@
 package adventuregame;
 
+import java.util.Map;
+
+import adventuregame.Utils.Tuple;
 import adventuregame.abstractclasses.Describable;
 
 public class Effect extends Describable{
+
+    public static Map<Type, Tuple<String, String>> effectDescriptions = Map.ofEntries(Map.entry(Type.FIRE       , new Tuple<String,String>("fire effect", "BURNINGNESS")),
+                                                                                      Map.entry(Type.PSYCHSTRIKE, new Tuple<String,String>("psychstrike effect","strong vexation of mind")),
+                                                                                      Map.entry(Type.POISON     , new Tuple<String,String>("poison", "an ill feeling in thy body")));
     
     //TODO fill descriptions map at start of Environment.main() using file
     Type type;
@@ -25,8 +32,8 @@ public class Effect extends Describable{
         type = t;
         cooldown = new Cooldown(duration, t);
         this.strength = strength;
-        description = Environment.effectDescriptions.get(type).t2();
-        this.name = Environment.effectDescriptions.get(type).t1();
+        description = effectDescriptions.get(type).t2();
+        this.name = effectDescriptions.get(type).t1();
     }
 
     public Effect(Type t, int duration, int strength, String name) 
@@ -34,7 +41,7 @@ public class Effect extends Describable{
         type = t;
         cooldown = new Cooldown(duration, t);
         this.strength = strength;
-        description = Environment.effectDescriptions.get(type).t2();
+        description = effectDescriptions.get(type).t2();
         this.name = name;
     }
 

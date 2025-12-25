@@ -2,24 +2,19 @@ package adventuregame;
 
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.*;
-import adventuregame.Utils.Tuple;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.dynamicitems.Torch;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Environment
 {
-    public static Room r0;
-    public static ArrayList<Player> allPlayers = new ArrayList<>();
+    public static Room curRoom;
     public static Player curPlayer;
+    public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static boolean isLaur;
-    public static Map<Effect.Type, Tuple<String, String>> effectDescriptions = Map.ofEntries(Map.entry(Effect.Type.FIRE       , new Tuple<String,String>("fire effect", "BURNINGNESS")),
-                                                                                             Map.entry(Effect.Type.PSYCHSTRIKE, new Tuple<String,String>("psychstrike effect","strong vexation of mind")),
-                                                                                             Map.entry(Effect.Type.POISON     , new Tuple<String,String>("poison", "an ill feeling in thy body")));
 
     public static void main(String[] args) throws Exception 
     {
@@ -30,15 +25,16 @@ public class Environment
         System.out.println();
 
         ArrayList<Room> playerRooms = new ArrayList<>();
+        //TODO seems like this whole loop could be optimized and shrunken
         while(!allPlayers.isEmpty())
         {
             for(Player p : allPlayers) if(!playerRooms.contains(p.getRoom())) playerRooms.add(p.getRoom());
             
             for(Room r : new ArrayList<>(playerRooms))
             {
-                r0 = r;
+                curRoom = r;
 
-                for (Player p : new ArrayList<>(r0.players))
+                for (Player p : new ArrayList<>(curRoom.players))
                 {
                     curPlayer = p;
                     isLaur = curPlayer.getName().equals("Laur");
@@ -46,17 +42,17 @@ public class Environment
                     System.out.println();
                 }
 
-                if(r0.players.isEmpty()) playerRooms.remove(r0);
-                if(r0.players.isEmpty()) break;
+                if(curRoom.players.isEmpty()) playerRooms.remove(curRoom);
+                if(curRoom.players.isEmpty()) break;
                 
-                for(Enemy e : new ArrayList<>(r0.enemies))
+                for(Enemy e : new ArrayList<>(curRoom.enemies))
                 {
                     e.updateUnit();
                     System.out.println();
-                    if(r0.players.isEmpty()) break;
+                    if(curRoom.players.isEmpty()) break;
                 }
 
-                if(r0.players.isEmpty()) playerRooms.remove(r0);
+                if(curRoom.players.isEmpty()) playerRooms.remove(curRoom);
             }
 
             System.out.println("--Round End--");
@@ -85,7 +81,7 @@ public class Environment
     private static void addPlayer(Player p)
     {
         allPlayers.add(p);
-        r0.players.add(p);
+        curRoom.players.add(p);
     }
 
     private static void generateMap()
@@ -93,46 +89,72 @@ public class Environment
         Room hall = new Room("a long hall with many cells","Prison hallway");
         //average narwhal weight is 1.425 tons
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
-        r0 = new Room(celld, celll, cellf, celln, null, false);
-        new Door(r0, hall, Wall.EAST);
-        new Window(r0, "a gloomy landscape through the tight, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
+        curRoom = new Room(celld, celll, cellf, celln, false);
+        new Door(curRoom, hall, Wall.EAST);
+        new Window(curRoom, "a gloomy landscape through the tight, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
-        for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln, null, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
 
         ArrayList<Enemy> ens = new ArrayList<>(List.of(new Enemy(3), new Enemy(3), new Enemy(3)));
         Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    
-                            "The Chamber.",
-                            "Chamber",
-                            new ArrayList<>(List.of(new Dialogue(new ArrayList<>(ens), 
-                                                                 new Dialogue.Node(0, "You're not supposed to be out'n'about!", new String[]{"Well... we are!",
-                                                                                                                                                           "Uh, ok. What should we do?",
-                                                                                                                                                           "Thou shalt not oppose ME."}, new Dialogue.Node[]
-                                                                    {
-                                                                        new Dialogue.Node(0,"Get the *BLORCK* back in your cell!", new String[] {"No.", 
-                                                                                                                                                            "Fine.",
-                                                                                                                                                            "Ok!"}, new Dialogue.Node[] 
-                                                                        {
-                                                                            new Dialogue.Node(0, "Then you die.", Dialogue.Node.Out.NONE, null),
-                                                                            new Dialogue.Node(0, "And don't you dare leave again...", Dialogue.Node.Out.ROOM, r0),
-                                                                            new Dialogue.Node(Dialogue.Node.Out.ROOM, r0)
-                                                                        }),
-                                                                        new Dialogue.Node(0, "You shold shut that trap and gloink back into your cell is what!", Dialogue.Node.Out.ROOM, r0),
-                                                                        new Dialogue.Node(Dialogue.Node.Out.ROOM, r0)
-                                                                    })
-                                                                )
-                                                    )
-                                            ),
-                            true);
+                                "The Chamber.",
+                                "Chamber",
+                                true);
         for(Enemy e : ens) chamber.add(e);
+        chamber.add(new Dialogue(
+            new ArrayList<>(ens), 
+            new Dialogue.Node.B(
+                0, 
+                "You're not supposed to be out'n'about!", 
+                new String[] {
+                    "Well... we are!",
+                    "Uh, ok. What should we do?",
+                    "Thou shalt not oppose ME."
+                }, 
+                new Dialogue.Node[]
+                {
+                    new Dialogue.Node.B(
+                        0,
+                        "Get the *BLORCK* back in your cell!", 
+                        new String[] {
+                            "No.", 
+                            "Fine.",
+                            "Ok!"
+                        }, 
+                        new Dialogue.Node[] 
+                        {
+                            new Dialogue.Node.B(0, "Then you die."),
+                            new Dialogue.Node.L<Room>(0, "And don't you dare leave again...", null, curRoom, true),
+                            new Dialogue.Node.L<Room>(curRoom, true)
+                        }
+                    ),
+                    new Dialogue.Node.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true),
+                    new Dialogue.Node.L<Room>(curRoom, true)
+                }
+            )
+        ));
         new Door(hall, chamber, Wall.NORTH);
         
-        Enemy shroomie = new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster");
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,",
                                   "Shroom Room.",
                                   "Mossy Ruin",
-                                  new ArrayList<>(List.of(new Dialogue(new ArrayList<>(List.of(shroomie)), new Dialogue.Node(0, "I see you.", new String[]{"Hello?", "Uh, ok.", "Die."}, Dialogue.Node.Out.EFFECTALL, new Effect(Effect.Type.POISON, 1, 1))))),
                                   true);
+        Enemy shroomie = new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster");
         mossyRuin.add(shroomie);
+        mossyRuin.add(new Dialogue(new ArrayList<>(
+            List.of(shroomie)), 
+            new Dialogue.Node.L<Effect>(
+                0, 
+                "I see you.", 
+                new String[]{
+                    "Hello?", 
+                    "Uh, ok.", 
+                    "Die."
+                },
+                new Effect(Effect.Type.POISON, 1, 1), 
+                true
+            )
+        ));
         
         Room joiner1 = new Room();
 
@@ -162,21 +184,21 @@ public class Environment
     {
         System.out.println("--Info--");
 
-        if(!r0.getIsFamiliar())
+        if(!curRoom.getIsFamiliar())
         {
             Utils.currentPrintDelay = Utils.MAX_PRINT_DELAY;
-            Utils.slowPrintln("You're in " + r0.getDescription() + ".");
+            Utils.slowPrintln("You're in " + curRoom.getDescription() + ".");
         }
         else
         {
-            Utils.slowPrintln(r0.getDescription());
+            Utils.slowPrintln(curRoom.getDescription());
         }
 
-        Utils.slowPrintDescList(r0.interactibles);
+        Utils.slowPrintDescList(curRoom.interactibles);
 
-        Utils.slowPrintDescList(r0.enemies);
+        Utils.slowPrintDescList(curRoom.enemies);
         
-        r0.discover();
+        curRoom.discover();
         Utils.currentPrintDelay = 3;
     }
 

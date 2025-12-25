@@ -11,6 +11,12 @@ public class Torch extends DynamicItem {
 
     public String name = "Torch";
 
+    public Torch()
+    {
+        it = new TorchItem(this);
+        in = new TorchInteractible(this, null, null);
+    }
+
     public Torch(Unit unit)
     {
         it = new TorchItem(this);

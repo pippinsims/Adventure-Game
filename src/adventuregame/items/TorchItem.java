@@ -30,4 +30,6 @@ public class TorchItem extends Item{
     @Override public String getDescription() { return self.getDescription(); }
 
     @Override public String getName() { return self.getName(); }
+
+    @Override public Item clone() { return new Torch().item(); }
 }

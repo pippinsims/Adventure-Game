@@ -3,6 +3,7 @@ package adventuregame;
 import java.util.ArrayList;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 
 public class Dialogue
@@ -15,98 +16,133 @@ public class Dialogue
     {
         this.actors = actors;
         current = start;
-
-        num = 0;
-        setLeafIndices(start);
-    }
-
-    private void setLeafIndices(Node cur)
-    {
-        if(cur.nodes == null) cur.setPath(num++);
-        else for(Node n : cur.nodes) setLeafIndices(n);
     }
 
     public Unit getCurrentActor()
     {
-        return actors.get(current.actor);
+        return actors.get(current.actor); //TODO make Dialogue only run if all actors are present
     }
 
-    public int next()
+    public void next()
     {
-        return next(getCurrentActor());
+        next(getCurrentActor());
     }
 
-    private int next(Unit actor)
+    private void next(Unit actor)
     {
         if(actor.getRoom() != null)
         {
             int path = Utils.promptList(actor.getName() + ": " + current.prompt, current.prompts);
-            if(current.nodes != null)
+            if(current instanceof Node.B && ((Node.B)current).nodes != null)
             {
-                current = current.nodes[path];
-                current.setPath(path);
-                return next(actors.get(current.actor));
+                current = ((Node.B)current).nodes[path];
+                next(actors.get(current.actor));
             }
+            else actors.getFirst().getRoom().dialogues.remove(this);
         }
-        return current.pathIndex;
     }
 
-    static class Node
+    static abstract class Node
     {
         int actor;
         String prompt;
         String[] prompts;
-        Node[] nodes;
-        int pathIndex;
-        Effect outEffect;
-        Room outRoom;
-        Out out;
-
-        enum Out
-        {
-            NONE,
-            ROOM,
-            EFFECTONE,
-            EFFECTALL
-        }
         
-        public Node(Out out, Describable d) 
-        { 
-            this.out = out; 
-            if(d instanceof Effect) outEffect = (Effect)d;
-            else if (d instanceof Room) outRoom = (Room)d;
+        static class L<T extends Describable> extends Node //L for Leaf
+        {
+            T out;
+            boolean applyToAll;
+
+            public L(int actor, String prompt, String[] prompts, T out, boolean applyToAll)
+            {
+                this.actor = actor;
+                this.prompt = prompt;
+                this.prompts = prompts;
+                this.out = out;
+                this.applyToAll = applyToAll;
+            }
+
+            public L(T out, boolean applyToAll)
+            {
+                this.out = out;
+                this.applyToAll = applyToAll;
+            }
         }
 
-        public Node(int actor, String prompt, Out out, Describable d)
+        static class B extends Node //B for Branch
         {
-            this.actor = actor;
-            this.prompt = prompt;
-            this.out = out; 
-            if(d instanceof Effect) outEffect = (Effect)d;
-            else if (d instanceof Room) outRoom = (Room)d; 
+            Node[] nodes;
+
+            public B(int actor, String prompt, String[] prompts, Node[] nodes)
+            {
+                this.actor = actor;
+                this.prompt = prompt;
+                this.prompts = prompts;
+                this.nodes = nodes;
+            }
+
+            public B(int actor, String prompt)
+            {
+                this.actor = actor;
+                this.prompt = prompt;
+            }
         }
 
-        public Node(int actor, String prompt, String[] prompts, Out out, Describable d)
-        {
-            this.actor = actor;
-            this.prompt = prompt;
-            this.prompts = prompts;
-            this.out = out;
-            if(d instanceof Effect) outEffect = (Effect)d;
-            else if (d instanceof Room) outRoom = (Room)d;
-        }
+        //Thought this would be cool but it was unnecessary, now it's here as a builder pattern reference
+        // static class LNodeBuilder<T extends Describable>
+        // {
+        //     T out;
+        //     public LNodeBuilder(T out) { this.out = out; }
+        //     int actor = -1         ; public LNodeBuilder<T> actor(int a)        { actor = a  ; return this; }
+        //     String prompt = null   ; public LNodeBuilder<T> prompt(String p)    { prompt = p ; return this; }
+        //     String[] prompts = null; public LNodeBuilder<T> prompts(String[] p) { prompts = p; return this; }
+        //     boolean all = false    ; public LNodeBuilder<T> all()               { all = true ; return this; }
+        //     public L<T> build() { return new L<T>(actor, prompt, prompts, out, all); }
+        // }
+    }
 
-        public Node(int actor, String prompt, String[] prompts, Node[] nodes)
-        {
-            this.actor = actor;
-            this.prompt = prompt;
-            this.prompts = prompts;
-            this.nodes = nodes;
-        }
+    public static void processNode(Dialogue.Node node)
+    {
+        if(node instanceof Dialogue.Node.L) getOutput((Dialogue.Node.L<?>)node);
+    }
 
-        public void setPath(int path)
+    private static <T extends Describable> void getOutput(Dialogue.Node.L<T> node)
+    {
+        if(node.out instanceof Room)
         {
-            pathIndex = path;
+            //TODO add pathfinding to make it be able to say "All players in rooms between curp.getName's room and out.getName moved back to out.getName"
+            Room out = (Room)node.out;
+            System.out.println("All players in " + Environment.curPlayer.getName() + "'s room moved back to " + out.getName());
+            for(Player p : Environment.curRoom.players) out.add(p);
+            Environment.curRoom.players.clear();
+        }
+        else if(node.out instanceof Effect)
+        {
+            Effect out = (Effect)node.out;
+            if(node.applyToAll)
+            {
+                System.out.println("Effect '" + out.getName() + "' added to all in " + Environment.curPlayer.getName() + "'s room");
+                for(Player p : Environment.curRoom.players) p.addEffect(new Effect(out));
+            }
+            else
+            {
+                System.out.println("Effect '" + out.getName() + "' added to " + Environment.curPlayer.getName());
+                Environment.curPlayer.addEffect(out);
+            }
+        }
+        else if(node.out instanceof Item)
+        {
+            Item out = (Item)node.out;
+            if(node.applyToAll)
+            {
+                System.out.println("Effect '" + out.getName() + "' added to all in " + Environment.curPlayer.getName() + "'s room");
+                for(Player p : Environment.curRoom.players) p.getInventory().add(out);
+            }
+            else
+            {
+                System.out.println("Effect '" + out.getName() + "' added to " + Environment.curPlayer.getName());
+                Environment.curPlayer.getInventory().add(out.clone());
+            }
         }
     }
 }
