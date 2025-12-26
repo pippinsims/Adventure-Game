@@ -106,11 +106,11 @@ public class Utils {
 
     public static void slowPrint(String output, int sleepDuration)
     {   
-        for(int i = 0; i < output.length(); i++)
-        {   
+        for(char c : output.toCharArray())
+        {  
             try
             {
-                if(output.charAt(i) == '\n' || output.charAt(i) == '.')
+                if(c == '\n' || c == '.')
                     Thread.sleep(sleepDuration * 5);
                 Thread.sleep(sleepDuration);
             }
@@ -119,7 +119,7 @@ public class Utils {
                 e.printStackTrace();
             }
 
-            System.out.print(output.charAt(i));
+            System.out.print(c);
         }
     }
 
@@ -318,5 +318,11 @@ public class Utils {
     {
         for(int i = 0; i < arr.length; i++) if(arr[i].equals(s)) return i;
         return -1;
+    }
+
+    public static boolean contains(String toCheck, String[] potentials)
+    {
+        for(String s : potentials) if(s.equals(toCheck)) return true;
+        return false;
     }
 }

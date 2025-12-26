@@ -2,13 +2,12 @@ package adventuregame.interactibles;
 
 import java.util.Random;
 
-import adventuregame.Interactible;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
 
-public class GoldenPotInteractible extends Interactible {
+public class GoldenPotInteractible extends InventoryInteractible {
 
     private GoldenPot self;
 

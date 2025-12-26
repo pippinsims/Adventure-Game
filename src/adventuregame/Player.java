@@ -1,8 +1,10 @@
 package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
+import adventuregame.interactibles.InventoryInteractible;
 import adventuregame.items.*;
 
 import java.util.*;
@@ -82,12 +84,12 @@ public class Player extends Unit
         if(myRoom.enemies.size() != 0) actions.add(Action.FIGHT);
 
         actions.add(Action.TALK);
-        if(true) // Would set to true once Player inspects language. Placeholder DEV true.
-        {
-            actions.add(Action.CAST);
-        }
 
-        if(name.equals("Laur")) actions.add(Action.COMMUNE);
+        if(name.equals("Laur")) 
+        {
+            actions.add(Action.CAST); //someday Valeent will
+            actions.add(Action.COMMUNE);
+        }
 
         if(inv.size() > 0) actions.add(Action.INVENTORY);
     }
@@ -214,6 +216,18 @@ public class Player extends Unit
     }
 
     private void castSpell() throws Exception
+    {        
+        System.out.println("Focus...");
+        System.out.print("Speak: ");
+        String input = Utils.scanner.nextLine();
+        
+        ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
+        
+        System.out.println("Your spell blorkt!");
+        performSpell(input);
+    }
+
+    private void performSpell(String input)
     {
         //TODO make a simple language generator
         /*
@@ -257,26 +271,86 @@ public class Player extends Unit
                     The quick brown fox jumps over the lazy dog.
                     τHε κuicκ brown φoξ ΞumpΣ οveρ τhε λazυ δoγ.
         */
-        String[] spellTypes = new String[]{"mind death all foes", "FERDINAND'S FLAMBERGE"};
-        
-        System.out.println("Focus...");
-        System.out.print("Speak: ");
-        String input = Utils.scanner.nextLine();
-        
-        ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
-        
-        switch(Utils.linearFind(spellTypes, input)) //TODO INPUT SUBSTRING PARSE METHOD (i.g. if second-to-last word "all", and last word "foes", apply to all Enemys)
+    //  String[] spellTypes = new String[]{"mind death all foes", "FERDINAND'S FLAMBERGE"};
+        // switch(Utils.linearFind(spellTypes, input)) //TODO INPUT SUBSTRING PARSE METHOD (i.g. if second-to-last word "all", and last word "foes", apply to all Enemys)
+        // {
+        //     case 0:
+        //         int lvl = 1000;
+        //         String message = "a level " + lvl + " Psych Strike spell";
+        //         Utils.slowPrintln("You release " + message + " on all of your foes.");
+        //         if(myRoom.enemies.size() == 0) Utils.slowPrint("... but you have no enemies! Nothing happens.");
+        //         else for (Enemy e : new ArrayList<>(myRoom.enemies)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), "2"+message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
+        //         break;
+        //     case 1:
+        //         Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
+        //         break;
+        // }
+
+        ArrayList<Describable> targets = new ArrayList<>();
+        if(Utils.contains(input, new String[]{"mind death", "sicken", "destroy"})) //if spell is against enemies
         {
-            case 0:
-                int lvl = 1000;
-                String message = "a level " + lvl + " Psych Strike spell";
-                Utils.slowPrintln("You release " + message + " on all of your foes.");
-                if(myRoom.enemies.size() == 0) Utils.slowPrint("... but you have no enemies! Nothing happens.");
-                else for (Enemy e : new ArrayList<>(myRoom.enemies)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), "2"+message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
-                break;
-            case 1:
-                Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
-                break;
+            for(Enemy e : myRoom.enemies)
+            {
+                boolean condition = false, first = true;
+                if(true/*root "omn" after targeting preposition "ad, on, pro" (to, on/in/against, for/on-behalf-of/before) */) { first = false; }
+            //  else { }
+                //if spell is noun or ("cause", "bring", "invoke", etc)-verb
+                //  accusative or ablative ending
+                //  targetted = root with chosen ending after targeting preposition
+                //else (if verb)
+                //  accusative ending
+                //  targetted = root with chosen ending after verb
+                switch("foes"/*guy targetted*/)
+                {
+                    case "foes":
+                        condition = true;
+                        break;
+                    case "goblins":
+                        condition = e.getDescription().equals("goblin");
+                        break;
+                }
+
+                if(condition) targets.add(e);
+                if(first) break;
+            }
+        }
+        else if(Utils.contains(input, new String[]{"repair", "warp/break", "gravito"})) //if spell is toward inanimate object
+        {
+            //gravito makes things heavy
+            ArrayList<Describable> allObjects = new ArrayList<>();
+            if(true/*all*/)
+            {
+                ArrayList<Describable> allContainers = new ArrayList<>();
+                allContainers.addAll(myRoom.enemies);
+                allContainers.addAll(myRoom.players);
+                allContainers.addAll(myRoom.interactibles);
+
+                for(Describable c : allContainers)
+                {
+                    if(c instanceof InventoryInteractible) for(Item i : ((InventoryInteractible)c).getInventory().getItems()) allObjects.add(i);
+                    if(c instanceof Enemy) for(Item i : ((Enemy)c).getInventory().getItems()) allObjects.add(i);
+                    if(c instanceof Player) for(Item i : ((Player)c).getInventory().getItems()) allObjects.add(i);
+                }
+            }
+
+            for(Describable o : allObjects)
+            {
+                boolean condition = false;
+                //get target(s)
+                switch("foes"/*target(s)*/)
+                {
+                    case "weapons":
+                        condition = o instanceof Item && ((Item)o).isWeapon();
+                        break;
+                    case "swords":
+                        condition = o.getName().equals("Sword");
+                        break;
+                    case "potions":
+                        condition = o.getDescription().equals("potion");
+                }
+
+                if(condition) targets.add(o);
+            }
         }
     }
 
