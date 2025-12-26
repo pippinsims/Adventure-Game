@@ -338,7 +338,7 @@ public class Player extends Unit
         
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
-        if(!myRoom.dialogues.isEmpty() && myRoom.getDialogueForced()) for(Dialogue d : new ArrayList<>(myRoom.dialogues)) { d.next(); Dialogue.processNode(d.current); }
+        if(!myRoom.dialogues.isEmpty() && myRoom.getDialogueForced()) for(Dialogue d : new ArrayList<>(myRoom.dialogues)) { d.next(); Dialogue.processLeaf(d.current); }
         
         setActions();
 

@@ -19,7 +19,8 @@ public class Enemy extends Unit
             case "Mushroom": 
             case "bllork":
             case "Shroomie": 
-            case "Delicious Fun Guy": 
+            case "Delicious Fun Guy":
+            case "glittering boy": 
                 return str + 's';
             case "Those-Who-Feast":
                 return str;
@@ -27,6 +28,8 @@ public class Enemy extends Unit
                 return "awkward fellas";
             case "pale man": 
                 return "pale men";
+            case "Gold Man":
+                return "Gold Men";
             case "Knower of Forest Beds and Roots":
                 return "Knowers of Forest Beds and Roots";
             
@@ -35,7 +38,7 @@ public class Enemy extends Unit
         }
     }
 
-    private void setDefaults(int m, Inventory i, int dmg, int w, String des)
+    private void setDefaults(int m, Inventory i, int dmg, int w, String des, String name)
     {
         maxHealth = m;
         health = maxHealth;
@@ -43,24 +46,17 @@ public class Enemy extends Unit
         this.dmg = new Damage(dmg);
         wisdom = w;
         description = des;
-        name = generateName();
+        this.name = name == null ? generateName() : name;
         deathMsg = "You ended " + getName();
     }
 
-    public Enemy(int health)
-    {
-        setDefaults(health, new Inventory(5), 4, 20, "goblin");
-    }
+    public Enemy(int health) { setDefaults(health, new Inventory(5), 4, 20, "goblin", null); }
 
-    public Enemy(int health, Inventory inventory, int damage, int wisdom)
-    {
-        setDefaults(health, inventory, damage, wisdom, "goblin");
-    }
+    public Enemy(int health, Inventory inventory, int damage, int wisdom) { setDefaults(health, inventory, damage, wisdom, "goblin", null); }
 
-    public Enemy(int health, Inventory inventory, int damage, int wisdom, String description)
-    {
-        setDefaults(health, inventory, damage, wisdom, description);
-    }
+    public Enemy(int health, Inventory inventory, int damage, int wisdom, String description) { setDefaults(health, inventory, damage, wisdom, description, null); }
+
+    public Enemy(int health, Inventory inventory, int damage, int wisdom, String description, String name) { setDefaults(health, inventory, damage, wisdom, description, name); }
 
     private String generateName() 
     {
@@ -93,11 +89,12 @@ public class Enemy extends Unit
     public String getRandomDescription()
     {
         String[] names = new String[]{description};
-        if (description.equals("goblin"))
-            names = new String[]{"Screebling Squabbler", "pale man", "bllork", "awkward fellow"};
-        else if (description.equals("Mushroom Monster"))
-            names = new String[]{"Mushroom","Shroomie", "Delicious Fun Guy", "Those-Who-Feast", "Knower of Forest Beds and Roots"};
-
+        switch(description)
+        {
+            case "goblin"          : names = new String[]{"Screebling Squabbler", "pale man", "bllork", "awkward fellow"}; break;
+            case "Mushroom Monster": names = new String[]{"Mushroom","Shroomie", "Delicious Fun Guy", "Those-Who-Feast", "Knower of Forest Beds and Roots"}; break;
+            case "Gold Man"        : names = new String[]{"glittering boy"}; break;
+        }
         return names[new Random().nextInt(names.length)];
     }
 
@@ -106,28 +103,18 @@ public class Enemy extends Unit
         if(Environment.isLaur)
             return randomDescription;
         else
-            return description; //description = getRandomDescription(); when it's Laur's turn
+            return description;
     }
 
-    public String getName()
-    {
-        return name;
-    }
+    public void randomizeDesc() { randomDescription = getRandomDescription(); }
 
-    public Inventory getInventory()
-    {
-        return inv;
-    }
+    public String getName() { return name; }
 
-    public Damage getAttackDamage()
-    {
-        return dmg;
-    }
+    public Inventory getInventory() { return inv; }
 
-    public int getWisdom()
-    {
-        return wisdom;
-    }
+    public Damage getAttackDamage() { return dmg; }
+
+    public int getWisdom() { return wisdom; }
 
     public void chooseAction(Room curRoom)
     {
@@ -144,41 +131,45 @@ public class Enemy extends Unit
     public void pleaResponse()
     {
         Utils.slowPrint(getName() + ": ");
-        if (description.equals("goblin"))
+        switch(description)
         {
-            switch(new Random().nextInt(3))
-            {
-                case 0:
-                    Utils.slowPrintln("I pity thee not.");
-                    break;
-                case 1:
-                    Utils.slowPrintln("ok.");
-                    isStunned = true;
-                    break;
-                case 2:
-                    Utils.slowPrintln("[Doesn't React]");
-                    break;
-            }
-        }
-        else if (description.equals("Mushroom Monster"))
-        {
-            isStunned = true;
-            switch(new Random().nextInt(3))
-            {
-                case 0:
-                    Utils.slowPrintln("I never wanted to fight...");
-                    break;
-                case 1:
-                    Utils.slowPrintln("orpelm hur hur");
-                    break;
-                case 2:
-                    Utils.slowPrintln("kubi kubi!");
-                    break;
-            }
+            case "goblin":
+                switch(new Random().nextInt(3))
+                {
+                    case 0:
+                        Utils.slowPrintln("I pity thee not.");
+                        break;
+                    case 1:
+                        Utils.slowPrintln("ok.");
+                        isStunned = true;
+                        break;
+                    case 2:
+                        Utils.slowPrintln("[Doesn't React]");
+                        break;
+                }
+                break;
+            case "Mushroom Monster":
+                isStunned = true;
+                switch(new Random().nextInt(3))
+                {
+                    case 0:
+                        Utils.slowPrintln("I never wanted to fight...");
+                        break;
+                    case 1:
+                        Utils.slowPrintln("orpelm hur hur");
+                        break;
+                    case 2:
+                        Utils.slowPrintln("kubi kubi!");
+                        break;
+                }
+                break;
+            case "Gold Man": 
+                Utils.slowPrintln("I am the Gold Man."); 
+                break;
         }
     }
 
-    public boolean performAction(int i) 
+    public void performAction(int i) 
     {
         String str = "";
         
@@ -193,9 +184,6 @@ public class Enemy extends Unit
 
                     case 2: //ATTACK
                         str = "The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.";
-                        break;
-
-                    default:
                         break;
                 }
                 break;
@@ -212,12 +200,22 @@ public class Enemy extends Unit
                         break;
                 }
                 break;
+
+            case "Gold Man":
+                switch(i)
+                {
+                    case 1:
+                        str = "Gold Man: I hold a thousand gifts.";
+                        break;
+                    case 2:
+                        str = "Gold Man: I choose not to destroy you.";
+                        break;
+                }
+                break;
         }
 
         Utils.slowPrintln(str);
-        if(i == 2) this.attack(myRoom.players.get(0), getAttackDamage());
-            
-        return true;
+        if(i == 2 && !description.equals("Gold Man")) this.attack(myRoom.players.get(0), getAttackDamage());
     }
 
     @Override
@@ -226,7 +224,14 @@ public class Enemy extends Unit
 
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
-        if(!myRoom.dialogues.isEmpty()) for(Dialogue d : myRoom.dialogues) if(d.getCurrentActor() == this) { d.next(); Dialogue.processNode(d.current); }
+        if(!myRoom.dialogues.isEmpty()) 
+        { 
+            for(Dialogue d : myRoom.dialogues) if(d.getCurrentActor() == this) 
+            { 
+                d.next(); 
+                Dialogue.processLeaf(d.current); 
+            } 
+        }
         else chooseAction(myRoom);
     }
 
@@ -238,6 +243,4 @@ public class Enemy extends Unit
         else
             return pluralOf(description);
     }
-
-    public void randomizeDesc() { randomDescription = getRandomDescription(); }
 }

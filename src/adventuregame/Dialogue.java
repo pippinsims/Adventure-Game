@@ -20,26 +20,26 @@ public class Dialogue
 
     public Unit getCurrentActor()
     {
-        return actors.get(current.actor); //TODO make Dialogue only run if all actors are present
+        return current.actor < actors.size() ? actors.get(current.actor) : null;
     }
 
-    public void next()
-    {
-        next(getCurrentActor());
+    public void next() 
+    { 
+        Unit a = getCurrentActor(); 
+        if(a != null) next(a); 
     }
 
     private void next(Unit actor)
     {
-        if(actor.getRoom() != null)
+        for(Unit a : actors) if(a.getRoom() == null) return; //no actors dead
+        
+        int path = current.prompt != null ? Utils.promptList(actor.getName() + ": " + current.prompt, current.prompts) : -1;
+        if(current instanceof Node.B && ((Node.B)current).nodes != null)
         {
-            int path = Utils.promptList(actor.getName() + ": " + current.prompt, current.prompts);
-            if(current instanceof Node.B && ((Node.B)current).nodes != null)
-            {
-                current = ((Node.B)current).nodes[path];
-                next(actors.get(current.actor));
-            }
-            else actors.getFirst().getRoom().dialogues.remove(this);
+            current = ((Node.B)current).nodes[path];
+            next(actors.get(current.actor));
         }
+        else actors.getFirst().getRoom().dialogues.remove(this);
     }
 
     static abstract class Node
@@ -67,6 +67,11 @@ public class Dialogue
                 this.out = out;
                 this.applyToAll = applyToAll;
             }
+
+            public Class<T> getGenericClass()
+            {
+                return (Class<T>)out.getClass();
+            }
         }
 
         static class B extends Node //B for Branch
@@ -86,6 +91,8 @@ public class Dialogue
                 this.actor = actor;
                 this.prompt = prompt;
             }
+
+            public B() {}
         }
 
         //Thought this would be cool but it was unnecessary, now it's here as a builder pattern reference
@@ -101,48 +108,60 @@ public class Dialogue
         // }
     }
 
-    public static void processNode(Dialogue.Node node)
+    public static void processLeaf(Dialogue.Node node)
     {
-        if(node instanceof Dialogue.Node.L) getOutput((Dialogue.Node.L<?>)node);
-    }
-
-    private static <T extends Describable> void getOutput(Dialogue.Node.L<T> node)
-    {
-        if(node.out instanceof Room)
+        if(node instanceof Dialogue.Node.L)
         {
-            //TODO add pathfinding to make it be able to say "All players in rooms between curp.getName's room and out.getName moved back to out.getName"
-            Room out = (Room)node.out;
-            System.out.println("All players in " + Environment.curPlayer.getName() + "'s room moved back to " + out.getName());
-            for(Player p : Environment.curRoom.players) out.add(p);
-            Environment.curRoom.players.clear();
+            System.out.println("leaf");
+            Dialogue.Node.L<?> n = (Dialogue.Node.L<?>)node;
+            Player p0 = Environment.curPlayer;
+            String name = p0.getName();
+            if(n.out instanceof Room)
+            {
+                //TODO add pathfinding to make it be able to say "All players in rooms between curp.getName's room and out.getName moved back to out.getName"
+                Room out = (Room)n.out;
+                if(n.applyToAll)
+                {
+                    System.out.println("All players in " + name + "'s room moved back to " + out.getName());
+                    for(Player p : Environment.curRoom.players) out.add(p);
+                    Environment.curRoom.players.clear();
+                }
+                else
+                {
+                    System.out.println(name + " moved back to " + out.getName());
+                    out.add(p0);
+                    Environment.curRoom.players.remove(p0);
+                }
+            }
+            else if(n.out instanceof Effect)
+            {
+                Effect out = (Effect)n.out;
+                if(n.applyToAll)
+                {
+                    System.out.println("Effect '" + out.getName() + "' added to all in " + name + "'s room");
+                    for(Player p : Environment.curRoom.players) p.addEffect(new Effect(out));
+                }
+                else
+                {
+                    System.out.println("Effect '" + out.getName() + "' added to " + name);
+                    p0.addEffect(out);
+                }
+            }
+            else if(n.out instanceof Item)
+            {
+                Item out = (Item)n.out;
+                if(n.applyToAll)
+                {
+                    System.out.println("Item '" + out.getName() + "' added to all in " + name + "'s room");
+                    for(Player p : Environment.curRoom.players) p.getInventory().add(out);
+                }
+                else
+                {
+                    System.out.println("Item '" + out.getName() + "' added to " + name);
+                    p0.getInventory().add(out.clone());
+                }
+            }
         }
-        else if(node.out instanceof Effect)
-        {
-            Effect out = (Effect)node.out;
-            if(node.applyToAll)
-            {
-                System.out.println("Effect '" + out.getName() + "' added to all in " + Environment.curPlayer.getName() + "'s room");
-                for(Player p : Environment.curRoom.players) p.addEffect(new Effect(out));
-            }
-            else
-            {
-                System.out.println("Effect '" + out.getName() + "' added to " + Environment.curPlayer.getName());
-                Environment.curPlayer.addEffect(out);
-            }
-        }
-        else if(node.out instanceof Item)
-        {
-            Item out = (Item)node.out;
-            if(node.applyToAll)
-            {
-                System.out.println("Effect '" + out.getName() + "' added to all in " + Environment.curPlayer.getName() + "'s room");
-                for(Player p : Environment.curRoom.players) p.getInventory().add(out);
-            }
-            else
-            {
-                System.out.println("Effect '" + out.getName() + "' added to " + Environment.curPlayer.getName());
-                Environment.curPlayer.getInventory().add(out.clone());
-            }
-        }
+        else System.out.println("bran");
     }
 }

@@ -91,7 +91,7 @@ public class Environment
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
         curRoom = new Room(celld, celll, cellf, celln, false);
         new Door(curRoom, hall, Wall.EAST);
-        new Window(curRoom, "a gloomy landscape through the tight, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
+        new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
         for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
 
@@ -129,7 +129,7 @@ public class Environment
                         }
                     ),
                     new Dialogue.Node.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true),
-                    new Dialogue.Node.L<Room>(curRoom, true)
+                    new Dialogue.Node.B()
                 }
             )
         ));
@@ -165,6 +165,7 @@ public class Environment
         Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.",
                                      "Treasure Room");
         new GoldenPot(treasureRoom);
+        treasureRoom.add(new Enemy(30, new Inventory(1), 0, 0, "Gold Man", "Midis"));
         new Door(joiner1, treasureRoom, Wall.SOUTH);
 
         new Torch(chamber, Wall.EAST);
