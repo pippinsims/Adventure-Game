@@ -5,6 +5,7 @@ import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.interactibles.InventoryInteractible;
+import adventuregame.interactibles.wallentities.Door;
 import adventuregame.items.*;
 
 import java.util.*;
@@ -131,31 +132,29 @@ public class Player extends Unit
         ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
 
         ArrayList<Enemy> ens = myRoom.enemies;
-        if(ens.size() > 0)
-        {   
-            //MAKE THIS MORE LIFELIKE, MAKE THE GUARDS BE GUARDS, YOU BE A PRISONER, AND OUTFITTED AS SUCH, THIS IS THE FIRST TRIAL
-            int chosenEnemyIndex = 0;
-            if(ens.size() > 1)
-                chosenEnemyIndex = Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens));
+        for(Item i : inv.getItems()) if(i instanceof Sword) ((Sword)i).setNumAttacks();
+        if(!ens.isEmpty())
+        {
+            Item chosen = null;
+            while(!ens.isEmpty())
+            {   
+                int chosenEnemyIndex = 0;
+                if(ens.size() > 1)
+                    chosenEnemyIndex = Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens));
 
-            String[] attackTypes = getAttackTypes();
-            int chosenAttackType = attackTypes.length > 1 ? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) : 0;
+                String[] attackTypes = getAttackTypes();
+                if(chosen == null) 
+                {
+                    int chosenAttackType = attackTypes.length > 1 ? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) : 0;
+                    chosen = inv.at(chosenAttackType - 1); //- 1 because of Punch
+                }
 
-            Damage attackDamage;
-            if(chosenAttackType == 0)
-            {
-                int dmgval = 1;
-                attackDamage = new Damage(dmgval, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious " + dmgval + " damage!");
+                this.attack(myRoom.enemies.get(chosenEnemyIndex), chosen == null ? new Damage(1, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious 1 damage!") : chosen.getDamage());
+                if(chosen instanceof Sword && ((Sword)chosen).use() && !ens.isEmpty()) System.out.println("Attack again!");
+                else break;
             }
-            else
-            {//chosenAttackType - 1 because of Punch
-                attackDamage = inv.at(chosenAttackType - 1).getDamage();
-            }
-            
-            this.attack(myRoom.enemies.get(chosenEnemyIndex), attackDamage);
         }
-        else
-            System.out.println("No enemies.");
+        else System.out.println("No enemies.");
     }
 
     private void inspect()
@@ -287,20 +286,19 @@ public class Player extends Unit
         // }
 
         ArrayList<Describable> targets = new ArrayList<>();
+        boolean firstOnly = !(true/*root "omn" after targeting preposition "ad, on, pro" (to, on/in/against, for/on-behalf-of/before) */);
+        boolean condition = false;
         if(Utils.contains(input, new String[]{"mind death", "sicken", "destroy"})) //if spell is against enemies
         {
             for(Enemy e : myRoom.enemies)
             {
-                boolean condition = false, first = true;
-                if(true/*root "omn" after targeting preposition "ad, on, pro" (to, on/in/against, for/on-behalf-of/before) */) { first = false; }
-            //  else { }
                 //if spell is noun or ("cause", "bring", "invoke", etc)-verb
                 //  accusative or ablative ending
-                //  targetted = root with chosen ending after targeting preposition
+                //  target = root with chosen ending after targeting preposition
                 //else (if verb)
                 //  accusative ending
-                //  targetted = root with chosen ending after verb
-                switch("foes"/*guy targetted*/)
+                //  target = root with chosen ending after verb
+                switch("foes"/*target*/)
                 {
                     case "foes":
                         condition = true;
@@ -311,14 +309,14 @@ public class Player extends Unit
                 }
 
                 if(condition) targets.add(e);
-                if(first) break;
+                if(firstOnly) break;
             }
         }
-        else if(Utils.contains(input, new String[]{"repair", "warp/break", "gravito"})) //if spell is toward inanimate object
+        else if(Utils.contains(input, new String[]{"repair", "warp", "break", "gravito"})) //if spell is toward inanimate object
         {
             //gravito makes things heavy
             ArrayList<Describable> allObjects = new ArrayList<>();
-            if(true/*all*/)
+            if(!firstOnly)
             {
                 ArrayList<Describable> allContainers = new ArrayList<>();
                 allContainers.addAll(myRoom.enemies);
@@ -328,16 +326,14 @@ public class Player extends Unit
                 for(Describable c : allContainers)
                 {
                     if(c instanceof InventoryInteractible) for(Item i : ((InventoryInteractible)c).getInventory().getItems()) allObjects.add(i);
-                    if(c instanceof Enemy) for(Item i : ((Enemy)c).getInventory().getItems()) allObjects.add(i);
-                    if(c instanceof Player) for(Item i : ((Player)c).getInventory().getItems()) allObjects.add(i);
+                    if(c instanceof Unit                 ) for(Item i : ((Unit                 )c).getInventory().getItems()) allObjects.add(i);
                 }
             }
 
             for(Describable o : allObjects)
             {
-                boolean condition = false;
-                //get target(s)
-                switch("foes"/*target(s)*/)
+                //get target
+                switch("foes"/*target*/)
                 {
                     case "weapons":
                         condition = o instanceof Item && ((Item)o).isWeapon();
@@ -350,6 +346,7 @@ public class Player extends Unit
                 }
 
                 if(condition) targets.add(o);
+                if(firstOnly) break;
             }
         }
     }
@@ -357,6 +354,15 @@ public class Player extends Unit
     private void interact()
     {
         ArrayList<Interactible> inters = myRoom.getUniqueInters();
+        for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty()) inters.remove(i);
+        for(Dialogue d : myRoom.dialogues) 
+        {
+            if(myRoom.getDialogueForced() && d.allActorsAlive() && !d.isComplete())
+            {
+                for(Interactible i : new ArrayList<>(inters)) if(i instanceof Door) inters.remove(i);
+                break;
+            }
+        }
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
 
         ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
@@ -412,7 +418,7 @@ public class Player extends Unit
         
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
-        if(!myRoom.dialogues.isEmpty() && myRoom.getDialogueForced()) for(Dialogue d : new ArrayList<>(myRoom.dialogues)) { d.next(); Dialogue.processLeaf(d.current); }
+        for(Dialogue d : new ArrayList<>(myRoom.dialogues)) if(myRoom.getDialogueForced() && d.allActorsAlive() && !d.atEnd) { d.next(); Dialogue.processLeaf(d.current); }
         
         setActions();
 

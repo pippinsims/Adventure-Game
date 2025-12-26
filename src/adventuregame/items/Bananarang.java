@@ -14,10 +14,7 @@ public class Bananarang extends Item
         System.out.println("You go to take a bite... but then... you probably shouldn't");
     }
 
-    @Override
-    public String getDescription() {
-        return description;
-    }
+    @Override public String getDescription() { return description; }
 
     @Override
     public Damage getDamage() 
@@ -25,21 +22,11 @@ public class Bananarang extends Item
        return new Damage(5, Damage.Type.BASIC, "You wail the bananarang at your enemy with KILLER INSTINCT!\nIt kills him.");
     }
 
-    @Override
-    public boolean isWeapon() 
-    {
-        return true;
-    }
+    @Override public boolean isWeapon() { return true; }
 
-    @Override
-    public String getName() {
-        return name;
-    }
+    @Override public String getName() { return name; }
 
-    @Override
-    public String getPluralDescription() {
-        return "bananarangs";
-    }
+    @Override public String getPluralDescription() { return "bananarangs"; }
 
     @Override public Item clone() { return new Bananarang(); }
 }

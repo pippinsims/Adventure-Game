@@ -60,7 +60,7 @@ public class Room extends Describable
     }
 
     public boolean getIsFamiliar() { return familiars.contains(Environment.curPlayer); }
-    public boolean getDialogueForced() { return forceDialogue; } //TODO janky to the max, not very useful structure, eventually we want Dialogues that run off a cue which could be just they enter the room for the first time
+    public boolean getDialogueForced() { return forceDialogue; } //TODO make Dialogues run off a cue which could be just they enter the room for the first time
 
     public void add(Interactible i)
     {

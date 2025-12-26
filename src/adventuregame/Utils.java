@@ -79,7 +79,7 @@ public class Utils {
 
     private static Map<Describable, Integer> countsOf(ArrayList<? extends Describable> arr)
     {
-        Map<Describable, Integer> m = new HashMap<>();
+        Map<Describable, Integer> m = new LinkedHashMap<>(); //preserve insertion order
         for (Describable d : arr) m.put(d, m.getOrDefault(d, 0) + 1);
         return m;
     }

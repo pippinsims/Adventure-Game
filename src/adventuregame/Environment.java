@@ -1,7 +1,10 @@
 package adventuregame;
 
+import adventuregame.interactibles.ItemHolder;
+import adventuregame.interactibles.Table;
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.*;
+import adventuregame.items.Sword;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.dynamicitems.Torch;
@@ -15,6 +18,17 @@ public class Environment
     public static Player curPlayer;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static boolean isLaur;
+
+    public enum Metal
+    {
+        COPPER,
+        TARIRON,
+        IRON,
+        SILVER,
+        GOLD,
+        LODESTONE,
+        STEEL
+    }
 
     public static void main(String[] args) throws Exception 
     {
@@ -41,9 +55,10 @@ public class Environment
                     p.updateUnit();
                     System.out.println();
                 }
+                for(Dialogue d : curRoom.dialogues) if(d.atEnd) d.complete();
 
                 if(curRoom.players.isEmpty()) playerRooms.remove(curRoom);
-                if(curRoom.players.isEmpty()) break;
+                if(allPlayers.isEmpty()) break;
                 
                 for(Enemy e : new ArrayList<>(curRoom.enemies))
                 {
@@ -93,7 +108,19 @@ public class Environment
         new Door(curRoom, hall, Wall.EAST);
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
-        for (int i = 1; i < 14; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        Room cell2 = new Room(celld, celll, cellf, celln, false);
+        new Table(cell2);
+        new ItemHolder(
+            new Sword(10, Metal.STEEL, "Cledobl", "glittering steel sword", "steel swords", "Your weapon shears the air in a gnawing arch"), 
+            cell2,
+            "stuck in",
+            "the table"
+        );
+        new Door(cell2, hall, Wall.EAST);
+        for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        Room cell14 = new Room(celld, celll, cellf, celln, false);
+        new Door(cell14, hall, Wall.WEST);
+        new ItemHolder(new Sword(4), cell14, "on", "the floor");
 
         ArrayList<Enemy> ens = new ArrayList<>(List.of(new Enemy(3), new Enemy(3), new Enemy(3)));
         Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    

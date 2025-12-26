@@ -11,6 +11,8 @@ public class Dialogue
     ArrayList<Unit> actors;
     Node current;
     int num;
+    boolean atEnd = false;              //atEnd when on last Node
+    private boolean isComplete = false; //isComplete when Player has moved after Dialogue
 
     public Dialogue(ArrayList<Unit> actors, Node start)
     {
@@ -18,20 +20,37 @@ public class Dialogue
         current = start;
     }
 
+    public boolean allActorsAlive()
+    {
+        for(Unit a : actors) if(a.getRoom() == null) return false;
+        return true;
+    }
+
     public Unit getCurrentActor()
     {
         return current.actor < actors.size() ? actors.get(current.actor) : null;
     }
 
+    public void complete()
+    {
+        isComplete = true;
+    }
+
+    public boolean isComplete()
+    {
+        return isComplete;
+    }
+
     public void next() 
     { 
         Unit a = getCurrentActor(); 
-        if(a != null) next(a); 
+        if(a != null) next(a);
+        atEnd = true;
     }
 
     private void next(Unit actor)
     {
-        for(Unit a : actors) if(a.getRoom() == null) return; //no actors dead
+        if(!allActorsAlive()) return;
         
         int path = current.prompt != null ? Utils.promptList(actor.getName() + ": " + current.prompt, current.prompts) : -1;
         if(current instanceof Node.B && ((Node.B)current).nodes != null)
@@ -39,7 +58,6 @@ public class Dialogue
             current = ((Node.B)current).nodes[path];
             next(actors.get(current.actor));
         }
-        else actors.getFirst().getRoom().dialogues.remove(this);
     }
 
     static abstract class Node
@@ -112,7 +130,6 @@ public class Dialogue
     {
         if(node instanceof Dialogue.Node.L)
         {
-            System.out.println("leaf");
             Dialogue.Node.L<?> n = (Dialogue.Node.L<?>)node;
             Player p0 = Environment.curPlayer;
             String name = p0.getName();
@@ -162,6 +179,5 @@ public class Dialogue
                 }
             }
         }
-        else System.out.println("bran");
     }
 }

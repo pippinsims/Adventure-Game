@@ -224,15 +224,14 @@ public class Enemy extends Unit
 
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
-        if(!myRoom.dialogues.isEmpty()) 
-        { 
-            for(Dialogue d : myRoom.dialogues) if(d.getCurrentActor() == this) 
-            { 
-                d.next(); 
-                Dialogue.processLeaf(d.current); 
-            } 
+        boolean nodials = true;
+        for(Dialogue d : myRoom.dialogues) if(!d.atEnd && d.allActorsAlive() && d.getCurrentActor() == this) 
+        {
+            nodials &= false;
+            d.next(); 
+            Dialogue.processLeaf(d.current);
         }
-        else chooseAction(myRoom);
+        if(nodials) chooseAction(myRoom);
     }
 
     @Override

@@ -9,4 +9,5 @@ public abstract class Item extends Describable
     public boolean isWeapon() { return false; }
     public abstract String getName();
     public abstract Item clone();
+    public boolean isDynamicItem() { return false; }
 }

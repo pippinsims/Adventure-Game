@@ -12,7 +12,7 @@ public class Interactible extends Describable
     public String normalLocPrep;
     protected String pluralDescription;
     public String plurLocPrep; 
-    public String actionVerb; 
+    public String actionVerb; //set to "" to make this an un-actionable interactible
     public String actLocPrep;
     protected String randomDescription;
     protected String randomPluralDescription;
@@ -38,7 +38,8 @@ public class Interactible extends Describable
     protected void setDefaults(String n, String d, String prep, String pd, String pprep, String a, String aprep, String[] rd, String[] rpd)
     {
         if(rd.length == 0)      setDefaults(n, d, prep, pd, pprep, a, aprep, d, pd);
-        else {
+        else 
+        {
             int r = new Random().nextInt(rd.length);
             if(rpd.length == 0) setDefaults(n, d, prep, pd, pprep, a, aprep, rd[r], pd);
             else                setDefaults(n, d, prep, pd, pprep, a, aprep, rd[r], rpd[r]);
