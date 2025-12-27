@@ -244,6 +244,29 @@ public class Utils {
         return confirmInput(scanner.nextLine(), listPrompts) - 1;
     }
 
+    public static String advancedPromptList(String[] questions, String[][] listPrompts, int index)
+    {
+        //String[] questions = {"q1","q2"}
+        //String[][] listprompts = 
+        // {
+        //     {"a","b","c"},
+        //     {"d","e","f"},
+        //     {"g","h", ""}
+        // }
+        // -> {"a","d","g"} or
+        //    {"b","e","h"} or 
+        //    {"c","f"} depending on index
+
+        System.out.println(questions[cap(index, questions.length-1)]);
+        ArrayList<String> outPromptsAsList = new ArrayList<>();
+        int i = cap(index, listPrompts[0].length - 1), l = 0;
+        while(l < listPrompts.length && !listPrompts[l][i].isEmpty()) outPromptsAsList.add(listPrompts[l++][i]);
+        
+        String[] outPrompts = outPromptsAsList.toArray(new String[0]);
+        printOptions(outPrompts);
+        return outPrompts[confirmInput(scanner.nextLine(), outPrompts) - 1];
+    }
+
     public static String articleOfDescribableInList(ArrayList<? extends Describable> arr, Describable d)
     {
         for (Describable d1 : arr) if(d.equals(d1)) return articleOf(d.getDescription()); //compare by description
@@ -324,5 +347,10 @@ public class Utils {
     {
         for(String s : potentials) if(s.equals(toCheck)) return true;
         return false;
+    }
+
+    public static int cap(int n, int at)
+    {
+        return n > at ? at : n;
     }
 }

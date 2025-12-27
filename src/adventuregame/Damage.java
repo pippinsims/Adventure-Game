@@ -13,7 +13,8 @@ public class Damage {
         BASIC,
         FIRE,
         PSYCHIC,
-        BLUNT
+        BLUNT,
+        UNBLOCKABLE
     }
 
     public static enum Mode

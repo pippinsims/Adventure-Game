@@ -107,6 +107,11 @@ public class Environment
         curRoom = new Room(celld, celll, cellf, celln, false);
         new Door(curRoom, hall, Wall.EAST);
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
+        //skeletoninteractible in cledobl room with armor
+        //armor on skeletoninteractible 50% chance of reducing basic/blunt damage by 1
+        //skeletoninteractible on interact 1% of turning into skeleton enemy with same inventory
+        //turn body into skeletoninteractible grasping sword if VITALITYDRAIN QTE runs out of time/kills you
+        //on inspect: print description of armor set
 
         Room cell2 = new Room(celld, celll, cellf, celln, false);
         new Table(cell2);
@@ -202,7 +207,7 @@ public class Environment
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
         addPlayer(new Player());
-        // addPlayer(new Player("Nuel"));
+        addPlayer(new Player("Nuel"));
         // addPlayer(new Player("Valeent"));
         // addPlayer(new Player("Peili"));
         // addPlayer(new Player("Dormaah"));

@@ -19,18 +19,15 @@ public abstract class Effectable extends Describable{
         NONE
     }
 
-    final public EffectUpdateResult effectUpdate(Effect e) throws Exception
+    final public EffectUpdateResult effectUpdate(Effect e)
     {
-        Utils.slowPrint("You have been effected by " + e.name);
-        int dur = e.cooldown.getDuration();
-        Utils.slowPrintln(", and will be effected by it for " + dur + " more turn" + (dur == 1 ? "" : "s") + ".");
         //System.out.println("Health: " + health + " (temporary println)");
 
         boolean effectIsOver = false;
         EffectUpdateResult result = EffectUpdateResult.NONE;
         switch (e.getType()) 
         {
-            case FIRE: //for fire, poison, and psychstrike, result is the receiveDamage result
+            case FIRE:
                 result = receiveDamage(new Damage(e.strength, Damage.Type.FIRE, e, "You're burned by fire"));
                 effectIsOver = e.cooldown.decrement();
                 break;
@@ -45,8 +42,21 @@ public abstract class Effectable extends Describable{
                 isStunned = true;
                 effectIsOver = e.cooldown.decrement();
                 break;
-        
-            default:
+
+            case VITALITYDRAIN:
+                maxHealth -= e.strength;
+                //health > maxHealth would never happen
+                result = receiveDamage(new Damage(e.strength, Damage.Type.UNBLOCKABLE, "You're stuck by Drain"));
+                effectIsOver = e.cooldown.decrement();
+                break;
+            
+            case VITALITYGROW:
+                maxHealth += e.strength;
+                effectIsOver = e.cooldown.decrement();
+                break;
+
+            case WEAKNESS:
+                effectIsOver = e.cooldown.decrement();
                 break;
         }
 
@@ -78,8 +88,9 @@ public abstract class Effectable extends Describable{
                 else
                     health -= damage.getValue() + 1;
                 break;
-        
-            default:
+
+            case UNBLOCKABLE:
+                health -= damage.getValue();
                 break;
         }
 
@@ -99,18 +110,34 @@ public abstract class Effectable extends Describable{
 
     final public EffectUpdateResult receiveDamage(Damage damage)
     {
-        if(damage.getMessage().charAt(0) != '2') return receiveDamage(damage, null);
-        else return receiveDamage(damage, damage.getMessage().substring(1));
+        return receiveDamage(damage, damage.getMessage().charAt(0) != '2' ? null : damage.getMessage().substring(1));
     }
 
     final public void addEffect(Effect e)
     {
         effects.add(e);
+
+        Utils.slowPrint("You have been effected by " + e.name);
+        int dur = e.cooldown.getRemainingDuration();
+        if(dur >= 0)
+            Utils.slowPrintln(", and will be effected by it for " + dur + " more turn" + (dur != 1 ? "s" : "") + ".");
+        else
+            Utils.slowPrintln(", and will be effect by it forever.");
+    }
+    
+    final public void removeAllOf(Effect.Type t)
+    {
+        for(Effect e : new ArrayList<>(effects)) if(e.getType() == t) effects.remove(e);
     }
 
     final public float getHealth()
     {
         return health;
+    }
+
+    final public float getMaxHealth()
+    {
+        return maxHealth;
     }
 
     //MARK: for testing

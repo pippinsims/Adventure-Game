@@ -20,7 +20,8 @@ public class Enemy extends Unit
             case "bllork":
             case "Shroomie": 
             case "Delicious Fun Guy":
-            case "glittering boy": 
+            case "glittering boy":
+            case "Skeleton":
                 return str + 's';
             case "Those-Who-Feast":
                 return str;
@@ -94,6 +95,7 @@ public class Enemy extends Unit
             case "goblin"          : names = new String[]{"Screebling Squabbler", "pale man", "bllork", "awkward fellow"}; break;
             case "Mushroom Monster": names = new String[]{"Mushroom","Shroomie", "Delicious Fun Guy", "Those-Who-Feast", "Knower of Forest Beds and Roots"}; break;
             case "Gold Man"        : names = new String[]{"glittering boy"}; break;
+            case "Skeleton"        : names = new String[]{"Skeleton"}; break;
         }
         return names[new Random().nextInt(names.length)];
     }
