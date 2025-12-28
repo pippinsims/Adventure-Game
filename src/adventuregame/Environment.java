@@ -84,6 +84,7 @@ public class Environment
         {
             int num = allPlayers.size();
             
+            
             for(int i = 0; i < num; i++)
             {
                 Utils.slowPrintAsList(allPlayers.get(i).getName(), num, i);
