@@ -246,7 +246,6 @@ public class Utils {
         } catch (NoSuchElementException e) {
             return 0;
         }
-        
     }
 
     public static String advancedPromptList(String[] questions, String[][] listPrompts, int index)

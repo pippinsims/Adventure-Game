@@ -289,6 +289,9 @@ public class Player extends Unit
         ArrayList<Describable> targets = new ArrayList<>();
         boolean firstOnly = !(true/*root "omn" after targeting preposition "ad, on, pro" (to, on/in/against, for/on-behalf-of/before) */);
         boolean condition = false;
+
+        
+
         if(Utils.contains(input, new String[]{"mind death", "sicken", "destroy"})) //if spell is against enemies
         {
             for(Enemy e : myRoom.enemies)

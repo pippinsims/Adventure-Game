@@ -137,7 +137,7 @@ public class Environment
         chamber.add(new Dialogue(
             new ArrayList<>(ens), 
             new Dialogue.Node.B(
-                0, 
+                0,
                 "You're not supposed to be out'n'about!", 
                 new String[] {
                     "Well... we are!",

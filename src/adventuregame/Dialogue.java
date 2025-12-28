@@ -85,11 +85,6 @@ public class Dialogue
                 this.out = out;
                 this.applyToAll = applyToAll;
             }
-
-            public Class<T> getGenericClass()
-            {
-                return (Class<T>)out.getClass();
-            }
         }
 
         static class B extends Node //B for Branch
