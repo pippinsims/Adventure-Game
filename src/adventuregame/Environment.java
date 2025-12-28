@@ -108,10 +108,11 @@ public class Environment
         new Door(curRoom, hall, Wall.EAST);
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
         //skeletoninteractible in cledobl room with armor
-        //armor on skeletoninteractible 50% chance of reducing basic/blunt damage by 1
+        //armor on skeletoninteractible 50% chance of reducing basic/blunt damage by 1, when repaired by smith (avg smith wouldn't be able to do this, need to follow a quest of meeting smiths and they point you to him, prodigy smith, conversant in ancient techniques): auto reduce 2 basic/blunt damage, other blockable damages have 50% chance reduce by 1 50% chance of all first 2 tiers of spells on this unit fail
         //skeletoninteractible on interact 1% of turning into skeleton enemy with same inventory
         //turn body into skeletoninteractible grasping sword if VITALITYDRAIN QTE runs out of time/kills you
         //on inspect: print description of armor set
+        //on Valeent inspect: armor is from an ancient House she's read about (she's a noble) (it's the same House that used to own this dungeon)
 
         Room cell2 = new Room(celld, celll, cellf, celln, false);
         new Table(cell2);

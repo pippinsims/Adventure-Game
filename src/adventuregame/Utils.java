@@ -241,7 +241,12 @@ public class Utils {
         if(listPrompts == null) return -1;
         
         printOptions(listPrompts);
-        return confirmInput(scanner.nextLine(), listPrompts) - 1;
+        try {
+            return confirmInput(scanner.nextLine(), listPrompts) - 1;
+        } catch (NoSuchElementException e) {
+            return 0;
+        }
+        
     }
 
     public static String advancedPromptList(String[] questions, String[][] listPrompts, int index)
@@ -264,7 +269,11 @@ public class Utils {
         
         String[] outPrompts = outPromptsAsList.toArray(new String[0]);
         printOptions(outPrompts);
-        return outPrompts[confirmInput(scanner.nextLine(), outPrompts) - 1];
+        try {
+            return outPrompts[confirmInput(scanner.nextLine(), outPrompts) - 1];
+        } catch (NoSuchElementException e) {
+            return outPrompts[0];
+        }
     }
 
     public static String articleOfDescribableInList(ArrayList<? extends Describable> arr, Describable d)
@@ -352,5 +361,11 @@ public class Utils {
     public static int cap(int n, int at)
     {
         return n > at ? at : n;
+    }
+
+    public static void restartScanner()
+    {
+        scanner.reset();
+        scanner = new Scanner(System.in);
     }
 }

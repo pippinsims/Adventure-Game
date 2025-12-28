@@ -2,7 +2,7 @@ package adventuregame;
 
 public class Damage {
 
-    private int value;
+    private float value;
     private Type type;
     private Mode mode = Mode.DEFAULT;
     private String message;
@@ -24,21 +24,21 @@ public class Damage {
         EFFECT
     }
 
-    public Damage(int value)
+    public Damage(float value)
     {
         this.value = value;
         this.type = Type.BASIC;
         message = "2normal damage";
     }
 
-    public Damage(int value, Type type, String msg)
+    public Damage(float value, Type type, String msg)
     {
         this.value = value;
         this.type = type;
         message = msg;
     }
 
-    public Damage(int value, Type type, Mode mode, String msg) throws Exception
+    public Damage(float value, Type type, Mode mode, String msg) throws Exception
     {
         this.value = value;
         this.type = type;
@@ -51,7 +51,7 @@ public class Damage {
         }
     }
 
-    public Damage(int value, Type type, Mode mode, Effect effect, String msg) throws Exception
+    public Damage(float value, Type type, Mode mode, Effect effect, String msg) throws Exception
     {
         this.value = value;
         this.type = type;
@@ -66,7 +66,7 @@ public class Damage {
         }
     }
 
-    public Damage(int value, Type type, Effect inflictedEffect, String msg)
+    public Damage(float value, Type type, Effect inflictedEffect, String msg)
     {
         this.value = value;
         this.type = type;
@@ -75,7 +75,7 @@ public class Damage {
         damageEffect = inflictedEffect;
     }
 
-    public int getValue()
+    public float getValue()
     {
         return value;
     }

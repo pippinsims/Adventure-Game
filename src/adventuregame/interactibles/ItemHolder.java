@@ -1,6 +1,7 @@
 package adventuregame.interactibles;
 
 import adventuregame.Effect;
+import adventuregame.Environment;
 import adventuregame.Interactible;
 import adventuregame.QuickTimeEvent;
 import adventuregame.Room;
@@ -46,7 +47,7 @@ public class ItemHolder extends Interactible {
             else
             {
                 System.out.println(u.getName() + " takes the sword by the handle... ");
-                new QuickTimeEvent(
+                if(!new QuickTimeEvent(
                     u,
                     item, 
                     new String[] {"YOU FEEL EXTREME PAIN. YOU ARE DYING"},
@@ -61,7 +62,7 @@ public class ItemHolder extends Interactible {
                     new String[] {"Cry out.", "Pry hand violently."},
                     new String[] {"Pull harder."},
                     new Effect(Effect.Type.VITALITYDRAIN, 10, (int)(u.getMaxHealth()/10))
-                ).run();
+                ).run()) if(u.getHealth() > 0) Environment.kill(u);
             }
         }
         else

@@ -61,6 +61,7 @@ public class Player extends Unit
     {
         myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = n;        
+        health = 11;
         deathMsg = name + " died.";
     }
 

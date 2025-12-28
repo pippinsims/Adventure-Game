@@ -54,7 +54,6 @@ public class QuickTimeEvent
         this.sender = sender;
         effectToApply = e;
     }
-
     static class InputThread extends Thread {
         public String input = null;
         protected Thread main;
@@ -68,8 +67,7 @@ public class QuickTimeEvent
             {
                 if(isOneQuestion)
                 { 
-                    input = prompts[0][Utils.promptList(questions[0], prompts[0])];
-                    output(input);
+                    input = output(prompts[0][Utils.promptList(questions[0], prompts[0])]) ? "" : null;
                     main.interrupt();
                 }
                 else
@@ -79,11 +77,8 @@ public class QuickTimeEvent
                         input = Utils.advancedPromptList(questions, prompts, currentPrompt);
                         if(Utils.linearFind(goodAnswers, input) >= 0) //TODO would be nice if this could also be a puzzle with a text input not just promptlist
                         {
-                            if(output(input))
-                            {
-                                main.interrupt();
-                                break;
-                            }
+                            if(actor.getHealth() > 0 && output(input)) main.interrupt();
+                            break;
                         }
                         else if(Utils.linearFind(badAnswers, input) >= 0) currentPrompt++; //TODO Node structure (as mentioned in another to-do) would make this a bit nicer, could have multiple paths
                     }
@@ -99,17 +94,21 @@ public class QuickTimeEvent
         String input = null;
         for(currentRound = 0; currentRound < maxLength; currentRound++)
         {
-            if(input == null) if(effectToApply != null && actor.effectUpdate(effectToApply) == EffectUpdateResult.DEATH) return false; //died
-            else return true; //succeeded
-            try { Thread.sleep(dur); } //TODO IT SEEMS LIKE FOR SOME REASON THIS ISN'T SLEEPING
-            catch (InterruptedException e) { 
+            if(input == null && effectToApply != null && actor.effectUpdate(effectToApply) == EffectUpdateResult.DEATH) break; //died
+
+            if(input != null) return true; //succeeded
+            
+            try { Thread.sleep(dur); }
+            catch (InterruptedException e) {
                 try { 
                     inputThr.join();
                     input = inputThr.input;
+                    if(input == null) return false; //does: if isOneQuestion return InputThread.output(x)
                 }
                 catch (InterruptedException e1) { e1.printStackTrace(); } 
             }
         }
+        Utils.restartScanner();
         return false; //ran out of time
     }
 
@@ -128,13 +127,10 @@ public class QuickTimeEvent
     {
         if(sender instanceof Sword && sender.getName().equals("Cledobl"))
         {
+            boolean succeeded = false;
             if(in.equals("Cry out.")) 
             {
-                if(actor.getRoom().players.size() == 1)
-                {
-                    System.out.println("You have no one to help you.");
-                    return false;
-                }
+                if(actor.getRoom().players.size() == 1) return false;
                 else
                 {
                     Unit helper = null;
@@ -147,52 +143,48 @@ public class QuickTimeEvent
                             @Override public String getName() { return null; }
                         },
                         maxLength - currentRound, 
-                        new String[] {helper.getName() + ", do you help?"}, 
-                        new String[][] {{"Help."},{"Do not help."}},
-                        new String[] {"Help.","Do not help."},
-                        null
+                        helper.getName() + ", do you help?", 
+                        new String[] {"Help.","Do not help."}
                     );
-                    boolean succeeded = help.run();
-                    if(succeeded)
-                    {
-                        actor.removeAllOf(Effect.Type.VITALITYDRAIN);
-                        switch(currentRound + 1)
-                        {
-                            case 1: case 2: case 3: 
-                                actor.maxHealth += currentRound;
-                                actor.addEffect(new Effect(Effect.Type.WEAKNESS, 1, 1));
-                                break;
-                            case 4: case 5: 
-                                actor.addEffect(new Effect(Effect.Type.VITALITYGROW, 3, currentRound/3));
-                                actor.addEffect(new Effect(Effect.Type.WEAKNESS, 6, 1));
-                                break;
-                            case 6: case 7: 
-                                actor.addEffect(new Effect(Effect.Type.WEAKNESS, 10, 1));
-                                break;
-                            case 8: case 9:
-                                actor.addEffect(new Effect(Effect.Type.WEAKNESS, -1, 1));
-                                break;
-                        }
-                    }
-                    return succeeded;
+                    succeeded = help.run();
                 }
             }
             else if(in.equals("Pry hand violently."))
             {
                 System.out.println("You pry your catatonic fingers from the lethal power of the blade's enchantment with your free hand.");
-                actor.removeAllOf(Effect.Type.VITALITYDRAIN);
-                return true;
+                succeeded = true;
             }
+            if(succeeded) 
+            {
+                actor.removeAllOf(Effect.Type.VITALITYDRAIN);
+                switch(currentRound + 1)
+                {
+                    case 1: case 2: case 3: 
+                        actor.maxHealth += currentRound;
+                        actor.addEffect(new Effect(Effect.Type.WEAKNESS, 1, 1));
+                        break;
+                    case 4: case 5: 
+                        actor.addEffect(new Effect(Effect.Type.VITALITYGROW, 3, currentRound/3));
+                        actor.addEffect(new Effect(Effect.Type.WEAKNESS, 6, 1));
+                        break;
+                    case 6: case 7: 
+                        actor.addEffect(new Effect(Effect.Type.WEAKNESS, 10, 1));
+                        break;
+                    case 8: case 9:
+                        actor.addEffect(new Effect(Effect.Type.WEAKNESS, -1, 1));
+                        break;
+                }
+            }
+            return succeeded;
         }
         else if(sender.getDescription().equals("helpcledobl"))
         {
             if(in.equals("Help."))
             {
-                System.out.println(actor.getName() + " grabs you and tears you away from that cursed blade.");
                 actor.removeAllOf(Effect.Type.VITALITYDRAIN);
                 return true;
             }
-            else return false;
+            return false;
         }
 
         throw new UnsupportedOperationException("QuickTimeEvent answer: '" + in + "' not recognized.");

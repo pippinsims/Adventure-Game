@@ -13,7 +13,7 @@ public class Sword extends Item {
     String description, pluralDescription;
     String name;
 
-    public Sword(int damage)
+    public Sword(float damage)
     {
         dmg = new Damage(damage, Damage.Type.BASIC, "You swing this blade in a blinding blur of DEATH.");
         material = Metal.IRON;
@@ -24,7 +24,7 @@ public class Sword extends Item {
         setNumAttacks();
     }
 
-    public Sword(int damage, Metal material, String name, String description, String pDes, String atkmsg)
+    public Sword(float damage, Metal material, String name, String description, String pDes, String atkmsg)
     {
         dmg = new Damage(damage, Damage.Type.BASIC, atkmsg);
         this.material = material;

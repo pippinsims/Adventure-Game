@@ -79,7 +79,7 @@ public abstract class Effectable extends Describable{
                 break;
             
             case PSYCHIC:
-                health -= new Random().nextInt(damage.getValue() + 1); //from 0 to damage
+                health -= new Random().nextFloat(damage.getValue() + 1); //from 0 to damage
                 break;
 
             case FIRE:
