@@ -5,7 +5,6 @@ import adventuregame.interactibles.Table;
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.*;
 import adventuregame.items.Sword;
-import adventuregame.items.Swourd;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.dynamicitems.Torch;
@@ -123,18 +122,8 @@ public class Environment
             "stuck in",
             "the table"
         );
-        new Door(cell2, hall, Wall.EAST);
-
-         Room cell3 = new Room(celld, celll, cellf, celln, false);
-                 new ItemHolder(
-            new Swourd(10, Metal.STEEL, "better swourd than Clustooped", "farting pear shaped swourd", "i du nuhs ???", "u gottem burh, pear shaped hole in their stomach hoo rah"), 
-            cell3,
-            "forced upon",
-            "the the ceiling"
-        );
-        new Door(cell3, hall, Wall.EAST);
-        
-        for (int i = 3; i < 13; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        new Door(cell2, hall, Wall.EAST);        
+        for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
         Room cell14 = new Room(celld, celll, cellf, celln, false);
         new Door(cell14, hall, Wall.WEST);
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
