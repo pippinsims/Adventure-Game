@@ -111,7 +111,7 @@ public class Utils {
             try
             {
                 if(c == '\n' || c == '.')
-                    Thread.sleep(sleepDuration * 5);
+                    Thread.sleep(sleepDuration * 5); //TODO breaks when called from non-main thread like in QTE
                 Thread.sleep(sleepDuration);
             }
             catch(Exception e) 

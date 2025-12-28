@@ -408,7 +408,7 @@ public class Player extends Unit
     @Override
     public void updateUnit() throws Exception 
     {
-        System.out.println("--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
+        System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
 
         if(name == "Laur") for (Enemy e : myRoom.enemies) e.randomizeDesc();
         
@@ -420,8 +420,10 @@ public class Player extends Unit
         
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
+        Room old = myRoom;
         for(Dialogue d : new ArrayList<>(myRoom.dialogues)) if(myRoom.getDialogueForced() && d.allActorsAlive() && !d.atEnd) { d.next(); Dialogue.processLeaf(d.current); }
-        
+        if(myRoom != old) return;
+
         setActions();
 
         if(ptolomyIsPresent) Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);

@@ -49,7 +49,6 @@ public class Environment
                 if(!found) playerRooms.add(p.getRoom());
             }
             
-            for(Room r : playerRooms) { System.out.println(r.getDescription());}
             for(Room r : new ArrayList<>(playerRooms))
             {
                 curRoom = r;
@@ -57,9 +56,10 @@ public class Environment
                 for (Player p : new ArrayList<>(r.players))
                 {
                     curPlayer = p;
-                    isLaur = curPlayer.getName().equals("Laur");
+                    isLaur = p.getName().equals("Laur");
                     p.updateUnit();
                     System.out.println();
+                    if(r.players.isEmpty()) break;
                 }
                 for(Dialogue d : r.dialogues) if(d.atEnd) d.complete();
 
@@ -80,7 +80,7 @@ public class Environment
                 if(r.players.isEmpty()) playerRooms.remove(r);
             }
 
-            System.out.println("--Round End--");
+            System.out.println("\t\t\t\t\t\t\t\t--Round End--");
         }
         
         Utils.scanner.close();
