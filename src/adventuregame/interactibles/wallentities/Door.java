@@ -1,6 +1,7 @@
 package adventuregame.interactibles.wallentities;
 
 import adventuregame.Environment;
+import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
@@ -9,6 +10,7 @@ import adventuregame.interactibles.WallEntity;
 public class Door extends WallEntity
 {
     Room myOtherRoom;
+    private boolean autoUse = false;
 
     public Door(Room room1, Room room2, Wall wall)
     {
@@ -72,6 +74,11 @@ public class Door extends WallEntity
         } 
     }
 
+    public void autoUse()
+    {
+        autoUse = true;
+    }
+
     @Override
     public void inspect()
     {
@@ -81,11 +88,25 @@ public class Door extends WallEntity
     @Override
     public void action(Unit u)
     {
+        Room r = u.getRoom();
+        
+        if(!autoUse)
+        {
+            if(Utils.promptList("You can:", new String[] {"Peek", "Use"}) == 0)
+            {
+                Environment.printInfo(getNextRoom(r), true);
+                Utils.slowPrint("Press Enter to continue");
+                Utils.scanner.nextLine();
+                if(u instanceof Player) ((Player)u).promptForAction();
+                return;
+            }
+        }
+
         Utils.slowPrint("you used " + (Environment.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
         
-        Room r = u.getRoom();
         r.remove(u);
         getNextRoom(r).add(u);
+        autoUse = false;
     }
 
     public Room getNextRoom(Room curRoom)

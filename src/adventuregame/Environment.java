@@ -224,25 +224,25 @@ public class Environment
         // addPlayer(new Player("Dormaah"));
     }
 
-    public static void printInfo()
+    public static void printInfo(Room r, boolean peek)
     {
         System.out.println("--Info--");
 
-        if(!curRoom.getIsFamiliar())
+        if(!r.getIsFamiliar())
         {
             Utils.currentPrintDelay = Utils.MAX_PRINT_DELAY;
-            Utils.slowPrintln("You're in " + curRoom.getDescription() + ".");
+            Utils.slowPrintln("You" + (peek ? " see " : "'re in ") + r.getDescription() + ".");
         }
         else
         {
-            Utils.slowPrintln(curRoom.getDescription());
+            Utils.slowPrintln(r.getDescription());
         }
 
-        Utils.slowPrintDescList(curRoom.interactibles);
+        Utils.slowPrintDescList(r.interactibles);
 
-        Utils.slowPrintDescList(curRoom.enemies);
+        Utils.slowPrintDescList(r.enemies);
         
-        curRoom.discover();
+        r.discover();
         Utils.currentPrintDelay = 3;
     }
 

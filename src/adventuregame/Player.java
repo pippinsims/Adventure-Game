@@ -18,6 +18,7 @@ public class Player extends Unit
 
     private String name;
     private Inventory inv = new Inventory(10);
+    private Door firstDoor = null; //exists solely for Action.LEAVE
 
     //FOR EACH ENUM, MAKE A MAP ENTRY
     enum Action 
@@ -29,7 +30,8 @@ public class Player extends Unit
         INTERACT,
         CAST,
         COMMUNE,
-        INVENTORY
+        INVENTORY,
+        LEAVE
     }
     
     private final Map<Action, String> actionTypes = Map.ofEntries(Map.entry(Action.NOTHING,  "Do nothing."),
@@ -39,7 +41,8 @@ public class Player extends Unit
                                                                   Map.entry(Action.INTERACT, "Do something"),
                                                                   Map.entry(Action.CAST,     "Utilize the power of the ancients"),
                                                                   Map.entry(Action.COMMUNE,  "Commune with Ptolomy's spirit"),
-                                                                  Map.entry(Action.INVENTORY,"Inventory"));
+                                                                  Map.entry(Action.INVENTORY,"Inventory"),
+                                                                  Map.entry(Action.LEAVE,    "Leave"));
 
     public List<Action> actions = new ArrayList<Action>();
 
@@ -94,26 +97,40 @@ public class Player extends Unit
         }
 
         if(inv.size() > 0) actions.add(Action.INVENTORY);
+
+        int numDoors = 0;
+        for(Interactible i : myRoom.interactibles) if(i instanceof Door) { if(firstDoor == null) firstDoor = (Door)i; numDoors++;}
+        if(numDoors == 1)actions.add(Action.LEAVE);
     }
 
-    public void performAction(int i) throws Exception
+    public void performAction(int i)
     {   
-        switch(actions.get(i))
-        {
-            case FIGHT: fight(); break;
-            case INSPECT: inspect(); break;
-            case TALK: talk(); break;
-            case CAST: castSpell(); break;
-            case INTERACT: interact(); break;
-            case COMMUNE: commune(); break;
-            case INVENTORY: inventory(); break;
-            default: break;
+        try{
+            switch(actions.get(i))
+            {
+                case FIGHT: fight(); break;
+                case INSPECT: inspect(); break;
+                case TALK: talk(); break;
+                case CAST: castSpell(); break;
+                case INTERACT: interact(); break;
+                case COMMUNE: commune(); break;
+                case INVENTORY: inventory(); break;
+                case LEAVE: leave();
+                default: break;
+            }
         }
+        catch(Exception e) { e.printStackTrace();}
     }
 
     public boolean getPtolomyIsPresent() 
     {
         return ptolomyIsPresent;
+    }
+
+    private void leave()
+    {
+        firstDoor.autoUse();
+        firstDoor.action(this);
     }
     
     /*
@@ -415,7 +432,7 @@ public class Player extends Unit
         myRoom.updateDoors();
         System.out.println();
 
-        Environment.printInfo();
+        Environment.printInfo(Environment.curRoom, false);
         System.out.println();
         
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
@@ -428,7 +445,12 @@ public class Player extends Unit
 
         if(ptolomyIsPresent) Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
 
-        //lists available actions, lets the player choose, then performs chosen action
+        promptForAction();
+    }
+
+    //lists available actions, lets the player choose, then performs chosen action
+    public void promptForAction()
+    {
         performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
     }
 
