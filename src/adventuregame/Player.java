@@ -144,13 +144,11 @@ public class Player extends Unit
                     chosenEnemyIndex = Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens));
 
                 String[] attackTypes = getAttackTypes();
-                if(chosen == null) 
-                {
-                    int chosenAttackType = attackTypes.length > 1 ? Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) : 0;
-                    chosen = inv.at(chosenAttackType - 1); //- 1 because of Punch
-                }
+                if(chosen == null) chosen = attackTypes.length > 1 ? inv.at(Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) - 1) : null;                
 
-                this.attack(myRoom.enemies.get(chosenEnemyIndex), chosen == null ? new Damage(1, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious 1 damage!") : chosen.getDamage());
+                Damage d = chosen == null ? new Damage(1, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious 1 damage!") : chosen.getDamage();
+                if(hasEffect(Effect.Type.WEAKNESS)) { d = new Damage(d); d.setValue(d.getValue() - 1); }
+                this.attack(myRoom.enemies.get(chosenEnemyIndex), d);
                 if(chosen instanceof Sword && ((Sword)chosen).use() && !ens.isEmpty()) System.out.println("Attack again!");
                 else break;
             }

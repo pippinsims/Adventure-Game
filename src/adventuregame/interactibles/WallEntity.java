@@ -32,7 +32,12 @@ public class WallEntity extends Interactible{
         }  
     }
 
-    public WallEntity.Wall getWall()
+    public void setWall(Wall wall)
+    {
+        this.wall = wall;
+    }
+
+    public Wall getWall()
     {
         return wall;
     }

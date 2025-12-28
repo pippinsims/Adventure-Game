@@ -24,6 +24,15 @@ public class Damage {
         EFFECT
     }
 
+    public Damage(Damage toClone)
+    {
+        value = toClone.getValue();
+        type = toClone.getType();
+        mode = toClone.getMode();
+        message = toClone.getMessage();
+        damageEffect = toClone.getEffect();
+    }
+
     public Damage(float value)
     {
         this.value = value;
@@ -78,6 +87,11 @@ public class Damage {
     public float getValue()
     {
         return value;
+    }
+
+    public void setValue(float value)
+    {
+        this.value = value;
     }
 
     public Type getType()

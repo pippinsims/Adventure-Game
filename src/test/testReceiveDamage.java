@@ -3,7 +3,7 @@ package test;
 import org.junit.Test;
 
 import adventuregame.*;
-import adventuregame.items.TorchItem;
+import adventuregame.dynamicitems.Torch;
 
 public class testReceiveDamage {    
 
@@ -36,9 +36,9 @@ public class testReceiveDamage {
     {
         Effectable k = new Player("Guy");
         float h = k.getHealth();
-        TorchItem t = new TorchItem(null);
+        Torch t = new Torch();
 
-        k.receiveDamage(t.getDamage());
+        k.receiveDamage(t.item().getDamage());
         for(int i = 0; i < 10; i++)
         {
             k.updateAllEffectsWithoutResult();

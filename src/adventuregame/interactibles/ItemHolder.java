@@ -36,41 +36,42 @@ public class ItemHolder extends Interactible {
     @Override
     public void action(Unit u)
     {
-        if(item.getName().equals("Cledobl"))
+        switch(item.getName())
         {
-            if(u.getName().equals("Laur"))
-            {
+            case "Cledobl":
+                if(u.getName().equals("Laur"))
+                {
+                    System.out.println(u.getName() + " took " + name + " " + actLocPrep + " " + locReference);
+                    myRoom.remove(this);
+                    u.getInventory().add(item);
+                }
+                else
+                {
+                    System.out.println(u.getName() + " takes the sword by the handle... ");
+                    if(!new QuickTimeEvent(
+                        u,
+                        item, 
+                        new String[] {"YOU FEEL EXTREME PAIN. YOU ARE DYING"},
+                        new String[][] {
+                            {"Do nothing."        , "Freeze."},
+                            {"Let go."            , "Let go."},
+                            {"Cry out."           , "Cry out."},
+                            {"Relax your grip."   , "PULL HARDER."}, //TODO ideaaaaally i'd make this a Node-based structure not unlike Dialogue, what i have right now is like sort of halfway there
+                            {"Pry hand violently.", ""},
+                            {"Pull harder."       , ""}
+                        },
+                        new String[] {"Cry out.", "Pry hand violently."},
+                        new String[] {"Pull harder."},
+                        new Effect(Effect.Type.VITALITYDRAIN, 10, (int)(u.getMaxHealth()/10))
+                    ).run()) if(u.getHealth() > 0) Environment.kill(u);
+                }
+                break;
+            default:
                 System.out.println(u.getName() + " took " + name + " " + actLocPrep + " " + locReference);
+
                 myRoom.remove(this);
                 u.getInventory().add(item);
-            }
-            else
-            {
-                System.out.println(u.getName() + " takes the sword by the handle... ");
-                if(!new QuickTimeEvent(
-                    u,
-                    item, 
-                    new String[] {"YOU FEEL EXTREME PAIN. YOU ARE DYING"},
-                    new String[][] {
-                        {"Do nothing."        , "Freeze."},
-                        {"Let go."            , "Let go."},
-                        {"Cry out."           , "Cry out."},
-                        {"Relax your grip."   , "PULL HARDER."}, //TODO ideaaaaally i'd make this a Node-based structure not unlike Dialogue, what i have right now is like sort of halfway there
-                        {"Pry hand violently.", ""},
-                        {"Pull harder."       , ""}
-                    },
-                    new String[] {"Cry out.", "Pry hand violently."},
-                    new String[] {"Pull harder."},
-                    new Effect(Effect.Type.VITALITYDRAIN, 10, (int)(u.getMaxHealth()/10))
-                ).run()) if(u.getHealth() > 0) Environment.kill(u);
-            }
-        }
-        else
-        {
-            System.out.println(u.getName() + " took " + name + " " + actLocPrep + " " + locReference);
-
-            myRoom.remove(this);
-            u.getInventory().add(item);
+                break;
         }
     }
 

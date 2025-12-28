@@ -46,12 +46,13 @@ public abstract class Effectable extends Describable{
             case VITALITYDRAIN:
                 maxHealth -= e.strength;
                 //health > maxHealth would never happen
-                result = receiveDamage(new Damage(e.strength, Damage.Type.UNBLOCKABLE, "You're stuck by Drain"));
+                result = receiveDamage(new Damage(e.strength, Damage.Type.UNBLOCKABLE, "You're stuck by Drain, max health decreased by " + e.strength));
                 effectIsOver = e.cooldown.decrement();
                 break;
             
             case VITALITYGROW:
                 maxHealth += e.strength;
+                System.out.println("Max health increased by " + e.strength);
                 effectIsOver = e.cooldown.decrement();
                 break;
 
@@ -123,6 +124,12 @@ public abstract class Effectable extends Describable{
             Utils.slowPrintln(", and will be effected by it for " + dur + " more turn" + (dur != 1 ? "s" : "") + ".");
         else
             Utils.slowPrintln(", and will be effect by it forever.");
+    }
+
+    final public boolean hasEffect(Effect.Type t)
+    {
+        for(Effect e : effects) if(e.getType() == t) return true;
+        return false;
     }
     
     final public void removeAllOf(Effect.Type t)

@@ -94,10 +94,6 @@ public class QuickTimeEvent
         String input = null;
         for(currentRound = 0; currentRound < maxLength; currentRound++)
         {
-            if(input == null && effectToApply != null && actor.effectUpdate(effectToApply) == EffectUpdateResult.DEATH) break; //died
-
-            if(input != null) return true; //succeeded
-            
             try { Thread.sleep(dur); }
             catch (InterruptedException e) {
                 try { 
@@ -107,6 +103,10 @@ public class QuickTimeEvent
                 }
                 catch (InterruptedException e1) { e1.printStackTrace(); } 
             }
+
+            if(input == null && effectToApply != null && actor.effectUpdate(effectToApply) == EffectUpdateResult.DEATH) break; //died
+
+            if(input != null) return true; //succeeded
         }
         Utils.restartScanner();
         return false; //ran out of time

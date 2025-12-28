@@ -26,4 +26,6 @@ public abstract class DynamicItem extends Describable {
 
     public Item item() { return it; }
     public Interactible interactible() { return in; }
+
+    protected abstract void init();
 }

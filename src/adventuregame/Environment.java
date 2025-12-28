@@ -42,32 +42,42 @@ public class Environment
         //TODO seems like this whole loop could be optimized and shrunken
         while(!allPlayers.isEmpty())
         {
-            for(Player p : allPlayers) if(!playerRooms.contains(p.getRoom())) playerRooms.add(p.getRoom());
+            for(Player p : allPlayers)
+            {
+                boolean found = false;
+                for(Room r : playerRooms) { if(r == p.getRoom()) { found = true; break; } } //must compare by reference not description
+                if(!found) playerRooms.add(p.getRoom());
+            }
             
+            for(Room r : playerRooms) { System.out.println(r.getDescription());}
             for(Room r : new ArrayList<>(playerRooms))
             {
                 curRoom = r;
 
-                for (Player p : new ArrayList<>(curRoom.players))
+                for (Player p : new ArrayList<>(r.players))
                 {
                     curPlayer = p;
                     isLaur = curPlayer.getName().equals("Laur");
                     p.updateUnit();
                     System.out.println();
                 }
-                for(Dialogue d : curRoom.dialogues) if(d.atEnd) d.complete();
+                for(Dialogue d : r.dialogues) if(d.atEnd) d.complete();
 
-                if(curRoom.players.isEmpty()) playerRooms.remove(curRoom);
+                if(r.players.isEmpty()) 
+                {
+                    playerRooms.remove(r);
+                    continue;
+                }
                 if(allPlayers.isEmpty()) break;
                 
-                for(Enemy e : new ArrayList<>(curRoom.enemies))
+                for(Enemy e : new ArrayList<>(r.enemies))
                 {
                     e.updateUnit();
                     System.out.println();
-                    if(curRoom.players.isEmpty()) break;
+                    if(r.players.isEmpty()) break;
                 }
 
-                if(curRoom.players.isEmpty()) playerRooms.remove(curRoom);
+                if(r.players.isEmpty()) playerRooms.remove(r);
             }
 
             System.out.println("--Round End--");
