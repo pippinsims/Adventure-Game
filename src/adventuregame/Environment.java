@@ -133,6 +133,7 @@ public class Environment
             "the the ceiling"
         );
         new Door(cell3, hall, Wall.EAST);
+        new GoldenPot(cell3);
         
         for (int i = 3; i < 13; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
         Room cell14 = new Room(celld, celll, cellf, celln, false);

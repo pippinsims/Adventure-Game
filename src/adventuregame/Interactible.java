@@ -53,7 +53,7 @@ public class Interactible extends Describable
 
     public void setRoom(Room room)
     {
-        myRoom = room;
+        myRoom = room; 
     }
     
     public String getActionDescription()
