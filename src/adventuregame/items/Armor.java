@@ -27,9 +27,9 @@ public class Armor extends Item {
         BOOTS
     }
 
-    public final static Map<MaterialType,String> armorDescs = Map.ofEntries(Map.entry(MaterialType.RUSTED, "Old armor, it's seen far better days, now it's rusted and tarnished."),
-                                                                    Map.entry(MaterialType.ANCIENT_RUSTED, "Old rusted armor, you notice an ancient glyph."),
-                                                                    Map.entry(MaterialType.ANCIENT, "Lodestone-enhanced ancient soldier's armor."));
+    public final static Map<MaterialType,String> armorDescs = Map.ofEntries(Map.entry(MaterialType.RUSTED, "old armor, which has seen far better days, but now it's rusted and tarnished."),
+                                                                            Map.entry(MaterialType.ANCIENT_RUSTED, "old rusted armor, you notice an ancient glyph."),
+                                                                            Map.entry(MaterialType.ANCIENT, "lodestone-enhanced ancient soldier's armor."));
 
     protected MaterialType mat;
     protected PartType type;

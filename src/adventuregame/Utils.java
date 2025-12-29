@@ -206,6 +206,7 @@ public class Utils {
 
     public static String[] actionDescsOf(ArrayList<Interactible> inters)
     {
+        // for(Interactible i:inters) System.out.println(i.getRoom());
         String[] d = new String[inters.size()];
         for(int i = 0; i < d.length; i++) d[i] = inters.get(i).getActionDescription();
         return d;

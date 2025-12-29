@@ -7,6 +7,8 @@ import adventuregame.Environment;
 import adventuregame.Inventory;
 import adventuregame.Room;
 import adventuregame.Utils;
+import adventuregame.enemies.Skeleton;
+import adventuregame.interactibles.SkeletonInteractible;
 
 public abstract class Enemy extends Unit
 {
@@ -145,5 +147,14 @@ public abstract class Enemy extends Unit
     public String getPluralDescription()
     {
         return pluralDescription;
+    }
+
+    @Override
+    public EffectUpdateResult receiveDamage(Damage damage)
+    {
+        EffectUpdateResult out = super.receiveDamage(damage); 
+        if(out == EffectUpdateResult.DEATH && this instanceof Skeleton) new SkeletonInteractible(myRoom, inv);
+        
+        return out;
     }
 }

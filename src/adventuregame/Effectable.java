@@ -93,7 +93,7 @@ public abstract class Effectable extends Describable{
         return v;
     }
 
-    final public EffectUpdateResult receiveDamage(Damage damage, String message)
+    final private EffectUpdateResult receiveDamage(Damage damage, String message)
     {
         float val = damage.getValue();
         val = computeDefenseVal(val);
@@ -135,7 +135,7 @@ public abstract class Effectable extends Describable{
         }
     }
 
-    final public EffectUpdateResult receiveDamage(Damage damage)
+    public EffectUpdateResult receiveDamage(Damage damage)
     {
         return receiveDamage(damage, damage.getMessage().charAt(0) != '2' ? null : damage.getMessage().substring(1));
     }

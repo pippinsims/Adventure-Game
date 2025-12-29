@@ -22,8 +22,10 @@ public class Interactible extends Describable
 
     public Interactible() {};
 
-    public Interactible(String name, String description, String preposition, String pluralDescription, String pluralPreposition, String actionVerb, String actionPreposition, String randomDescription, String randomPluralDescription, String locationReference)
+    public Interactible(Room r, String name, String description, String preposition, String pluralDescription, String pluralPreposition, String actionVerb, String actionPreposition, String randomDescription, String randomPluralDescription, String locationReference)
     {
+        myRoom = r;
+        r.add(this);
         setDefaults(name,description,preposition,pluralDescription,pluralPreposition,actionVerb,actionPreposition,randomDescription,randomPluralDescription);
         locReference = locationReference; 
     }
@@ -32,6 +34,10 @@ public class Interactible extends Describable
     {
         if(aprep.isEmpty()) aprep = prep;
         if(pprep.isEmpty()) pprep = prep;
+        if(rd.isEmpty()){ 
+            rd = description;
+            rpd = pd;
+        }
 
         name                    = n;
         description             = d;

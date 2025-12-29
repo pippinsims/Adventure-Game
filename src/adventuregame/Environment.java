@@ -141,102 +141,84 @@ public class Environment
         );
         cleholder.isEnabled = false;
         new Door(cell2, hall, Wall.EAST);
-        ArrayList<Item> clegear = new ArrayList<>(List.of(
-                                                        new Armor("Ancient Boot" , "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.BOOTS),
-                                                        new Armor("Ancient Gaunt", "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.GAUNTLETS),
-                                                        new Armor("Ancient Helm" , "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.HELMET),
-                                                        new Armor("Ancient Legs" , "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.LEGS),
-                                                        new Armor("Ancient Torso", "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.TORSO)
-                                                    ));
         SkeletonInteractible cleskelly = 
-        new SkeletonInteractible("Ancient Skeleton", 
-                         "Old dilapidated skeleton with armor",
-                         "bent over",
-                         "",
-                         "",
-                         "brush aside",
-                         "from",
-                         "",
-                         "",
-                         "the table"
-                        ){
-                            @Override 
-                            public void action(Unit u)
+        new SkeletonInteractible(
+            cell2,
+            "Ancient Skeleton", 
+            "old dilapidated skeleton with armor",
+            "bent over",
+            "",
+            "",
+            "brush aside",
+            "from",
+            "",
+            "",
+            "the table"
+        )
+        {
+            @Override 
+            public void action(Unit u)
+            {
+                switch(actionVerb)
+                {
+                    case "brush aside":
+                        if(new Random().nextInt(10) == 9)
+                        {
+                            Utils.slowPrintln("You attempt to brush away the skeleton, but it reacts, bones clinking, and assumes a combat stance!");
+                            getRoom().interactibles.remove(this);
+                            getRoom().add(new Skeleton(inv));
+                        }
+                        else
+                        {
+                            Utils.slowPrintln("You brush the hand of the skeleton away from the sword.");
+                            cleholder.isEnabled = true;
+                            actionVerb = "loot";
+                            normalLocPrep = "lying on";
+                            locReference = "the floor";
+                        }
+                        break;
+                    case "loot":
+                        Inventory uinv = u.getInventory();
+                        if(uinv.isFull())
+                            Utils.slowPrintln("Your inventory is full! You cannot loot this.");
+                        else
+                        {
+                            Utils.slowPrintln("You check the skeleton for items...");
+                            String[] prompts = new String[] {"Take all", "Take one"};
+                            if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
                             {
-                                switch(actionVerb)
+                                ArrayList<Item> its = inv.getItems();
+                                Item i = its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its)));
+                                uinv.add(i);
+                                inv.remove(i);
+                            }
+                            else
+                            {
+                                for(Item i : new ArrayList<>(inv.getItems())) if(!uinv.isFull())
                                 {
-                                    case "brush aside":
-                                        if(new Random().nextInt(10) == 9)
-                                        {
-                                            getRoom().interactibles.remove(this);
-                                            getRoom().add(
-                                                new Skeleton(
-                                                    clegear,
-                                                    new Sword(5)
-                                                )
-                                            );
-                                        }
-                                        else
-                                        {
-                                            Utils.slowPrintln("You brush the hand of the skeleton away from the sword.");
-                                            cleholder.isEnabled = true;
-                                            actionVerb = "loot";
-                                            normalLocPrep = "lying on";
-                                            locReference = "the floor";
-                                        }
-                                        break;
-                                    case "loot":
-                                        Inventory uinv = u.getInventory();
-                                        if(uinv.isFull())
-                                        {
-                                            Utils.slowPrintln("You check the skeleton for items...");
-                                            String[] prompts = new String[] {"Take all", "Take one"};
-                                            if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
-                                            {
-                                                ArrayList<Item> its = inv.getItems();
-                                                Item i = its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its)));
-                                                uinv.add(i);
-                                                its.remove(i);   
-                                            }
-                                            else
-                                            {
-                                                for(Item i : new ArrayList<>(inv.getItems())) if(!uinv.isFull())
-                                                {
-                                                    uinv.add(i);
-                                                    inv.remove(i);
-                                                }
-                                                
-                                                if(!inv.isEmpty()) Utils.slowPrint("Your inventory is full! You only took some of the items.");
-                                            }
-                                            if(inv.isEmpty()) actionVerb = "";
-                                        }
-                                        else Utils.slowPrintln("Your inventory is full! You cannot loot this.");
-                                        break;
+                                    uinv.add(i);
+                                    inv.remove(i);
                                 }
+                                
+                                if(!inv.isEmpty()) Utils.slowPrint("Your inventory is full! You only took some of the items.");
                             }
-
-                            @Override
-                            public void inspect()
-                            {
-                                for(Item i : inv.getItems()) if(i instanceof Armor) 
-                                { 
-                                    if(curPlayer.getName().equals("Valeent"))
-                                    {
-                                        Utils.slowPrintln(Armor.armorDescs.get(((Armor)i).getMat()));
-                                        return;
-                                    }
-                                    else
-                                    {
-                                        Utils.slowPrintln(Armor.armorDescs.get(Armor.MaterialType.RUSTED));
-                                        return;
-                                    }
-                                }
-                                description = "Old dilapidated skeleton.";
-                                Utils.slowPrintln(getDescription());
-                            }
-                        };
-        for(Item i : clegear) cleskelly.add(i);
-        cleskelly.add(new Sword(5));
+                            boolean armorFound = false;
+                            for(Item i : inv.getItems()) if(i instanceof Armor) { armorFound = true; break; }
+                            if(!armorFound) description = "old dilapidated skeleton";
+                            if(inv.isEmpty()) actionVerb = "";
+                        }
+                        break;
+                }
+            }
+        };
+        for(Item i : new ArrayList<>(List.of(//TODO ned descs
+            new Armor("Ancient Boot" , "rusty boots", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.BOOTS),
+            new Armor("Ancient Gaunt", "rusty gauntlets", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.GAUNTLETS),
+            new Armor("Ancient Helm" , "rusty helmet", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.HELMET),
+            new Armor("Ancient Legs" , "rusty greaves", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.LEGS),
+            new Armor("Ancient Torso", "rusty chestpiece", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.TORSO),
+            new Sword(5)
+        ))) cleskelly.add(i);
 
         for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
         Room cell14 = new Room(celld, celll, cellf, celln, false);
@@ -287,18 +269,19 @@ public class Environment
                                   "Shroom Room.",
                                   "Mossy Ruin",
                                   true);
-        Interactible mushroom = new Interactible("Big mushroom",
-                                                 "table-sized toadstool",
-                                                 "on",
-                                                 "",
-                                                 "",
-                                                 "",
-                                                 "",
-                                                 "toad-sized TABLEstool",
-                                                 "",
-                                                 "the floor"
-                                                );
-        mossyRuin.add(mushroom);
+        new Interactible(
+                            mossyRuin,
+                            "Big mushroom",
+                            "table-sized toadstool",
+                            "on",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "toad-sized TABLEstool",
+                            "",
+                            "the floor"
+                        );
         
         Room joiner1 = new Room();
 
@@ -317,9 +300,9 @@ public class Environment
 
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
-        addPlayer(new Player());
+        // addPlayer(new Player());
         addPlayer(new Player("Nuel"));
-        // addPlayer(new Player("Valeent"));
+        addPlayer(new Player("Valeent"));
         // addPlayer(new Player("Peili"));
         // addPlayer(new Player("Dormaah"));
     }

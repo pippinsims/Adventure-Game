@@ -1,6 +1,7 @@
 package adventuregame.interactibles.wallentities;
 
 import adventuregame.Environment;
+import adventuregame.Interactible;
 import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
@@ -104,18 +105,31 @@ public class Door extends WallEntity
 
         Utils.slowPrint("you used " + (Environment.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
         
+        for(Interactible i : r.interactibles) 
+            {System.out.println(i.getDescription());
+                if(i instanceof Door)
+                {
+                    System.out.println(": " + ((Door)i).myRoom.getDescription() + " to " + (((Door)i).myOtherRoom.getDescription()));
+                }
+            }
         r.remove(u);
+        
+        //TODO this breaks when you leave cledobl room with leave()
+        Environment.printInfo(r, false); //prints cledobl room
+        Environment.printInfo(myRoom, false); //prints hallway (6 west, 8 east???)
+        Environment.printInfo(myOtherRoom, false); //prints window room?!?
+
         getNextRoom(r).add(u);
         autoUse = false;
     }
 
-    public Room getNextRoom(Room curRoom)
+    final public Room getNextRoom(Room curRoom)
     {
         if(curRoom == myRoom)
             return myOtherRoom;
         else if(curRoom == myOtherRoom) 
             return myRoom;
-        else
-            return null;
+
+        return null;
     }
 }

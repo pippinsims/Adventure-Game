@@ -1,11 +1,8 @@
 package adventuregame.enemies;
 
-import java.util.ArrayList;
-
 import adventuregame.Inventory;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Enemy;
-import adventuregame.abstractclasses.Item;
 
 public class Skeleton extends Enemy{
 
@@ -15,12 +12,11 @@ public class Skeleton extends Enemy{
         pluralDescription = "skeletons";
     }
 
-    public Skeleton(ArrayList<Item> armor, Item weapon)
+    public Skeleton(Inventory i)
     {
         setDefaults(20, new Inventory(6), 5, 0, "skeleton", "Oess");
         pluralDescription = "skeletons";
-        for(Item i : armor) inv.add(i);
-        inv.add(weapon);
+        inv = i;
     }
 
     public void pleaResponse()
@@ -30,7 +26,7 @@ public class Skeleton extends Enemy{
 
     @Override
     public void performAction(int i) {
-        switch(Action.values()[i])
+        switch(Action.values()[i-1])
         {
             case NONE:
                 Utils.slowPrintln("The " + getModifiedDescription("sad") + " is motionless.");
