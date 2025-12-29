@@ -173,7 +173,7 @@ public class Environment
             )
         ));
         new Door(room5, room6, Wall.NORTH);
-        Room room8 = new Room("A room5way that is missing its north wall. From here you can see that you are deep underground due to a large cavern.", "A hollow cube missing its nose, and eyes, and mouth, and other stuff", "Its the room5way missing a wall showing the deep cavern", "the broken wall room", false);
+        Room room8 = new Room("A hallway that is missing its north wall. From here you can see that you are deep underground due to a large cavern.", "A hollow cube missing its nose, and eyes, and mouth, and other stuff", "Its the hallway missing a wall showing the deep cavern", "the broken wall room", false);
         new Door(room6, room8, Wall.NORTH);
         
         
@@ -199,10 +199,10 @@ public class Environment
         ));
         new Door(room8, room9, Wall.EAST);
 
-        Room room10 = new Room("There is dining room5 with a crackling fireplace. The room’s smells make your stomachs churn due to the lack of real food.", "A Trystal shines, on a place for things with legs. ", "Its the dining room5", "dining room5", false);
+        Room room10 = new Room("There is dining hall with a crackling fireplace. The room’s smells make your stomachs churn due to the lack of real food.", "A Trystal shines, on a place for things with legs. ", "Its the dining hall", "dining hall", false);
         new Door(room8, room10, Wall.SOUTH);
 
-        Room room11 = new Room("A plain old room5way", "a walk for old men", "still a boring room5way", "a room5way", false);
+        Room room11 = new Room("A plain old hallway", "a walk for old men", "still a boring hallway", "a hallway", false);
         new Door(room10, room11, Wall.SOUTH);
 
         Room room12 = new Room("A tall stairway connecting the first and second floors, some of the stairs have fallen to disrepair. Stay close to the wall or risk falling to your death.", "A quarrelsome bird", "it's the stairwell", "stairwell to the second floor", false);
