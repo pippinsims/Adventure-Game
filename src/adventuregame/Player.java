@@ -45,7 +45,7 @@ public class Player extends Unit
 
     public Player()
     {
-        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
+        myRoom = Environment.startRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = "Laur";
         
         inv.add(new Bananarang());
@@ -59,7 +59,7 @@ public class Player extends Unit
 
     public Player(String n)
     {
-        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
+        myRoom = Environment.startRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = n;        
         health = 11;
         deathMsg = name + " died.";
@@ -67,7 +67,7 @@ public class Player extends Unit
 
     public Player(boolean genName)
     {
-        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
+        myRoom = Environment.startRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = Utils.names1[Utils.rand.nextInt(Utils.names1.length)] + Utils.names2[Utils.rand.nextInt(Utils.names2.length)];
         deathMsg = name + " died.";
     }

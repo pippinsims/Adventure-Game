@@ -135,14 +135,14 @@ public class Dialogue
                 if(n.applyToAll)
                 {
                     System.out.println("All players in " + name + "'s room moved back to " + out.getName());
-                    for(Player p : Environment.curRoom.players) out.add(p);
-                    Environment.curRoom.players.clear();
+                    for(Player p : Environment.startRoom.players) out.add(p);
+                    Environment.startRoom.players.clear();
                 }
                 else
                 {
                     System.out.println(name + " moved back to " + out.getName());
                     out.add(p0);
-                    Environment.curRoom.players.remove(p0);
+                    Environment.startRoom.players.remove(p0);
                 }
             }
             else if(n.out instanceof Effect)
@@ -151,7 +151,7 @@ public class Dialogue
                 if(n.applyToAll)
                 {
                     System.out.println("Effect '" + out.getName() + "' added to all in " + name + "'s room");
-                    for(Player p : Environment.curRoom.players) p.addEffect(new Effect(out));
+                    for(Player p : Environment.startRoom.players) p.addEffect(new Effect(out));
                 }
                 else
                 {
@@ -165,7 +165,7 @@ public class Dialogue
                 if(n.applyToAll)
                 {
                     System.out.println("Item '" + out.getName() + "' added to all in " + name + "'s room");
-                    for(Player p : Environment.curRoom.players) p.getInventory().add(out);
+                    for(Player p : Environment.startRoom.players) p.getInventory().add(out);
                 }
                 else
                 {

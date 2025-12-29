@@ -14,7 +14,7 @@ import java.util.List;
 
 public class Environment
 {
-    public static Room curRoom;
+    public static Room startRoom;
     public static Player curPlayer;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static boolean isLaur;
@@ -46,28 +46,28 @@ public class Environment
             
             for(Room r : new ArrayList<>(playerRooms))
             {
-                curRoom = r;
+                startRoom = r;
 
-                for (Player p : new ArrayList<>(curRoom.players))
+                for (Player p : new ArrayList<>(startRoom.players))
                 {
                     curPlayer = p;
                     isLaur = curPlayer.getName().equals("Laur");
                     p.updateUnit();
                     System.out.println();
                 }
-                for(Dialogue d : curRoom.dialogues) if(d.atEnd) d.complete();
+                for(Dialogue d : startRoom.dialogues) if(d.atEnd) d.complete();
 
-                if(curRoom.players.isEmpty()) playerRooms.remove(curRoom);
+                if(startRoom.players.isEmpty()) playerRooms.remove(startRoom);
                 if(allPlayers.isEmpty()) break;
                 
-                for(Enemy e : new ArrayList<>(curRoom.enemies))
+                for(Enemy e : new ArrayList<>(startRoom.enemies))
                 {
                     e.updateUnit();
                     System.out.println();
-                    if(curRoom.players.isEmpty()) break;
+                    if(startRoom.players.isEmpty()) break;
                 }
 
-                if(curRoom.players.isEmpty()) playerRooms.remove(curRoom);
+                if(startRoom.players.isEmpty()) playerRooms.remove(startRoom);
             }
 
             System.out.println("--Round End--");
@@ -84,7 +84,7 @@ public class Environment
         {
             int num = allPlayers.size();
             
-            
+
             for(int i = 0; i < num; i++)
             {
                 Utils.slowPrintAsList(allPlayers.get(i).getName(), num, i);
@@ -98,17 +98,17 @@ public class Environment
     private static void addPlayer(Player p)
     {
         allPlayers.add(p);
-        curRoom.players.add(p);
+        startRoom.players.add(p);
     }
 
     private static void generateMap()
     {
-        Room hall = new Room("a long hall with many cells","Prison hallway");
+        Room room5 = new Room("A hallway lined with cells for prisoners; none hold anything of import.","Hallway of Prison cells");
         //average narwhal weight is 1.425 tons
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
-        curRoom = new Room(celld, celll, cellf, celln, false);
-        new Door(curRoom, hall, Wall.EAST);
-        new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
+        startRoom = new Room(celld, celll, cellf, celln, false);
+        new Door(startRoom, room5, Wall.EAST);
+        new Window(startRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
         //skeletoninteractible in cledobl room with armor
         //armor on skeletoninteractible 50% chance of reducing basic/blunt damage by 1, when repaired by smith (avg smith wouldn't be able to do this, need to follow a quest of meeting smiths and they point you to him, prodigy smith, conversant in ancient techniques): auto reduce 2 basic/blunt damage, other blockable damages have 50% chance reduce by 1 50% chance of all first 2 tiers of spells on this unit fail
         //skeletoninteractible on interact 1% of turning into skeleton enemy with same inventory
@@ -116,32 +116,31 @@ public class Environment
         //on inspect: print description of armor set
         //on Valeent inspect: armor is from an ancient House she's read about (she's a noble) (it's the same House that used to own this dungeon)
 
-        Room cell2 = new Room(celld, celll, cellf, celln, false);
-        new Table(cell2);
+        Room room4 = new Room("A old room left to what ever hides in the corners of this keep", "The wriggler has had his picnic with this Bort", "It is the old hidden room", "Cledobl", false);
+        new Table(room4);
         new ItemHolder(
             new Sword(10, Metal.STEEL, "Cledobl", "glittering steel sword", "steel swords", "Your weapon shears the air in a gnawing arch"), 
-            cell2,
+            room4,
             "stuck in",
             "the table"
         );
-        new Door(cell2, hall, Wall.EAST);
+        new Door(room5, room4, Wall.SOUTH);
 
-         Room cell3 = new Room(celld, celll, cellf, celln, false);
-        new Door(cell3, hall, Wall.EAST);
-        new GoldenPot(cell3);
+         Room room2 = new Room("A small hall containing half of a tapestry. This half shows an empty throne for a queen. The throne is extravagant. the tapestry is ornately  with different twisting designs. This Hall leads to a door to the east", "A winding trail contains The clothing of a bull, spotted with mean thoughts; a wrong place for little clouds is holds no vapor. A vertical lid is located at the end of the way.", "The hall with a half of a tapestry showing an empty queens throne. At the end of the hall is a door.", "A hall with the Torn Tapestry", false);
+        new Door(room2, room5, Wall.WEST);
+        new Torch(room2, Wall.SOUTH);
 
-        for (int i = 3; i < 13; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
-        Room cell14 = new Room(celld, celll, cellf, celln, false);
-        new Door(cell14, hall, Wall.WEST);
-        new ItemHolder(new Sword(4), cell14, "on", "the floor");
+        Room room3 = new Room("A bare room of little interest", "a bag of flies", "an empty room", "iron sword room", false);
+        new Door(room3, room2, Wall.WEST);
+        new ItemHolder(new Sword(4), room3, "on", "the floor");
 
         ArrayList<Enemy> ens = new ArrayList<>(List.of(new Enemy(3), new Enemy(3), new Enemy(3)));
-        Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    
-                                "The Chamber.",
-                                "Chamber",
+        Room room6 = new Room("A room that stinks of goblins",       
+                                "The stinky room.",
+                                "goblin room",
                                 true);
-        for(Enemy e : ens) chamber.add(e);
-        chamber.add(new Dialogue(
+        for(Enemy e : ens) room6.add(e);
+        room6.add(new Dialogue(
             new ArrayList<>(ens), 
             new Dialogue.Node.B(
                 0,
@@ -164,24 +163,27 @@ public class Environment
                         new Dialogue.Node[] 
                         {
                             new Dialogue.Node.B(0, "Then you die."),
-                            new Dialogue.Node.L<Room>(0, "And don't you dare leave again...", null, curRoom, true),
-                            new Dialogue.Node.L<Room>(curRoom, true)
+                            new Dialogue.Node.L<Room>(0, "And don't you dare leave again...", null, startRoom, true),
+                            new Dialogue.Node.L<Room>(startRoom, true)
                         }
                     ),
-                    new Dialogue.Node.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true),
+                    new Dialogue.Node.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, startRoom, true),
                     new Dialogue.Node.B()
                 }
             )
         ));
-        new Door(hall, chamber, Wall.NORTH);
+        new Door(room5, room6, Wall.NORTH);
+        Room room8 = new Room("A room5way that is missing its north wall. From here you can see that you are deep underground due to a large cavern.", "A hollow cube missing its nose, and eyes, and mouth, and other stuff", "Its the room5way missing a wall showing the deep cavern", "the broken wall room", false);
+        new Door(room6, room8, Wall.NORTH);
         
-        Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,",
+        
+        Room room9 = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,",
                                   "Shroom Room.",
                                   "Mossy Ruin",
                                   true);
         Enemy shroomie = new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster");
-        mossyRuin.add(shroomie);
-        mossyRuin.add(new Dialogue(new ArrayList<>(
+        room9.add(shroomie);
+        room9.add(new Dialogue(new ArrayList<>(
             List.of(shroomie)), 
             new Dialogue.Node.L<Effect>(
                 0, 
@@ -195,24 +197,40 @@ public class Environment
                 true
             )
         ));
-        
-        Room joiner1 = new Room();
+        new Door(room8, room9, Wall.EAST);
 
-        new Door(chamber, mossyRuin, Wall.NORTH);
-        new Door(chamber, new Room(), Wall.WEST);
-        new Door(chamber, joiner1, Wall.EAST);
+        Room room10 = new Room("There is dining room5 with a crackling fireplace. The room’s smells make your stomachs churn due to the lack of real food.", "A Trystal shines, on a place for things with legs. ", "Its the dining room5", "dining room5", false);
+        new Door(room8, room10, Wall.SOUTH);
 
-        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.",
-                                     "Treasure Room");
-        new GoldenPot(treasureRoom);
-        treasureRoom.add(new Enemy(30, new Inventory(1), 0, 0, "Gold Man", "Midis"));
-        new Door(joiner1, treasureRoom, Wall.SOUTH);
+        Room room11 = new Room("A plain old room5way", "a walk for old men", "still a boring room5way", "a room5way", false);
+        new Door(room10, room11, Wall.SOUTH);
 
-        new Torch(chamber, Wall.EAST);
-        new Torch(chamber, Wall.WEST);
-        new Torch(chamber, Wall.WEST);
+        Room room12 = new Room("A tall stairway connecting the first and second floors, some of the stairs have fallen to disrepair. Stay close to the wall or risk falling to your death.", "A quarrelsome bird", "it's the stairwell", "stairwell to the second floor", false);
+        new Door(room11, room12, Wall.EAST);
 
-        new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
+        Room room13 = new Room("room 13", "It's Bugmar's coin", "It's the quarter's the goblins sleep... well... slept in.", "The goblin's barrak's", false);
+        new Door(room11, room13, Wall.SOUTH);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        new ViewablePicture(room2, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
         addPlayer(new Player());
         addPlayer(new Player("Nuel"));
@@ -225,21 +243,21 @@ public class Environment
     {
         System.out.println("--Info--");
 
-        if(!curRoom.getIsFamiliar())
+        if(!startRoom.getIsFamiliar())
         {
             Utils.currentPrintDelay = Utils.MAX_PRINT_DELAY;
-            Utils.slowPrintln("You're in " + curRoom.getDescription() + ".");
+            Utils.slowPrintln("You're in " + startRoom.getDescription() + ".");
         }
         else
         {
-            Utils.slowPrintln(curRoom.getDescription());
+            Utils.slowPrintln(startRoom.getDescription());
         }
 
-        Utils.slowPrintDescList(curRoom.interactibles);
+        Utils.slowPrintDescList(startRoom.interactibles);
 
-        Utils.slowPrintDescList(curRoom.enemies);
+        Utils.slowPrintDescList(startRoom.enemies);
         
-        curRoom.discover();
+        startRoom.discover();
         Utils.currentPrintDelay = 3;
     }
 
