@@ -18,6 +18,15 @@ public class Interactible extends Describable
     protected String randomPluralDescription;
     public String locReference;
     protected Room myRoom;
+    public boolean isEnabled = true;
+
+    public Interactible() {};
+
+    public Interactible(String name, String description, String preposition, String pluralDescription, String pluralPreposition, String actionVerb, String actionPreposition, String randomDescription, String randomPluralDescription, String locationReference)
+    {
+        setDefaults(name,description,preposition,pluralDescription,pluralPreposition,actionVerb,actionPreposition,randomDescription,randomPluralDescription);
+        locReference = locationReference; 
+    }
 
     protected void setDefaults(String n, String d, String prep, String pd, String pprep, String a, String aprep, String rd, String rpd)
     {
@@ -29,7 +38,7 @@ public class Interactible extends Describable
         normalLocPrep           = prep;
         pluralDescription       = pd;
         plurLocPrep             = pprep;
-        actionVerb              = a;
+        actionVerb              = a; //won't perform action if actionVerb.equals("")
         actLocPrep              = aprep;
         randomDescription       = rd;
         randomPluralDescription = rpd;
@@ -45,6 +54,10 @@ public class Interactible extends Describable
             else                setDefaults(n, d, prep, pd, pprep, a, aprep, rd[r], rpd[r]);
         }
     }
+
+    public void enable() { isEnabled = true; }
+    public void disable() { isEnabled = false; }
+    public boolean isEnabled() { return isEnabled; }
 
     public Room getRoom()
     {

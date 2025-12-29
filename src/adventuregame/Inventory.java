@@ -29,6 +29,10 @@ public class Inventory {
         return items;
     }
 
+    public boolean isEmpty() { return items.isEmpty(); }
+
+    public boolean isFull() { return size() == max(); }
+
     public int max() { return maxSize; }
 
     public boolean add(Item i)

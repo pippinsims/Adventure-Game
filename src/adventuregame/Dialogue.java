@@ -36,6 +36,13 @@ public class Dialogue
         isComplete = true;
     }
 
+    public Node getCurrent() { return current; }
+
+    public boolean isAtEnd()
+    {
+        return atEnd;
+    }
+
     public boolean isComplete()
     {
         return isComplete;

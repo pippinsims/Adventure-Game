@@ -367,4 +367,10 @@ public class Utils {
         scanner.reset();
         scanner = new Scanner(System.in);
     }
+
+    public static <T> boolean contains(List<?> l, Class<T> c) 
+    {
+        for (Object i : l) if (i.getClass().equals(c.getClass())) return true;
+        return false;
+    }
 }

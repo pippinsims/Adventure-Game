@@ -84,6 +84,8 @@ public class Torch extends DynamicItem {
             }
 
             @Override public boolean isWeapon() { return true; }
+            
+            @Override public boolean isDynamicItem() { return true; }
 
             @Override public String getPluralDescription() { return self.getPluralDescription(); }
 

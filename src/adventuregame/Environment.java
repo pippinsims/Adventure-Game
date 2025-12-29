@@ -1,16 +1,23 @@
 package adventuregame;
 
 import adventuregame.interactibles.ItemHolder;
+import adventuregame.interactibles.SkeletonInteractible;
 import adventuregame.interactibles.Table;
 import adventuregame.interactibles.WallEntity.Wall;
 import adventuregame.interactibles.wallentities.*;
+import adventuregame.items.Armor;
 import adventuregame.items.Sword;
+import adventuregame.abstractclasses.Enemy;
+import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.dynamicitems.Torch;
+import adventuregame.enemies.Goblin;
+import adventuregame.enemies.Skeleton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Environment
 {
@@ -126,19 +133,117 @@ public class Environment
 
         Room cell2 = new Room(celld, celll, cellf, celln, false);
         new Table(cell2);
-        new ItemHolder(
+        Interactible cleholder = new ItemHolder(
             new Sword(10, Metal.STEEL, "Cledobl", "glittering steel sword", "steel swords", "Your weapon shears the air in a gnawing arch"), 
             cell2,
             "stuck in",
             "the table"
         );
-        new Door(cell2, hall, Wall.EAST);        
+        cleholder.isEnabled = false;
+        new Door(cell2, hall, Wall.EAST);
+        ArrayList<Item> clegear = new ArrayList<>(List.of(
+                                                        new Armor("Ancient Boot" , "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.BOOTS),
+                                                        new Armor("Ancient Gaunt", "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.GAUNTLETS),
+                                                        new Armor("Ancient Helm" , "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.HELMET),
+                                                        new Armor("Ancient Legs" , "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.LEGS),
+                                                        new Armor("Ancient Torso", "", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.TORSO)
+                                                    ));
+        SkeletonInteractible cleskelly = 
+        new SkeletonInteractible("Ancient Skeleton", 
+                         "Old dilapidated skeleton with armor",
+                         "bent over",
+                         "",
+                         "",
+                         "brush aside",
+                         "from",
+                         "",
+                         "",
+                         "the table"
+                        ){
+                            @Override 
+                            public void action(Unit u)
+                            {
+                                switch(actionVerb)
+                                {
+                                    case "brush aside":
+                                        if(new Random().nextInt(10) == 9)
+                                        {
+                                            getRoom().interactibles.remove(this);
+                                            getRoom().add(
+                                                new Skeleton(
+                                                    clegear,
+                                                    new Sword(5)
+                                                )
+                                            );
+                                        }
+                                        else
+                                        {
+                                            Utils.slowPrintln("You brush the hand of the skeleton away from the sword.");
+                                            cleholder.isEnabled = true;
+                                            actionVerb = "loot";
+                                            normalLocPrep = "lying on";
+                                            locReference = "the floor";
+                                        }
+                                        break;
+                                    case "loot":
+                                        Inventory uinv = u.getInventory();
+                                        if(uinv.isFull())
+                                        {
+                                            Utils.slowPrintln("You check the skeleton for items...");
+                                            String[] prompts = new String[] {"Take all", "Take one"};
+                                            if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
+                                            {
+                                                ArrayList<Item> its = inv.getItems();
+                                                Item i = its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its)));
+                                                uinv.add(i);
+                                                its.remove(i);   
+                                            }
+                                            else
+                                            {
+                                                for(Item i : new ArrayList<>(inv.getItems())) if(!uinv.isFull())
+                                                {
+                                                    uinv.add(i);
+                                                    inv.remove(i);
+                                                }
+                                                
+                                                if(!inv.isEmpty()) Utils.slowPrint("Your inventory is full! You only took some of the items.");
+                                            }
+                                            if(inv.isEmpty()) actionVerb = "";
+                                        }
+                                        else Utils.slowPrintln("Your inventory is full! You cannot loot this.");
+                                        break;
+                                }
+                            }
+
+                            @Override
+                            public void inspect()
+                            {
+                                for(Item i : inv.getItems()) if(i instanceof Armor) 
+                                { 
+                                    if(curPlayer.getName().equals("Valeent"))
+                                    {
+                                        Utils.slowPrintln(Armor.armorDescs.get(((Armor)i).getMat()));
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        Utils.slowPrintln(Armor.armorDescs.get(Armor.MaterialType.RUSTED));
+                                        return;
+                                    }
+                                }
+                                description = "Old dilapidated skeleton.";
+                                Utils.slowPrintln(getDescription());
+                            }
+                        };
+        for(Item i : clegear) cleskelly.add(i);
+        cleskelly.add(new Sword(5));
+
         for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
         Room cell14 = new Room(celld, celll, cellf, celln, false);
         new Door(cell14, hall, Wall.WEST);
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
 
-        ArrayList<Enemy> ens = new ArrayList<>(List.of(new Enemy(3), new Enemy(3), new Enemy(3)));
+        ArrayList<Enemy> ens = new ArrayList<>(List.of(new Goblin(3), new Goblin(3), new Goblin(3)));
         Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    
                                 "The Chamber.",
                                 "Chamber",
@@ -182,22 +287,18 @@ public class Environment
                                   "Shroom Room.",
                                   "Mossy Ruin",
                                   true);
-        Enemy shroomie = new Enemy(2, new Inventory(2), 1, 99999, "Mushroom Monster");
-        mossyRuin.add(shroomie);
-        mossyRuin.add(new Dialogue(new ArrayList<>(
-            List.of(shroomie)), 
-            new Dialogue.Node.L<Effect>(
-                0, 
-                "I see you.", 
-                new String[]{
-                    "Hello?", 
-                    "Uh, ok.", 
-                    "Die."
-                },
-                new Effect(Effect.Type.POISON, 1, 1), 
-                true
-            )
-        ));
+        Interactible mushroom = new Interactible("Big mushroom",
+                                                 "table-sized toadstool",
+                                                 "on",
+                                                 "",
+                                                 "",
+                                                 "",
+                                                 "",
+                                                 "toad-sized TABLEstool",
+                                                 "",
+                                                 "the floor"
+                                                );
+        mossyRuin.add(mushroom);
         
         Room joiner1 = new Room();
 
@@ -205,10 +306,9 @@ public class Environment
         new Door(chamber, new Room(), Wall.WEST);
         new Door(chamber, joiner1, Wall.EAST);
 
-        Room treasureRoom = new Room("a room filled to the brim in a plentious manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion.",
+        Room treasureRoom = new Room("a room filled to the brim in a plenteous manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion",
                                      "Treasure Room");
         new GoldenPot(treasureRoom);
-        treasureRoom.add(new Enemy(30, new Inventory(1), 0, 0, "Gold Man", "Midis"));
         new Door(joiner1, treasureRoom, Wall.SOUTH);
 
         new Torch(chamber, Wall.EAST);

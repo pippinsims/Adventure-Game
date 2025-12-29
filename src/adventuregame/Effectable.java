@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Unit;
+import adventuregame.items.Armor;
 
 public abstract class Effectable extends Describable{
     protected ArrayList<Effect> effects = new ArrayList<Effect>();
@@ -70,28 +73,51 @@ public abstract class Effectable extends Describable{
         return result;
     }
 
+    private float computeDefenseVal(float v)
+    {
+        if(this instanceof Unit)
+        {
+            Unit u = (Unit)this;
+
+            for(Item i : u.getInventory().getItems()) if(i instanceof Armor && ((Armor)i).isEquipped())
+            {
+                v -= ((Armor)i).getDefense();
+            }
+        }
+        if(v < 0)
+        {
+            Utils.slowPrintln("Armor blocked all damage!");
+            v = 0;
+        }
+
+        return v;
+    }
+
     final public EffectUpdateResult receiveDamage(Damage damage, String message)
     {
+        float val = damage.getValue();
+        val = computeDefenseVal(val);
+
         if(message == null) Utils.slowPrintln(damage.getMessage());
         else Utils.slowPrintln(getName() + " is hit by " + message);
         switch (damage.getType()) {
             case BASIC: case BLUNT:
-                health -= damage.getValue();
+                health -= val;
                 break;
             
             case PSYCHIC:
-                health -= new Random().nextFloat(damage.getValue() + 1); //from 0 to damage
+                health -= new Random().nextFloat(val + 1); //from 0 to damage
                 break;
 
             case FIRE:
                 if(damage.getMode() == Damage.Mode.EFFECT && damage.hasEffect())
                     health -= damage.getEffect().strength;
                 else
-                    health -= damage.getValue() + 1;
+                    health -= val + 1;
                 break;
 
             case UNBLOCKABLE:
-                health -= damage.getValue();
+                health -= val;
                 break;
         }
 

@@ -153,6 +153,8 @@ public class GoldenPot extends DynamicItem {
                 return new Damage(1, Damage.Type.BLUNT, "You attempt to attack with your golden pot.");
             }
 
+            @Override public boolean isDynamicItem() { return true; }
+
             @Override public String getPluralDescription() { return self.getPluralDescription(); }
 
             @Override public String getDescription() { return self.getDescription(); }

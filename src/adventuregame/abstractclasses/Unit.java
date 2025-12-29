@@ -3,6 +3,7 @@ import adventuregame.Damage;
 import adventuregame.Effectable;
 import adventuregame.Inventory;
 import adventuregame.Room;
+import adventuregame.items.Armor;
 
 //FOR PLAYER, FOLLOWERS, NPCS, AND ENEMIES
 
@@ -22,4 +23,6 @@ public abstract class Unit extends Effectable
 
     protected String deathMsg;
     public String getDeathMessage() { return deathMsg; }
+
+    protected Armor held = null;
 }

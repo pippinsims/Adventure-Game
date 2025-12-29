@@ -1,6 +1,7 @@
 package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
@@ -373,7 +374,7 @@ public class Player extends Unit
     private void interact()
     {
         ArrayList<Interactible> inters = myRoom.getUniqueInters();
-        for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty()) inters.remove(i);
+        for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty() || !i.isEnabled) inters.remove(i);
         for(Dialogue d : myRoom.dialogues) 
         {
             if(myRoom.getDialogueForced() && d.allActorsAlive() && !d.isComplete())

@@ -1,6 +1,7 @@
 package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.wallentities.Door;
 
