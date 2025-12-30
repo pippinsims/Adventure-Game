@@ -3,8 +3,8 @@ package adventuregame;
 import adventuregame.interactibles.ItemHolder;
 import adventuregame.interactibles.SkeletonInteractible;
 import adventuregame.interactibles.Table;
-import adventuregame.interactibles.WallEntity.Wall;
-import adventuregame.interactibles.wallentities.*;
+import adventuregame.interactibles.WallInteractible.Wall;
+import adventuregame.interactibles.wallinteractibles.*;
 import adventuregame.items.Armor;
 import adventuregame.items.Sword;
 import adventuregame.abstractclasses.Enemy;
@@ -39,52 +39,36 @@ public class Environment
 
     public static void main(String[] args) throws Exception 
     {
-        //room r0 is the current room
         generateMap();
 
         printIntroduction();
         System.out.println();
 
-        ArrayList<Room> playerRooms = new ArrayList<>();
-        //TODO seems like this whole loop could be optimized and shrunken
         while(!allPlayers.isEmpty())
         {
-            for(Player p : allPlayers)
+            //all players
+            for(Player p : new ArrayList<>(allPlayers))
             {
-                boolean found = false;
-                for(Room r : playerRooms) { if(r == p.getRoom()) { found = true; break; } } //must compare by reference not description
-                if(!found) playerRooms.add(p.getRoom());
+                curPlayer = p; curRoom = p.getRoom(); isLaur = p.getName().equals("Laur");
+                p.updateUnit();
+                System.out.println();
+                for(Dialogue d : curRoom.dialogues) if(d.atEnd) d.complete();
             }
-            
-            for(Room r : new ArrayList<>(playerRooms))
+            curPlayer = null; isLaur = false;
+
+            ArrayList<Room> playerRooms = new ArrayList<>();
+            for(Player p : allPlayers) if(!Utils.contains(playerRooms, p.getRoom())) playerRooms.add(p.getRoom());
+
+            //all enemies in player rooms
+            for(Room r : playerRooms) if(!r.enemies.isEmpty())
             {
                 curRoom = r;
-
-                for (Player p : new ArrayList<>(r.players))
-                {
-                    curPlayer = p;
-                    isLaur = p.getName().equals("Laur");
-                    p.updateUnit();
-                    System.out.println();
-                    if(r.players.isEmpty()) break;
-                }
-                for(Dialogue d : r.dialogues) if(d.atEnd) d.complete();
-
-                if(r.players.isEmpty()) 
-                {
-                    playerRooms.remove(r);
-                    continue;
-                }
-                if(allPlayers.isEmpty()) break;
-                
                 for(Enemy e : new ArrayList<>(r.enemies))
                 {
                     e.updateUnit();
                     System.out.println();
                     if(r.players.isEmpty()) break;
                 }
-
-                if(r.players.isEmpty()) playerRooms.remove(r);
             }
 
             System.out.println("\t\t\t\t\t\t\t\t--Round End--");
@@ -113,7 +97,7 @@ public class Environment
     private static void addPlayer(Player p)
     {
         allPlayers.add(p);
-        curRoom.players.add(p);
+        curRoom.add(p); //TODO for now, all players spawn in curRoom
     }
 
     private static void generateMap()
@@ -149,69 +133,40 @@ public class Environment
             "bent over",
             "",
             "",
-            "brush aside",
-            "from",
-            "",
-            "",
+            "brush",
+            "aside from",
             "the table"
         )
         {
             @Override 
             public void action(Unit u)
             {
-                switch(actionVerb)
+                getRoom().interactibles.remove(this);
+                if(new Random().nextInt(10) == 9)
                 {
-                    case "brush aside":
-                        if(new Random().nextInt(10) == 9)
-                        {
-                            Utils.slowPrintln("You attempt to brush away the skeleton, but it reacts, bones clinking, and assumes a combat stance!");
-                            getRoom().interactibles.remove(this);
-                            getRoom().add(new Skeleton(inv));
-                        }
-                        else
-                        {
-                            Utils.slowPrintln("You brush the hand of the skeleton away from the sword.");
-                            cleholder.isEnabled = true;
-                            actionVerb = "loot";
-                            normalLocPrep = "lying on";
-                            locReference = "the floor";
-                        }
-                        break;
-                    case "loot":
-                        Inventory uinv = u.getInventory();
-                        if(uinv.isFull())
-                            Utils.slowPrintln("Your inventory is full! You cannot loot this.");
-                        else
-                        {
-                            Utils.slowPrintln("You check the skeleton for items...");
-                            String[] prompts = new String[] {"Take all", "Take one"};
-                            if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
-                            {
-                                ArrayList<Item> its = inv.getItems();
-                                Item i = its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its)));
-                                uinv.add(i);
-                                inv.remove(i);
-                            }
-                            else
-                            {
-                                for(Item i : new ArrayList<>(inv.getItems())) if(!uinv.isFull())
-                                {
-                                    uinv.add(i);
-                                    inv.remove(i);
-                                }
-                                
-                                if(!inv.isEmpty()) Utils.slowPrint("Your inventory is full! You only took some of the items.");
-                            }
-                            boolean armorFound = false;
-                            for(Item i : inv.getItems()) if(i instanceof Armor) { armorFound = true; break; }
-                            if(!armorFound) description = "old dilapidated skeleton";
-                            if(inv.isEmpty()) actionVerb = "";
-                        }
-                        break;
+                    Utils.slowPrintln("You attempt to brush away the skeleton, but it reacts, bones clinking, and assumes a combat stance!");
+                    getRoom().add(new Skeleton(inv));
                 }
+                else
+                {
+                    Utils.slowPrintln("You brush the hand of the skeleton away from the sword, causing it to crumble to the floor.");
+                    new SkeletonInteractible(
+                        getRoom(), 
+                        name, 
+                        description,
+                        "on",
+                        "",
+                        "",
+                        "loot",
+                        "",
+                        "the floor",
+                        inv
+                    );
+                }
+                cleholder.isEnabled = true;
             }
         };
-        for(Item i : new ArrayList<>(List.of(//TODO ned descs
+        for(Item i : new ArrayList<>(List.of(
             new Armor("Ancient Boot" , "rusty boots", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.BOOTS),
             new Armor("Ancient Gaunt", "rusty gauntlets", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.GAUNTLETS),
             new Armor("Ancient Helm" , "rusty helmet", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.HELMET),
@@ -232,7 +187,7 @@ public class Environment
                                 true);
         for(Enemy e : ens) chamber.add(e);
         chamber.add(new Dialogue(
-            new ArrayList<>(ens), 
+            new ArrayList<>(ens),
             new Dialogue.Node.B(
                 0,
                 "You're not supposed to be out'n'about!", 
@@ -253,13 +208,13 @@ public class Environment
                         }, 
                         new Dialogue.Node[] 
                         {
-                            new Dialogue.Node.B(0, "Then you die."),
+                            new Dialogue.Node.L(0, "Then you die."),
                             new Dialogue.Node.L<Room>(0, "And don't you dare leave again...", null, curRoom, true),
                             new Dialogue.Node.L<Room>(curRoom, true)
                         }
                     ),
                     new Dialogue.Node.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true),
-                    new Dialogue.Node.B()
+                    new Dialogue.Node.L()
                 }
             )
         ));
@@ -278,10 +233,8 @@ public class Environment
                             "",
                             "",
                             "",
-                            "toad-sized TABLEstool",
-                            "",
                             "the floor"
-                        );
+                        ) {{ descMap.put("Laur", "toad-sized TABLEstool"); }};
         
         Room joiner1 = new Room();
 
@@ -300,16 +253,16 @@ public class Environment
 
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
-        // addPlayer(new Player());
+        addPlayer(new Player());
         addPlayer(new Player("Nuel"));
         addPlayer(new Player("Valeent"));
-        // addPlayer(new Player("Peili"));
-        // addPlayer(new Player("Dormaah"));
+        addPlayer(new Player("Peili"));
+        addPlayer(new Player("Dormaah"));
     }
 
     public static void printInfo(Room r, boolean peek)
     {
-        System.out.println("--Info--");
+        if(!peek) System.out.println("--Info--");
 
         if(!r.getIsFamiliar())
         {

@@ -33,7 +33,6 @@ public class Armor extends Item {
 
     protected MaterialType mat;
     protected PartType type;
-    protected String name, description, pluralDescription;
 
     public Armor(String name, String description, String pluralDescription, MaterialType mat, PartType type)
     {
@@ -103,11 +102,5 @@ public class Armor extends Item {
         throw new UnsupportedOperationException("Unimplemented method 'getDamage'");
     }
 
-    @Override public String getName() { return name; }
-
     @Override public Item clone() { return new Armor(name, description, pluralDescription, mat, type); }
-
-    @Override public String getPluralDescription() { return pluralDescription; }
-    
-    @Override public String getDescription() { return description; }   
 }

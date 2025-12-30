@@ -3,21 +3,20 @@ package adventuregame;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.Unit;
-import adventuregame.interactibles.wallentities.Door;
+import adventuregame.interactibles.wallinteractibles.Door;
 
 import java.util.ArrayList;
 
 public class Room extends Describable
 {
+    public static ArrayList<Room> rooms = new ArrayList<>();
+
     public  ArrayList<Enemy>        enemies       = new ArrayList<>();
     public  ArrayList<Player>       players       = new ArrayList<>();
     public  ArrayList<Interactible> interactibles = new ArrayList<>();
     public  ArrayList<Dialogue>     dialogues     = new ArrayList<>();
     private ArrayList<Door>         doors         = new ArrayList<>();
     private ArrayList<Player>       familiars     = new ArrayList<>();
-    private String name;
-    private String description;
-    private String laurDescription;
     private String familiarDescription;
     private boolean forceDialogue = false;
 
@@ -25,39 +24,41 @@ public class Room extends Describable
     {
         name = "Bare";
         description = "a bare room";
-        laurDescription = "an... empty place";
+        descMap.put("Laur", "an... empty place");
         familiarDescription = "Bare room.";
+        rooms.add(this);
     }
 
     public Room(String d, String l, String f, String n, boolean forceDialogue)
     {
         description = d;
-        laurDescription = l;
+        descMap.put("Laur", l);
         familiarDescription = f;
         name = n;
         this.forceDialogue = forceDialogue;
+        rooms.add(this);
     }
 
     public Room(String d, String f, String n, boolean forceDialogue)
     {
         description = d;
-        laurDescription = d;
         familiarDescription = f;
         name = n;
         this.forceDialogue = forceDialogue;
+        rooms.add(this);
     }
 
     public Room(String d, String n)
     {
         description = d;
-        laurDescription = d;
         familiarDescription = n + ".";
         name = n;
+        rooms.add(this);
     }
 
     public void discover()
     {
-        if(!familiars.contains(Environment.curPlayer)) familiars.add(Environment.curPlayer);
+        descMap.put(Environment.curPlayer.getName(), familiarDescription);
     }
 
     public boolean getIsFamiliar() { return familiars.contains(Environment.curPlayer); }
@@ -95,13 +96,6 @@ public class Room extends Describable
         for (Door door : doors) door.setWall(this);
     }
 
-    public String getDescription()
-    {
-        if(getIsFamiliar()) return familiarDescription;
-        if(Environment.isLaur) return laurDescription;
-        return description;
-    }
-
     public ArrayList<Interactible> getUniqueInters()
     {
         ArrayList<Interactible> inters = new ArrayList<>();
@@ -118,14 +112,5 @@ public class Room extends Describable
         //if the doors have same from room and to room TODO .equals() should just compare by reference again, but i don't know what that'd break
         for(Interactible i1 : arr) if(i1 instanceof Door && ((Door)i1).getRoom() == d.getRoom() && ((Door)i1).getNextRoom(d.getRoom()) == d.getNextRoom(d.getRoom())) return true;
         return false;
-    }
-
-    @Override public String getName() { return name; }
-    
-    // TODO just here because it has to be, I don't know if there'd ever be a case for describing multiple of the exact same room
-    @Override
-    public String getPluralDescription() 
-    {
-        throw new UnsupportedOperationException("Unimplemented method 'getPluralDescription'");
     }
 }

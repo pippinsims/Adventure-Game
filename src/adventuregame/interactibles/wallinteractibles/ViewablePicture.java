@@ -1,21 +1,16 @@
-package adventuregame.interactibles.wallentities;
+package adventuregame.interactibles.wallinteractibles;
 
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
-import adventuregame.interactibles.WallEntity;
+import adventuregame.interactibles.WallInteractible;
 
-public class ViewablePicture extends WallEntity {
+public class ViewablePicture extends WallInteractible {
     
     private String txtFileName;
     
     public ViewablePicture(Room room, String fileName, Wall wall, String description, String name)
     {
-        myRoom = room;
-        myRoom.add(this);
-        this.wall = wall;
-        txtFileName = fileName;
-
         setDefaults(
             name, 
             description, 
@@ -23,19 +18,18 @@ public class ViewablePicture extends WallEntity {
             "depictions", 
             "", 
             "Inspect",
-            "",
-            "",
-            "scrawlings"
+            ""
         );
-        
+
+        myRoom = room;
+        myRoom.add(this);
+        this.wall = wall;
+        txtFileName = fileName;
+
         setLocationReference();
     }
 
-    @Override
-    public void action(Unit u) 
-    {
-        inspect();
-    }
+    @Override public void action(Unit u) { inspect(); }
 
     @Override
     public void inspect()
@@ -44,7 +38,5 @@ public class ViewablePicture extends WallEntity {
         String s = Utils.readFile(txtFileName);
         System.out.println(s);
         System.out.println("\"" + name + "\"");
-        System.out.println("Press enter to continue");
-        Utils.scanner.nextLine();
     }
 }

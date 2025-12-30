@@ -1,10 +1,31 @@
 package adventuregame.abstractclasses;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import adventuregame.Environment;
+import adventuregame.Player;
+
 public abstract class Describable
 {
-    public abstract String getPluralDescription();
-    public abstract String getDescription();
-    public abstract String getName();
+    protected String description = "", pluralDescription = "", name;
+    protected Map<String,String> descMap = new HashMap<>();
+    protected Map<String,String> pDescMap = new HashMap<>();
+
+    public final String getName() { return name; }
+    
+    public final String getDescription() { 
+        Player p = Environment.curPlayer;
+        if(p != null && descMap.containsKey(p.getName())) return descMap.get(p.getName());
+        else return description;
+    }
+
+    public final String getPluralDescription() { 
+        Player p = Environment.curPlayer;
+        if(p != null && pDescMap.containsKey(p.getName())) return pDescMap.get(p.getName());
+        else return pluralDescription; 
+    }
+    
 
     @Override
     public int hashCode() 

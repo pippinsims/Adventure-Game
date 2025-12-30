@@ -137,11 +137,7 @@ public class QuickTimeEvent
                     for(Unit u : actor.getRoom().players) if(u != actor) helper = u;
                     QuickTimeEvent help = new QuickTimeEvent(
                         helper, 
-                        new Describable() {
-                            @Override public String getPluralDescription() { return null; }
-                            @Override public String getDescription() { return "helpcledobl"; }
-                            @Override public String getName() { return null; }
-                        },
+                        new Describable() { { description = "helpcledobl"; } },
                         maxLength - currentRound, 
                         helper.getName() + ", do you help?", 
                         new String[] {"Help.","Do not help."}

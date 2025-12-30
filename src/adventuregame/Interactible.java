@@ -1,43 +1,43 @@
 package adventuregame;
 
-import java.util.Random;
-
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
 
 public class Interactible extends Describable
 {
-    public String name;
-    protected String description;
     public String normalLocPrep;
-    protected String pluralDescription;
     public String plurLocPrep; 
     public String actionVerb; //set to "" to make this an un-actionable interactible
     public String actLocPrep;
-    protected String randomDescription;
-    protected String randomPluralDescription;
     public String locReference;
     protected Room myRoom;
     public boolean isEnabled = true;
 
     public Interactible() {};
 
-    public Interactible(Room r, String name, String description, String preposition, String pluralDescription, String pluralPreposition, String actionVerb, String actionPreposition, String randomDescription, String randomPluralDescription, String locationReference)
+    public Interactible(Room r, String name, String description, String preposition, String pluralDescription, String pluralPreposition, String actionVerb, String actionPreposition, String locationReference)
     {
+        setDefaults(
+            name,
+            description,
+            preposition,
+            pluralDescription,
+            pluralPreposition,
+            actionVerb,
+            actionPreposition
+        );
+
+        locReference = locationReference; 
+
         myRoom = r;
         r.add(this);
-        setDefaults(name,description,preposition,pluralDescription,pluralPreposition,actionVerb,actionPreposition,randomDescription,randomPluralDescription);
-        locReference = locationReference; 
+        
     }
 
-    protected void setDefaults(String n, String d, String prep, String pd, String pprep, String a, String aprep, String rd, String rpd)
+    protected void setDefaults(String n, String d, String prep, String pd, String pprep, String a, String aprep)
     {
         if(aprep.isEmpty()) aprep = prep;
         if(pprep.isEmpty()) pprep = prep;
-        if(rd.isEmpty()){ 
-            rd = description;
-            rpd = pd;
-        }
 
         name                    = n;
         description             = d;
@@ -46,19 +46,6 @@ public class Interactible extends Describable
         plurLocPrep             = pprep;
         actionVerb              = a; //won't perform action if actionVerb.equals("")
         actLocPrep              = aprep;
-        randomDescription       = rd;
-        randomPluralDescription = rpd;
-    }
-
-    protected void setDefaults(String n, String d, String prep, String pd, String pprep, String a, String aprep, String[] rd, String[] rpd)
-    {
-        if(rd.length == 0)      setDefaults(n, d, prep, pd, pprep, a, aprep, d, pd);
-        else 
-        {
-            int r = new Random().nextInt(rd.length);
-            if(rpd.length == 0) setDefaults(n, d, prep, pd, pprep, a, aprep, rd[r], pd);
-            else                setDefaults(n, d, prep, pd, pprep, a, aprep, rd[r], rpd[r]);
-        }
     }
 
     public void enable() { isEnabled = true; }
@@ -93,27 +80,6 @@ public class Interactible extends Describable
     {
         for (Interactible i : myRoom.interactibles) if(this != i && this.equals(i)) return false;
         return true;
-    }
-    
-    @Override
-    public String getPluralDescription()
-    {
-        if(Environment.curPlayer.getName().equals("Laur")) return randomPluralDescription;
-        else return pluralDescription;
-        
-    }
-
-    @Override
-    public String getDescription()
-    {
-        if(Environment.curPlayer.getName().equals("Laur")) return randomDescription;
-        else return description;
-    }
-
-    @Override
-    public String getName() 
-    {
-        return name;
     }
 
     public void action(Unit u)

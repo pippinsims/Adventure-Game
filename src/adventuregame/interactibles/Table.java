@@ -14,9 +14,7 @@ public class Table extends Interactible {
             "wooden tables",
             "in",
             "",
-            "",
-            new String[0],
-            new String[0]
+            ""
         );
 
         myRoom = r;

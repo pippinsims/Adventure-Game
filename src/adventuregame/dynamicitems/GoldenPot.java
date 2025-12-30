@@ -14,7 +14,7 @@ public class GoldenPot extends DynamicItem {
     
     public static final String[] descriptions = new String[]{"smooth, curvaceous golden pot. It has a spherical base which curves into a neck that widens at the mouth", "golden pot, no longer smooth, it has a large dent", "vaguely pot-shaped vessel, made of gold", "crumpled piece of gold"};
     public static final String[] pluralDescs  = new String[]{"golden pots","dented gold pots","heavily damaged gold pots","hunks of deformed goldwork"};
-    public String name = "Golden Pot";
+    {name = "Golden Pot";}
     public int dmg = 0;
 
     public GoldenPot()
@@ -41,12 +41,6 @@ public class GoldenPot extends DynamicItem {
         placeInteractible(room);
     }
 
-    @Override public String getPluralDescription() { return pluralDescs[dmg]; }
-
-    @Override public String getDescription() { return descriptions[dmg]; }
-
-    @Override public String getName() { return name; }
-
     @Override protected void init()
     {
         GoldenPot parent = this;
@@ -68,15 +62,13 @@ public class GoldenPot extends DynamicItem {
                 }
 
                 setDefaults(
-                    "", 
-                    "",
+                    self.name,
+                    self.description,
                     prep,
-                    "",
+                    self.pluralDescription,
                     "",
                     "Interact with",
-                    "",
-                    new String[0],
-                    new String[0]
+                    ""
                 );
             }
 
@@ -113,7 +105,8 @@ public class GoldenPot extends DynamicItem {
                                 break;
                         }
 
-                        description = self.getDescription();
+                        pluralDescription = pluralDescs[dmg];
+                        description = descriptions[dmg];
                         break;
 
                     case 1:
@@ -129,16 +122,16 @@ public class GoldenPot extends DynamicItem {
             {
                 Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
             }
-
-            @Override public String getPluralDescription() { return self.getPluralDescription(); }
-
-            @Override public String getDescription() { return self.getDescription(); }
-
-            @Override public String getName() { return self.getName(); }
         };
 
         it = new Item() {
             private GoldenPot self = parent;
+
+            {
+                pluralDescription = self.pluralDescription;
+                description = self.description;
+                name = self.name;
+            }
 
             @Override
             public void action(Unit u) 
@@ -154,12 +147,6 @@ public class GoldenPot extends DynamicItem {
             }
 
             @Override public boolean isDynamicItem() { return true; }
-
-            @Override public String getPluralDescription() { return self.getPluralDescription(); }
-
-            @Override public String getDescription() { return self.getDescription(); }
-            
-            @Override public String getName() { return self.getName(); }
 
             @Override public Item clone() { return new GoldenPot().item(); }
         };

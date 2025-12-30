@@ -25,8 +25,9 @@ public class Skeleton extends Enemy{
     }
 
     @Override
-    public void performAction(int i) {
-        switch(Action.values()[i-1])
+    public void performAction(int i) 
+    {
+        switch(Action.values()[i])
         {
             case NONE:
                 Utils.slowPrintln("The " + getModifiedDescription("sad") + " is motionless.");

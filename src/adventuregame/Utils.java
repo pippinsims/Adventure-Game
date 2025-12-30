@@ -80,7 +80,7 @@ public class Utils {
     public static Map<Describable, Integer> countsOf(ArrayList<? extends Describable> arr)
     {
         Map<Describable, Integer> m = new LinkedHashMap<>(); //preserve insertion order
-        for (Describable d : arr) m.put(d, m.getOrDefault(d, 0) + 1);
+        for (Describable d : arr) m.put(d, m.getOrDefault(d, 0) + 1); //based on Description
         return m;
     }
 
@@ -355,6 +355,12 @@ public class Utils {
     public static boolean contains(String toCheck, String[] potentials)
     {
         for(String s : potentials) if(s.equals(toCheck)) return true;
+        return false;
+    }
+
+    public static boolean contains(ArrayList<? extends Describable> arr, Object toFind)
+    {
+        for(Object o : arr) { if(o == toFind) return true; }
         return false;
     }
 

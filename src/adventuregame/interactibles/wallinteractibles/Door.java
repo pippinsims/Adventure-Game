@@ -1,28 +1,18 @@
-package adventuregame.interactibles.wallentities;
+package adventuregame.interactibles.wallinteractibles;
 
 import adventuregame.Environment;
-import adventuregame.Interactible;
 import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
-import adventuregame.interactibles.WallEntity;
+import adventuregame.interactibles.WallInteractible;
 
-public class Door extends WallEntity
+public class Door extends WallInteractible
 {
     Room myOtherRoom;
-    private boolean autoUse = false;
 
     public Door(Room room1, Room room2, Wall wall)
     {
-        myRoom = room1;
-        myRoom.add(this);
-
-        myOtherRoom = room2;
-        myOtherRoom.add(this);
-        
-        this.wall = wall;
-
         setDefaults(
             "Door", 
             "door", 
@@ -30,10 +20,19 @@ public class Door extends WallEntity
             "doors", 
             "that lead through", 
             "Use",
-            "",
-            new String[]{"ordinary ol\' creaky slab o\' wood" , "regular ol\' creaky plank" , "unassuming, decrepit wooden door" , "Boris"  , "doors"},
-            new String[]{"ordinary ol\' creaky slabs o\' wood", "regular ol\' creaky planks", "unassuming, decrepit wooden doors", "Borises", "doorses"}
+            ""
         );
+        int r = Utils.rand.nextInt(5);
+        descMap.put("Laur", new String[]{"ordinary ol\' creaky slab o\' wood" , "regular ol\' creaky plank" , "unassuming, decrepit wooden door" , "Boris"  , "doors"}[r]);
+        pDescMap.put("Laur", new String[]{"ordinary ol\' creaky slabs o\' wood", "regular ol\' creaky planks", "unassuming, decrepit wooden doors", "Borises", "doorses"}[r]);
+
+        myRoom = room1;
+        myRoom.add(this);
+
+        myOtherRoom = room2;
+        myOtherRoom.add(this);
+        
+        this.wall = wall;
 
         setLocationReference();
     }
@@ -57,6 +56,7 @@ public class Door extends WallEntity
             myOtherRoom = temp;
 
             wall = complementOf(wall);
+            
             setLocationReference();
         }
         else if(room != myRoom)
@@ -75,52 +75,32 @@ public class Door extends WallEntity
         } 
     }
 
-    public void autoUse()
-    {
-        autoUse = true;
-    }
-
     @Override
     public void inspect()
     {
-        Utils.slowPrintln("You take a closer look at this gate-esque object and you notice that it is made of poplar wood, and has marks in it, as if from a sword.");
+        Utils.slowPrint("You peek through the door. ");
+        Environment.printInfo(getNextRoom(Environment.curRoom), true);
     }
 
     @Override
     public void action(Unit u)
     {
         Room r = u.getRoom();
-        
-        if(!autoUse)
-        {
-            if(Utils.promptList("You can:", new String[] {"Peek", "Use"}) == 0)
-            {
-                Environment.printInfo(getNextRoom(r), true);
-                Utils.slowPrint("Press Enter to continue");
-                Utils.scanner.nextLine();
-                if(u instanceof Player) ((Player)u).promptForAction();
-                return;
-            }
-        }
 
         Utils.slowPrint("you used " + (Environment.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
         
-        for(Interactible i : r.interactibles) 
-            {System.out.println(i.getDescription());
-                if(i instanceof Door)
-                {
-                    System.out.println(": " + ((Door)i).myRoom.getDescription() + " to " + (((Door)i).myOtherRoom.getDescription()));
-                }
-            }
         r.remove(u);
-        
-        //TODO this breaks when you leave cledobl room with leave()
-        Environment.printInfo(r, false); //prints cledobl room
-        Environment.printInfo(myRoom, false); //prints hallway (6 west, 8 east???)
-        Environment.printInfo(myOtherRoom, false); //prints window room?!?
-
         getNextRoom(r).add(u);
-        autoUse = false;
+
+        if(u instanceof Player)
+        {
+            Player p = ((Player)u);
+            if(p.doorMoves-- > 0)
+            {
+                p.setActions();
+                p.promptForAction();
+            }
+        }
     }
 
     final public Room getNextRoom(Room curRoom)

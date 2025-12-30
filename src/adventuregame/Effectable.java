@@ -144,7 +144,7 @@ public abstract class Effectable extends Describable{
     {
         effects.add(e);
 
-        Utils.slowPrint("You have been effected by " + e.name);
+        Utils.slowPrint("You have been effected by " + e.getName());
         int dur = e.cooldown.getRemainingDuration();
         if(dur >= 0)
             Utils.slowPrintln(", and will be effected by it for " + dur + " more turn" + (dur != 1 ? "s" : "") + ".");

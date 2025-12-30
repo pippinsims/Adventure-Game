@@ -12,56 +12,65 @@ import adventuregame.items.Armor;
 
 public class SkeletonInteractible extends InventoryInteractible
 {
+    private String simpleDesc = "old dilapidated skeleton";
+
     public SkeletonInteractible(Room r, Inventory i)
     {
         super(r, "Skeleton", 
               "skeleton bone pile",
-              "lying",
+              "on",
               "",
               "",
               "loot",
-              "on",
-              "",
               "",
               "the floor");
         inv = i;
     }
 
-    public SkeletonInteractible(Room r, String n, String d, String p, String pd, String pp, String a, String ap, String rd, String rpd, String l) {
-        super(r, n, d, p, pd, pp, a, ap, rd, rpd, l);
+    public SkeletonInteractible(Room r, String n, String d, String p, String pd, String pp, String a, String ap, String l, Inventory i) {
+        super(r, n, d, p, pd, pp, a, ap, l);
+        inv = i;
+    }
+
+    public SkeletonInteractible(Room r, String n, String d, String p, String pd, String pp, String a, String ap, String l) {
+        super(r, n, d, p, pd, pp, a, ap, l);
         inv = new Inventory(6);
     }
 
     @Override 
     public void action(Unit u)
     {
-        if(actionVerb.equals("loot"))
+        Inventory uinv = u.getInventory();
+        if(uinv.isFull())
+            Utils.slowPrintln("Your inventory is full! You cannot loot this.");
+        else
         {
-            Inventory uinv = u.getInventory();
-            if(uinv.isFull())
+            ArrayList<Item> its = inv.getItems();
+            Utils.slowPrintln("You check the skeleton for items...");
+            String[] prompts = new String[] {"Take all", "Take one"};
+            if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
             {
-                Utils.slowPrintln("You check the skeleton for items...");
-                String[] prompts = new String[] {"Take all", "Take one"};
-                if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
+                Item i = its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its)));
+                uinv.add(i);
+                inv.remove(i);
+            }
+            else
+            {
+                for(Item i : new ArrayList<>(its)) if(!uinv.isFull())
                 {
-                    ArrayList<Item> its = inv.getItems();
-                    Item i = its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its)));
                     uinv.add(i);
-                    its.remove(i);   
+                    inv.remove(i);
                 }
                 else
                 {
-                    for(Item i : new ArrayList<>(inv.getItems())) if(!uinv.isFull())
-                    {
-                        uinv.add(i);
-                        inv.remove(i);
-                    }
-                    
-                    if(!inv.isEmpty()) Utils.slowPrint("Your inventory is full! You only took some of the items.");
+                    Utils.slowPrint("Your inventory is full! You only took some of the items.");
+                    break;
                 }
-                if(inv.isEmpty()) actionVerb = "";
             }
-            else Utils.slowPrintln("Your inventory is full! You cannot loot this.");
+            boolean armorFound = false;
+            for(Item i : its) if(i instanceof Armor) { armorFound = true; break; }
+            if(!armorFound) description = simpleDesc;
+            if(inv.isEmpty()) actionVerb = "";
         }
     }
 
@@ -75,7 +84,7 @@ public class SkeletonInteractible extends InventoryInteractible
             Utils.slowPrintln(Armor.armorDescs.get(mat == Armor.MaterialType.ANCIENT_RUSTED && !Environment.curPlayer.getName().equals("Valeent") ? Armor.MaterialType.RUSTED : mat));
             return;
         }
-        description = "old dilapidated skeleton.";
+        description = simpleDesc;
         Utils.slowPrintln(getDescription());
     }
 }

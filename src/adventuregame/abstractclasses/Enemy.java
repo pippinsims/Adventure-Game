@@ -3,7 +3,6 @@ import java.util.Random;
 
 import adventuregame.Damage;
 import adventuregame.Dialogue;
-import adventuregame.Environment;
 import adventuregame.Inventory;
 import adventuregame.Room;
 import adventuregame.Utils;
@@ -15,8 +14,6 @@ public abstract class Enemy extends Unit
     protected Inventory inv;
     protected Damage dmg;
     protected int wisdom;
-    protected String description, pluralDescription, randomDescription;
-    protected String name;
 
     protected enum Action
     {
@@ -93,17 +90,7 @@ public abstract class Enemy extends Unit
         return names[new Random().nextInt(names.length)];
     }
 
-    public String getDescription()
-    {
-        if(Environment.isLaur)
-            return randomDescription;
-        else
-            return description;
-    }
-
-    public void randomizeDesc() { randomDescription = getRandomDescription(); }
-
-    public String getName() { return name; }
+    // public void randomizeDesc() { randomDescription = getRandomDescription(); }
 
     public Inventory getInventory() { return inv; }
 
@@ -116,11 +103,11 @@ public abstract class Enemy extends Unit
         //DECISIONMAKING FOR ENEMY
         if(isStunned || curRoom.players.isEmpty())
         {
-            performAction(1);
+            performAction(0);
             isStunned = false;
         }
         else
-            performAction(2);
+            performAction(1);
     }
 
     public abstract void pleaResponse();
@@ -137,16 +124,9 @@ public abstract class Enemy extends Unit
         for(Dialogue d : myRoom.dialogues) if(!d.isAtEnd() && d.allActorsAlive() && d.getCurrentActor() == this) 
         {
             nodials &= false;
-            d.next(); 
-            Dialogue.processLeaf(d.getCurrent());
+            d.next();
         }
         if(nodials) chooseAction(myRoom);
-    }
-    
-    @Override
-    public String getPluralDescription()
-    {
-        return pluralDescription;
     }
 
     @Override

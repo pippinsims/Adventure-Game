@@ -7,11 +7,15 @@ import adventuregame.Utils;
 import adventuregame.abstractclasses.DynamicItem;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
-import adventuregame.interactibles.WallEntity;
+import adventuregame.interactibles.WallInteractible;
 
 public class Torch extends DynamicItem {
 
-    public String name = "Torch";
+    {
+        name = "Torch";
+        description = "burning torch, providing light and warmth";
+        pluralDescription = "torches";
+    }
 
     public Torch()
     {
@@ -24,25 +28,19 @@ public class Torch extends DynamicItem {
         collectItem(unit);
     }
 
-    public Torch(Room room, WallEntity.Wall wall)
+    public Torch(Room room, WallInteractible.Wall wall)
     {
         init();
         in.setRoom(room);
-        ((WallEntity)in).setWall(wall);
-        ((WallEntity)in).setLocationReference();
+        ((WallInteractible)in).setWall(wall);
+        ((WallInteractible)in).setLocationReference();
         placeInteractible(room);
     }
-
-    @Override public String getPluralDescription() { return "torches"; }
-
-    @Override public String getDescription() { return "burning torch, providing light and warmth"; }
-
-    @Override public String getName() { return name; }
 
     @Override protected void init()
     {
         Torch parent = this;
-        in = new WallEntity() {
+        in = new WallInteractible() {
             Torch self = parent;
             
             {
@@ -53,9 +51,7 @@ public class Torch extends DynamicItem {
                     self.getPluralDescription(), 
                     "", 
                     "Take", 
-                    "from",
-                    new String[]{"flaming stick", "blazing rod", "burny ol\' chunk o\' lumber"}, 
-                    new String[0]
+                    "from" //TODO Laur descs {"flaming stick", "blazing rod", "burny ol\' chunk o\' lumber"}
                 );
             }
 
@@ -76,6 +72,12 @@ public class Torch extends DynamicItem {
         it = new Item() {
             Torch self = parent;
 
+            {
+                pluralDescription = self.pluralDescription;
+                description = self.description;
+                name = self.name;
+            }
+
             @Override public void action(Unit u) { System.out.println("The torch is fiery... You stare deeply into the flames."); }
 
             @Override public Damage getDamage() throws Exception 
@@ -86,12 +88,6 @@ public class Torch extends DynamicItem {
             @Override public boolean isWeapon() { return true; }
             
             @Override public boolean isDynamicItem() { return true; }
-
-            @Override public String getPluralDescription() { return self.getPluralDescription(); }
-
-            @Override public String getDescription() { return self.getDescription(); }
-
-            @Override public String getName() { return self.getName(); }
 
             @Override public Item clone() { return new Torch().item(); }
         };

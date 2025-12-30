@@ -8,20 +8,24 @@ import adventuregame.abstractclasses.Enemy;
 
 public class Goblin extends Enemy {
 
-    public Goblin(int health) { setDefaults(health, new Inventory(5), 4, 20, "goblin with pointy ears", null); 
-        pluralDescription = "goblins with pointy ears";
+    { pluralDescription = "goblins"; }
+
+    public Goblin(int health) { 
+        setDefaults(health, new Inventory(5), 4, 20, "goblin with pointy ears", null);
     }
 
-    public Goblin(int health, Inventory inventory, int damage, int wisdom) { setDefaults(health, inventory, damage, wisdom, "goblin with pointy ears", null);
-        pluralDescription = "goblins with pointy ears";
-     }
-    
-    public Goblin(int health, Inventory inventory, int damage, int wisdom, String description, String pluralDescription) { setDefaults(health, inventory, damage, wisdom, description, null);
-        this.pluralDescription = pluralDescription; 
-     }
+    public Goblin(int health, Inventory inventory, int damage, int wisdom) { 
+        setDefaults(health, inventory, damage, wisdom, "goblin with pointy ears", null);
+    }
 
-    public Goblin(int health, Inventory inventory, int damage, int wisdom, String description, String pluralDescription, String name) { setDefaults(health, inventory, damage, wisdom, description, name); 
-        this.pluralDescription = pluralDescription; 
+    @Override
+    public void setDefaults(int m, Inventory i, int dmg, int w, String des, String name)
+    {
+        super.setDefaults(m, i, dmg, w, des, name);
+
+        int r = Utils.rand.nextInt(4);
+        descMap.put("Laur", (new String[] {"Screeblin Squabbler","pale man","awkward fellow","bllork"})[r]);
+        pDescMap.put("Laur", (new String[] {"Screeblin Squabblers","pale men","awkward fellas","bllorks"})[r]);
     }
 
     @Override 

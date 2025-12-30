@@ -6,7 +6,7 @@ import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.interactibles.InventoryInteractible;
-import adventuregame.interactibles.wallentities.Door;
+import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.*;
 
 import java.util.*;
@@ -17,9 +17,9 @@ public class Player extends Unit
     private boolean ptolomyIsPresent = false;
     private int ptolomyPrintLength;
 
-    private String name;
     private Inventory inv = new Inventory(10);
     private Door firstDoor = null; //exists solely for Action.LEAVE
+    public int doorMoves;
 
     //FOR EACH ENUM, MAKE A MAP ENTRY
     enum Action 
@@ -49,7 +49,6 @@ public class Player extends Unit
 
     public Player()
     {
-        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = "Laur";
         
         inv.add(new Bananarang());
@@ -59,21 +58,35 @@ public class Player extends Unit
         ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
         ptolomyPrintLength = 0;//50;
         deathMsg = name + " died.";
+        setDescription();
     }
 
     public Player(String n)
     {
-        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = n;        
         health = 11;
         deathMsg = name + " died.";
+        setDescription();
     }
 
     public Player(boolean genName)
     {
-        myRoom = Environment.curRoom; //FOR NOW, ALL PLAYERS SPAWN AT THE BEGINNING
         name = Utils.names1[Utils.rand.nextInt(Utils.names1.length)] + Utils.names2[Utils.rand.nextInt(Utils.names2.length)];
         deathMsg = name + " died.";
+        setDescription();
+    }
+
+    private void setDescription()
+    {
+        switch(name)
+        {
+            case "Laur"   : description = "He is a strange-looking man with grimy fingernails";
+            case "Nuel"   : description = "He is a tallish impolite man with a perminent sneer"; // He can pick locks
+            case "Valeent": description = "She is a perilous-looking woman with anger issues"; // Notes on Valeent, skill where she randomly increments her place in the turn order by 1
+            case "Peili"  : description = "She is a consternated woman with a bewildered look and a horrendous scar across her forehead"; // Lodestones in her baggage
+            case "Dormaah": description = "He is a stout fish of a man, knows wild things";
+            default       : description = "They are a person";
+        }
     }
 
     public void setActions()
@@ -100,7 +113,7 @@ public class Player extends Unit
         if(inv.size() > 0) actions.add(Action.INVENTORY);
 
         int numDoors = 0;
-        for(Interactible i : myRoom.interactibles) if(i instanceof Door) { if(firstDoor == null) firstDoor = (Door)i; numDoors++;}
+        for(Interactible i : myRoom.interactibles) if(i instanceof Door) { firstDoor = (Door)i; numDoors++;}
         if(numDoors == 1)actions.add(Action.LEAVE);
     }
 
@@ -130,7 +143,6 @@ public class Player extends Unit
 
     private void leave()
     {
-        firstDoor.autoUse();
         firstDoor.action(this);
     }
     
@@ -182,6 +194,12 @@ public class Player extends Unit
         Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
         if(d instanceof Interactible) ((Interactible)d).inspect();
         else Utils.slowPrintln(d.getDescription());
+
+        Utils.slowPrint("Press Enter to continue");
+        Utils.scanner.nextLine();
+        promptForAction();
+
+        //TODO after a turn where i followed dialogue that put me back in the cell, Laur could everyone except with himself replacing Nuel.
     }
 
     private void commune()
@@ -427,20 +445,13 @@ public class Player extends Unit
     public void updateUnit() throws Exception 
     {
         System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
-
-        if(name == "Laur") for (Enemy e : myRoom.enemies) e.randomizeDesc();
-        
-        myRoom.updateDoors();
-        System.out.println();
-
-        Environment.printInfo(Environment.curRoom, false);
-        System.out.println();
         
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
         Room old = myRoom;
-        for(Dialogue d : new ArrayList<>(myRoom.dialogues)) if(myRoom.getDialogueForced() && d.allActorsAlive() && !d.atEnd) { d.next(); Dialogue.processLeaf(d.current); }
+        for(Dialogue d : new ArrayList<>(myRoom.dialogues)) if(myRoom.getDialogueForced() && d.allActorsAlive() && !d.atEnd) d.next();
         if(myRoom != old) return;
+        doorMoves = 2;
 
         setActions();
 
@@ -452,6 +463,12 @@ public class Player extends Unit
     //lists available actions, lets the player choose, then performs chosen action
     public void promptForAction()
     {
+        myRoom.updateDoors();
+
+        System.out.println();
+        Environment.printInfo(myRoom, false);
+        System.out.println();
+
         performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
     }
 
@@ -474,22 +491,4 @@ public class Player extends Unit
         // TODO create a use for wisdom
         throw new UnsupportedOperationException("Unimplemented method 'getWisdom'");
     }
-
-    @Override public String getPluralDescription() { return getName() + "s"; }
-
-    @Override
-    public String getDescription() 
-    {
-        switch(name)
-        {
-            case "Laur"   : return "He is a strange-looking man with grimy fingernails";
-            case "Nuel"   : return "He is a tallish impolite man with a perminent sneer"; // He can pick locks
-            case "Valeent": return "She is a perilous-looking woman with anger issues"; // Notes on Valeent, skill where she randomly increments her place in the turn order by 1
-            case "Peili"  : return "She is a consternated woman with a bewildered look and a horrendous scar across her forehead"; // Lodestones in her baggage
-            case "Dormaah": return "He is a stout fish of a man, knows wild things";
-            default       : return "They are a person";
-        }
-    }
-
-    @Override public String getName() { return name; }
 }

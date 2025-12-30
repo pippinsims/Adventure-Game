@@ -22,9 +22,7 @@ public class ItemHolder extends Interactible {
             i.getPluralDescription(), 
             "", 
             "Take", 
-            "from", 
-            new String[0], 
-            new String[0]
+            "from"
         );
 
         item = i;

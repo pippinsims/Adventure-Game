@@ -14,7 +14,6 @@ public abstract class Unit extends Effectable
     public abstract Inventory getInventory();
     public abstract Damage getAttackDamage();
     public abstract int getWisdom();
-    public abstract String getName();
 
     protected Room myRoom;
     public Room getRoom() { return myRoom; }

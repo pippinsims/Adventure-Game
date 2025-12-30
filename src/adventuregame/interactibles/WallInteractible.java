@@ -2,7 +2,7 @@ package adventuregame.interactibles;
 
 import adventuregame.Interactible;
 
-public class WallEntity extends Interactible{
+public class WallInteractible extends Interactible{
 
     protected Wall wall;
 
@@ -55,8 +55,8 @@ public class WallEntity extends Interactible{
     {
         for (Interactible i : myRoom.interactibles) 
         {
-            if(i instanceof WallEntity)
-                if(this != i && this.equals(i) && ((WallEntity)i).getWallString().equals(getWallString()))
+            if(i instanceof WallInteractible)
+                if(this != i && this.equals(i) && ((WallInteractible)i).getWallString().equals(getWallString()))
                     return false;
         }
         return true;
@@ -75,7 +75,7 @@ public class WallEntity extends Interactible{
 
         if(obj == null || getClass() != obj.getClass()) return false;
 
-        WallEntity w = (WallEntity) obj;
+        WallInteractible w = (WallInteractible) obj;
         return this.getDescription().equals(w.getDescription()) && this.locReference.equals(w.locReference);
     }
 }

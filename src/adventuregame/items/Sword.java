@@ -10,8 +10,6 @@ public class Sword extends Item {
     Damage dmg;
     public int numAttacks = 0;
     Metal material;
-    String description, pluralDescription;
-    String name;
 
     public Sword(float damage)
     {
@@ -60,11 +58,5 @@ public class Sword extends Item {
 
     @Override public Damage getDamage() throws Exception { return dmg; }
 
-    @Override public String getName() { return name; }
-
     @Override public Item clone() { return new Sword(dmg.getValue(), material, name, description, pluralDescription, dmg.getMessage()); }
-
-    @Override public String getPluralDescription() { return pluralDescription; }
-
-    @Override public String getDescription() { return description; }
 }
