@@ -214,6 +214,41 @@ public class Environment
 
 
 
+//floor 2
+        Room room201 = new Room("", "", "", "", false);
+        new Door(room12, room201, Wall.WEST);
+        Room room202 = new Room("", "", "", "", false);
+                new Door(room202, room201, Wall.EAST);
+        Room room203 = new Room("", "", "", "", false);
+        Room room204 = new Room("", "", "", "", false);
+        Room room205 = new Room("", "", "", "", false);
+        Room room206 = new Room("", "", "", "", false);
+        Room room207 = new Room("", "", "", "", false);
+        Room room208 = new Room("", "", "", "", false);
+        Room room209 = new Room("", "", "", "", false);
+        Room room210 = new Room("", "", "", "", false);
+        Room room211 = new Room("", "", "", "", false);
+        Room room212 = new Room("", "", "", "", false);
+        Room room213 = new Room("", "", "", "", false);
+        Room room214 = new Room("", "", "", "", false);
+        Room room215 = new Room("", "", "", "", false);
+        Room room216 = new Room("", "", "", "", false);
+        Room room217 = new Room("", "", "", "", false);
+        Room room218 = new Room("", "", "", "", false);
+        Room room219 = new Room("", "", "", "", false);
+                new Door(room202, room203, Wall.EAST);
+                new Door(room202, room205, Wall.EAST);
+                new Door(room202, room212, Wall.SOUTH);
+                new Door(room202, room204, Wall.NORTH);
+                new Door(room202, room201, Wall.EAST);
+                new Door(room212, room213, Wall.EAST);
+                new Door(room212, room211, Wall.NORTH);
+                new Door(room212, room214, Wall.WEST);
+                new Door(room202, room201, Wall.EAST);
+                new Door(room202, room201, Wall.EAST);
+                new Door(room202, room201, Wall.EAST);
+                new Door(room202, room201, Wall.EAST);
+
 
 
 
