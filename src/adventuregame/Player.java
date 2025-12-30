@@ -158,27 +158,32 @@ public class Player extends Unit
     can place objects in positions. Maybe every room has a list of local unique positions, and you get a list of them when you want
     to place something
     */
-    private void fight() throws Exception
+    private void fight()
     {
         ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
 
         ArrayList<Enemy> ens = myRoom.enemies;
-        for(Item i : inv.getItems()) if(i instanceof Sword) ((Sword)i).setNumAttacks();
+        for(Weapon w : inv.getWeapons()) if(w instanceof Sword) ((Sword)w).setNumAttacks();
         if(!ens.isEmpty())
         {
-            Item chosen = null;
+            Weapon chosen = null;
             while(!ens.isEmpty())
             {   
-                int chosenEnemyIndex = 0;
-                if(ens.size() > 1)
-                    chosenEnemyIndex = Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens));
+                final int chosenEnemyIndex = ens.size() > 1 ? Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens)) 
+                                                            : 0;
 
-                String[] attackTypes = getAttackTypes();
-                if(chosen == null) chosen = attackTypes.length > 1 ? inv.at(Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", attackTypes) - 1) : null;                
+                ArrayList<Weapon> weps = inv.getWeapons();
+                weps.addFirst(new Weapon() {
+                    {   description = "Punch"; 
+                        atkmsg = "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad"); }
+                    @Override public void action(Unit u, boolean isFinal) {}
+                    @Override public Damage getDamage() { return new Damage(1, Damage.Type.BASIC); }
+                });
+                if(chosen == null) chosen = Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", weps);                
 
-                Damage d = chosen == null ? new Damage(1, Damage.Type.BASIC, "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad") + " and deal a serious 1 damage!") : chosen.getDamage();
+                Damage d = chosen.getDamage();
                 if(hasEffect(Effect.Type.WEAKNESS)) { d = new Damage(d); d.setValue(d.getValue() - 1); }
-                this.attack(myRoom.enemies.get(chosenEnemyIndex), d);
+                this.attack(myRoom.enemies.get(chosenEnemyIndex), d, chosen.getAttackMessage());
                 if(chosen instanceof Sword && ((Sword)chosen).use() && !ens.isEmpty()) System.out.println("Attack again!");
                 else break;
             }
@@ -199,7 +204,7 @@ public class Player extends Unit
         Utils.scanner.nextLine();
         promptForAction();
 
-        //TODO after a turn where i followed dialogue that put me back in the cell, Laur could everyone except with himself replacing Nuel.
+        //TODO after a turn where i followed dialogue that put me back in the cell, Laur could inspect everyone except with himself replacing Nuel.
     }
 
     private void commune()
@@ -224,8 +229,7 @@ public class Player extends Unit
 
     private void talk()
     {
-        if(myRoom.getDialogueForced()) myRoom.dialogues.getFirst().next();
-        else
+        if(!myRoom.doFirstDialogue())
         {
             System.out.println("What do you say?");
             String s = Utils.scanner.nextLine();
@@ -249,7 +253,7 @@ public class Player extends Unit
         }
     }
 
-    private void castSpell() throws Exception
+    private void castSpell()
     {        
         System.out.println("Focus...");
         System.out.print("Speak: ");
@@ -374,7 +378,7 @@ public class Player extends Unit
                 switch("foes"/*target*/)
                 {
                     case "weapons":
-                        condition = o instanceof Item && ((Item)o).isWeapon();
+                        condition = o instanceof Item && o instanceof Weapon;
                         break;
                     case "swords":
                         condition = o.getName().equals("Sword");
@@ -393,14 +397,7 @@ public class Player extends Unit
     {
         ArrayList<Interactible> inters = myRoom.getUniqueInters();
         for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty() || !i.isEnabled) inters.remove(i);
-        for(Dialogue d : myRoom.dialogues) 
-        {
-            if(myRoom.getDialogueForced() && d.allActorsAlive() && !d.isComplete())
-            {
-                for(Interactible i : new ArrayList<>(inters)) if(i instanceof Door) inters.remove(i);
-                break;
-            }
-        }
+        if(!myRoom.enemies.isEmpty()) for(Interactible i : new ArrayList<>(inters)) if(i instanceof Door) inters.remove(i);
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
 
         ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
@@ -415,16 +412,7 @@ public class Player extends Unit
                  prompts = new String[inv.size()];
         for(int i = 0; i < prompts.length; i++) prompts[i] = n[i] + ": " + d[i];
 
-        inv.at(Utils.promptList("Which item do you choose? (This is your inventory, you can hold " + inv.max() + " items total)", prompts)).action(this);
-    }
-
-    private String[] getAttackTypes() 
-    {
-        String[] attackTypes = new String[inv.size() + 1];
-        attackTypes[0] = "Punch";
-        for (int idx = 1; idx < attackTypes.length; idx++) attackTypes[idx] = inv.at(idx - 1).getName(); //TODO make this use the isWeapon() method
-
-        return attackTypes;
+        inv.at(Utils.promptList("Which item do you choose? (This is your inventory, you can hold " + inv.max() + " items total)", prompts)).action(this, false);
     }
 
     private String[] getPlayerActionDescriptions()
@@ -442,15 +430,12 @@ public class Player extends Unit
     }
 
     @Override
-    public void updateUnit() throws Exception 
+    public void updateUnit()
     {
         System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
         
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
-        Room old = myRoom;
-        for(Dialogue d : new ArrayList<>(myRoom.dialogues)) if(myRoom.getDialogueForced() && d.allActorsAlive() && !d.atEnd) d.next();
-        if(myRoom != old) return;
         doorMoves = 2;
 
         setActions();

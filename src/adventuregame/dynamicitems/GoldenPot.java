@@ -2,7 +2,7 @@ package adventuregame.dynamicitems;
 
 import java.util.Random;
 
-import adventuregame.Damage;
+import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.DynamicItem;
@@ -134,21 +134,15 @@ public class GoldenPot extends DynamicItem {
             }
 
             @Override
-            public void action(Unit u) 
+            public void action(Unit u, boolean isFinal) 
             {
                 System.out.print("You hold this pot. ");
                 if(Utils.promptList("Do you want to place it on the ground?", new String[] {"Yes", "No"}) == 0) self.placeInteractible(u.getRoom());
-            }
 
-            @Override
-            public Damage getDamage() 
-            {
-                return new Damage(1, Damage.Type.BLUNT, "You attempt to attack with your golden pot.");
+                if(!isFinal && u instanceof Player) ((Player)u).promptForAction();
             }
 
             @Override public boolean isDynamicItem() { return true; }
-
-            @Override public Item clone() { return new GoldenPot().item(); }
         };
     }
 }

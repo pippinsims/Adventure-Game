@@ -26,7 +26,7 @@ public class Effect extends Describable{
         description = new String(e.description);
         strength = e.strength;
         name = e.name;
-        pluralDescription = effectDescriptions.get(type).t1() + " effects";
+        pluralDescription = effectDescriptions.get(type).t1 + " effects";
     }
 
     public Effect(Type t, int duration, int strength)
@@ -34,9 +34,9 @@ public class Effect extends Describable{
         type = t;
         cooldown = new Cooldown(duration, t);
         this.strength = strength;
-        description = effectDescriptions.get(type).t2();
-        name = effectDescriptions.get(type).t1();
-        pluralDescription = effectDescriptions.get(type).t1() + " effects";
+        description = effectDescriptions.get(type).t2;
+        name = effectDescriptions.get(type).t1;
+        pluralDescription = effectDescriptions.get(type).t1 + " effects";
     }
 
     public Effect(Type t, int duration, int strength, String name) 
@@ -44,9 +44,9 @@ public class Effect extends Describable{
         type = t;
         cooldown = new Cooldown(duration, t);
         this.strength = strength;
-        description = effectDescriptions.get(type).t2();
+        description = effectDescriptions.get(type).t2;
         this.name = name;
-        pluralDescription = effectDescriptions.get(type).t1() + " effects";
+        pluralDescription = effectDescriptions.get(type).t1 + " effects";
     }
 
     public enum Type{

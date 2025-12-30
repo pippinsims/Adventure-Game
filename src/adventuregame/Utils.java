@@ -249,6 +249,20 @@ public class Utils {
         }
     }
 
+    public static <T extends Describable> T promptList(String question, ArrayList<T> prompters)
+    {
+        System.out.println(question);
+        String[] listPrompts = descriptionsOf(prompters);
+        if(listPrompts == null) return null;
+        
+        printOptions(listPrompts);
+        try {
+            return prompters.get(confirmInput(scanner.nextLine(), listPrompts) - 1);
+        } catch (NoSuchElementException e) {
+            return prompters.get(0);
+        }
+    }
+
     public static String advancedPromptList(String[] questions, String[][] listPrompts, int index)
     {
         //String[] questions = {"q1","q2"}
@@ -315,23 +329,13 @@ public class Utils {
 
     public static final class Tuple<T1, T2> 
     {
-        private final T1 t1;
-        private final T2 t2;
+        public final T1 t1;
+        public final T2 t2;
 
         public Tuple(T1 t1, T2 t2) 
         {
             this.t1 = t1;
             this.t2 = t2;
-        }
-
-        public T1 t1() 
-        {
-            return t1;
-        }
-
-        public T2 t2()
-        {
-            return t2;
         }
 
         @Override

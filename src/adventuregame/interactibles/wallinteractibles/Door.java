@@ -8,7 +8,7 @@ import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallInteractible;
 
 public class Door extends WallInteractible
-{
+{//TODO add doors locking from 1 or both sides, then make doors lock when in combat
     Room myOtherRoom;
 
     public Door(Room room1, Room room2, Wall wall)

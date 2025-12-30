@@ -37,7 +37,7 @@ public class Environment
         STEEL
     }
 
-    public static void main(String[] args) throws Exception 
+    public static void main(String[] args)
     {
         generateMap();
 
@@ -52,7 +52,6 @@ public class Environment
                 curPlayer = p; curRoom = p.getRoom(); isLaur = p.getName().equals("Laur");
                 p.updateUnit();
                 System.out.println();
-                for(Dialogue d : curRoom.dialogues) if(d.atEnd) d.complete();
             }
             curPlayer = null; isLaur = false;
 
@@ -68,6 +67,7 @@ public class Environment
                     e.updateUnit();
                     System.out.println();
                     if(r.players.isEmpty()) break;
+                    // for(Player p : r.players) System.out.println(p.getName());
                 }
             }
 
@@ -105,17 +105,22 @@ public class Environment
         Room hall = new Room("a long hall with many cells","Prison hallway");
         //average narwhal weight is 1.425 tons
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
-        curRoom = new Room(celld, celll, cellf, celln, false);
+        curRoom = new Room(celld, celll, cellf, celln);
         new Door(curRoom, hall, Wall.EAST);
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
-        //skeletoninteractible in cledobl room with armor
-        //armor on skeletoninteractible 50% chance of reducing basic/blunt damage by 1, when repaired by smith (avg smith wouldn't be able to do this, need to follow a quest of meeting smiths and they point you to him, prodigy smith, conversant in ancient techniques): auto reduce 2 basic/blunt damage, other blockable damages have 50% chance reduce by 1 50% chance of all first 2 tiers of spells on this unit fail
-        //skeletoninteractible on interact 1% of turning into skeleton enemy with same inventory
+        SkeletonInteractible x = new SkeletonInteractible(curRoom);
         //turn body into skeletoninteractible grasping sword if VITALITYDRAIN QTE runs out of time/kills you
-        //on inspect: print description of armor set
         //on Valeent inspect: armor is from an ancient House she's read about (she's a noble) (it's the same House that used to own this dungeon)
+        for(Item i : new ArrayList<>(List.of(
+            new Armor("Ancient Boot" , "rusty boots", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.BOOTS),
+            new Armor("Ancient Gaunt", "rusty gauntlets", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.GAUNTLETS),
+            new Armor("Ancient Helm" , "rusty helmet", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.HELMET),
+            new Armor("Ancient Legs" , "rusty greaves", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.LEGS),
+            new Armor("Ancient Torso", "rusty chestpiece", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.TORSO),
+            new Sword(5)
+        ))) x.add(i);
 
-        Room cell2 = new Room(celld, celll, cellf, celln, false);
+        Room cell2 = new Room(celld, celll, cellf, celln);
         new Table(cell2);
         Interactible cleholder = new ItemHolder(
             new Sword(10, Metal.STEEL, "Cledobl", "glittering steel sword", "steel swords", "Your weapon shears the air in a gnawing arch"), 
@@ -175,55 +180,56 @@ public class Environment
             new Sword(5)
         ))) cleskelly.add(i);
 
-        for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln, false), hall, i < 7 ? Wall.EAST : Wall.WEST);
-        Room cell14 = new Room(celld, celll, cellf, celln, false);
+        for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        Room cell14 = new Room(celld, celll, cellf, celln);
         new Door(cell14, hall, Wall.WEST);
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
 
         ArrayList<Enemy> ens = new ArrayList<>(List.of(new Goblin(3), new Goblin(3), new Goblin(3)));
         Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    
                                 "The Chamber.",
-                                "Chamber",
-                                true);
+                                "Chamber");
         for(Enemy e : ens) chamber.add(e);
-        chamber.add(new Dialogue(
-            new ArrayList<>(ens),
-            new Dialogue.Node.B(
-                0,
-                "You're not supposed to be out'n'about!", 
-                new String[] {
-                    "Well... we are!",
-                    "Uh, ok. What should we do?",
-                    "Thou shalt not oppose ME."
-                }, 
-                new Dialogue.Node[]
-                {
-                    new Dialogue.Node.B(
-                        0,
-                        "Get the *BLORCK* back in your cell!", 
-                        new String[] {
-                            "No.", 
-                            "Fine.",
-                            "Ok!"
-                        }, 
-                        new Dialogue.Node[] 
-                        {
-                            new Dialogue.Node.L(0, "Then you die."),
-                            new Dialogue.Node.L<Room>(0, "And don't you dare leave again...", null, curRoom, true),
-                            new Dialogue.Node.L<Room>(curRoom, true)
-                        }
-                    ),
-                    new Dialogue.Node.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true),
-                    new Dialogue.Node.L()
-                }
+        ens.getFirst().dialogues.add(
+            new Dialogue(
+                ens.getFirst(),
+                new ArrayList<>(List.of(ens.get(0),ens.get(1))),
+                new Dialogue.Node.B(
+                    0,
+                    "You're not supposed to be out'n'about!", 
+                    new String[] {
+                        "Well... we are!",
+                        "Uh, ok. What should we do?",
+                        "Thou shalt not oppose ME."
+                    }, 
+                    new Dialogue.Node[]
+                    {
+                        new Dialogue.Node.B(
+                            0,
+                            "Get the *BLORCK* back in your cell!", 
+                            new String[] {
+                                "No.", 
+                                "Fine.",
+                                "Ok!"
+                            }, 
+                            new Dialogue.Node[] 
+                            {
+                                new Dialogue.Node.L<>(0, "Then you die."),
+                                new Dialogue.Node.L<Room>(0, "And don't you dare leave again...", null, curRoom, true),
+                                new Dialogue.Node.L<Room>(curRoom, true)
+                            }
+                        ),
+                        new Dialogue.Node.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true),
+                        new Dialogue.Node.L<>()
+                    }
+                )
             )
-        ));
+        );
         new Door(hall, chamber, Wall.NORTH);
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,",
                                   "Shroom Room.",
-                                  "Mossy Ruin",
-                                  true);
+                                  "Mossy Ruin");
         new Interactible(
                             mossyRuin,
                             "Big mushroom",
@@ -297,7 +303,7 @@ public class Environment
             u.getRoom().players.remove(u);
             allPlayers.remove(u);
         }
-
+        u.setRoom(null);
         Utils.slowPrintln(u.getDeathMessage() + "------", 0/*200*/);
     }
 }

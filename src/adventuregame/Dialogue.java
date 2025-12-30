@@ -8,6 +8,7 @@ import adventuregame.abstractclasses.Unit;
 
 public class Dialogue
 {
+    Unit initiator;
     ArrayList<Unit> actors;
     Node current;
     Player to;
@@ -15,13 +16,14 @@ public class Dialogue
     boolean atEnd = false;              //atEnd when on last Node
     private boolean isComplete = false; //isComplete when Player has moved after Dialogue
 
-    public Dialogue(ArrayList<Unit> actors, Node start)
+    public Dialogue(Unit initiator, ArrayList<Unit> actors, Node start)
     {
+        this.initiator = initiator;
         this.actors = actors;
         current = start;
     }
 
-    public boolean allActorsAlive()
+    private boolean allActorsAlive()
     {
         for(Unit a : actors) if(a.getRoom() == null) return false;
         return true;
@@ -30,6 +32,11 @@ public class Dialogue
     public Unit getCurrentActor()
     {
         return current.actor < actors.size() ? actors.get(current.actor) : null;
+    }
+
+    public Unit getInitiator()
+    {
+        return initiator;
     }
 
     public void complete()
@@ -49,20 +56,23 @@ public class Dialogue
         return isComplete;
     }
 
-    public void next() 
+    public boolean next() 
     { 
         to = actors.get(0).getRoom().players.get(0);
         Unit a = getCurrentActor(); 
-        if(a != null) next(a);
-        atEnd = true;
-        processLeaf();
+        if(allActorsAlive()) 
+        {
+            next(a);
+            atEnd = true;
+            processLeaf();
+            return true;
+        }
+        return false;
     }
 
     private void next(Unit actor)
-    {
-        if(!allActorsAlive()) return;
-        
-        int path = current.prompt != null ? Utils.promptList(actor.getName() + " to " + to.getName() + ": " + current.prompt + "\n"+to.getName()+":", current.prompts) : -1;
+    {   
+        int path = current.prompt != null ? Utils.promptList(actor.getName() + " to " + to.getName() + ": " + current.prompt + (current.prompts != null ? "\n"+to.getName()+":" : ""), current.prompts) : -1;
         if(current instanceof Node.B && ((Node.B)current).nodes != null)
         {
             current = ((Node.B)current).nodes[path];
@@ -131,7 +141,7 @@ public class Dialogue
                 Room out = (Room)n.out;
                 if(n.applyToAll)
                 {
-                    System.out.println("All players in " + name + "'s room moved back to " + out.getName()); //TODO prints twice
+                    System.out.println("All players in " + name + "'s room moved back to " + out.getName());
                     for(Player p : Environment.curRoom.players) out.add(p);
                     Environment.curRoom.players.clear();
                 }

@@ -1,21 +1,28 @@
 package adventuregame;
 
+import java.util.Map;
+
 public class Damage {
 
     private float value;
     private Type type;
     private Mode mode = Mode.DEFAULT;
-    private String message;
     private Effect damageEffect = null;
 
     public static enum Type
     {
         BASIC,
+        BLUNT,
         FIRE,
         PSYCHIC,
-        BLUNT,
         UNBLOCKABLE
     }
+
+    public static Map<Type, String> descMap = Map.ofEntries(Map.entry(Type.BASIC, "basic"),
+                                                               Map.entry(Type.BLUNT, "blunt"),
+                                                               Map.entry(Type.FIRE, "fire"),
+                                                               Map.entry(Type.PSYCHIC, "psychic"),
+                                                               Map.entry(Type.UNBLOCKABLE, "unblockable"));
 
     public static enum Mode
     {
@@ -29,7 +36,6 @@ public class Damage {
         value = toClone.getValue();
         type = toClone.getType();
         mode = toClone.getMode();
-        message = toClone.getMessage();
         damageEffect = toClone.getEffect();
     }
 
@@ -37,22 +43,19 @@ public class Damage {
     {
         this.value = value;
         this.type = Type.BASIC;
-        message = "2normal damage";
     }
 
-    public Damage(float value, Type type, String msg)
+    public Damage(float value, Type type)
     {
         this.value = value;
         this.type = type;
-        message = msg;
     }
 
-    public Damage(float value, Type type, Mode mode, String msg) throws Exception
+    public Damage(float value, Type type, Mode mode)
     {
         this.value = value;
         this.type = type;
         this.mode = mode;
-        message = msg;
 
         if(mode == Mode.INFLICTEFFECT || mode == Mode.EFFECT)
         {
@@ -60,17 +63,15 @@ public class Damage {
         }
     }
 
-    public Damage(float value, Type type, Mode mode, Effect effect, String msg) throws Exception
+    public Damage(float value, Type type, Mode mode, Effect effect)
     {
         this.value = value;
         this.type = type;
         this.mode = mode;
-        message = msg;
 
         if(mode == Mode.INFLICTEFFECT || mode == Mode.EFFECT)
         {
-            if(effect == null)
-                throw new RuntimeException(mode + " should have a non-null effect! (wrong parameters)"); 
+            if(effect == null) throw new IllegalArgumentException(mode + " should have a non-null effect!");
             damageEffect = effect;
         }
     }
@@ -80,7 +81,6 @@ public class Damage {
         this.value = value;
         this.type = type;
         this.mode = Mode.EFFECT;
-        message = msg;
         damageEffect = inflictedEffect;
     }
 
@@ -112,10 +112,5 @@ public class Damage {
     public boolean hasEffect()
     {
         return damageEffect != null;
-    }
-
-    public String getMessage()
-    {
-        return message;
     }
 }

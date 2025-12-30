@@ -2,12 +2,13 @@ package adventuregame.dynamicitems;
 
 import adventuregame.Damage;
 import adventuregame.Effect;
+import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.DynamicItem;
-import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallInteractible;
+import adventuregame.items.Weapon;
 
 public class Torch extends DynamicItem {
 
@@ -69,27 +70,26 @@ public class Torch extends DynamicItem {
             }
         };
 
-        it = new Item() {
+        it = new Weapon() {
             Torch self = parent;
-
             {
                 pluralDescription = self.pluralDescription;
                 description = self.description;
                 name = self.name;
+                atkmsg = "You swing the torch at your enemy!";
             }
 
-            @Override public void action(Unit u) { System.out.println("The torch is fiery... You stare deeply into the flames."); }
+            @Override public void action(Unit u, boolean isFinal) { 
+                System.out.println("The torch is fiery... You stare deeply into the flames.");
+                if(!isFinal && u instanceof Player) ((Player)u).promptForAction();
+             }
 
-            @Override public Damage getDamage() throws Exception 
+            @Override public Damage getDamage() 
             {
-                return new Damage(1, Damage.Type.FIRE, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.FIRE, 3, 1), "You swing the torch at your enemy!");
+                return new Damage(1, Damage.Type.FIRE, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.FIRE, 3, 1));
             }
-
-            @Override public boolean isWeapon() { return true; }
             
             @Override public boolean isDynamicItem() { return true; }
-
-            @Override public Item clone() { return new Torch().item(); }
         };
     }
 }

@@ -1,10 +1,10 @@
 package adventuregame.abstractclasses;
+import java.util.ArrayList;
 import java.util.Random;
 
 import adventuregame.Damage;
 import adventuregame.Dialogue;
 import adventuregame.Inventory;
-import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.enemies.Skeleton;
 import adventuregame.interactibles.SkeletonInteractible;
@@ -14,10 +14,12 @@ public abstract class Enemy extends Unit
     protected Inventory inv;
     protected Damage dmg;
     protected int wisdom;
+    public ArrayList<Dialogue> dialogues = new ArrayList<>();
 
     protected enum Action
     {
         NONE,
+        DIALOGUE,
         ATTACK
     }
 
@@ -98,16 +100,18 @@ public abstract class Enemy extends Unit
 
     public int getWisdom() { return wisdom; }
 
-    public void chooseAction(Room curRoom)
+    public void chooseAction()
     {
         //DECISIONMAKING FOR ENEMY
-        if(isStunned || curRoom.players.isEmpty())
+        if(isStunned || myRoom.players.isEmpty())
         {
             performAction(0);
             isStunned = false;
         }
-        else
+        else if (!dialogues.isEmpty() && dialogues.getFirst().getInitiator() == this)
             performAction(1);
+        else
+            performAction(2);
     }
 
     public abstract void pleaResponse();
@@ -115,18 +119,12 @@ public abstract class Enemy extends Unit
     public abstract void performAction(int i);
 
     @Override
-    public void updateUnit() throws Exception {
+    public void updateUnit() {
         System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
 
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
-        boolean nodials = true;
-        for(Dialogue d : myRoom.dialogues) if(!d.isAtEnd() && d.allActorsAlive() && d.getCurrentActor() == this) 
-        {
-            nodials &= false;
-            d.next();
-        }
-        if(nodials) chooseAction(myRoom);
+        chooseAction();
     }
 
     @Override

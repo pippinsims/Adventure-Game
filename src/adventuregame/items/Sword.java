@@ -2,10 +2,10 @@ package adventuregame.items;
 
 import adventuregame.Damage;
 import adventuregame.Environment.Metal;
-import adventuregame.abstractclasses.Item;
+import adventuregame.Player;
 import adventuregame.abstractclasses.Unit;
 
-public class Sword extends Item {
+public class Sword extends Weapon {
 
     Damage dmg;
     public int numAttacks = 0;
@@ -13,7 +13,8 @@ public class Sword extends Item {
 
     public Sword(float damage)
     {
-        dmg = new Damage(damage, Damage.Type.BASIC, "You swing this blade in a blinding blur of DEATH.");
+        dmg = new Damage(damage, Damage.Type.BASIC);
+        atkmsg = "You swing this blade in a blinding blur of DEATH.";
         material = Metal.IRON;
         name = "Sword";
         description = "nondescript iron sword";
@@ -24,7 +25,8 @@ public class Sword extends Item {
 
     public Sword(float damage, Metal material, String name, String description, String pDes, String atkmsg)
     {
-        dmg = new Damage(damage, Damage.Type.BASIC, atkmsg);
+        dmg = new Damage(damage, Damage.Type.BASIC);
+        this.atkmsg = atkmsg;
         this.material = material;
         this.name = name;
         this.description = description;
@@ -52,11 +54,10 @@ public class Sword extends Item {
         return --numAttacks > 0;
     }
 
-    @Override public void action(Unit u) { System.out.println("You inspect this sword: " + description); }
+    @Override public void action(Unit u, boolean isFinal) { 
+        System.out.println("You inspect this sword: " + description); 
+        if(!isFinal && u instanceof Player) ((Player)u).promptForAction();
+    }
 
-    @Override public boolean isWeapon() { return true; }
-
-    @Override public Damage getDamage() throws Exception { return dmg; }
-
-    @Override public Item clone() { return new Sword(dmg.getValue(), material, name, description, pluralDescription, dmg.getMessage()); }
+    @Override public Damage getDamage() { return dmg; }
 }

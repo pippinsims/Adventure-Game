@@ -1,12 +1,11 @@
 package adventuregame.abstractclasses;
 
-import adventuregame.Damage;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Item extends Describable
 {
-    public abstract void action(Unit u);
-    public abstract Damage getDamage() throws Exception;
-    public boolean isWeapon() { return false; }
-    public abstract Item clone();
+    public abstract void action(Unit u, boolean isFinal);
+    public final Item clone() { return new ArrayList<Item>(List.of(this)).getFirst(); };
     public boolean isDynamicItem() { return false; }
 }

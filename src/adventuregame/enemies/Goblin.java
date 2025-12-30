@@ -56,9 +56,14 @@ public class Goblin extends Enemy {
                 Utils.slowPrintln("The " + getModifiedDescription("sad") + " stands still, sort of like a Zucchini Mushroom.");
                 break;
 
+            case DIALOGUE:
+                boolean didTalk = dialogues.getFirst().next();
+                dialogues.remove(0);
+                if(!didTalk) chooseAction();
+                break;
+
             case ATTACK:
-                Utils.slowPrintln("The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.");
-                this.attack(myRoom.players.get(0), getAttackDamage());
+                this.attack(myRoom.players.get(0), getAttackDamage(), "The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.");
                 break;
         }
     }

@@ -14,6 +14,19 @@ public class SkeletonInteractible extends InventoryInteractible
 {
     private String simpleDesc = "old dilapidated skeleton";
 
+    public SkeletonInteractible(Room r)
+    {
+        super(r, "Skeleton", 
+              "skeleton bone pile",
+              "on",
+              "",
+              "",
+              "loot",
+              "",
+              "the floor");
+        inv = new Inventory(6);
+    }
+
     public SkeletonInteractible(Room r, Inventory i)
     {
         super(r, "Skeleton", 
@@ -47,6 +60,7 @@ public class SkeletonInteractible extends InventoryInteractible
         {
             ArrayList<Item> its = inv.getItems();
             Utils.slowPrintln("You check the skeleton for items...");
+            for(Item i : its) Utils.slowPrintln(i.getDescription());
             String[] prompts = new String[] {"Take all", "Take one"};
             if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
             {
@@ -58,7 +72,13 @@ public class SkeletonInteractible extends InventoryInteractible
             {
                 for(Item i : new ArrayList<>(its)) if(!uinv.isFull())
                 {
+                    if(i instanceof Armor && u.getInventory().hasUnequippedArmor())
+                    {
+                        Utils.slowPrintln("You're already holding a piece of unequipped armor! Cannot take another.");
+                        continue;
+                    } //TODO add Trade action
                     uinv.add(i);
+                    if(i instanceof Armor) i.action(u, true);
                     inv.remove(i);
                 }
                 else
@@ -67,9 +87,8 @@ public class SkeletonInteractible extends InventoryInteractible
                     break;
                 }
             }
-            boolean armorFound = false;
-            for(Item i : its) if(i instanceof Armor) { armorFound = true; break; }
-            if(!armorFound) description = simpleDesc;
+            if(!inv.getArmor().isEmpty()) return;
+            description = simpleDesc;
             if(inv.isEmpty()) actionVerb = "";
         }
     }
@@ -77,7 +96,7 @@ public class SkeletonInteractible extends InventoryInteractible
     @Override
     public void inspect()
     {
-        for(Item i : inv.getItems()) if(i instanceof Armor) 
+        for(Armor i : inv.getArmor()) 
         {
             Utils.slowPrint("It's got ");
             Armor.MaterialType mat = ((Armor)i).getMat();

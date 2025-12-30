@@ -14,11 +14,9 @@ public class Room extends Describable
     public  ArrayList<Enemy>        enemies       = new ArrayList<>();
     public  ArrayList<Player>       players       = new ArrayList<>();
     public  ArrayList<Interactible> interactibles = new ArrayList<>();
-    public  ArrayList<Dialogue>     dialogues     = new ArrayList<>();
     private ArrayList<Door>         doors         = new ArrayList<>();
     private ArrayList<Player>       familiars     = new ArrayList<>();
     private String familiarDescription;
-    private boolean forceDialogue = false;
 
     public Room()
     {
@@ -29,22 +27,20 @@ public class Room extends Describable
         rooms.add(this);
     }
 
-    public Room(String d, String l, String f, String n, boolean forceDialogue)
+    public Room(String d, String l, String f, String n)
     {
         description = d;
         descMap.put("Laur", l);
         familiarDescription = f;
         name = n;
-        this.forceDialogue = forceDialogue;
         rooms.add(this);
     }
 
-    public Room(String d, String f, String n, boolean forceDialogue)
+    public Room(String d, String f, String n)
     {
         description = d;
         familiarDescription = f;
         name = n;
-        this.forceDialogue = forceDialogue;
         rooms.add(this);
     }
 
@@ -61,8 +57,18 @@ public class Room extends Describable
         descMap.put(Environment.curPlayer.getName(), familiarDescription);
     }
 
+    public boolean doFirstDialogue()
+    {
+        for(Enemy e : enemies) if(e.dialogues.getFirst() != null) 
+        { 
+            e.dialogues.getFirst().next();
+            e.dialogues.remove(0); 
+            return true;
+        }
+        return false;
+    }
+
     public boolean getIsFamiliar() { return familiars.contains(Environment.curPlayer); }
-    public boolean getDialogueForced() { return forceDialogue; } //TODO make Dialogues run off a cue which could be just they enter the room for the first time
 
     public void add(Interactible i)
     {
@@ -74,11 +80,6 @@ public class Room extends Describable
     {
         if(u instanceof Player) players.add((Player)u); else enemies.add((Enemy)u);
         u.setRoom(this);
-    }
-
-    public void add(Dialogue d)
-    {
-        dialogues.add(d);
     }
 
     public boolean remove(Interactible i)

@@ -1,10 +1,10 @@
 package adventuregame;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 import adventuregame.abstractclasses.Describable;
-import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.items.Armor;
 
@@ -49,7 +49,8 @@ public abstract class Effectable extends Describable{
             case VITALITYDRAIN:
                 maxHealth -= e.strength;
                 //health > maxHealth would never happen
-                result = receiveDamage(new Damage(e.strength, Damage.Type.UNBLOCKABLE, "You're stuck by Drain, max health decreased by " + e.strength));
+                Utils.slowPrintln("You're stuck by Drain, max health decreased by " + e.strength);
+                result = receiveDamage(new Damage(e.strength, Damage.Type.UNBLOCKABLE));
                 effectIsOver = e.cooldown.decrement();
                 break;
             
@@ -73,51 +74,57 @@ public abstract class Effectable extends Describable{
         return result;
     }
 
-    private float computeDefenseVal(float v)
+    private Damage computeDefenseVal(Damage d)
     {
+        float val = d.getValue();
         if(this instanceof Unit)
         {
             Unit u = (Unit)this;
 
-            for(Item i : u.getInventory().getItems()) if(i instanceof Armor && ((Armor)i).isEquipped())
+            for(Armor i : u.getInventory().getArmor()) if(i.isEquipped())
             {
-                v -= ((Armor)i).getDefense();
+                for(Map.Entry<Damage.Type,Float> def : ((Armor)i).getDefense().entrySet()) if(def.getKey() == d.getType()) 
+                {
+                    float v = def.getValue();
+                    if(v > 0) Utils.slowPrintln(((Armor)i).getArmorDesc() + " blocked " + v + " " + Damage.descMap.get(def.getKey()) + " damage.");
+                    val -= v;
+                }
             }
         }
-        if(v < 0)
+        if(val < 0)
         {
             Utils.slowPrintln("Armor blocked all damage!");
-            v = 0;
+            val = 0;
         }
 
-        return v;
+        d.setValue(val);
+        return d;
     }
 
-    final private EffectUpdateResult receiveDamage(Damage damage, String message)
+    public EffectUpdateResult receiveDamage(Damage damage)
     {
-        float val = damage.getValue();
-        val = computeDefenseVal(val);
+        Utils.slowPrintln(getName() + " is hit by " + damage.getValue() + " " + Damage.descMap.get(damage.getType()) + " damage.");
 
-        if(message == null) Utils.slowPrintln(damage.getMessage());
-        else Utils.slowPrintln(getName() + " is hit by " + message);
-        switch (damage.getType()) {
+        Damage newdamage = computeDefenseVal(new Damage(damage));
+        
+        switch (newdamage.getType()) {
             case BASIC: case BLUNT:
-                health -= val;
+                health -= newdamage.getValue();
                 break;
             
             case PSYCHIC:
-                health -= new Random().nextFloat(val + 1); //from 0 to damage
+                health -= new Random().nextFloat(newdamage.getValue() + 1); //from 0 to damage
                 break;
 
             case FIRE:
-                if(damage.getMode() == Damage.Mode.EFFECT && damage.hasEffect())
-                    health -= damage.getEffect().strength;
+                if(newdamage.getMode() == Damage.Mode.EFFECT && newdamage.hasEffect())
+                    health -= newdamage.getEffect().strength;
                 else
-                    health -= val + 1;
+                    health -= newdamage.getValue() + 1;
                 break;
 
             case UNBLOCKABLE:
-                health -= val;
+                health -= damage.getValue();
                 break;
         }
 
@@ -133,11 +140,6 @@ public abstract class Effectable extends Describable{
             Environment.kill(this);
             return EffectUpdateResult.DEATH;
         }
-    }
-
-    public EffectUpdateResult receiveDamage(Damage damage)
-    {
-        return receiveDamage(damage, damage.getMessage().charAt(0) != '2' ? null : damage.getMessage().substring(1));
     }
 
     final public void addEffect(Effect e)
@@ -174,7 +176,7 @@ public abstract class Effectable extends Describable{
     }
 
     //MARK: for testing
-    public void updateAllEffectsWithoutResult() throws Exception
+    public void updateAllEffectsWithoutResult()
     {
         for (int i = effects.size() - 1; i >= 0; i--)
         {

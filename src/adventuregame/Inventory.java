@@ -3,12 +3,20 @@ package adventuregame;
 import java.util.ArrayList;
 
 import adventuregame.abstractclasses.Item;
+import adventuregame.items.Armor;
+import adventuregame.items.Weapon;
 
 public class Inventory {
     private ArrayList<ItemStack> items = new ArrayList<ItemStack>();
     private int maxSize;
 
     public Inventory(int size) { maxSize = size; }
+
+    public Inventory(Inventory i)
+    {
+        maxSize = size();
+        items = new ArrayList<>(i.items);
+    }
 
     public int size() { return items.size(); }
 
@@ -20,6 +28,12 @@ public class Inventory {
         return 0;
     }
 
+    public int indexOf(Item i)
+    {
+        for(int j = 0; j < items.size(); j++) if(items.get(j).is(i)) return j;
+        return -1;
+    }
+
     public int countAt(int i) { return items.get(i).count(); }
 
     public ArrayList<Item> getItems()
@@ -27,6 +41,26 @@ public class Inventory {
         ArrayList<Item> items = new ArrayList<>();
         for(ItemStack s : this.items) items.add(s.item());
         return items;
+    }
+
+    public ArrayList<Weapon> getWeapons()
+    {
+        ArrayList<Weapon> weps = new ArrayList<>();
+        for(ItemStack s : this.items) if(s.item() instanceof Weapon) weps.add((Weapon)s.item());
+        return weps;
+    }
+
+    public ArrayList<Armor> getArmor()
+    {
+        ArrayList<Armor> arms = new ArrayList<>();
+        for(ItemStack s : this.items) if(s.item() instanceof Armor) arms.add((Armor)s.item());
+        return arms;
+    }
+
+    public boolean hasUnequippedArmor()
+    {
+        for(Armor a : getArmor()) if(!a.isEquipped()) return true;
+        return false;
     }
 
     public boolean isEmpty() { return items.isEmpty(); }
