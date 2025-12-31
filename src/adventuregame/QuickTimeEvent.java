@@ -16,7 +16,6 @@ public class QuickTimeEvent
     int currentPrompt = 0;
     int maxLength;
     int dur = 2000;
-    boolean doBreak = false;
     String[] questions;
     String[][] prompts;
     String[] goodAnswers;
@@ -26,6 +25,17 @@ public class QuickTimeEvent
     Describable sender;
     Effect effectToApply;
     boolean isOneQuestion = false;
+
+    Node current;
+
+    public QuickTimeEvent(Unit actor, Describable sender, Node.B answerTree)
+    {
+        this.actor = actor;
+        this.sender = sender;
+        maxLength = answerTree.getMaxLength();
+        isOneQuestion = maxLength == 1;
+        current = answerTree;
+    }
 
     public QuickTimeEvent(Unit actor, Describable sender, int length, String question, String[] prompts)
     {
@@ -246,6 +256,43 @@ public class QuickTimeEvent
                 Weapon w = Utils.getFirst(actor.getInventory().getWeapons(), Weapon.class);
                 if(w != null) yourBody.add(w);
                 break;
+        }
+    }
+
+    public static class Node
+    {
+        String prompt;
+        String[] prompts;
+
+        public static class B extends Node
+        {
+            Node[] nodes;
+            B(String prompt, String[] prompts, Node[] nodes)
+            {
+                this.prompt = prompt;
+                this.prompts = prompts;
+                this.nodes = nodes;
+                for (Node node : nodes) {
+                    node.setlen
+                }
+            }
+
+            public int getMaxLength()
+            {
+                return 10;
+            }
+        }
+
+        public static class L extends Node
+        {
+            Output out;
+            L(Output type) { out = type; }
+        }
+
+        public static enum Output
+        {
+            GOOD,
+            NEUTRAL
         }
     }
 }
