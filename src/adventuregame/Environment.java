@@ -108,17 +108,7 @@ public class Environment
         curRoom = new Room(celld, celll, cellf, celln);
         new Door(curRoom, hall, Wall.EAST);
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
-        SkeletonInteractible x = new SkeletonInteractible(curRoom);
         //turn body into skeletoninteractible grasping sword if VITALITYDRAIN QTE runs out of time/kills you
-        //on Valeent inspect: armor is from an ancient House she's read about (she's a noble) (it's the same House that used to own this dungeon)
-        for(Item i : new ArrayList<>(List.of(
-            new Armor("Ancient Boot" , "rusty boots", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.BOOTS),
-            new Armor("Ancient Gaunt", "rusty gauntlets", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.GAUNTLETS),
-            new Armor("Ancient Helm" , "rusty helmet", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.HELMET),
-            new Armor("Ancient Legs" , "rusty greaves", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.LEGS),
-            new Armor("Ancient Torso", "rusty chestpiece", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.TORSO),
-            new Sword(5)
-        ))) x.add(i);
 
         Room cell2 = new Room(celld, celll, cellf, celln);
         new Table(cell2);
@@ -231,16 +221,16 @@ public class Environment
                                   "Shroom Room.",
                                   "Mossy Ruin");
         new Interactible(
-                            mossyRuin,
-                            "Big mushroom",
-                            "table-sized toadstool",
-                            "on",
-                            "",
-                            "",
-                            "",
-                            "",
-                            "the floor"
-                        ) {{ descMap.put("Laur", "toad-sized TABLEstool"); }};
+            mossyRuin,
+            "Big mushroom",
+            "table-sized toadstool",
+            "on",
+            "",
+            "",
+            "",
+            "",
+            "the floor"
+        ) {{ descMap.put("Laur", "toad-sized TABLEstool"); }};
         
         Room joiner1 = new Room();
 

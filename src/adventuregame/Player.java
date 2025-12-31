@@ -195,7 +195,7 @@ public class Player extends Unit
     {
         ArrayList<Describable> descs = new ArrayList<>(myRoom.interactibles);
         descs.addAll(myRoom.players);
-        descs.remove(this);
+        descs.remove(this); //TODO this is listed
         Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
         if(d instanceof Interactible) ((Interactible)d).inspect();
         else Utils.slowPrintln(d.getDescription());
@@ -475,5 +475,70 @@ public class Player extends Unit
     {
         // TODO create a use for wisdom
         throw new UnsupportedOperationException("Unimplemented method 'getWisdom'");
+    }
+
+    public static class Inspect
+    {
+        Node current;
+
+        public Inspect(Node.Head head) { current = head.next; }
+
+        public String get() 
+        {
+            String m = current.msg;
+            if(current.next != null) current = current.next;
+            return m;
+        }
+
+        public static class Node
+        {
+            protected Node next;
+            protected Player person;
+            protected String msg;
+            private Node prev = null;
+
+            public static class Head extends Node
+            {
+                public Head(Node next)
+                {
+                    this.next = next;
+                    last().setPerson();
+                }
+            }
+
+            public static class Branch extends Node
+            {
+                public Branch(String msg, Node next)
+                {
+                    this.msg = msg;
+                    this.next = next;
+                    next.prev = this;
+                }
+            }
+
+            public static class Leaf extends Node
+            {
+                public Leaf(String msg)
+                {
+                    this.msg = msg;
+                }
+                public Leaf(String msg, Player person)
+                {
+                    this.person = person;
+                    this.msg = msg;
+                }
+            }
+
+            private void setPerson()
+            { 
+                if(prev != null)
+                {
+                    prev.person = person;
+                    prev.setPerson();
+                }
+            }
+
+            protected Node last() { return next == null ? this : next.last(); }
+        }
     }
 }

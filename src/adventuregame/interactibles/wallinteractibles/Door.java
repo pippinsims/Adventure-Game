@@ -76,6 +76,12 @@ public class Door extends WallInteractible
     }
 
     @Override
+    public void setInspects()
+    {
+        put("You take a closer look at this gate-esque object and you notice that it is made of poplar wood, and has marks in it, as if from a sword.");
+    }
+
+    @Override
     public void inspect()
     {
         Utils.slowPrint("You peek through the door. ");

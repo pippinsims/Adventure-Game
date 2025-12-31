@@ -14,13 +14,9 @@ public abstract class InventoryInteractible extends Interactible {
         super(r, n, d, p, pd, pp, a, ap, l);
     }
 
-    public Inventory getInventory()
-    {
-        return inv;
-    }
+    public Inventory getInventory() { return inv; }
 
-    public void add(Item i)
-    {
-        inv.add(i);
-    }
+    public void add(Item i) { inv.add(i); }
+
+    public void remove(Item i) { inv.remove(i); }
 }

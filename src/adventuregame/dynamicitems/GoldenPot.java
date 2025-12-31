@@ -117,10 +117,9 @@ public class GoldenPot extends DynamicItem {
                 }
             }
 
-            @Override
-            public void inspect() 
+            @Override protected void setInspects()
             {
-                Utils.slowPrintln("You take a closer look at this golden pot and notice nothing new.");
+                put("You take a closer look at this golden pot and notice nothing new.");
             }
         };
 
@@ -144,5 +143,7 @@ public class GoldenPot extends DynamicItem {
 
             @Override public boolean isDynamicItem() { return true; }
         };
+
+        
     }
 }

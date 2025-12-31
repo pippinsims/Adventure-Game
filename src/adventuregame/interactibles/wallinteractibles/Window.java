@@ -1,7 +1,6 @@
 package adventuregame.interactibles.wallinteractibles;
 
 import adventuregame.Room;
-import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallInteractible;
 
@@ -32,8 +31,7 @@ public class Window extends WallInteractible {
     @Override public void action(Unit u) { inspect(); }
 
     @Override
-    public void inspect()
-    {
-        Utils.slowPrintln("You look through the window and see "+view);
+    protected void setInspects() {
+        put("You look through the window and see "+view);
     }
 }

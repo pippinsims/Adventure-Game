@@ -63,10 +63,9 @@ public class Torch extends DynamicItem {
                 Utils.slowPrint("You have received a Torch!");
             }
 
-            @Override
-            public void inspect()
+            @Override protected void setInspects()
             {
-                Utils.slowPrintln("You take a closer look at this torch and notice nothing new. It's hot, I guess");
+                put("You take a closer look at this torch and notice nothing new. It's hot, I guess");
             }
         };
 

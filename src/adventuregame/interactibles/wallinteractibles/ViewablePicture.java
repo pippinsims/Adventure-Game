@@ -39,4 +39,6 @@ public class ViewablePicture extends WallInteractible {
         System.out.println(s);
         System.out.println("\"" + name + "\"");
     }
+
+    @Override public void setInspects() {}
 }

@@ -2,7 +2,6 @@ package adventuregame.interactibles;
 
 import java.util.ArrayList;
 
-import adventuregame.Environment;
 import adventuregame.Inventory;
 import adventuregame.Room;
 import adventuregame.Utils;
@@ -65,21 +64,27 @@ public class SkeletonInteractible extends InventoryInteractible
             if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
             {
                 Item i = its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its)));
-                uinv.add(i);
-                inv.remove(i);
+                if(i instanceof Armor && u.getInventory().hasUnequippedArmor())
+                    Utils.slowPrintln("You're already holding a piece of unequipped armor! Cannot take another."); //TODO add Trade action
+                else
+                {
+                    uinv.add(i);
+                    if(i instanceof Armor) i.action(u, true);
+                    remove(i);
+                }
             }
             else
             {
                 for(Item i : new ArrayList<>(its)) if(!uinv.isFull())
                 {
                     if(i instanceof Armor && u.getInventory().hasUnequippedArmor())
+                        Utils.slowPrintln("You're already holding a piece of unequipped armor! Cannot take another."); //TODO add Trade action
+                    else
                     {
-                        Utils.slowPrintln("You're already holding a piece of unequipped armor! Cannot take another.");
-                        continue;
-                    } //TODO add Trade action
-                    uinv.add(i);
-                    if(i instanceof Armor) i.action(u, true);
-                    inv.remove(i);
+                        uinv.add(i);
+                        if(i instanceof Armor) i.action(u, true);
+                        remove(i);
+                    }
                 }
                 else
                 {
@@ -93,17 +98,30 @@ public class SkeletonInteractible extends InventoryInteractible
         }
     }
 
+    @Override protected void setInspects() {}
+
     @Override
-    public void inspect()
+    public void add(Item i)
     {
-        for(Armor i : inv.getArmor()) 
+        if(i instanceof Armor) 
         {
-            Utils.slowPrint("It's got ");
             Armor.MaterialType mat = ((Armor)i).getMat();
-            Utils.slowPrintln(Armor.armorDescs.get(mat == Armor.MaterialType.ANCIENT_RUSTED && !Environment.curPlayer.getName().equals("Valeent") ? Armor.MaterialType.RUSTED : mat));
-            return;
+            switch(mat)
+            {
+                case ANCIENT_RUSTED:
+                    put("", "It's got " + Armor.armorDescs.get(Armor.MaterialType.RUSTED));
+                    put("Valeent", new String[] {"It's got " + Armor.armorDescs.get(mat), "You notice the glyph on the armor is that of a long deceased House. You feel you remember it from one of your schoolbooks."});
+                    break;
+                default: put("", "It's got " + Armor.armorDescs.get(mat)); break;
+            }
         }
-        description = simpleDesc;
-        Utils.slowPrintln(getDescription());
+        inv.add(i);
+    }
+
+    @Override
+    public void remove(Item i)
+    {
+        inv.remove(i);
+        if(inv.getArmor().isEmpty()) for(String name : insMap.keySet()) put(name, simpleDesc);
     }
 }

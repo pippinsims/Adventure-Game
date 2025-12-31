@@ -73,9 +73,8 @@ public class ItemHolder extends Interactible {
         }
     }
 
-    @Override
-    public void inspect()
+    @Override protected void setInspects()
     {
-        System.out.println(name + ": " + description);
+        put(name + ": " + description);
     }
 }

@@ -1,5 +1,10 @@
 package adventuregame;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import adventuregame.Player.Inspect;
+import adventuregame.Player.Inspect.Node;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
 
@@ -13,7 +18,24 @@ public class Interactible extends Describable
     protected Room myRoom;
     public boolean isEnabled = true;
 
-    public Interactible() {};
+    public Map<String,Inspect> insMap = new HashMap<>();
+
+    public Interactible() { setInspects(); };
+
+    protected final void put(String defaultInspect)              { put("", defaultInspect); }
+    protected final void put(String name, String defaultInspect) { put(name, new String[] {defaultInspect}); }
+    protected final void put(String[] inspects)                  { put("", inspects); }
+    protected final void put(String name, String[] inspects) 
+    { 
+        Node[] nodepath = new Node[inspects.length];
+        for(int i = inspects.length - 1; i >= 0; i--)
+        {
+            if(i == inspects.length - 1) nodepath[i] = new Node.Leaf(inspects[i]);
+            else nodepath[i] = new Node.Branch(inspects[i], nodepath[i+1]);
+        }
+
+        insMap.put(name, new Inspect(new Node.Head(nodepath[0])));
+    }
 
     public Interactible(Room r, String name, String description, String preposition, String pluralDescription, String pluralPreposition, String actionVerb, String actionPreposition, String locationReference)
     {
@@ -87,8 +109,16 @@ public class Interactible extends Describable
         throw new UnsupportedOperationException("Unimplemented method 'action'");
     }
 
+    protected void setInspects()
+    {
+        throw new UnsupportedOperationException("Unimplemented method 'setInspects'");
+    }
+
     public void inspect()
     {
-        throw new UnsupportedOperationException("Unimplemented method 'inspectInteractible'");
+        if(insMap.containsKey(Environment.curPlayer.getName()))
+            Utils.slowPrintln(insMap.get(Environment.curPlayer.getName()).get());
+        else
+            Utils.slowPrintln(insMap.get("").get());
     }
 }

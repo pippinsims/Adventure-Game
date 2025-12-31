@@ -22,5 +22,8 @@ public class Table extends Interactible {
         r.add(this);
     }
 
-    @Override public void inspect() { System.out.println(name + ": " + description); }
+    @Override protected void setInspects()
+    {
+        put(name + ": " + description);
+    }
 }
