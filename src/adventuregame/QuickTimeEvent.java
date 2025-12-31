@@ -3,7 +3,11 @@ package adventuregame;
 import adventuregame.Effectable.EffectUpdateResult;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.interactibles.ItemHolder;
+import adventuregame.interactibles.SkeletonInteractible;
+import adventuregame.items.Armor;
 import adventuregame.items.Sword;
+import adventuregame.items.Weapon;
 
 public class QuickTimeEvent
 {
@@ -18,6 +22,7 @@ public class QuickTimeEvent
     String[] goodAnswers;
     String[] badAnswers;
     Unit actor;
+    private Room room; //used in output() and fail()
     Describable sender;
     Effect effectToApply;
     boolean isOneQuestion = false;
@@ -28,6 +33,7 @@ public class QuickTimeEvent
         this.questions = new String[] { question };
         this.prompts = new String[][] { prompts };
         this.actor = actor;
+        room = actor.getRoom();
         this.sender = sender;
         isOneQuestion = true;
     }
@@ -40,6 +46,7 @@ public class QuickTimeEvent
         this.badAnswers = badAnswers != null ? badAnswers : new String[0]; 
         this.prompts = prompts;
         this.actor = actor;
+        room = actor.getRoom();
         this.sender = sender;
     }
 
@@ -51,23 +58,34 @@ public class QuickTimeEvent
         this.badAnswers = badAnswers != null ? badAnswers : new String[0]; 
         this.prompts = prompts;
         this.actor = actor;
+        room = actor.getRoom();
         this.sender = sender;
         effectToApply = e;
     }
+
     static class InputThread extends Thread {
         public String input = null;
         protected Thread main;
         public InputThread(Thread main) { this.main = main; }
     }
 
-    public boolean run()
+    public boolean go()
+    {
+        boolean out = run();
+        if(!out) fail();
+        return out;
+    }
+
+    private boolean run()
     {
         InputThread inputThr = new InputThread(Thread.currentThread()) {
             public void run() 
             {
                 if(isOneQuestion)
                 { 
-                    input = output(prompts[0][Utils.promptList(questions[0], prompts[0])]) ? "" : null;
+                    int in = Utils.promptList(questions[0], prompts[0]);
+                    if(in < 0) return;
+                    input = output(prompts[0][in]) ? "" : null;
                     main.interrupt();
                 }
                 else
@@ -75,6 +93,8 @@ public class QuickTimeEvent
                     while(true)
                     {
                         input = Utils.advancedPromptList(questions, prompts, currentPrompt);
+                        if(input == null) return;
+                        
                         if(Utils.linearFind(goodAnswers, input) >= 0) //TODO would be nice if this could also be a puzzle with a text input not just promptlist
                         {
                             if(actor.getHealth() > 0 && output(input)) main.interrupt();
@@ -94,7 +114,7 @@ public class QuickTimeEvent
         String input = null;
         for(currentRound = 0; currentRound < maxLength; currentRound++)
         {
-            try { Thread.sleep(dur); }
+            try { Thread.sleep(dur); } //TODO still breaks on "Cry Out."
             catch (InterruptedException e) {
                 try { 
                     inputThr.join();
@@ -108,18 +128,13 @@ public class QuickTimeEvent
 
             if(input != null) return true; //succeeded
         }
-        Utils.restartScanner();
+        inputThr.interrupt();
         return false; //ran out of time
     }
 
     public void setWaitDuration(int seconds)
     {
         dur = seconds * 1000;
-    }
-
-    public void breakEvent()
-    {
-        doBreak = true;
     }
 
     //expand this for every new QuickTimeEvent
@@ -130,11 +145,11 @@ public class QuickTimeEvent
             boolean succeeded = false;
             if(in.equals("Cry out.")) 
             {
-                if(actor.getRoom().players.size() == 1) return false;
+                if(room.players.size() == 1) return false;
                 else
                 {
                     Unit helper = null;
-                    for(Unit u : actor.getRoom().players) if(u != actor) helper = u;
+                    for(Unit u : room.players) if(u != actor) helper = u;
                     QuickTimeEvent help = new QuickTimeEvent(
                         helper, 
                         new Describable() { { description = "helpcledobl"; } },
@@ -142,7 +157,7 @@ public class QuickTimeEvent
                         helper.getName() + ", do you help?", 
                         new String[] {"Help.","Do not help."}
                     );
-                    succeeded = help.run();
+                    succeeded = help.go();
                 }
             }
             else if(in.equals("Pry hand violently."))
@@ -184,5 +199,53 @@ public class QuickTimeEvent
         }
 
         throw new UnsupportedOperationException("QuickTimeEvent answer: '" + in + "' not recognized.");
+    }
+
+    private void fail()
+    {
+        switch(sender.getName())
+        {
+            case "Cledobl":
+                ItemHolder cleholder = Utils.getFirst(room.interactibles,ItemHolder.class);
+                cleholder.isEnabled = false;
+                SkeletonInteractible yourBody = new SkeletonInteractible(
+                    room,
+                    actor.getName()+"'s body", 
+                    "new-looking skeleton",
+                    "gripped tightly to",
+                    "",
+                    "",
+                    "brush",
+                    "aside from it's grip on",
+                    "the sword"
+                )
+                {
+                    @Override 
+                    public void action(Unit u)
+                    {
+                        getRoom().interactibles.remove(this);
+                        Utils.slowPrintln("You brush the hand of the skeleton away from the sword, causing it to crumble to the floor.");
+                        new SkeletonInteractible(
+                            getRoom(), 
+                            name, 
+                            simpleDesc,
+                            "on",
+                            "new-looking skeletons",
+                            "",
+                            "loot",
+                            "",
+                            "the floor",
+                            inv,
+                            insMap
+                        );
+                        cleholder.isEnabled = true;
+                    }
+                };
+                
+                for(Armor a : actor.getInventory().getArmor()) yourBody.add(a);
+                Weapon w = Utils.getFirst(actor.getInventory().getWeapons(), Weapon.class);
+                if(w != null) yourBody.add(w);
+                break;
+        }
     }
 }

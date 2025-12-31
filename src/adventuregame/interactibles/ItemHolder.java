@@ -61,7 +61,7 @@ public class ItemHolder extends Interactible {
                         new String[] {"Cry out.", "Pry hand violently."},
                         new String[] {"Pull harder."},
                         new Effect(Effect.Type.VITALITYDRAIN, 10, (int)(u.getMaxHealth()/10))
-                    ).run()) if(u.getHealth() > 0) Environment.kill(u);
+                    ).go()) if(u.getHealth() > 0) Environment.kill(u);
                 }
                 break;
             default:

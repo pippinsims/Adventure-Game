@@ -1,6 +1,9 @@
 package adventuregame.items;
 
+import java.util.Random;
+
 import adventuregame.Damage;
+import adventuregame.Environment;
 import adventuregame.Environment.Metal;
 import adventuregame.Player;
 import adventuregame.abstractclasses.Unit;
@@ -10,6 +13,7 @@ public class Sword extends Weapon {
     Damage dmg;
     public int numAttacks = 0;
     Metal material;
+    String[] atkmsgs;
 
     public Sword(float damage)
     {
@@ -27,6 +31,18 @@ public class Sword extends Weapon {
     {
         dmg = new Damage(damage, Damage.Type.BASIC);
         this.atkmsg = atkmsg;
+        this.material = material;
+        this.name = name;
+        this.description = description;
+        this.pluralDescription = pDes;
+
+        setNumAttacks();
+    }
+
+    public Sword(float damage, Metal material, String name, String description, String pDes, String[] atkmsgs)
+    {
+        dmg = new Damage(damage, Damage.Type.BASIC);
+        this.atkmsgs = atkmsgs;
         this.material = material;
         this.name = name;
         this.description = description;
@@ -59,5 +75,7 @@ public class Sword extends Weapon {
         if(!isFinal && u instanceof Player) ((Player)u).promptForAction();
     }
 
-    @Override public Damage getDamage() { return dmg; }
+    @Override public Damage getDamage() { 
+        if(atkmsgs != null && Environment.isLaur) atkmsg = atkmsgs[new Random().nextInt(atkmsgs.length)];
+        return dmg; }
 }

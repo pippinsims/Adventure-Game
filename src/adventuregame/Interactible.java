@@ -34,6 +34,7 @@ public class Interactible extends Describable
             else nodepath[i] = new Node.Branch(inspects[i], nodepath[i+1]);
         }
 
+        // System.out.println("insMap.put("+name+", "+nodepath[0].msg+")");
         insMap.put(name, new Inspect(new Node.Head(nodepath[0])));
     }
 
@@ -118,7 +119,9 @@ public class Interactible extends Describable
     {
         if(insMap.containsKey(Environment.curPlayer.getName()))
             Utils.slowPrintln(insMap.get(Environment.curPlayer.getName()).get());
-        else
+        else if(insMap.containsKey(""))
             Utils.slowPrintln(insMap.get("").get());
+        else
+            throw new UnsupportedOperationException("insMap for name: '" + name + "' description: '" + description + "' is null");
     }
 }

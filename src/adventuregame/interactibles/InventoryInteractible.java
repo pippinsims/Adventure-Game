@@ -16,7 +16,7 @@ public abstract class InventoryInteractible extends Interactible {
 
     public Inventory getInventory() { return inv; }
 
-    public void add(Item i) { inv.add(i); }
+    public void add(Item i) { inv.add(i); setInspects(); }
 
-    public void remove(Item i) { inv.remove(i); }
+    public void remove(Item i) { inv.remove(i); setInspects(); }
 }

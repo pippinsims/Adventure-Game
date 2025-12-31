@@ -30,6 +30,7 @@ public abstract class Describable
     @Override
     public int hashCode() 
     {
+        if(getDescription() == null) throw new UnsupportedOperationException(name + " has no desc");
         return getDescription().hashCode();
     }
 
@@ -41,6 +42,7 @@ public abstract class Describable
         if(obj == null || getClass() != obj.getClass()) return false;
 
         Describable d = (Describable) obj;
+        
         return this.getDescription().equals(d.getDescription());
     }
 }

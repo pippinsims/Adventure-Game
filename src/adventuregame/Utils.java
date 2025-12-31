@@ -1,6 +1,7 @@
 package adventuregame;
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.*;
 
 import adventuregame.abstractclasses.Describable;
 
@@ -13,6 +14,10 @@ public class Utils {
 
     public static String[] names1 = new String[]{"Bo","Kua","An","Lis","Yi"};
     public static String[] names2 = new String[]{"sandual","\'hananah","mon","tio","narsh","poaf","duan"};
+
+    static final BlockingQueue<String> in = new LinkedBlockingQueue<>();
+
+    static { new Thread(() -> { while (true) in.add(Utils.scanner.nextLine()); }, "stdin").start(); }
 
     public static String readFile (String fileName)
     {
@@ -242,8 +247,13 @@ public class Utils {
         if(listPrompts == null) return -1;
         
         printOptions(listPrompts);
+
+
+        String in = scanloop();
+        if(in == null) return -1;
+        
         try {
-            return confirmInput(scanner.nextLine(), listPrompts) - 1;
+            return confirmInput(in, listPrompts) - 1;
         } catch (NoSuchElementException e) {
             return 0;
         }
@@ -256,8 +266,12 @@ public class Utils {
         if(listPrompts == null) return null;
         
         printOptions(listPrompts);
+
+        String in = scanloop();
+        if(in == null) return null;
+
         try {
-            return prompters.get(confirmInput(scanner.nextLine(), listPrompts) - 1);
+            return prompters.get(confirmInput(in, listPrompts) - 1);
         } catch (NoSuchElementException e) {
             return prompters.get(0);
         }
@@ -283,8 +297,12 @@ public class Utils {
         
         String[] outPrompts = outPromptsAsList.toArray(new String[0]);
         printOptions(outPrompts);
+
+        String in = scanloop();
+        if(in == null) return null;
+
         try {
-            return outPrompts[confirmInput(scanner.nextLine(), outPrompts) - 1];
+            return outPrompts[confirmInput(in, outPrompts) - 1];
         } catch (NoSuchElementException e) {
             return outPrompts[0];
         }
@@ -321,7 +339,7 @@ public class Utils {
                 System.out.println(question);
                 printOptions(options);
 
-                inputString = scanner.nextLine();
+                inputString = scanloop();
             } 
         } while(inputInt == null);
         return inputInt;
@@ -373,15 +391,35 @@ public class Utils {
         return n > at ? at : n;
     }
 
-    public static void restartScanner()
-    {
-        scanner.reset();
-        scanner = new Scanner(System.in);
-    }
+    // public static void restartScanner()
+    // {
+    //     System.out.println("Restarting Scanner");
+    //     scanner.close();
+    //     scanner = new Scanner(System.in);
+    // }
 
     public static <T> boolean contains(List<?> l, Class<T> c) 
     {
         for (Object i : l) if (i.getClass().equals(c.getClass())) return true;
         return false;
+    }
+
+    public static <T, K extends T> K getFirst(ArrayList<? extends T> arr, Class<K> type) 
+    {
+        for (T element : arr) if(type.isInstance(element)) return type.cast(element);
+        return null;
+    }
+
+    static String scan() throws InterruptedException 
+    { 
+        return in.poll(2000, TimeUnit.MILLISECONDS);
+    }
+
+    static String scanloop()
+    {
+        String s; 
+        try { while ((s = scan()) == null); }
+        catch (InterruptedException e) { return null; }
+        return s;
     }
 }

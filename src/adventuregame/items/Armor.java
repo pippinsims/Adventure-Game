@@ -56,9 +56,8 @@ public class Armor extends Item {
 
     @Override
     public void action(Unit u, boolean isFinal) {
-        boolean found = false;
-        for(Armor a : u.getInventory().getArmor()) if(a == this) { found = true; break; }
-        if(!found) throw new IllegalAccessError("Tried to equip armor that wasn't in your inventory!");
+        
+        if(u.getInventory().getArmor().isEmpty()) throw new IllegalAccessError("Tried to equip armor that wasn't in your inventory!");
 
         if(equippedTo != null)
         {

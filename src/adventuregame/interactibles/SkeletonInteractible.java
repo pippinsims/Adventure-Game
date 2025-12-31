@@ -1,8 +1,10 @@
 package adventuregame.interactibles;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import adventuregame.Inventory;
+import adventuregame.Player.Inspect;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Item;
@@ -11,7 +13,7 @@ import adventuregame.items.Armor;
 
 public class SkeletonInteractible extends InventoryInteractible
 {
-    private String simpleDesc = "old dilapidated skeleton";
+    protected String simpleDesc;
 
     public SkeletonInteractible(Room r)
     {
@@ -24,6 +26,8 @@ public class SkeletonInteractible extends InventoryInteractible
               "",
               "the floor");
         inv = new Inventory(6);
+        simpleDesc = description;
+        setInspects();
     }
 
     public SkeletonInteractible(Room r, Inventory i)
@@ -37,16 +41,23 @@ public class SkeletonInteractible extends InventoryInteractible
               "",
               "the floor");
         inv = i;
+        simpleDesc = description;
+        setInspects();
     }
 
-    public SkeletonInteractible(Room r, String n, String d, String p, String pd, String pp, String a, String ap, String l, Inventory i) {
+    public SkeletonInteractible(Room r, String n, String d, String p, String pd, String pp, String a, String ap, String l, Inventory i, Map<String, Inspect> im) {
         super(r, n, d, p, pd, pp, a, ap, l);
+        simpleDesc = description;
         inv = i;
+        insMap = im;
+        setInspects();
     }
 
     public SkeletonInteractible(Room r, String n, String d, String p, String pd, String pp, String a, String ap, String l) {
         super(r, n, d, p, pd, pp, a, ap, l);
+        simpleDesc = description;
         inv = new Inventory(6);
+        setInspects();
     }
 
     @Override 
@@ -70,7 +81,7 @@ public class SkeletonInteractible extends InventoryInteractible
                 {
                     uinv.add(i);
                     if(i instanceof Armor) i.action(u, true);
-                    remove(i);
+                    inv.remove(i);
                 }
             }
             else
@@ -83,7 +94,7 @@ public class SkeletonInteractible extends InventoryInteractible
                     {
                         uinv.add(i);
                         if(i instanceof Armor) i.action(u, true);
-                        remove(i);
+                        inv.remove(i);
                     }
                 }
                 else
@@ -92,36 +103,29 @@ public class SkeletonInteractible extends InventoryInteractible
                     break;
                 }
             }
-            if(!inv.getArmor().isEmpty()) return;
-            description = simpleDesc;
+            setInspects();
             if(inv.isEmpty()) actionVerb = "";
         }
     }
 
-    @Override protected void setInspects() {}
-
-    @Override
-    public void add(Item i)
+    @Override protected void setInspects() 
     {
-        if(i instanceof Armor) 
+        put(simpleDesc);
+        for(Armor a : inv.getArmor())
         {
-            Armor.MaterialType mat = ((Armor)i).getMat();
+            Armor.MaterialType mat = a.getMat();
             switch(mat)
             {
                 case ANCIENT_RUSTED:
-                    put("", "It's got " + Armor.armorDescs.get(Armor.MaterialType.RUSTED));
+                    put("It's got " + Armor.armorDescs.get(Armor.MaterialType.RUSTED));
                     put("Valeent", new String[] {"It's got " + Armor.armorDescs.get(mat), "You notice the glyph on the armor is that of a long deceased House. You feel you remember it from one of your schoolbooks."});
                     break;
-                default: put("", "It's got " + Armor.armorDescs.get(mat)); break;
+                default: put("It's got " + Armor.armorDescs.get(mat)); break;
             }
+            description = simpleDesc + " with armor";
+            return;
         }
-        inv.add(i);
-    }
-
-    @Override
-    public void remove(Item i)
-    {
-        inv.remove(i);
-        if(inv.getArmor().isEmpty()) for(String name : insMap.keySet()) put(name, simpleDesc);
+        for(String name : insMap.keySet()) put(name, simpleDesc);
+        description = simpleDesc;
     }
 }

@@ -59,15 +59,19 @@ public class Environment
             for(Player p : allPlayers) if(!Utils.contains(playerRooms, p.getRoom())) playerRooms.add(p.getRoom());
 
             //all enemies in player rooms
-            for(Room r : playerRooms) if(!r.enemies.isEmpty())
+            for(Room r : playerRooms) 
             {
-                curRoom = r;
-                for(Enemy e : new ArrayList<>(r.enemies))
+                if(r == null) throw new UnsupportedOperationException("this is cooked");
+                if(!r.enemies.isEmpty())
                 {
-                    e.updateUnit();
-                    System.out.println();
-                    if(r.players.isEmpty()) break;
-                    // for(Player p : r.players) System.out.println(p.getName());
+                    curRoom = r;
+                    for(Enemy e : new ArrayList<>(r.enemies))
+                    {
+                        e.updateUnit();
+                        System.out.println();
+                        if(r.players.isEmpty()) break;
+                        // for(Player p : r.players) System.out.println(p.getName());
+                    }
                 }
             }
 
@@ -113,7 +117,16 @@ public class Environment
         Room cell2 = new Room(celld, celll, cellf, celln);
         new Table(cell2);
         Interactible cleholder = new ItemHolder(
-            new Sword(10, Metal.STEEL, "Cledobl", "glittering steel sword", "steel swords", "Your weapon shears the air in a gnawing arch"), 
+            new Sword(10, Metal.STEEL, "Cledobl", "glittering steel sword", "steel swords", new String[] {
+                "Your weapon shears the air in a gnawing arch",
+                "The blade scythes with unerring vanquishity",
+                "Time slows as a sinister blur seeps towards the enemy",
+                "THE SOUL OF CLEDOBL DOTH ADMIRE IT'S VICTIM'S DEMISE",
+                "Scccreech of laughter echos lengthwise across the back of Laur's mind!",
+                "As you swing this sabre, Laur imagines what it'd be like to be dead.\nNot fun.",
+                "Ptolomy cackles like he witnessing da hyena.\n\n\t\t\tCledobl kills. (._.)",
+                "Something deep within Laur *SNAPS* like twigs in the wild fire of his burning love and passion. Nothing to do now but destroy."
+            }),
             cell2,
             "stuck in",
             "the table"
@@ -124,7 +137,7 @@ public class Environment
         new SkeletonInteractible(
             cell2,
             "Ancient Skeleton", 
-            "old dilapidated skeleton with armor",
+            "old dilapidated skeleton",
             "bent over",
             "",
             "",
@@ -148,14 +161,15 @@ public class Environment
                     new SkeletonInteractible(
                         getRoom(), 
                         name, 
-                        description,
+                        simpleDesc,
                         "on",
                         "",
                         "",
                         "loot",
                         "",
                         "the floor",
-                        inv
+                        inv,
+                        insMap
                     );
                 }
                 cleholder.isEnabled = true;
@@ -249,11 +263,11 @@ public class Environment
 
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
-        addPlayer(new Player());
+        // addPlayer(new Player());
         addPlayer(new Player("Nuel"));
         addPlayer(new Player("Valeent"));
-        addPlayer(new Player("Peili"));
-        addPlayer(new Player("Dormaah"));
+        // addPlayer(new Player("Peili"));
+        // addPlayer(new Player("Dormaah"));
     }
 
     public static void printInfo(Room r, boolean peek)
@@ -289,9 +303,10 @@ public class Environment
         }
         else if(u instanceof Player)
         {
-            Utils.slowPrintln("you died.");
+            Utils.slowPrintln("you died." + u.getName());
             u.getRoom().players.remove(u);
             allPlayers.remove(u);
+            for(Player x : allPlayers) System.out.println(x.getName());
         }
         u.setRoom(null);
         Utils.slowPrintln(u.getDeathMessage() + "------", 0/*200*/);

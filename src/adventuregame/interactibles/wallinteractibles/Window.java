@@ -24,6 +24,7 @@ public class Window extends WallInteractible {
         myRoom.add(this);
         this.wall = wall;
         this.view = view;
+        setInspects();
         
         setLocationReference();
     }

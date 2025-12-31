@@ -80,12 +80,12 @@ public class Player extends Unit
     {
         switch(name)
         {
-            case "Laur"   : description = "He is a strange-looking man with grimy fingernails";
-            case "Nuel"   : description = "He is a tallish impolite man with a perminent sneer"; // He can pick locks
-            case "Valeent": description = "She is a perilous-looking woman with anger issues"; // Notes on Valeent, skill where she randomly increments her place in the turn order by 1
-            case "Peili"  : description = "She is a consternated woman with a bewildered look and a horrendous scar across her forehead"; // Lodestones in her baggage
-            case "Dormaah": description = "He is a stout fish of a man, knows wild things";
-            default       : description = "They are a person";
+            case "Laur"   : description = "He is a strange-looking man with grimy fingernails"; break;
+            case "Nuel"   : description = "He is a tallish impolite man with a perminent sneer"; break; // He can pick locks
+            case "Valeent": description = "She is a perilous-looking woman with anger issues"; break; // Notes on Valeent, skill where she randomly increments her place in the turn order by 1
+            case "Peili"  : description = "She is a consternated woman with a bewildered look and a horrendous scar across her forehead"; break; // Lodestones in her baggage
+            case "Dormaah": description = "He is a stout fish of a man, knows wild things"; break;
+            default       : description = "They are a person"; break;
         }
     }
 
@@ -201,7 +201,7 @@ public class Player extends Unit
         else Utils.slowPrintln(d.getDescription());
 
         Utils.slowPrint("Press Enter to continue");
-        Utils.scanner.nextLine();
+        Utils.scanloop();
         promptForAction();
 
         //TODO after a turn where i followed dialogue that put me back in the cell, Laur could inspect everyone except with himself replacing Nuel.
@@ -212,7 +212,7 @@ public class Player extends Unit
         System.out.println();
 
         System.out.println("What do you say to Ptolomy's spirit?\n");
-        Utils.scanner.nextLine();
+        Utils.scanloop();
 
         System.out.println();
         System.out.print("The reply: ");
@@ -232,7 +232,7 @@ public class Player extends Unit
         if(!myRoom.doFirstDialogue())
         {
             System.out.println("What do you say?");
-            String s = Utils.scanner.nextLine();
+            String s = Utils.scanloop();
             if(s.contains("stop")) for (Enemy e : myRoom.enemies) e.pleaResponse();
         }
         Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
@@ -257,7 +257,7 @@ public class Player extends Unit
     {        
         System.out.println("Focus...");
         System.out.print("Speak: ");
-        String input = Utils.scanner.nextLine();
+        String input = Utils.scanloop();
         
         ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
         
