@@ -31,7 +31,7 @@ public class testclass {
                         //3, succeeded
                         //4, succeeded 
                         //5, succeeded
-                        6,// nested QTE, etc
+                        //6  succeeded as far as I could tell
                     })
                     {
                         System.out.println("--Begin Test--");
@@ -140,11 +140,11 @@ public class testclass {
                                 .run();
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
                                 break;
-                            case 6: //Nested QTEs
+                            case 6: //Nested QTEs threads do not conflict
                                 Player p1 = new Player("Guy", 10);
                                 p1.setRoom(new Room());
                                 System.out.println(p1.getName() + ": " + p1.getHealth() + " health.");
-                                new QuickTimeEvent(
+                                new EffectQTE(
                                     p1, 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     new Effect(Type.FIRE, -1, 1),
@@ -187,7 +187,6 @@ public class testclass {
                                 ) 
                                 { 
                                     @Override protected void timeout() { System.out.println("Timed out normally."); }
-                                    @Override protected boolean update() { System.out.println("Tick!"); return false; } 
                                 }
                                 .run();
                                 System.out.println(p1.getName() + ": " + p1.getHealth() + " health.");
