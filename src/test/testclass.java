@@ -1,6 +1,7 @@
 package test;
 
 import adventuregame.Effect;
+import adventuregame.Game;
 import adventuregame.Player;
 import adventuregame.QuickTimeEvent;
 import adventuregame.Room;
@@ -11,18 +12,74 @@ import adventuregame.QuickTimeEvent.NoUpdateQTE;
 import adventuregame.QuickTimeEvent.Node;
 import adventuregame.QuickTimeEvent.Node.Output;
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.enemies.Goblin;
 
 public class testclass {
     
     public static void main(String[] args)
     {   
         for(String s : new String[] {
-            "QTE"
+            "Room scenarios",
+            // "Dialogue",
+            // "QTE" succeeded
         })
             switch(s)
             {
+                case "Room scenarios":
+                    for(int i : new int[]{
+                        0,
+            // case FIGHT:     fight();     break;
+            // case INSPECT:   inspect();   break;
+            // case TALK:      talk();      break;
+            // case CAST:      castSpell(); break;
+            // case INTERACT:  interact();  break;
+            // case COMMUNE:   commune();   break;
+            // case INVENTORY: inventory(); break;
+            // case LEAVE:     leave();     break;
+                    })
+                    {
+                        System.out.println("--Begin Test Room Scenarios--");
+                        switch(i)
+                        {
+                            case 0: //test fight()
+                                System.out.println("--Combat--");
+                                System.out.println("Test 1, kill enemy.");
+                                Game.curRoom  = new Room();
+                                Game.curPlayer = new Player("Guy", 10);
+                                Game.curRoom.add(new Goblin(1));
+                                Game.curPlayer.setRoom(Game.curRoom);
+                                Game.curPlayer.updateUnit();
+
+                                System.out.println("Test 2, get killed.");
+                                Game.curRoom  = new Room();
+                                Game.curPlayer = new Player("Guy", 1);
+                                Game.curRoom.add(Game.curPlayer);
+                                Game.curRoom.add(new Goblin(10));
+                                for(Enemy e : Game.curRoom.enemies) e.setRoom(Game.curRoom);
+                                Game.curPlayer.setRoom(Game.curRoom);
+                                Game.curPlayer.updateUnit();
+                                for(Enemy e : Game.curRoom.enemies) e.chooseAction();
+
+                                break;
+                        }
+                    }
+                    break;
+                case "Dialogue":
+                    for(int i : new int[]{
+                        0,
+                        1
+                    })
+                    {
+                        System.out.println("--Begin Test Dialogue--");
+                        switch(i)
+                        {
+                            case 0: //Timeless QTE
+                        }
+                    }
+                    break;
                 case "QTE":
                     for(int i : new int[]{
                         //0, succeeded as far as I could tell 
@@ -34,7 +91,7 @@ public class testclass {
                         //6  succeeded as far as I could tell
                     })
                     {
-                        System.out.println("--Begin Test--");
+                        System.out.println("--Begin Test QTE--");
                         switch(i)
                         {
                             case 0: //Timeless QTE

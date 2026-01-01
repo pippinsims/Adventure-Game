@@ -137,7 +137,7 @@ public abstract class Effectable extends Describable{
             return EffectUpdateResult.VERYHURT;
         else
         {
-            Environment.kill(this);
+            Game.kill(this);
             return EffectUpdateResult.DEATH;
         }
     }

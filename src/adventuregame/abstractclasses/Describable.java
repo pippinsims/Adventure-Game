@@ -3,7 +3,7 @@ package adventuregame.abstractclasses;
 import java.util.HashMap;
 import java.util.Map;
 
-import adventuregame.Environment;
+import adventuregame.Game;
 import adventuregame.Player;
 
 public abstract class Describable
@@ -15,13 +15,13 @@ public abstract class Describable
     public final String getName() { return name; }
     
     public final String getDescription() { 
-        Player p = Environment.curPlayer;
+        Player p = Game.curPlayer;
         if(p != null && descMap.containsKey(p.getName())) return descMap.get(p.getName());
         else return description;
     }
 
     public final String getPluralDescription() { 
-        Player p = Environment.curPlayer;
+        Player p = Game.curPlayer;
         if(p != null && pDescMap.containsKey(p.getName())) return pDescMap.get(p.getName());
         else return pluralDescription; 
     }
@@ -42,7 +42,7 @@ public abstract class Describable
         if(obj == null || getClass() != obj.getClass()) return false;
 
         Describable d = (Describable) obj;
-        
+
         return this.getDescription().equals(d.getDescription());
     }
 }

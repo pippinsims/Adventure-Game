@@ -54,7 +54,7 @@ public class Room extends Describable
 
     public void discover()
     {
-        descMap.put(Environment.curPlayer.getName(), familiarDescription);
+        descMap.put(Game.curPlayer.getName(), familiarDescription);
     }
 
     public boolean doFirstDialogue()
@@ -68,7 +68,7 @@ public class Room extends Describable
         return false;
     }
 
-    public boolean getIsFamiliar() { return familiars.contains(Environment.curPlayer); }
+    public boolean getIsFamiliar() { return familiars.contains(Game.curPlayer); }
 
     public void add(Interactible i)
     {

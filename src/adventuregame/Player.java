@@ -2,10 +2,8 @@ package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Enemy;
-import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
-import adventuregame.interactibles.InventoryInteractible;
 import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.*;
 
@@ -174,7 +172,7 @@ public class Player extends Unit
                     {   description = "Punch"; 
                         atkmsg = "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad"); }
                     @Override public void action(Unit u, boolean isFinal) {}
-                    @Override public Damage getDamage() { return new Damage(1, Damage.Type.BASIC); }
+                    @Override public Damage getDamage() { return getAttackDamage(); }
                 });
                 if(chosen == null) chosen = Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", weps);                
 
@@ -192,7 +190,7 @@ public class Player extends Unit
     {
         ArrayList<Describable> descs = new ArrayList<>(myRoom.interactibles);
         descs.addAll(myRoom.players);
-        descs.remove(this); //TODO this is listed
+        descs.remove(this); //TODO but "this" is listed even though it's removed
         Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
         if(d instanceof Interactible) ((Interactible)d).inspect();
         else Utils.slowPrintln(d.getDescription());
@@ -258,14 +256,21 @@ public class Player extends Unit
         
         ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
         
-        System.out.println("Your spell blorkt!");
-        performSpell(input);
-    }
-
-    private void performSpell(String input)
-    {
-        //TODO make a simple language generator
-        /*
+        String[] spellTypes = new String[]{"mind death all foes", "FERDINAND'S FLAMBERGE"};
+        switch(Utils.linearFind(spellTypes, input))
+        {
+            case 0:
+                int lvl = 1000;
+                String message = "a level " + lvl + " Psych Strike spell";
+                Utils.slowPrintln("You release " + message + " on all of your foes.");
+                if(myRoom.enemies.size() == 0) Utils.slowPrint("... but you have no enemies! Nothing happens.");
+                else for (Enemy e : new ArrayList<>(myRoom.enemies)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl)), message); //need to instantiate every time, otherwise they'd all have the same instance of the effect
+                break;
+            case 1:
+                Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
+                break;
+        }
+        /*TODO make a simple language generator
             Get the latin sentence of the sentence, then change the words and endings with a new auto-generated set and let em try and figure that out.
             For further obfuscation, use 4 alphabet cases: Superupper, upper, lower, sublower
             superupper is just greek uppercase, sublower is just greek lowercase
@@ -305,28 +310,13 @@ public class Player extends Unit
                 glish word would be capital, just make the second so.
                     The quick brown fox jumps over the lazy dog.
                     τHε κuicκ brown φoξ ΞumpΣ οveρ τhε λazυ δoγ.
-        */
-    //  String[] spellTypes = new String[]{"mind death all foes", "FERDINAND'S FLAMBERGE"};
-        // switch(Utils.linearFind(spellTypes, input)) //TODO INPUT SUBSTRING PARSE METHOD (i.g. if second-to-last word "all", and last word "foes", apply to all Enemys)
-        // {
-        //     case 0:
-        //         int lvl = 1000;
-        //         String message = "a level " + lvl + " Psych Strike spell";
-        //         Utils.slowPrintln("You release " + message + " on all of your foes.");
-        //         if(myRoom.enemies.size() == 0) Utils.slowPrint("... but you have no enemies! Nothing happens.");
-        //         else for (Enemy e : new ArrayList<>(myRoom.enemies)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl), "2"+message)); //need to instantiate every time, otherwise they'd all have the same instance of the effect
-        //         break;
-        //     case 1:
-        //         Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
-        //         break;
-        // }
-
-        ArrayList<Describable> targets = new ArrayList<>();
-        boolean firstOnly = !(true/*root "omn" after targeting preposition "ad, on, pro" (to, on/in/against, for/on-behalf-of/before) */);
-        boolean condition = false;
-
         
-
+        ArrayList<Describable> targets = new ArrayList<>();
+        boolean firstOnly = !(true/*root "omn" after targeting preposition "ad, on, pro" (to, on/in/against, for/on-behalf-of/before) *\);
+        boolean condition = false;
+        
+        
+        
         if(Utils.contains(input, new String[]{"mind death", "sicken", "destroy"})) //if spell is against enemies
         {
             for(Enemy e : myRoom.enemies)
@@ -337,7 +327,7 @@ public class Player extends Unit
                 //else (if verb)
                 //  accusative ending
                 //  target = root with chosen ending after verb
-                switch("foes"/*target*/)
+                switch("foes"/*target*\)
                 {
                     case "foes":
                         condition = true;
@@ -346,7 +336,7 @@ public class Player extends Unit
                         condition = e.getDescription().equals("goblin");
                         break;
                 }
-
+        
                 if(condition) targets.add(e);
                 if(firstOnly) break;
             }
@@ -361,18 +351,18 @@ public class Player extends Unit
                 allContainers.addAll(myRoom.enemies);
                 allContainers.addAll(myRoom.players);
                 allContainers.addAll(myRoom.interactibles);
-
+        
                 for(Describable c : allContainers)
                 {
                     if(c instanceof InventoryInteractible) for(Item i : ((InventoryInteractible)c).getInventory().getItems()) allObjects.add(i);
                     if(c instanceof Unit                 ) for(Item i : ((Unit                 )c).getInventory().getItems()) allObjects.add(i);
                 }
             }
-
+        
             for(Describable o : allObjects)
             {
                 //get target
-                switch("foes"/*target*/)
+                switch("foes"/*target*\)
                 {
                     case "weapons":
                         condition = o instanceof Item && o instanceof Weapon;
@@ -383,11 +373,12 @@ public class Player extends Unit
                     case "potions":
                         condition = o.getDescription().equals("potion");
                 }
-
+        
                 if(condition) targets.add(o);
                 if(firstOnly) break;
             }
         }
+        */
     }
 
     private void interact()
@@ -448,7 +439,7 @@ public class Player extends Unit
         myRoom.updateDoors();
 
         System.out.println();
-        Environment.printInfo(myRoom, false);
+        Game.printInfo(myRoom, false);
         System.out.println();
 
         performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
@@ -463,8 +454,7 @@ public class Player extends Unit
     @Override
     public Damage getAttackDamage() 
     {
-        //TODO will be used in combat manager I assume, to get attack damage at that time for the enemy decisionmaking
-        throw new UnsupportedOperationException("Unimplemented method 'getAttackDamage'");
+        return new Damage(1, Damage.Type.BASIC); //punch
     }
 
     @Override

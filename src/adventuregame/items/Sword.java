@@ -3,8 +3,8 @@ package adventuregame.items;
 import java.util.Random;
 
 import adventuregame.Damage;
-import adventuregame.Environment;
-import adventuregame.Environment.Metal;
+import adventuregame.Game.Metal;
+import adventuregame.Game;
 import adventuregame.Player;
 import adventuregame.abstractclasses.Unit;
 
@@ -76,6 +76,6 @@ public class Sword extends Weapon {
     }
 
     @Override public Damage getDamage() { 
-        if(atkmsgs != null && Environment.isLaur) atkmsg = atkmsgs[new Random().nextInt(atkmsgs.length)];
+        if(atkmsgs != null && Game.isLaur) atkmsg = atkmsgs[new Random().nextInt(atkmsgs.length)];
         return dmg; }
 }

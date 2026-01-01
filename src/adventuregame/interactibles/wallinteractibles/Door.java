@@ -1,6 +1,6 @@
 package adventuregame.interactibles.wallinteractibles;
 
-import adventuregame.Environment;
+import adventuregame.Game;
 import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
@@ -85,7 +85,7 @@ public class Door extends WallInteractible
     public void inspect()
     {
         Utils.slowPrint("You peek through the door. ");
-        Environment.printInfo(getNextRoom(Environment.curRoom), true);
+        Game.printInfo(getNextRoom(Game.curRoom), true);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class Door extends WallInteractible
     {
         Room r = u.getRoom();
 
-        Utils.slowPrint("you used " + (Environment.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
+        Utils.slowPrint("you used " + (Game.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
         
         r.remove(u);
         getNextRoom(r).add(u);

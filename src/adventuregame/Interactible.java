@@ -117,8 +117,8 @@ public class Interactible extends Describable
 
     public void inspect()
     {
-        if(insMap.containsKey(Environment.curPlayer.getName()))
-            Utils.slowPrintln(insMap.get(Environment.curPlayer.getName()).get());
+        if(insMap.containsKey(Game.curPlayer.getName()))
+            Utils.slowPrintln(insMap.get(Game.curPlayer.getName()).get());
         else if(insMap.containsKey(""))
             Utils.slowPrintln(insMap.get("").get());
         else
