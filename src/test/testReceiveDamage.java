@@ -11,7 +11,7 @@ public class testReceiveDamage {
     @Test
     public void testDamageSuccess()
     {
-        Effectable p = new Player("Guy");
+        Effectable p = new Player("Guy", 10);
         float h = p.getHealth();
         int dmg = 2;
        
@@ -37,7 +37,7 @@ public class testReceiveDamage {
     @Test
     public void testTorchAttack()
     {
-        Effectable k = new Player("Guy");
+        Effectable k = new Player("Guy", 10);
         float h = k.getHealth();
         Torch t = new Torch();
 
@@ -53,7 +53,7 @@ public class testReceiveDamage {
     @Test
     public void testEffect()
     {
-        Effectable k = new Player("Guy");
+        Effectable k = new Player("Guy", 10);
         Effect e = new Effect(Effect.Type.FIRE, 2, 1);
         
         Utils.slowPrintln("inflicted with fire");
@@ -64,7 +64,7 @@ public class testReceiveDamage {
     @Test (expected = Exception.class)
     public void testNoEffectInflict()
     {
-        Effectable k = new Player("Guy");
+        Effectable k = new Player("Guy", 10);
        
         Utils.slowPrintln("inflicted with fire");
         k.receiveDamage(new Damage(2, Damage.Type.FIRE, Damage.Mode.INFLICTEFFECT, null));
@@ -73,7 +73,7 @@ public class testReceiveDamage {
     @Test (expected = Exception.class)
     public void testNoEffectEffect()
     {
-        Effectable k = new Player("Guy");
+        Effectable k = new Player("Guy", 10);
         
         Utils.slowPrintln("burning with fire");
         k.receiveDamage(new Damage(2, Damage.Type.FIRE, Damage.Mode.EFFECT, null));

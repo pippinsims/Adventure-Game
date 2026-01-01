@@ -61,10 +61,10 @@ public class Player extends Unit
         setDescription();
     }
 
-    public Player(String n)
+    public Player(String n, int health)
     {
         name = n;        
-        health = 11;
+        this.health = health;
         deathMsg = name + " died.";
         setDescription();
     }
@@ -119,21 +119,18 @@ public class Player extends Unit
 
     public void performAction(int i)
     {   
-        try{
-            switch(actions.get(i))
-            {
-                case FIGHT: fight(); break;
-                case INSPECT: inspect(); break;
-                case TALK: talk(); break;
-                case CAST: castSpell(); break;
-                case INTERACT: interact(); break;
-                case COMMUNE: commune(); break;
-                case INVENTORY: inventory(); break;
-                case LEAVE: leave();
-                default: break;
-            }
+        switch(actions.get(i))
+        {
+            case FIGHT:     fight();     break;
+            case INSPECT:   inspect();   break;
+            case TALK:      talk();      break;
+            case CAST:      castSpell(); break;
+            case INTERACT:  interact();  break;
+            case COMMUNE:   commune();   break;
+            case INVENTORY: inventory(); break;
+            case LEAVE:     leave();     break;
+            default:                     break;
         }
-        catch(Exception e) { e.printStackTrace();}
     }
 
     public boolean getPtolomyIsPresent() 

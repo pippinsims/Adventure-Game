@@ -15,7 +15,7 @@ public class Utils {
     public static String[] names1 = new String[]{"Bo","Kua","An","Lis","Yi"};
     public static String[] names2 = new String[]{"sandual","\'hananah","mon","tio","narsh","poaf","duan"};
 
-    static final BlockingQueue<String> in = new LinkedBlockingQueue<>();
+    public static final BlockingQueue<String> in = new LinkedBlockingQueue<>();
 
     static { new Thread(() -> { while (true) in.add(Utils.scanner.nextLine()); }, "stdin").start(); }
 
@@ -30,9 +30,9 @@ public class Utils {
             }
             fileScanner.close();
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
-            e.printStackTrace();
+            throw new UnsupportedOperationException("File couldn't be read correctly!");
         }
         return completeString;
     }
@@ -121,7 +121,7 @@ public class Utils {
             }
             catch(Exception e) 
             {
-                e.printStackTrace();
+                throw new UnknownError(e.getMessage());
             }
 
             System.out.print(c);
@@ -410,12 +410,12 @@ public class Utils {
         return null;
     }
 
-    static String scan() throws InterruptedException 
+    public static String scan() throws InterruptedException 
     { 
         return in.poll(2000, TimeUnit.MILLISECONDS);
     }
 
-    static String scanloop()
+    public static String scanloop()
     {
         String s; 
         try { while ((s = scan()) == null); }

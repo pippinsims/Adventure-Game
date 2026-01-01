@@ -17,7 +17,7 @@ public class Effect extends Describable{
     //TODO fill descriptions map at start of Environment.main() using file
     Type type;
     Cooldown cooldown;
-    int strength;
+    float strength;
 
     public Effect(Effect e)
     {
@@ -29,7 +29,7 @@ public class Effect extends Describable{
         pluralDescription = effectDescriptions.get(type).t1 + " effects";
     }
 
-    public Effect(Type t, int duration, int strength)
+    public Effect(Type t, int duration, float strength)
     {
         type = t;
         cooldown = new Cooldown(duration, t);
@@ -39,7 +39,7 @@ public class Effect extends Describable{
         pluralDescription = effectDescriptions.get(type).t1 + " effects";
     }
 
-    public Effect(Type t, int duration, int strength, String name) 
+    public Effect(Type t, int duration, float strength, String name) 
     {
         type = t;
         cooldown = new Cooldown(duration, t);

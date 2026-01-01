@@ -175,6 +175,11 @@ public abstract class Effectable extends Describable{
         return maxHealth;
     }
 
+    final public void updateMaxHealth(float h)
+    {
+        maxHealth = h;
+    }
+
     //MARK: for testing
     public void updateAllEffectsWithoutResult()
     {

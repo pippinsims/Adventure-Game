@@ -263,11 +263,11 @@ public class Environment
 
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
-        // addPlayer(new Player());
-        addPlayer(new Player("Nuel"));
-        addPlayer(new Player("Valeent"));
-        // addPlayer(new Player("Peili"));
-        // addPlayer(new Player("Dormaah"));
+        addPlayer(new Player());
+        // addPlayer(new Player("Nuel", 10));
+        addPlayer(new Player("Valeent", 10));
+        // addPlayer(new Player("Peili", 12));
+        // addPlayer(new Player("Dormaah", 10));
     }
 
     public static void printInfo(Room r, boolean peek)
