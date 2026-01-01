@@ -3,9 +3,10 @@ package adventuregame.interactibles;
 import java.util.function.Consumer;
 
 import adventuregame.Effect;
-import adventuregame.Environment;
 import adventuregame.Interactible;
 import adventuregame.QuickTimeEvent;
+import adventuregame.QuickTimeEvent.EffectQTE;
+import adventuregame.QuickTimeEvent.NoUpdateQTE;
 import adventuregame.QuickTimeEvent.Node;
 import adventuregame.QuickTimeEvent.Node.Output;
 import adventuregame.Room;
@@ -85,7 +86,7 @@ public class ItemHolder extends Interactible {
                             {
                                 Unit helper = null;
                                 for(Unit u : u.getRoom().players) if(u != q.getActor()) { helper = u; break; }
-                                new QuickTimeEvent(
+                                new NoUpdateQTE(
                                     helper,
                                     new Describable() { { description = "helpcledobl"; } }, 
                                     -1,
@@ -115,29 +116,14 @@ public class ItemHolder extends Interactible {
                                             },
                                         }
                                     )
-                                ){ @Override protected void timeout() { throw new UnsupportedOperationException("timeless QTE timed out"); }
+                                ){ @Override protected void timeout() {} //timeless QTE
                                 }.run();
                                 return true;
                             }
                         }
                     };
 
-                    new QuickTimeEvent(/*new QuickTimeEvent(
-                    //     u,
-                    //     item, 
-                    //     new String[] {"YOU FEEL EXTREME PAIN. YOU ARE DYING"},
-                    //     new String[][] {
-                    //         {"Do nothing."        , "Freeze."},
-                    //         {"Let go."            , "Let go."},
-                    //         {"Cry out."           , "Cry out."},
-                    //         {"Relax your grip."   , "PULL HARDER."}, //TODO ideaaaaally i'd make this a Node-based structure not unlike Dialogue, what i have right now is like sort of halfway there
-                    //         {"Pry hand violently.", ""},
-                    //         {"Pull harder."       , ""}
-                    //     },
-                    //     new String[] {"Cry out.", "Pry hand violently."},
-                    //     new String[] {"Pull harder."},
-                    //     new Effect(Effect.Type.VITALITYDRAIN, 10, (int)(u.getMaxHealth()/10))
-                    )*/
+                    new EffectQTE(
                         u,
                         item,
                         new Effect(Effect.Type.VITALITYDRAIN, 10, u.getMaxHealth()/10),
@@ -224,7 +210,6 @@ public class ItemHolder extends Interactible {
                             for(Armor a : actor.getInventory().getArmor()) yourBody.add(a);
                             Weapon w = Utils.getFirst(actor.getInventory().getWeapons(), Weapon.class);
                             if(w != null) yourBody.add(w);
-                            Environment.kill(actor);
                         }
                     }.run();
                 }

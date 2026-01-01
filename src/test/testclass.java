@@ -6,8 +6,11 @@ import adventuregame.QuickTimeEvent;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.Effect.Type;
+import adventuregame.QuickTimeEvent.EffectQTE;
+import adventuregame.QuickTimeEvent.NoUpdateQTE;
 import adventuregame.QuickTimeEvent.Node;
 import adventuregame.QuickTimeEvent.Node.Output;
+import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 
@@ -28,14 +31,14 @@ public class testclass {
                         //3, succeeded
                         //4, succeeded 
                         //5, succeeded
-                        6,//player death handling, nested QTE, etc
+                        6,// nested QTE, etc
                     })
                     {
                         System.out.println("--Begin Test--");
                         switch(i)
                         {
                             case 0: //Timeless QTE
-                                new QuickTimeEvent(
+                                new NoUpdateQTE(
                                     new Player("Guy", 10), 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     -1,
@@ -44,7 +47,7 @@ public class testclass {
                                 .run();
                                 break;
                             case 1: //QTE.timeout()
-                                new QuickTimeEvent(
+                                new NoUpdateQTE(
                                     new Player("Guy", 10), 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     3,
@@ -53,7 +56,7 @@ public class testclass {
                                 .run();
                                 break;
                             case 2: //Node.X and no-output Node.L
-                                new QuickTimeEvent(
+                                new NoUpdateQTE(
                                     new Player("Guy", 10), 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     -1,
@@ -71,7 +74,7 @@ public class testclass {
                                 .run();
                                 break;
                             case 3: //QTE.Node.L(END) output(String, QuickTimeEvent) override
-                                new QuickTimeEvent(
+                                new NoUpdateQTE(
                                     new Player("Guy", 10), 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     -1,
@@ -81,7 +84,7 @@ public class testclass {
                                 .run();
                                 break;
                             case 4: //QTE.Node.L(CHECK) output(String, QuickTimeEvent) override
-                                new QuickTimeEvent(
+                                new NoUpdateQTE(
                                     new Player("Guy", 10), 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     -1,
@@ -95,53 +98,99 @@ public class testclass {
                                 .run();
                                 break;
                             case 5: //Player.effectUpdate()
-                                Player p = new Player("Guy", 10);
-                                System.out.println(p.getName() + ": " + p.getHealth() + " health.");
-                                new QuickTimeEvent(
-                                    p, 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
-                                    new Effect(Type.FIRE, 3, 1),
-                                    new Node.B("Test QTE Fire effect", new String[]{""}, new Node[] {new Node.X()})
-                                ) { @Override protected void timeout() {} }
-                                .run();
-                                System.out.println(p.getName() + ": " + p.getHealth() + " health.");
-                                break;
-                            case 6: //Player.effectUpdate() == EffectUpdateResult.DEATH
-                                p = new Player("Guy", 3);
+                                System.out.println("-Test 1-");
+                                Player p = new Player("Guy1", 3);
                                 p.setRoom(new Room());
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
-                                new QuickTimeEvent(
+                                new EffectQTE(
                                     p, 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     new Effect(Type.FIRE, 10, 1),
                                     new Node.B("Test QTE Effect death handling QTE.dur > health", new String[]{""}, new Node[] {new Node.X()})
-                                ) { @Override protected void timeout() {} }
+                                ) 
+                                { @Override protected void timeout() { System.out.println("Test FAILED! Should not have timed out!"); } }
                                 .run();
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
                                 
-                                p = new Player("Guy", 3);
+                                System.out.println("-Test 2-");
+                                p = new Player("Guy2", 3);
                                 p.setRoom(new Room());
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
-                                new QuickTimeEvent(
+                                new EffectQTE(
                                     p, 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     new Effect(Type.FIRE, 3, 1),
                                     new Node.B("Test QTE Effect death handling duration == health", new String[]{""}, new Node[] {new Node.X()})
-                                ) { @Override protected void timeout() {} }
+                                ) 
+                                { @Override protected void timeout() { System.out.println("Test FAILED! Should not have timed out!"); } }
                                 .run();
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
-
-                                p = new Player("Guy", 10);
+                                
+                                System.out.println("-Test 3-");
+                                p = new Player("Guy3", 10);
                                 p.setRoom(new Room());
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
-                                new QuickTimeEvent(
+                                new EffectQTE(
                                     p, 
                                     new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
                                     new Effect(Type.FIRE, 3, 1),
                                     new Node.B("Test QTE Effect handling QTE.dur < health", new String[]{""}, new Node[] {new Node.X()})
-                                ) { @Override protected void timeout() {} }
+                                ) 
+                                { @Override protected void timeout() { System.out.println("Test SUCCESS! Timed out normally."); } }
                                 .run();
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
+                                break;
+                            case 6: //Nested QTEs
+                                Player p1 = new Player("Guy", 10);
+                                p1.setRoom(new Room());
+                                System.out.println(p1.getName() + ": " + p1.getHealth() + " health.");
+                                new QuickTimeEvent(
+                                    p1, 
+                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Effect(Type.FIRE, -1, 1),
+                                    new Node.B(
+                                        "prompt for nested QTE", 
+                                        new String[]{"start nested QTE"}, 
+                                        new Node[] {
+                                            new Node.L(Output.CHECK){
+                                                @Override
+                                                public boolean output(String in, QuickTimeEvent q) 
+                                                {
+                                                    new NoUpdateQTE(
+                                                        p1,
+                                                        new Describable(){{description="testdesc";}},
+                                                        -1,
+                                                        new Node.B("inner QTE check prompt:", 
+                                                        new String[] {"yes","no"},
+                                                        new Node[]{ 
+                                                            new Node.L(Output.END) {
+                                                                @Override public boolean output(String in, QuickTimeEvent q) {
+                                                                    System.out.println("you answered yes (answer #1)");
+                                                                    return true;
+                                                                }
+                                                            },
+                                                            new Node.L(Output.END) {
+                                                                @Override public boolean output(String in, QuickTimeEvent q) {
+                                                                    System.out.println("you answered no (answer #2)");
+                                                                    return true;
+                                                                }
+                                                            },
+                                                        })
+                                                    )
+                                                    { @Override protected void timeout() {} } //timeless QTE
+                                                    .run();
+                                                    return false; //unbeatable QTE
+                                                }
+                                            }
+                                        }
+                                    )
+                                ) 
+                                { 
+                                    @Override protected void timeout() { System.out.println("Timed out normally."); }
+                                    @Override protected boolean update() { System.out.println("Tick!"); return false; } 
+                                }
+                                .run();
+                                System.out.println(p1.getName() + ": " + p1.getHealth() + " health.");
                                 break;
                         }
                         System.out.println("--End Test--");

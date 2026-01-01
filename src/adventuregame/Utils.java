@@ -115,13 +115,12 @@ public class Utils {
         {  
             try
             {
-                if(c == '\n' || c == '.')
-                    Thread.sleep(sleepDuration * 5); //TODO breaks when called from non-main thread like in QTE
-                Thread.sleep(sleepDuration);
+                if(c == '\n' || c == '.') Thread.sleep(sleepDuration * 5);
+                else Thread.sleep(sleepDuration);
             }
-            catch(Exception e) 
+            catch(InterruptedException e)
             {
-                throw new UnknownError(e.getMessage());
+                throw new Error(e.getMessage() + " while trying to slowPrint '" + output + "'");
             }
 
             System.out.print(c);
