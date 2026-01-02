@@ -2,6 +2,7 @@ package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Enemy;
+import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.interactibles.wallinteractibles.Door;
@@ -99,7 +100,7 @@ public class Player extends Unit
             actions.add(Action.INTERACT);
         }
 
-        if(myRoom.enemies.size() != 0) actions.add(Action.FIGHT);
+        if(myRoom.enemies.size() + myRoom.NPCs.size() != 0) actions.add(Action.FIGHT);
 
         actions.add(Action.TALK);
 
@@ -158,7 +159,7 @@ public class Player extends Unit
     {
         ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
 
-        ArrayList<Enemy> ens = myRoom.enemies;
+        ArrayList<NonPlayer> ens = myRoom.allNPCs();
         for(Weapon w : inv.getWeapons()) if(w instanceof Sword) ((Sword)w).setNumAttacks();
         if(!ens.isEmpty())
         {
@@ -169,17 +170,12 @@ public class Player extends Unit
                                                             : 0;
 
                 ArrayList<Weapon> weps = inv.getWeapons();
-                weps.addFirst(new Weapon() {
-                    {   description = "Punch"; 
-                        atkmsg = "You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad"); }
-                    @Override public void action(Unit u, boolean isFinal) {}
-                    @Override public Damage getDamage() { return getAttackDamage(); }
-                });
+                weps.addFirst(new Weapon.Punch("You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad")));
                 if(chosen == null) chosen = Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", weps);                
 
                 Damage d = chosen.getDamage();
                 if(hasEffect(Effect.Type.WEAKNESS)) { d = new Damage(d); d.setValue(d.getValue() - 1); }
-                this.attack(myRoom.enemies.get(chosenEnemyIndex), d, chosen.getAttackMessage());
+                this.attack(ens.get(chosenEnemyIndex), d, chosen.getAttackMessage());
                 if(chosen instanceof Sword && ((Sword)chosen).use() && !ens.isEmpty()) System.out.println("Attack again!");
                 else break;
             }
@@ -449,12 +445,6 @@ public class Player extends Unit
     public Inventory getInventory() 
     {
         return inv;
-    }
-
-    @Override
-    public Damage getAttackDamage() 
-    {
-        return new Damage(1, Damage.Type.BASIC); //punch
     }
 
     @Override

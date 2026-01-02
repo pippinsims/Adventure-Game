@@ -3,24 +3,37 @@ package adventuregame.abstractclasses;
 import java.util.ArrayList;
 import java.util.Random;
 
-import adventuregame.Damage;
 import adventuregame.Dialogue;
 import adventuregame.Inventory;
 import adventuregame.Utils;
-import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.Weapon;
 
 public abstract class NonPlayer extends Unit {
     protected Inventory inv;
-    protected Damage dmg;
     protected int wisdom;
     public ArrayList<Dialogue> dialogues = new ArrayList<>();
+    public ArrayList<Unit> enemies = new ArrayList<>();
+    public ArrayList<NonPlayer> friends = new ArrayList<>();
 
     protected enum Action
     {
-        NONE,
+        NORMAL,
         DIALOGUE,
         ATTACK
+    }
+
+    protected NonPlayer() {}
+
+    public NonPlayer(int health, Inventory inventory, int wisdom, String description, String pluralDescription, String name) 
+    { 
+        this.maxHealth = health;
+        this.health = health;
+        inv = inventory;
+        this.wisdom = wisdom;
+        this.description = description;
+        this.pluralDescription = pluralDescription;
+        this.name = name;
+        deathMsg = "You ended " + getName();
     }
 
     protected String pluralOf(String str)
@@ -37,12 +50,11 @@ public abstract class NonPlayer extends Unit {
         }
     }
 
-    public void setDefaults(int m, Inventory i, int dmg, int w, String des, String name)
+    public void setDefaults(int m, Inventory i, int w, String des, String name)
     {
         maxHealth = m;
         health = maxHealth;
         inv = i;
-        this.dmg = new Damage(dmg);
         wisdom = w;
         description = des;
         this.name = name == null ? generateName() : name;
@@ -90,8 +102,6 @@ public abstract class NonPlayer extends Unit {
 
     public Inventory getInventory() { return inv; }
 
-    public Damage getAttackDamage() { return dmg; }
-
     public int getWisdom() { return wisdom; }
 
     protected void talk()
@@ -101,21 +111,39 @@ public abstract class NonPlayer extends Unit {
         if(!didTalk) chooseAction();
     }
 
+    protected void attack()
+    {
+        for(Unit x : myRoom.all())
+        {
+            if(Utils.contains(enemies, x))
+            {
+                //TODO just attacks first enemy
+                Weapon p = new Weapon.Punch(x instanceof Enemy ? "You heave a mighty blow at the " + ((Enemy)x).getModifiedDescription("sad") : "You attack "+x.getName()+"!");
+                this.attack(x, p.getDamage(), p.getAttackMessage());
+                if(x.isDead()) for(Unit e : new ArrayList<>(enemies)) if(e == x) enemies.remove(e);
+                break;
+            }
+        }
+    }
+
     public abstract void performAction(Action a);
 
     public void chooseAction()
     {
+        for(Enemy e : myRoom.enemies) if(!Utils.contains(enemies, e)) enemies.add(e);
+        for(NonPlayer f : friends) for(Unit e : f.enemies) if(!Utils.contains(enemies, e)) enemies.add(e);
+
         if(isStunned || myRoom.players.isEmpty())
         {
-            performAction(Action.NONE);
+            performAction(Action.NORMAL);
             isStunned = false;
         }
         else if (!dialogues.isEmpty() && dialogues.getFirst().getInitiator() == this)
             performAction(Action.DIALOGUE);
-        else if (!myRoom.enemies.isEmpty())
+        else if (!enemies.isEmpty() && Utils.contains(myRoom.all(), enemies.getFirst()))
             performAction(Action.ATTACK);
         else
-            performAction(Action.NONE);
+            performAction(Action.NORMAL);
     }
 
     @Override
@@ -125,52 +153,5 @@ public abstract class NonPlayer extends Unit {
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
         chooseAction();
-    }
-
-    public static class Bofer extends NonPlayer
-    {
-        { setDefaults(10, new Inventory(10), 1, 10, "Grassy bofer", "Bofer"); }
-
-        @Override
-        public void setDefaults(int m, Inventory i, int dmg, int w, String des, String name)
-        {
-            maxHealth = m;
-            health = maxHealth;
-            inv = i;
-            this.dmg = new Damage(dmg);
-            wisdom = w;
-            description = des;
-            this.name = name;
-            deathMsg = "You ended " + getName();
-        }
-
-        @Override
-        public void performAction(Action a) {
-            switch(a)
-            {
-                case ATTACK:
-                    Enemy e = myRoom.enemies.getFirst();
-                    Weapon w = new Weapon() {
-                        {   description = "Punch"; 
-                            atkmsg = "You heave a mighty blow at the " + e.getModifiedDescription("sad"); }
-                        @Override public void action(Unit u, boolean isFinal) {}
-                        @Override public Damage getDamage() { return getAttackDamage(); }
-                    };
-                    this.attack(e, w.getDamage(), w.getAttackMessage());
-                    break;
-                case DIALOGUE:
-                    talk();
-                    break;
-                case NONE:
-                    if(new Random().nextInt(2) == 1)
-                    {
-                        ArrayList<Door> d = myRoom.getDoors();
-                        d.get(new Random().nextInt(d.size())).action(this);
-                    }
-                    else Utils.slowPrintln("Bofer does nothing.");
-                break;
-            }
-//TODO make NPCs easily make-able, and test all their actions
-        }
     }
 }

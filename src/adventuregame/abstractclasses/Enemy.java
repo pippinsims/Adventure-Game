@@ -8,7 +8,16 @@ import adventuregame.interactibles.SkeletonInteractible;
 
 public abstract class Enemy extends NonPlayer
 {
+    protected Enemy() {}
+
+    public Enemy(int health, Inventory inventory, int wisdom, String description, String pluralDescription, String name) {
+        super(health, inventory, wisdom, description, pluralDescription, name);
+    }
+
     public abstract void pleaResponse();
+    protected Damage dmg;
+
+    public Damage getAttackDamage() { return dmg; }
 
     @Override
     public void chooseAction()
@@ -16,7 +25,7 @@ public abstract class Enemy extends NonPlayer
         //DECISIONMAKING FOR ENEMY
         if(isStunned || myRoom.players.isEmpty())
         {
-            performAction(Action.NONE);
+            performAction(Action.NORMAL);
             isStunned = false;
         }
         else if (!dialogues.isEmpty() && dialogues.getFirst().getInitiator() == this)
@@ -36,16 +45,21 @@ public abstract class Enemy extends NonPlayer
 
     public static class Skeleton extends Enemy{
 
+        {
+            dmg = new Damage(5);
+            pluralDescription = "skeletons";
+        }
+
         public Skeleton()
         {
-            setDefaults(20, new Inventory(6), 5, 0, "skeleton", "Oess");
-            pluralDescription = "skeletons";
+            super();
+            setDefaults(20, new Inventory(6), 0, "skeleton", "Oess");
         }
 
         public Skeleton(Inventory i)
         {
-            setDefaults(20, new Inventory(6), 5, 0, "skeleton", "Oess");
-            pluralDescription = "skeletons";
+            super();
+            setDefaults(20, new Inventory(6), 0, "skeleton", "Oess");
             inv = i;
         }
 
@@ -59,7 +73,7 @@ public abstract class Enemy extends NonPlayer
         {
             switch(a)
             {
-                case NONE:
+                case NORMAL:
                     Utils.slowPrintln("The " + getModifiedDescription("sad") + " is motionless.");
                     break;
 
@@ -68,6 +82,7 @@ public abstract class Enemy extends NonPlayer
                     break;
 
                 case ATTACK:
+                    //TODO just attacks first enemy
                     this.attack(myRoom.players.get(0), getAttackDamage(), "The " + getModifiedDescription("scary") + " attacks you with its weapon");
                     break;
             }
@@ -79,17 +94,21 @@ public abstract class Enemy extends NonPlayer
         { pluralDescription = "goblins"; }
 
         public Goblin(int health) { 
-            setDefaults(health, new Inventory(5), 4, 20, "goblin with pointy ears", null);
+            super();
+            setDefaults(health, new Inventory(5), 20, "goblin with pointy ears", null);
+            dmg = new Damage(4);
         }
 
         public Goblin(int health, Inventory inventory, int damage, int wisdom) { 
-            setDefaults(health, inventory, damage, wisdom, "goblin with pointy ears", null);
+            super();
+            setDefaults(health, inventory, wisdom, "goblin with pointy ears", null);
+            dmg = new Damage(damage);
         }
 
         @Override
-        public void setDefaults(int m, Inventory i, int dmg, int w, String des, String name)
+        public void setDefaults(int m, Inventory i, int w, String des, String name)
         {
-            super.setDefaults(m, i, dmg, w, des, name);
+            super.setDefaults(m, i, w, des, name);
 
             int r = Utils.rand.nextInt(4);
             descMap.put("Laur", (new String[] {"Screeblin Squabbler","pale man","awkward fellow","bllork"})[r]);
@@ -120,7 +139,7 @@ public abstract class Enemy extends NonPlayer
         {
             switch(a)
             {
-                case NONE:
+                case NORMAL:
                     Utils.slowPrintln("The " + getModifiedDescription("sad") + " stands still, sort of like a Zucchini Mushroom.");
                     break;
 
@@ -129,6 +148,7 @@ public abstract class Enemy extends NonPlayer
                     break;
 
                 case ATTACK:
+                    //TODO just attacks first enemy
                     this.attack(myRoom.players.get(0), getAttackDamage(), "The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.");
                     break;
             }

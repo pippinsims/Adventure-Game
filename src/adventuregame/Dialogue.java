@@ -25,7 +25,7 @@ public class Dialogue
 
     private boolean allActorsAlive()
     {
-        for(Unit a : actors) if(a.getRoom() == null) return false;
+        for(Unit a : actors) if(a.isDead()) return false;
         return true;
     }
 

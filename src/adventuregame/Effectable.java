@@ -13,6 +13,7 @@ public abstract class Effectable extends Describable{
     protected float maxHealth = 10;
     protected float health = maxHealth;
     protected boolean isStunned = false; //isStunned makes Enemy units become unstunned as their next action, instead of attacking
+    private boolean isDead = false;
 
     public enum EffectUpdateResult
     {
@@ -138,11 +139,14 @@ public abstract class Effectable extends Describable{
         else
         {
             Game.kill(this);
+            this.isDead = true;
             return EffectUpdateResult.DEATH;
         }
     }
 
-    final public void addEffect(Effect e)
+    public final boolean isDead() { return isDead; }
+
+    public final void addEffect(Effect e)
     {
         effects.add(e);
 

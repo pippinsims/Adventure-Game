@@ -103,19 +103,17 @@ public class Game
 
     public static void kill(Effectable e)
     {
-        Unit u = (Unit)e;
+        Unit u = (Unit)e; //currently theres no non-unit effectables
         if(u instanceof Enemy)
-        {
-            ArrayList<Enemy> all = u.getRoom().enemies;
-            for(int i = 0; i < all.size(); i++) if(all.get(i) == u) all.remove(i); //normal remove method compares by description (.equals())
             if(isLaur) Utils.slowPrintln("You've murdered " + u.getName(), 0/*200*/);
-        }
         else if(u instanceof Player)
         {
             Utils.slowPrintln("you died.");
-            u.getRoom().players.remove(u); //all players will have unique descriptions, if it's removing the wrong thing thats because their descriptions are wrong
             allPlayers.remove(u);
         }
+        else if(u instanceof NonPlayer)
+            loaded.remove(u);
+        u.getRoom().remove(u);
         u.setRoom(null);
         Utils.slowPrintln(u.getDeathMessage() + "------", 0/*200*/);
     }

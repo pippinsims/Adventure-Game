@@ -104,23 +104,83 @@ public class Environment extends Game
             new Sword(5)
         ))) cleskelly.add(i);
 
-        for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        // for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
         Room cell14 = new Room(celld, celll, cellf, celln);
         new Door(cell14, hall, Wall.WEST);
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
-        NonPlayer bofe = new NonPlayer.Bofer();
+        NonPlayer bofe = new NonPlayer(10, new Inventory(10), 0, "Grassy bofer", "Grassy bofers", "Bofer") 
+        {
+            @Override
+            public void performAction(Action a) 
+            {
+                switch(a)
+                {
+                    case ATTACK: attack(); break;
+                    case DIALOGUE: talk(); break;
+                    case NORMAL:
+                        if(new Random().nextInt(2) == 1)
+                        {
+                            ArrayList<Door> d = myRoom.getDoors();
+                            d.get(new Random().nextInt(d.size())).action(this);
+                            System.out.println(myRoom.getName());
+                        }
+                        else Utils.slowPrintln("Bofer does nothing.");
+                        break;
+                }
+            }
+        };
         loaded.add(bofe);
         cell14.add(bofe);
 
-        ArrayList<Enemy> ens = new ArrayList<>(List.of(new Enemy.Goblin(3), new Enemy.Goblin(3), new Enemy.Goblin(3)));
-        Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    
-                                "The Chamber.",
-                                "Chamber");
-        for(Enemy e : ens) chamber.add(e);
-        ens.getFirst().dialogues.add(
+        NonPlayer daed = new NonPlayer(10, new Inventory(10), 0, "An interesting looking fellow who has greenish eyes", "Interesting fellows", "Daedalus") 
+        {
+            @Override
+            public void performAction(Action a) 
+            {
+                for(Unit u : bofe.enemies) if(!Utils.contains(enemies, u)) enemies.add(u);
+
+                switch(a)
+                {
+                    case ATTACK: attack(); break;
+                    case DIALOGUE: talk(); break;
+                    case NORMAL:
+                        if(!Utils.contains(myRoom.all(), bofe))
+                        {
+                            for(Door d : myRoom.getDoors())
+                            {
+                                if(Utils.contains(d.getNextRoom(myRoom).all(), bofe))
+                                {
+                                    d.action(this);
+                                    return;
+                                }
+                            }
+                            Utils.slowPrintln("Daedalus has no Bofer. :(");
+                        }
+                        else
+                            Utils.slowPrintln("Daedalus sits contented.");
+                        break;
+                }
+            }
+        };
+        loaded.add(daed);
+        cell14.add(daed);
+        bofe.friends.add(daed);
+        daed.friends.add(bofe);
+
+        Room chamber = new Room(
+            "a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    
+            "The Chamber.",
+            "Chamber"
+        );
+        
+        Enemy e = new Enemy.Goblin(3);
+        chamber.add(e);
+        chamber.add(new Enemy.Goblin(3));
+        chamber.add(new Enemy.Goblin(3));
+        e.dialogues.add(
             new Dialogue(
-                ens.getFirst(),
-                new ArrayList<>(List.of(ens.get(0),ens.get(1))),
+                e,
+                new ArrayList<>(List.of(e)),
                 new Dialogue.Node.B(
                     0,
                     "You're not supposed to be out'n'about!", 

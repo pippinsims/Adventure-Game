@@ -60,6 +60,25 @@ public class Room extends Describable
         name = "room"+roomnum++;
     }
 
+    public ArrayList<NonPlayer> allNPCs()
+    {
+        ArrayList<NonPlayer> all = new ArrayList<>();
+        all.addAll(enemies);
+        all.addAll(NPCs);
+
+        return all;
+    }
+
+    public ArrayList<Unit> all()
+    {
+        ArrayList<Unit> all = new ArrayList<>();
+        all.addAll(enemies);
+        all.addAll(NPCs);
+        all.addAll(players);
+
+        return all;
+    }
+
     public void discover()
     {
         descMap.put(Game.cur.getName(), familiarDescription);
@@ -105,11 +124,22 @@ public class Room extends Describable
     public boolean remove(Unit u)
     {
         if(u instanceof Player) 
-            return players.remove((Player)u); 
-        else if(u instanceof Enemy) 
-            return enemies.remove((Enemy)u);
+            return players.remove(u); 
+        else if(u instanceof Enemy)
+            return enemies.remove(u);
         else
-            return NPCs.remove((NonPlayer)u);
+            return NPCs.remove(u);
+
+        // if(u instanceof Player)  TODO for some reason using this (required) implementation makes Daedalus not follow Bofer out of the room
+        //     return players.remove(u); //all players will have unique descriptions, if it's removing the wrong thing thats because their descriptions are wrong
+        // else {
+        //     //normal remove method compares by description (.equals())
+        //     if(u instanceof Enemy)
+        //         for(Enemy x : enemies) if(x == u) return enemies.remove(u);
+        //     else
+        //         for(NonPlayer y : NPCs) if(y == u) return NPCs.remove(u);
+        //     return false;
+        // }
     }
 
     public ArrayList<Door> getDoors()
