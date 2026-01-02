@@ -108,7 +108,9 @@ public class Environment extends Game
         Room cell14 = new Room(celld, celll, cellf, celln);
         new Door(cell14, hall, Wall.WEST);
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
-        cell14.add(new NonPlayer.Bofer());
+        NonPlayer bofe = new NonPlayer.Bofer();
+        loaded.add(bofe);
+        cell14.add(bofe);
 
         ArrayList<Enemy> ens = new ArrayList<>(List.of(new Enemy.Goblin(3), new Enemy.Goblin(3), new Enemy.Goblin(3)));
         Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    

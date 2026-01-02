@@ -114,6 +114,8 @@ public abstract class NonPlayer extends Unit {
             performAction(Action.DIALOGUE);
         else if (!myRoom.enemies.isEmpty())
             performAction(Action.ATTACK);
+        else
+            performAction(Action.NONE);
     }
 
     @Override
@@ -159,11 +161,16 @@ public abstract class NonPlayer extends Unit {
                 case DIALOGUE:
                     talk();
                     break;
-                case NONE: 
-                    if(new Random().nextInt(2) == 1) Utils.getFirst(myRoom.interactibles, Door.class).action(this);
+                case NONE:
+                    if(new Random().nextInt(2) == 1)
+                    {
+                        ArrayList<Door> d = myRoom.getDoors();
+                        d.get(new Random().nextInt(d.size())).action(this);
+                    }
                     else Utils.slowPrintln("Bofer does nothing.");
                 break;
             }
+//TODO make NPCs easily make-able, and test all their actions
         }
     }
 }

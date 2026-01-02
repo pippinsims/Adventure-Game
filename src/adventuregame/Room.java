@@ -112,6 +112,11 @@ public class Room extends Describable
             return NPCs.remove((NonPlayer)u);
     }
 
+    public ArrayList<Door> getDoors()
+    {
+        return doors;
+    }
+
     public void updateDoors()
     {
         for (Door door : doors) door.setWall(this);

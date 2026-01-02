@@ -12,6 +12,7 @@ public class Game
     public static Unit cur;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static boolean isLaur;
+    public static ArrayList<NonPlayer> loaded = new ArrayList<>();
 
     public enum Metal
     {
@@ -42,14 +43,17 @@ public class Game
             ArrayList<Room> playerRooms = new ArrayList<>();
             for(Player p : allPlayers) if(!Utils.contains(playerRooms, p.getRoom())) playerRooms.add(p.getRoom());
 
-            //all enemies in player rooms
-            for(Room r : playerRooms) 
+            ArrayList<NonPlayer> nonpCache = new ArrayList<>();
+
+            //all loaded enemies or in player rooms
+            for(Room r : playerRooms)
             {
                 if(!r.enemies.isEmpty())
                 {
                     curRoom = r;
                     for(Enemy e : new ArrayList<>(r.enemies))
                     {
+                        nonpCache.add(e);
                         cur = e;
                         e.updateUnit();
                         System.out.println();
@@ -66,11 +70,24 @@ public class Game
                     curRoom = r;
                     for(NonPlayer n : new ArrayList<>(r.NPCs))
                     {
+                        nonpCache.add(n);
                         cur = n;
                         n.updateUnit();
                         System.out.println();
                         if(r.players.isEmpty()) break;
                     }
+                }
+            }
+
+            //all loaded NonPlayers
+            for(NonPlayer n : loaded)
+            {
+                if(!Utils.contains(nonpCache, n))
+                {
+                    cur = n;
+                    curRoom = n.getRoom();
+                    n.updateUnit();
+                    System.out.println();
                 }
             }
 
