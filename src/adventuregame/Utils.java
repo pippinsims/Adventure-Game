@@ -82,6 +82,34 @@ public class Utils {
         }
     }
 
+    public static void slowPrintNameList(ArrayList<? extends Describable> arr)
+    {
+        Map<Describable, Integer> m = countsOf(arr);
+
+        int i = 0;
+        String a, d;
+        for (Map.Entry<Describable, Integer> e : m.entrySet())
+        {
+            Interactible k = e.getKey() instanceof Interactible ? (Interactible)e.getKey() : null;
+            if(e.getValue() > 1)
+            {
+                d = e.getKey().getName() + "s";
+                if(k != null) d += " " + k.plurLocPrep + " " + k.locReference;
+                a = (i == 0 ? "There are " : "") + e.getValue() + " ";
+            }
+            else
+            {
+                d = e.getKey().getName();
+                if(k != null) d += " " + k.normalLocPrep + " " + k.locReference;
+                a = (i == 0 ? "There is " : "");
+            }
+       
+            Utils.slowPrintlnAsListEntry(a + d, m.size(), i);
+
+            i++;
+        }
+    }
+
     public static Map<Describable, Integer> countsOf(ArrayList<? extends Describable> arr)
     {
         Map<Describable, Integer> m = new LinkedHashMap<>(); //preserve insertion order

@@ -8,7 +8,7 @@ import adventuregame.Player.Inspect.Node;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
 
-public class Interactible extends Describable
+public abstract class Interactible extends Describable
 {
     public String normalLocPrep;
     public String plurLocPrep; 
@@ -34,7 +34,7 @@ public class Interactible extends Describable
             else nodepath[i] = new Node.Branch(inspects[i], nodepath[i+1]);
         }
 
-        // System.out.println("insMap.put("+name+", "+nodepath[0].msg+")");
+        // System.out.println(this.getClass()+".insMap.put("+(name.equals("")?"\"\"":name)+", "+nodepath[0].msg+")"); MARK: for insMap checking
         insMap.put(name, new Inspect(new Node.Head(nodepath[0])));
     }
 
@@ -105,20 +105,14 @@ public class Interactible extends Describable
         return true;
     }
 
-    public void action(Unit u)
-    {
-        throw new UnsupportedOperationException("Unimplemented method 'action'");
-    }
+    public abstract void action(Unit u);
 
-    protected void setInspects()
-    {
-        throw new UnsupportedOperationException("Unimplemented method 'setInspects'");
-    }
+    protected abstract void setInspects();
 
-    public void inspect()
+    public void inspect(Unit u)
     {
-        if(insMap.containsKey(Game.curPlayer.getName()))
-            Utils.slowPrintln(insMap.get(Game.curPlayer.getName()).get());
+        if(insMap.containsKey(u.getName()))
+            Utils.slowPrintln(insMap.get(u.getName()).get());
         else if(insMap.containsKey(""))
             Utils.slowPrintln(insMap.get("").get());
         else

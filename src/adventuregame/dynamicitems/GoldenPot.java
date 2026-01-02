@@ -138,7 +138,7 @@ public class GoldenPot extends DynamicItem {
                 System.out.print("You hold this pot. ");
                 if(Utils.promptList("Do you want to place it on the ground?", new String[] {"Yes", "No"}) == 0) self.placeInteractible(u.getRoom());
 
-                if(!isFinal && u instanceof Player) ((Player)u).promptForAction();
+                if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
             }
 
             @Override public boolean isDynamicItem() { return true; }

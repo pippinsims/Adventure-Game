@@ -29,7 +29,7 @@ public class Window extends WallInteractible {
         setLocationReference();
     }
 
-    @Override public void action(Unit u) { inspect(); }
+    @Override public void action(Unit u) { inspect(u); }
 
     @Override
     protected void setInspects() {

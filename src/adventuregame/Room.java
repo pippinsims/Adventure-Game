@@ -18,6 +18,8 @@ public class Room extends Describable
     private ArrayList<Player>       familiars     = new ArrayList<>();
     private String familiarDescription;
 
+    private static int roomnum = 0;
+
     public Room()
     {
         name = "Bare";
@@ -25,6 +27,7 @@ public class Room extends Describable
         descMap.put("Laur", "an... empty place");
         familiarDescription = "Bare room.";
         rooms.add(this);
+        name = "room"+roomnum++;
     }
 
     public Room(String d, String l, String f, String n)
@@ -34,6 +37,7 @@ public class Room extends Describable
         familiarDescription = f;
         name = n;
         rooms.add(this);
+        name = "room"+roomnum++;
     }
 
     public Room(String d, String f, String n)
@@ -42,6 +46,7 @@ public class Room extends Describable
         familiarDescription = f;
         name = n;
         rooms.add(this);
+        name = "room"+roomnum++;
     }
 
     public Room(String d, String n)
@@ -50,6 +55,7 @@ public class Room extends Describable
         familiarDescription = n + ".";
         name = n;
         rooms.add(this);
+        name = "room"+roomnum++;
     }
 
     public void discover()

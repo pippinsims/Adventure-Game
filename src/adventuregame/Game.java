@@ -30,7 +30,9 @@ public class Game
             //all players
             for(Player p : new ArrayList<>(allPlayers))
             {
-                curPlayer = p; curRoom = p.getRoom(); isLaur = p.getName().equals("Laur");
+                curPlayer = p; 
+                curRoom = p.getRoom(); 
+                isLaur = p.getName().equals("Laur");
                 p.updateUnit();
                 System.out.println();
             }
@@ -42,7 +44,6 @@ public class Game
             //all enemies in player rooms
             for(Room r : playerRooms) 
             {
-                if(r == null) throw new UnsupportedOperationException("this is cooked");
                 if(!r.enemies.isEmpty())
                 {
                     curRoom = r;
@@ -51,12 +52,11 @@ public class Game
                         e.updateUnit();
                         System.out.println();
                         if(r.players.isEmpty()) break;
-                        // for(Player p : r.players) System.out.println(p.getName());
                     }
                 }
             }
 
-            System.out.println("\t\t\t\t\t\t\t\t--Round End--");
+            Utils.slowPrintln("\t\t\t\t\t\t\t\t--Round End--");
         }
     }
 
@@ -73,14 +73,13 @@ public class Game
         {
             ArrayList<Enemy> all = u.getRoom().enemies;
             for(int i = 0; i < all.size(); i++) if(all.get(i) == u) all.remove(i); //normal remove method compares by description (.equals())
-            if(curPlayer.getName().equals("Laur")) Utils.slowPrintln("You've murdered " + u.getName(), 0/*200*/);
+            if(isLaur) Utils.slowPrintln("You've murdered " + u.getName(), 0/*200*/);
         }
         else if(u instanceof Player)
         {
-            Utils.slowPrintln("you died." + u.getName());
-            u.getRoom().players.remove(u);
+            Utils.slowPrintln("you died.");
+            u.getRoom().players.remove(u); //all players will have unique descriptions, if it's removing the wrong thing thats because their descriptions are wrong
             allPlayers.remove(u);
-            for(Player x : allPlayers) System.out.println(x.getName());
         }
         u.setRoom(null);
         Utils.slowPrintln(u.getDeathMessage() + "------", 0/*200*/);
@@ -105,7 +104,7 @@ public class Game
 
     public static void printInfo(Room r, boolean peek)
     {
-        if(!peek) System.out.println("--Info--");
+        if(!peek) Utils.slowPrintln("--Info--");
 
         if(!r.getIsFamiliar())
         {
@@ -120,6 +119,10 @@ public class Game
         Utils.slowPrintDescList(r.interactibles);
 
         Utils.slowPrintDescList(r.enemies);
+
+        ArrayList<Player> p = new ArrayList<>(r.players);
+        p.remove(curPlayer);
+        Utils.slowPrintNameList(p);
         
         r.discover();
         Utils.currentPrintDelay = 3;

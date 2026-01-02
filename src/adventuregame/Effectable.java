@@ -56,7 +56,7 @@ public abstract class Effectable extends Describable{
             
             case VITALITYGROW:
                 maxHealth += e.strength;
-                System.out.println("Max health increased by " + e.strength);
+                Utils.slowPrintln("Max health increased by " + e.strength);
                 effectIsOver = e.cooldown.decrement();
                 break;
 

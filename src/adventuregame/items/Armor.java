@@ -91,7 +91,7 @@ public class Armor extends Item {
             }
         }
 
-        if(!isFinal && u instanceof Player) ((Player)u).promptForAction();
+        if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
     }
 
     public String getArmorDesc() { return armorDesc; }

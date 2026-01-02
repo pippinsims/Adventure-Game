@@ -80,7 +80,7 @@ public class Torch extends DynamicItem {
 
             @Override public void action(Unit u, boolean isFinal) { 
                 System.out.println("The torch is fiery... You stare deeply into the flames.");
-                if(!isFinal && u instanceof Player) ((Player)u).promptForAction();
+                if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
              }
 
             @Override public Damage getDamage() 

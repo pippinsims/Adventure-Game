@@ -15,7 +15,7 @@ public class Bananarang extends Weapon
     public void action(Unit u, boolean isFinal) 
     {
         System.out.println("You go to take a bite... but then... you probably shouldn't");
-        if(!isFinal && u instanceof Player) ((Player)u).promptForAction();
+        if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
     }
 
 

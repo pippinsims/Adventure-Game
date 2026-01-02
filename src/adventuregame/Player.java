@@ -18,6 +18,7 @@ public class Player extends Unit
     private Inventory inv = new Inventory(10);
     private Door firstDoor = null; //exists solely for Action.LEAVE
     public int doorMoves;
+    public boolean ableToAct = false;
 
     //FOR EACH ENUM, MAKE A MAP ENTRY
     enum Action 
@@ -192,12 +193,12 @@ public class Player extends Unit
         descs.addAll(myRoom.players);
         descs.remove(this); //TODO but "this" is listed even though it's removed
         Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
-        if(d instanceof Interactible) ((Interactible)d).inspect();
+        if(d instanceof Interactible) ((Interactible)d).inspect(this);
         else Utils.slowPrintln(d.getDescription());
 
         Utils.slowPrint("Press Enter to continue");
         Utils.scanloop();
-        promptForAction();
+        ableToAct = true;
 
         //TODO after a turn where i followed dialogue that put me back in the cell, Laur could inspect everyone except with himself replacing Nuel.
     }
@@ -421,28 +422,27 @@ public class Player extends Unit
     public void updateUnit()
     {
         System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
-        
         for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
 
         doorMoves = 2;
+        ableToAct = true;
 
         setActions();
 
         if(ptolomyIsPresent) Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
 
-        promptForAction();
-    }
+        while(ableToAct) 
+        {
+            ableToAct = false;
+            //lists available actions, lets the player choose, then performs chosen action
+            myRoom.updateDoors();
 
-    //lists available actions, lets the player choose, then performs chosen action
-    public void promptForAction()
-    {
-        myRoom.updateDoors();
+            System.out.println();
+            Game.printInfo(myRoom, false);
+            System.out.println();
 
-        System.out.println();
-        Game.printInfo(myRoom, false);
-        System.out.println();
-
-        performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
+            performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
+        }
     }
 
     @Override

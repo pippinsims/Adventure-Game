@@ -29,10 +29,10 @@ public class ViewablePicture extends WallInteractible {
         setLocationReference();
     }
 
-    @Override public void action(Unit u) { inspect(); }
+    @Override public void action(Unit u) { inspect(u); }
 
     @Override
-    public void inspect()
+    public void inspect(Unit u)
     {
         Utils.slowPrintln("You take a closer look at the depiction:\n");
         String s = Utils.readFile(txtFileName);

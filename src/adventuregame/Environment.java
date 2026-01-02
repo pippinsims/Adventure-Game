@@ -1,19 +1,12 @@
 package adventuregame;
 
-import adventuregame.interactibles.ItemHolder;
-import adventuregame.interactibles.SkeletonInteractible;
-import adventuregame.interactibles.Table;
+import adventuregame.interactibles.*;
 import adventuregame.interactibles.WallInteractible.Wall;
 import adventuregame.interactibles.wallinteractibles.*;
-import adventuregame.items.Armor;
-import adventuregame.items.Sword;
-import adventuregame.abstractclasses.Enemy;
-import adventuregame.abstractclasses.Item;
-import adventuregame.abstractclasses.Unit;
-import adventuregame.dynamicitems.GoldenPot;
-import adventuregame.dynamicitems.Torch;
-import adventuregame.enemies.Goblin;
-import adventuregame.enemies.Skeleton;
+import adventuregame.items.*;
+import adventuregame.abstractclasses.*;
+import adventuregame.dynamicitems.*;
+import adventuregame.enemies.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +34,6 @@ public class Environment extends Game
         curRoom = new Room(celld, celll, cellf, celln);
         new Door(curRoom, hall, Wall.EAST);
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
-        //turn body into skeletoninteractible grasping sword if VITALITYDRAIN QTE runs out of time/kills you
 
         Room cell2 = new Room(celld, celll, cellf, celln);
         new Table(cell2);
@@ -173,7 +165,11 @@ public class Environment extends Game
             "",
             "",
             "the floor"
-        ) {{ descMap.put("Laur", "toad-sized TABLEstool"); }};
+        ) {
+            { descMap.put("Laur", "toad-sized TABLEstool"); }
+            @Override public void action(Unit u) {}
+            @Override protected void setInspects() { put(name, description); }
+        };
         
         Room joiner1 = new Room();
 
@@ -192,10 +188,10 @@ public class Environment extends Game
 
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
-        // addPlayer(new Player());
-        // addPlayer(new Player("Nuel", 10));
-        // addPlayer(new Player("Valeent", 10));
-        // addPlayer(new Player("Peili", 12));
-        // addPlayer(new Player("Dormaah", 10));
+        addPlayer(new Player());
+        addPlayer(new Player("Nuel", 10));
+        addPlayer(new Player("Valeent", 10));
+        addPlayer(new Player("Peili", 12));
+        addPlayer(new Player("Dormaah", 10));
     }
 }

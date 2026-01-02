@@ -33,6 +33,7 @@ public class ItemHolder extends Interactible {
             "Take", 
             "from"
         );
+        setInspects();
 
         item = i;
         locReference = location;

@@ -2,7 +2,7 @@ package adventuregame.interactibles;
 
 import adventuregame.Interactible;
 
-public class WallInteractible extends Interactible{
+public abstract class WallInteractible extends Interactible{
 
     protected Wall wall;
 

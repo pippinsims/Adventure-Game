@@ -141,13 +141,13 @@ public class Dialogue
                 Room out = (Room)n.out;
                 if(n.applyToAll)
                 {
-                    System.out.println("All players in " + name + "'s room moved back to " + out.getName());
+                    Utils.slowPrintln("All players in " + name + "'s room moved back to " + out.getName());
                     for(Player p : Game.curRoom.players) out.add(p);
                     Game.curRoom.players.clear();
                 }
                 else
                 {
-                    System.out.println(name + " moved back to " + out.getName());
+                    Utils.slowPrintln(name + " moved back to " + out.getName());
                     out.add(to);
                     Game.curRoom.players.remove(to);
                 }
@@ -157,12 +157,12 @@ public class Dialogue
                 Effect out = (Effect)n.out;
                 if(n.applyToAll)
                 {
-                    System.out.println("Effect '" + out.getName() + "' added to all in " + name + "'s room");
+                    Utils.slowPrintln("Effect '" + out.getName() + "' added to all in " + name + "'s room");
                     for(Player p : Game.curRoom.players) p.addEffect(new Effect(out));
                 }
                 else
                 {
-                    System.out.println("Effect '" + out.getName() + "' added to " + name);
+                    Utils.slowPrintln("Effect '" + out.getName() + "' added to " + name);
                     to.addEffect(out);
                 }
             }
@@ -171,12 +171,12 @@ public class Dialogue
                 Item out = (Item)n.out;
                 if(n.applyToAll)
                 {
-                    System.out.println("Item '" + out.getName() + "' added to all in " + name + "'s room");
+                    Utils.slowPrintln("Item '" + out.getName() + "' added to all in " + name + "'s room");
                     for(Player p : Game.curRoom.players) p.getInventory().add(out);
                 }
                 else
                 {
-                    System.out.println("Item '" + out.getName() + "' added to " + name);
+                    Utils.slowPrintln("Item '" + out.getName() + "' added to " + name);
                     to.getInventory().add(out.clone());
                 }
             }
