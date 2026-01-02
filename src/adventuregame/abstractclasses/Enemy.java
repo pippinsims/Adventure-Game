@@ -1,130 +1,28 @@
 package adventuregame.abstractclasses;
-import java.util.ArrayList;
 import java.util.Random;
 
 import adventuregame.Damage;
-import adventuregame.Dialogue;
 import adventuregame.Inventory;
 import adventuregame.Utils;
-import adventuregame.enemies.Skeleton;
 import adventuregame.interactibles.SkeletonInteractible;
 
-public abstract class Enemy extends Unit
+public abstract class Enemy extends NonPlayer
 {
-    protected Inventory inv;
-    protected Damage dmg;
-    protected int wisdom;
-    public ArrayList<Dialogue> dialogues = new ArrayList<>();
+    public abstract void pleaResponse();
 
-    protected enum Action
-    {
-        NONE,
-        DIALOGUE,
-        ATTACK
-    }
-
-    protected String pluralOf(String str)
-    {
-        switch (str) {
-            case "goblin":
-            case "Screebling Squabbler":
-            case "bllork":
-            case "Skeleton":
-                return str + 's';
-            case "awkward fellow":
-                return "awkward fellas";
-            case "pale man": 
-                return "pale men";
-            
-            default:
-                throw new UnsupportedOperationException("No plural for '"+str+"'");
-        }
-    }
-
-    public void setDefaults(int m, Inventory i, int dmg, int w, String des, String name)
-    {
-        maxHealth = m;
-        health = maxHealth;
-        inv = i;
-        this.dmg = new Damage(dmg);
-        wisdom = w;
-        description = des;
-        this.name = name == null ? generateName() : name;
-        deathMsg = "You ended " + getName();
-    }
-
-    protected String generateName() 
-    {
-        return Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
-    }
-
-    public String getModifiedDescription(String type)
-    {
-        switch (type) 
-        {
-            case "scary":
-                type = "monster";
-                break;
-            case "sad":
-                type = "poor fiend";
-                break;
-            case "random":
-                type = getRandomDescription();
-                break;
-        }
-
-        if(health <= maxHealth / 3)
-            return "bent double " + type;
-        else if(health <= (maxHealth * 2) / 3)
-            return "slightly bruised " + type;
-        else
-            return type;
-    }
-
-    protected String getRandomDescription()
-    {
-        String[] names = new String[]{description};
-        switch(description)
-        {
-            case "Goblin"          : names = new String[]{"Screebling Squabbler", "pale man", "bllork", "awkward fellow"}; break;
-            case "Skeleton"        : names = new String[]{"Skeleton"}; break;
-        }
-        return names[new Random().nextInt(names.length)];
-    }
-
-    // public void randomizeDesc() { randomDescription = getRandomDescription(); }
-
-    public Inventory getInventory() { return inv; }
-
-    public Damage getAttackDamage() { return dmg; }
-
-    public int getWisdom() { return wisdom; }
-
+    @Override
     public void chooseAction()
     {
         //DECISIONMAKING FOR ENEMY
         if(isStunned || myRoom.players.isEmpty())
         {
-            performAction(0);
+            performAction(Action.NONE);
             isStunned = false;
         }
         else if (!dialogues.isEmpty() && dialogues.getFirst().getInitiator() == this)
-            performAction(1);
+            performAction(Action.DIALOGUE);
         else
-            performAction(2);
-    }
-
-    public abstract void pleaResponse();
-
-    public abstract void performAction(int i);
-
-    @Override
-    public void updateUnit() {
-        System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
-
-        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
-
-        chooseAction();
+            performAction(Action.ATTACK);
     }
 
     @Override
@@ -134,5 +32,106 @@ public abstract class Enemy extends Unit
         if(out == EffectUpdateResult.DEATH && this instanceof Skeleton) new SkeletonInteractible(myRoom, inv);
         
         return out;
+    }
+
+    public static class Skeleton extends Enemy{
+
+        public Skeleton()
+        {
+            setDefaults(20, new Inventory(6), 5, 0, "skeleton", "Oess");
+            pluralDescription = "skeletons";
+        }
+
+        public Skeleton(Inventory i)
+        {
+            setDefaults(20, new Inventory(6), 5, 0, "skeleton", "Oess");
+            pluralDescription = "skeletons";
+            inv = i;
+        }
+
+        public void pleaResponse()
+        {
+            Utils.slowPrint(getName() + ": it moves it's jaw, but due to the lack of both lips and vocal chords, no words come out.");
+        }
+
+        @Override
+        public void performAction(Action a) 
+        {
+            switch(a)
+            {
+                case NONE:
+                    Utils.slowPrintln("The " + getModifiedDescription("sad") + " is motionless.");
+                    break;
+
+                case DIALOGUE:
+                    talk();
+                    break;
+
+                case ATTACK:
+                    this.attack(myRoom.players.get(0), getAttackDamage(), "The " + getModifiedDescription("scary") + " attacks you with its weapon");
+                    break;
+            }
+        }
+    }
+
+    public static class Goblin extends Enemy {
+
+        { pluralDescription = "goblins"; }
+
+        public Goblin(int health) { 
+            setDefaults(health, new Inventory(5), 4, 20, "goblin with pointy ears", null);
+        }
+
+        public Goblin(int health, Inventory inventory, int damage, int wisdom) { 
+            setDefaults(health, inventory, damage, wisdom, "goblin with pointy ears", null);
+        }
+
+        @Override
+        public void setDefaults(int m, Inventory i, int dmg, int w, String des, String name)
+        {
+            super.setDefaults(m, i, dmg, w, des, name);
+
+            int r = Utils.rand.nextInt(4);
+            descMap.put("Laur", (new String[] {"Screeblin Squabbler","pale man","awkward fellow","bllork"})[r]);
+            pDescMap.put("Laur", (new String[] {"Screeblin Squabblers","pale men","awkward fellas","bllorks"})[r]);
+        }
+
+        @Override 
+        public void pleaResponse()
+        {
+            Utils.slowPrint(getName() + ": ");
+            switch(new Random().nextInt(3))
+            {
+                case 0:
+                    Utils.slowPrintln("I pity thee not.");
+                    break;
+                case 1:
+                    Utils.slowPrintln("ok.");
+                    isStunned = true;
+                    break;
+                case 2:
+                    Utils.slowPrintln("[Doesn't React]");
+                    break;
+            }
+        }
+
+        @Override
+        public void performAction(Action a)
+        {
+            switch(a)
+            {
+                case NONE:
+                    Utils.slowPrintln("The " + getModifiedDescription("sad") + " stands still, sort of like a Zucchini Mushroom.");
+                    break;
+
+                case DIALOGUE:
+                    talk();
+                    break;
+
+                case ATTACK:
+                    this.attack(myRoom.players.get(0), getAttackDamage(), "The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.");
+                    break;
+            }
+        }
     }
 }

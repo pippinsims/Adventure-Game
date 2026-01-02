@@ -6,7 +6,6 @@ import adventuregame.interactibles.wallinteractibles.*;
 import adventuregame.items.*;
 import adventuregame.abstractclasses.*;
 import adventuregame.dynamicitems.*;
-import adventuregame.enemies.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +73,7 @@ public class Environment extends Game
                 if(new Random().nextInt(10) == 9)
                 {
                     Utils.slowPrintln("You attempt to brush away the skeleton, but it reacts, bones clinking, and assumes a combat stance!");
-                    getRoom().add(new Skeleton(inv));
+                    getRoom().add(new Enemy.Skeleton(inv));
                 }
                 else
                 {
@@ -109,8 +108,9 @@ public class Environment extends Game
         Room cell14 = new Room(celld, celll, cellf, celln);
         new Door(cell14, hall, Wall.WEST);
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
+        cell14.add(new NonPlayer.Bofer());
 
-        ArrayList<Enemy> ens = new ArrayList<>(List.of(new Goblin(3), new Goblin(3), new Goblin(3)));
+        ArrayList<Enemy> ens = new ArrayList<>(List.of(new Enemy.Goblin(3), new Enemy.Goblin(3), new Enemy.Goblin(3)));
         Room chamber = new Room("a dimly lit room.\nThere is a faint foul odor...\nThe patchwork on the wall depicts of a redheaded lunatic.\n\"Lord Gareth the Mad.\"",                    
                                 "The Chamber.",
                                 "Chamber");

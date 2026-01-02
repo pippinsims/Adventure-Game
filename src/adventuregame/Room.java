@@ -2,6 +2,7 @@ package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Enemy;
+import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.wallinteractibles.Door;
 
@@ -13,6 +14,7 @@ public class Room extends Describable
 
     public  ArrayList<Enemy>        enemies       = new ArrayList<>();
     public  ArrayList<Player>       players       = new ArrayList<>();
+    public  ArrayList<NonPlayer>    NPCs          = new ArrayList<>();
     public  ArrayList<Interactible> interactibles = new ArrayList<>();
     private ArrayList<Door>         doors         = new ArrayList<>();
     private ArrayList<Player>       familiars     = new ArrayList<>();
@@ -60,21 +62,23 @@ public class Room extends Describable
 
     public void discover()
     {
-        descMap.put(Game.curPlayer.getName(), familiarDescription);
+        descMap.put(Game.cur.getName(), familiarDescription);
     }
 
     public boolean doFirstDialogue()
     {
-        for(Enemy e : enemies) if(e.dialogues.getFirst() != null) 
+        ArrayList<NonPlayer> all = new ArrayList<>(enemies);
+        all.addAll(NPCs);
+        for(NonPlayer n : all) if(n.dialogues.getFirst() != null) 
         { 
-            e.dialogues.getFirst().next();
-            e.dialogues.remove(0); 
+            n.dialogues.getFirst().next();
+            n.dialogues.remove(0); 
             return true;
         }
         return false;
     }
 
-    public boolean getIsFamiliar() { return familiars.contains(Game.curPlayer); }
+    public boolean isFamiliarTo(Unit u) { return familiars.contains(u); }
 
     public void add(Interactible i)
     {
@@ -84,7 +88,12 @@ public class Room extends Describable
 
     public void add(Unit u)
     {
-        if(u instanceof Player) players.add((Player)u); else enemies.add((Enemy)u);
+        if(u instanceof Player) 
+            players.add((Player)u); 
+        else if(u instanceof Enemy) 
+            enemies.add((Enemy)u);
+        else
+            NPCs.add((NonPlayer)u);
         u.setRoom(this);
     }
 
@@ -95,7 +104,12 @@ public class Room extends Describable
 
     public boolean remove(Unit u)
     {
-        return u instanceof Player ? players.remove((Player)u) : enemies.remove((Enemy)u);
+        if(u instanceof Player) 
+            return players.remove((Player)u); 
+        else if(u instanceof Enemy) 
+            return enemies.remove((Enemy)u);
+        else
+            return NPCs.remove((NonPlayer)u);
     }
 
     public void updateDoors()

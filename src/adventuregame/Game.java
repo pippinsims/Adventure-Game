@@ -3,12 +3,13 @@ package adventuregame;
 import java.util.ArrayList;
 
 import adventuregame.abstractclasses.Enemy;
+import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 
 public class Game
 {
     public static Room curRoom;
-    public static Player curPlayer;
+    public static Unit cur;
     public static ArrayList<Player> allPlayers = new ArrayList<>();
     public static boolean isLaur;
 
@@ -30,13 +31,13 @@ public class Game
             //all players
             for(Player p : new ArrayList<>(allPlayers))
             {
-                curPlayer = p; 
+                cur = p; 
                 curRoom = p.getRoom(); 
                 isLaur = p.getName().equals("Laur");
                 p.updateUnit();
                 System.out.println();
             }
-            curPlayer = null; isLaur = false;
+            cur = null; isLaur = false;
 
             ArrayList<Room> playerRooms = new ArrayList<>();
             for(Player p : allPlayers) if(!Utils.contains(playerRooms, p.getRoom())) playerRooms.add(p.getRoom());
@@ -49,7 +50,24 @@ public class Game
                     curRoom = r;
                     for(Enemy e : new ArrayList<>(r.enemies))
                     {
+                        cur = e;
                         e.updateUnit();
+                        System.out.println();
+                        if(r.players.isEmpty()) break;
+                    }
+                }
+            }
+
+            //all NPCs in player rooms
+            for(Room r : playerRooms) 
+            {
+                if(!r.NPCs.isEmpty())
+                {
+                    curRoom = r;
+                    for(NonPlayer n : new ArrayList<>(r.NPCs))
+                    {
+                        cur = n;
+                        n.updateUnit();
                         System.out.println();
                         if(r.players.isEmpty()) break;
                     }
@@ -106,7 +124,7 @@ public class Game
     {
         if(!peek) Utils.slowPrintln("--Info--");
 
-        if(!r.getIsFamiliar())
+        if(!r.isFamiliarTo(cur))
         {
             Utils.currentPrintDelay = Utils.MAX_PRINT_DELAY;
             Utils.slowPrintln("You" + (peek ? " see " : "'re in ") + r.getDescription() + ".");
@@ -120,8 +138,10 @@ public class Game
 
         Utils.slowPrintDescList(r.enemies);
 
+        Utils.slowPrintNameList(r.NPCs); //TODO integrate and test NPCs fully
+
         ArrayList<Player> p = new ArrayList<>(r.players);
-        p.remove(curPlayer);
+        p.remove(cur);
         Utils.slowPrintNameList(p);
         
         r.discover();

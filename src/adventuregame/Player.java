@@ -191,7 +191,9 @@ public class Player extends Unit
     {
         ArrayList<Describable> descs = new ArrayList<>(myRoom.interactibles);
         descs.addAll(myRoom.players);
-        descs.remove(this); //TODO but "this" is listed even though it's removed
+        descs.remove(this); //compares by description
+        descs.addAll(myRoom.enemies);
+        descs.addAll(myRoom.NPCs);
         Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
         if(d instanceof Interactible) ((Interactible)d).inspect(this);
         else Utils.slowPrintln(d.getDescription());
@@ -199,8 +201,6 @@ public class Player extends Unit
         Utils.slowPrint("Press Enter to continue");
         Utils.scanloop();
         ableToAct = true;
-
-        //TODO after a turn where i followed dialogue that put me back in the cell, Laur could inspect everyone except with himself replacing Nuel.
     }
 
     private void commune()

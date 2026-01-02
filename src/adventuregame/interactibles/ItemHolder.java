@@ -44,7 +44,7 @@ public class ItemHolder extends Interactible {
     @Override
     public void action(Unit u)
     {
-        switch(item.getName())
+        switch(item.getName()) //TODO add Trade action, add Enchantments for ItemHolders that override their .action()
         {
             case "Cledobl":
                 if(u.getName().equals("Laur"))

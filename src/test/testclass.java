@@ -15,7 +15,6 @@ import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
-import adventuregame.enemies.Goblin;
 
 public class testclass {
     
@@ -48,19 +47,19 @@ public class testclass {
                                 System.out.println("--Combat--");
                                 System.out.println("Test 1, kill enemy.");
                                 Game.curRoom  = new Room();
-                                Game.curPlayer = new Player("Guy", 10);
-                                Game.curRoom.add(new Goblin(1));
-                                Game.curPlayer.setRoom(Game.curRoom);
-                                Game.curPlayer.updateUnit();
+                                Game.cur = new Player("Guy", 10);
+                                Game.curRoom.add(new Enemy.Goblin(1));
+                                Game.cur.setRoom(Game.curRoom);
+                                Game.cur.updateUnit();
 
                                 System.out.println("Test 2, get killed.");
                                 Game.curRoom  = new Room();
-                                Game.curPlayer = new Player("Guy", 1);
-                                Game.curRoom.add(Game.curPlayer);
-                                Game.curRoom.add(new Goblin(10));
+                                Game.cur = new Player("Guy", 1);
+                                Game.curRoom.add(Game.cur);
+                                Game.curRoom.add(new Enemy.Goblin(10));
                                 for(Enemy e : Game.curRoom.enemies) e.setRoom(Game.curRoom);
-                                Game.curPlayer.setRoom(Game.curRoom);
-                                Game.curPlayer.updateUnit();
+                                Game.cur.setRoom(Game.curRoom);
+                                Game.cur.updateUnit();
                                 for(Enemy e : Game.curRoom.enemies) e.chooseAction();
 
                                 break;
