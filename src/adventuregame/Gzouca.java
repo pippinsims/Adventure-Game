@@ -83,13 +83,6 @@ public class Gzouca {
                 default: mode = null;
             }
 
-            // ArrayList<Card> list = new ArrayList<>();
-            // while(list.size() < 5)
-            //     for(Card c : p.getValue().cards())
-            //         if(Utils.rand.nextInt(2) == 1)
-            //             list.add(c);
-            // while(list.size() > 5) list.removeLast();
-
             players.add(new Player(p.getKey(), mode, null));
             j++;
         }
@@ -367,6 +360,7 @@ public class Gzouca {
 
     private String stringOf(Card.Type t, Player p)
     {
+        //currently obfuscation is turned off
         int first = 0, second = 0;
         switch (t) {
             case Broken: return "Bro";//p.arr[16];
