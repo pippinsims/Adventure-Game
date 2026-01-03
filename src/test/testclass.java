@@ -1,7 +1,11 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import adventuregame.Effect;
 import adventuregame.Game;
+import adventuregame.Gzouca;
 import adventuregame.Player;
 import adventuregame.QuickTimeEvent;
 import adventuregame.Room;
@@ -15,13 +19,16 @@ import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.items.Cards;
+import adventuregame.items.Cards.Card;
 
 public class testclass {
     
     public static void main(String[] args)
     {   
         for(String s : new String[] {
-            "Room scenarios",
+            // "Room scenarios",
+            "Gzouca",
             // "Dialogue",
             // "QTE" succeeded
         })
@@ -78,6 +85,30 @@ public class testclass {
                             case 0: //Timeless QTE
                         }
                     }
+                    break;
+                case "Gzouca":
+                    ArrayList<Card> c = new ArrayList<>();
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p1));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p2));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p10));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p4));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Zero));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n1));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n2));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n3));
+                    Cards gopcards = new Cards(new ArrayList<>(c));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p1));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p2));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p3));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p10));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Zero));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n1));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n2));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n3));
+                    Cards targincards = new Cards(new ArrayList<>(c));
+                    Map<String, Cards> peeps = Map.ofEntries(Map.entry("Gop", gopcards),
+                                                             Map.entry("Targin", targincards));
+                    new Gzouca(peeps);
                     break;
                 case "QTE":
                     for(int i : new int[]{
@@ -251,6 +282,6 @@ public class testclass {
                         System.out.println("--End Test--");
                     }
                     break;
-            }
+                }
         }
 }

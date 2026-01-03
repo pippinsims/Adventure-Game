@@ -83,7 +83,7 @@ public abstract class Enemy extends NonPlayer
 
                 case ATTACK:
                     //TODO just attacks first enemy
-                    this.attack(myRoom.players.get(0), getAttackDamage(), "The " + getModifiedDescription("scary") + " attacks you with its weapon");
+                    this.attack(myRoom.players.getFirst(), getAttackDamage(), "The " + getModifiedDescription("scary") + " attacks you with its weapon");
                     break;
             }
         }
@@ -149,7 +149,7 @@ public abstract class Enemy extends NonPlayer
 
                 case ATTACK:
                     //TODO just attacks first enemy
-                    this.attack(myRoom.players.get(0), getAttackDamage(), "The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.");
+                    this.attack(myRoom.players.getFirst(), getAttackDamage(), "The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.");
                     break;
             }
         }

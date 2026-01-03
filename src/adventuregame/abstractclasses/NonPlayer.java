@@ -113,14 +113,15 @@ public abstract class NonPlayer extends Unit {
 
     protected void attack()
     {
-        for(Unit x : myRoom.all())
+        for(Unit u : myRoom.all())
         {
-            if(Utils.contains(enemies, x))
+            if(Utils.contains(enemies, u))
             {
                 //TODO just attacks first enemy
-                Weapon p = new Weapon.Punch(x instanceof Enemy ? "You heave a mighty blow at the " + ((Enemy)x).getModifiedDescription("sad") : "You attack "+x.getName()+"!");
-                this.attack(x, p.getDamage(), p.getAttackMessage());
-                if(x.isDead()) for(Unit e : new ArrayList<>(enemies)) if(e == x) enemies.remove(e);
+                Weapon chsn = new Weapon.Punch(u instanceof Enemy ? "You heave a mighty blow at the " + ((Enemy)u).getModifiedDescription("sad") : "You attack " + u.getName() + "!");
+                for(Weapon w : inv.getWeapons()) if(w.getDamage().getValue() > chsn.getDamage().getValue()) chsn = w;
+                this.attack(u, chsn.getDamage(), chsn.getAttackMessage());
+                if(u.isDead()) for(Unit e : new ArrayList<>(enemies)) if(e == u) enemies.remove(e);
                 break;
             }
         }
