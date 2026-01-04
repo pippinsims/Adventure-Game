@@ -69,7 +69,7 @@ public class Environment extends Game
             @Override 
             public void action(Unit u)
             {
-                getRoom().interactibles.remove(this);
+                getRoom().remove(this);
                 if(new Random().nextInt(10) == 9)
                 {
                     Utils.slowPrintln("You attempt to brush away the skeleton, but it reacts, bones clinking, and assumes a combat stance!");

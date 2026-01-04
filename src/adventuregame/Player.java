@@ -187,7 +187,7 @@ public class Player extends Unit
     {
         ArrayList<Describable> descs = new ArrayList<>(myRoom.interactibles);
         descs.addAll(myRoom.players);
-        descs.remove(this); //compares by description
+        descs.remove(this);
         descs.addAll(myRoom.enemies);
         descs.addAll(myRoom.NPCs);
         Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
@@ -418,7 +418,7 @@ public class Player extends Unit
     public void updateUnit()
     {
         System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
-        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
+        for(Effect e : new ArrayList<>(effects)) if(effectUpdate(e) == EffectUpdateResult.DEATH) return;
 
         doorMoves = 2;
         ableToAct = true;

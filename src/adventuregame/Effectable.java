@@ -66,11 +66,7 @@ public abstract class Effectable extends Describable{
                 break;
         }
 
-        if(effectIsOver) for(Effect check : new ArrayList<>(effects)) if(check == e)
-        {
-            effects.remove(e);
-            break;
-        }
+        if(effectIsOver) effects.remove(e);
 
         return result;
     }
@@ -187,9 +183,6 @@ public abstract class Effectable extends Describable{
     //MARK: for testing
     public void updateAllEffectsWithoutResult()
     {
-        for (int i = effects.size() - 1; i >= 0; i--)
-        {
-            effectUpdate(effects.get(i));
-        }
+        for (int i = effects.size() - 1; i >= 0; i--) effectUpdate(effects.get(i));
     }
 }

@@ -88,14 +88,7 @@ public class Inventory {
 
     public boolean remove(Item i)
     {
-        for(ItemStack s : items)
-        {
-            if(s.is(i) && s.dec())
-            {
-                items.remove(s);
-                return true;
-            }
-        }
+        for(ItemStack s : items) if(s.is(i) && s.dec()) return items.remove(s);
         return false;
     }
 

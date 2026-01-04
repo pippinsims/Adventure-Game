@@ -149,7 +149,7 @@ public class Dialogue
                 {
                     Utils.slowPrintln(name + " moved back to " + out.getName());
                     out.add(to);
-                    Game.curRoom.players.remove(to);
+                    Game.curRoom.remove(to);
                 }
             }
             else if(n.out instanceof Effect)

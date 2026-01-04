@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import adventuregame.Dialogue;
+import adventuregame.Effect;
 import adventuregame.Inventory;
 import adventuregame.Utils;
 import adventuregame.items.Weapon;
@@ -121,7 +122,7 @@ public abstract class NonPlayer extends Unit {
                 Weapon chsn = new Weapon.Punch(u instanceof Enemy ? "You heave a mighty blow at the " + ((Enemy)u).getModifiedDescription("sad") : "You attack " + u.getName() + "!");
                 for(Weapon w : inv.getWeapons()) if(w.getDamage().getValue() > chsn.getDamage().getValue()) chsn = w;
                 this.attack(u, chsn.getDamage(), chsn.getAttackMessage());
-                if(u.isDead()) for(Unit e : new ArrayList<>(enemies)) if(e == u) enemies.remove(e);
+                if(u.isDead()) enemies.remove(u);
                 break;
             }
         }
@@ -151,7 +152,7 @@ public abstract class NonPlayer extends Unit {
     public void updateUnit() {
         System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
 
-        for (int i = effects.size() - 1; i >= 0; i--) if(effectUpdate(effects.get(i)) == EffectUpdateResult.DEATH) return;
+        for(Effect e : new ArrayList<>(effects)) if(effectUpdate(e) == EffectUpdateResult.DEATH) return;
 
         chooseAction();
     }

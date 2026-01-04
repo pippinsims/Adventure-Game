@@ -123,23 +123,9 @@ public class Room extends Describable
 
     public boolean remove(Unit u)
     {
-        if(u instanceof Player) 
-            return players.remove(u); 
-        else if(u instanceof Enemy)
-            return enemies.remove(u);
-        else
-            return NPCs.remove(u);
-
-        // if(u instanceof Player)  TODO for some reason using this (required) implementation makes Daedalus not follow Bofer out of the room
-        //     return players.remove(u); //all players will have unique descriptions, if it's removing the wrong thing thats because their descriptions are wrong
-        // else {
-        //     //normal remove method compares by description (.equals())
-        //     if(u instanceof Enemy)
-        //         for(Enemy x : enemies) if(x == u) return enemies.remove(u);
-        //     else
-        //         for(NonPlayer y : NPCs) if(y == u) return NPCs.remove(u);
-        //     return false;
-        // }
+        if(u instanceof Player) return players.remove(u); 
+        else if(u instanceof Enemy) return enemies.remove(u);
+        else return NPCs.remove(u);
     }
 
     public ArrayList<Door> getDoors()
@@ -155,18 +141,8 @@ public class Room extends Describable
     public ArrayList<Interactible> getUniqueInters()
     {
         ArrayList<Interactible> inters = new ArrayList<>();
-        for (Interactible i : interactibles) if(!contains(inters, i)) inters.add(i); 
+        for (Interactible i : interactibles) if(!inters.contains(i)) inters.add(i); 
         
         return inters;
-    }
-
-    private boolean contains(ArrayList<? extends Interactible> arr, Interactible i)
-    {
-        if(!(i instanceof Door)) return arr.contains(i); //This compares by description
-        Door d = (Door)i;
-
-        //if the doors have same from room and to room TODO .equals() should just compare by reference again, but i don't know what that'd break
-        for(Interactible i1 : arr) if(i1 instanceof Door && ((Door)i1).getRoom() == d.getRoom() && ((Door)i1).getNextRoom(d.getRoom()) == d.getNextRoom(d.getRoom())) return true;
-        return false;
     }
 }

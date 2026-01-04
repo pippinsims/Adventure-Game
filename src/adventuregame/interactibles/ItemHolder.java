@@ -189,7 +189,7 @@ public class ItemHolder extends Interactible {
                                 @Override 
                                 public void action(Unit u)
                                 {
-                                    getRoom().interactibles.remove(this);
+                                    getRoom().remove(this);
                                     Utils.slowPrintln("You brush the hand of the skeleton away from the sword, causing it to crumble to the floor.");
                                     new SkeletonInteractible(
                                         getRoom(), 

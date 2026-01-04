@@ -41,6 +41,6 @@ public abstract class Describable
 
         Describable d = (Describable) obj;
 
-        return this.getDescription().equals(d.getDescription());
+        return this == d;//this.getDescription().equals(d.getDescription());
     }
 }

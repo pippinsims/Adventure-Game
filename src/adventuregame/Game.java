@@ -78,7 +78,7 @@ public class Game
                     }
                 }
             }
-
+            
             //all loaded NonPlayers
             for(NonPlayer n : loaded)
             {
@@ -103,9 +103,12 @@ public class Game
 
     public static void kill(Effectable e)
     {
+        System.out.println("kill("+e.getName()+")");
         Unit u = (Unit)e; //currently theres no non-unit effectables
         if(u instanceof Enemy)
+        {
             if(isLaur) Utils.slowPrintln("You've murdered " + u.getName(), 0/*200*/);
+        }
         else if(u instanceof Player)
         {
             Utils.slowPrintln("you died.");
@@ -121,15 +124,10 @@ public class Game
     protected final static void printIntroduction()
     {
         Utils.slowPrint("In this land, you're known as ");
-        if(Game.allPlayers.size() > 0)
-        {
-            int num = Game.allPlayers.size();
-            
-            for(int i = 0; i < num; i++)
-            {
-                Utils.slowPrintAsList(Game.allPlayers.get(i).getName(), num, i);
-            }
-        }
+
+        int num = Game.allPlayers.size(); 
+        if(num > 0) for(int i = 0; i < num; i++) Utils.slowPrintAsList(Game.allPlayers.get(i).getName(), num, i); 
+        
         Utils.slowPrint(" ", 1000);
         Utils.slowPrint("Adventure awaits!", 10);
         Utils.slowPrint("\n", 200);

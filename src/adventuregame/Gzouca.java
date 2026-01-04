@@ -364,27 +364,23 @@ public class Gzouca {
             case Being : return p.arr[14];
             case Beast : return p.arr[13];
             case Zero  : return p.arr[0 ];
-            case n1    : fir = 12; sec = 1 ; break;
-            case n2    : fir = 12; sec = 2 ; break;
-            case n3    : fir = 12; sec = 3 ; break;
-            case n4    : fir = 12; sec = 4 ; break;
-            case n5    : fir = 12; sec = 5 ; break;
-            case n6    : fir = 12; sec = 6 ; break;
-            case n7    : fir = 12; sec = 7 ; break;
-            case n8    : fir = 12; sec = 8 ; break;
-            case n9    : fir = 12; sec = 9 ; break;
-            case n10   : fir = 12; sec = 10; break;
-            case p1    : fir = 11; sec = 1 ; break;
-            case p2    : fir = 11; sec = 2 ; break;
-            case p3    : fir = 11; sec = 3 ; break;
-            case p4    : fir = 11; sec = 4 ; break;
-            case p5    : fir = 11; sec = 5 ; break;
-            case p6    : fir = 11; sec = 6 ; break;
-            case p7    : fir = 11; sec = 7 ; break;
-            case p8    : fir = 11; sec = 8 ; break;
-            case p9    : fir = 11; sec = 9 ; break;
-            case p10   : fir = 11; sec = 10; break;
+            case n1  : case p1:  sec = 1 ; break;
+            case n2  : case p2:  sec = 2 ; break;
+            case n3  : case p3:  sec = 3 ; break;
+            case n4  : case p4:  sec = 4 ; break;
+            case n5  : case p5:  sec = 5 ; break;
+            case n6  : case p6:  sec = 6 ; break;
+            case n7  : case p7:  sec = 7 ; break;
+            case n8  : case p8:  sec = 8 ; break;
+            case n9  : case p9:  sec = 9 ; break;
+            case n10 : case p10: sec = 10; break;
         }
+        switch (t) {
+            case n1:case n2:case n3:case n4:case n5:case n6:case n7:case n8:case n9:case n10: fir = 12; break;
+            case p1:case p2:case p3:case p4:case p5:case p6:case p7:case p8:case p9:case p10: fir = 11; break;
+            default:break;
+        }
+        
         if(p.isFlipped) fir = 12 - i(fir == 12);
         
         return p.arr[fir] + " " + p.arr[sec];

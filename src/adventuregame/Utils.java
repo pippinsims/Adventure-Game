@@ -337,7 +337,7 @@ public class Utils {
 
     public static String articleOfDescribableInList(ArrayList<? extends Describable> arr, Describable d)
     {
-        for (Describable d1 : arr) if(d.equals(d1)) return articleOf(d.getDescription()); //compare by description
+        for (Describable d1 : arr) if(d.getDescription().equals(d1.getDescription())) return articleOf(d.getDescription());
         return "the";
     }
 
