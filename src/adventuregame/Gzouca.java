@@ -60,10 +60,6 @@ public class Gzouca {
         Loppi
     }
 
-    private final String[] color = new String[] {"hole"     ,"pill"    ,"cystal"   ,"ghost"    ,"tome","kite","red"  ,"yellow" ,"green" ,"blue"  ,"titan"  ,"strong","weak", "bittern","bugel","barley","hay"};
-    private final String[] shape = new String[] {"dark"     ,"stone"   ,"mite"     ,"snowflake","tree","cave","cube" ,"pyramid","prism" ,"sphere","statue" ,"mad"   ,"sane", "night","morning","fate","feeling"};
-    private final String[] beast = new String[] {"whirlpool","jon boat","lodestone","tomb"     ,"sea" ,"wood","snake","frog"   ,"lizard","dragon","mansion","waxing","waning","cold","heat","gate","garnet"};
-
     static ArrayList<Card> dealt = new ArrayList<>();
 
     public Gzouca(Map<String, Cards> playersMap)
@@ -89,10 +85,9 @@ public class Gzouca {
 
         for(int hand = 0; hand < 3; hand++)
         {
-            System.out.println("Hand " + (hand + 1) + "!");
+            System.out.println("----------------Hand " + (hand + 1) + "!");
             for(Player p : players) 
             {
-                System.out.println(p.name + " receiving cards...");
                 p.hand = new ArrayList<>();
                 ArrayList<Card> submission = new ArrayList<>(playersMap.get(p.name).cards());
                 while(p.hand.size() < 5)
@@ -113,28 +108,31 @@ public class Gzouca {
             boolean doBreak = false;
             for(int round = 0; round < 5; round++)
             {
-                System.out.println("Round " + (round + 1) + "!");
+                System.out.println("----------------Round " + (round + 1) + "!");
                 Card.Type[] cardvalues = Card.Type.values();
-                dealt.add(new Card(t, cardvalues[Utils.rand.nextInt(cardvalues.length-5)+5]));
+                dealt.add(new Card(t, cardvalues[Utils.rand.nextInt(cardvalues.length-15)+15])); //no specials no negatives
                 
                 for(Player p : players)
                 {
                     if(p.isSet) continue;
-                    System.out.println(p.name + "'s turn!\ndealt:");
+                    System.out.println("dealt:");
                     for(Card c : dealt) System.out.print(stringOf(c.type(), p) + ", ");
                     System.out.println();
                     for(Player p1 : players)
                     {
-                        System.out.println(p1.name+"'s played cards: ");
-                        for(Card c : p1.played) System.out.print(stringOf(c.type(), p) + ", ");
-                        System.out.println();
+                        if(!p1.played.isEmpty())
+                        {
+                            System.out.println(p1.name+"------------");
+                            for(Card c : p1.played) System.out.print(stringOf(c.type(), p) + ", ");
+                            System.out.println("\n------------");
+                        }
                     }
 
                     String[] cardsStr = new String[p.hand.size()];
                     for(int i = 0; i < p.hand.size(); i++) cardsStr[i] = stringOf(p.hand.get(i).type(), p);
                     System.out.println();
                     
-                    Card cardPlayed = p.hand.get(Utils.promptList("This is your hand, which do you play?", cardsStr));
+                    Card cardPlayed = p.hand.get(Utils.promptList(p.name + ", this is your hand, which do you play?", cardsStr));
                     p.played.add(cardPlayed);
                     p.hand.remove(cardPlayed);
 
@@ -142,10 +140,10 @@ public class Gzouca {
                     if(v > 10)
                     {
                         switch (v) {
-                            case 11: p.hasBeast = true; break;
-                            case 12: p.hasBeing = true; break;
-                            case 13: p.isFlipped = true;break;
-                            case 14: p.tiebreaks += 1;  break;
+                            case 11: p.hasBeast = true;  break;
+                            case 12: p.hasBeing = true;  break;
+                            case 13: p.isFlipped = true; break;
+                            case 14: p.tiebreaks += 1;   break;
                         }
                     }
 
@@ -183,42 +181,40 @@ public class Gzouca {
 
     private Player getWinner(ArrayList<Player> players)
     {
-        boolean first = true;
+        boolean firstWinner = true;
         int bestPts = 0;
         Player winner = null;
         for(Player p : players)
         {
-            if(!p.lockScore) p.roundPoints = p.setRoundPoints(-1,-1);
+            if(!p.isSet) p.roundPoints = p.setRoundPoints(-1,-1);
 
-            if(first) 
+            if(firstWinner)
             {
                 if(p.roundPoints <= 18)
                 {
-                    first = false; 
+                    firstWinner = false; 
                     winner = p;
                 }
             }
             else
             {
-                if(winner == null)
+                if(winner == null) //if tied
                 {
-                    if(p.roundPoints > bestPts && p.roundPoints <= 18) 
-                        winner = p;
+                    if(p.roundPoints > bestPts && p.roundPoints <= 18) winner = p;
                 }
                 else
                 {
-                    if(p.roundPoints > winner.roundPoints && p.roundPoints <= 18) 
-                        winner = p;
-                    else if(p.roundPoints == winner.roundPoints)
-                    {
-                        if(p.tiebreaks > winner.tiebreaks)
-                            winner = p;
-                        else if(p.tiebreaks == winner.tiebreaks)
+                    if(p.roundPoints > winner.roundPoints && p.roundPoints <= 18) winner = p;
+                    else 
+                        if(p.roundPoints == winner.roundPoints) //winner.rndpts always <= 18
                         {
-                            bestPts = winner.roundPoints;
-                            winner = null;
+                            if(p.tiebreaks > winner.tiebreaks) winner = p;
+                            else if(p.tiebreaks == winner.tiebreaks)
+                            {
+                                bestPts = winner.roundPoints;
+                                winner = null;
+                            }
                         }
-                    }
                 }
             }
         }
@@ -247,7 +243,6 @@ public class Gzouca {
         public int roundPoints = 0;
         private int setRound;
         private int setHand;
-        public boolean lockScore = false;
 
         Player(String name, String[] array, ArrayList<Card> cards)
         {
@@ -263,7 +258,6 @@ public class Gzouca {
             setHand = hand;
             setRound = round;
             roundPoints = setRoundPoints(round, hand);
-            lockScore = true;
         }
 
         public int setRoundPoints(int round, int hand)
@@ -290,11 +284,10 @@ public class Gzouca {
                     default: sum += v;
                 }
             }
+            System.out.println(name + " sum: "+ sum);
 
             if(hasBeast && hasBeing)
             {
-                if(sum == 18) return sum;
-
                 if(curHand > curRound)
                 {
                     winmin -= curHand;
@@ -311,11 +304,11 @@ public class Gzouca {
                 if(hasBeing) 
                 {
                     // the Being: +(roundnum) or -(anywhere from handnum to roundnum)
-                    winmin -= curRound;
-                    winmax -= curRound;
+                    winmin = winmax -= curRound;
                     
                     if(sum > winmax)
                     {
+                        winmin = winmax = 18;
                         if(curHand > curRound)
                         {
                             winmin += curRound;
@@ -332,11 +325,11 @@ public class Gzouca {
                 else if(hasBeast)
                 {
                     // the Beast: -(roundnum) or +(anywhere from handnum to roundnum)
-                    winmin += curRound;
-                    winmax += curRound;
+                    winmin = winmax += curRound;
                     
-                    if(sum > winmax)
+                    if(sum < winmin)
                     {
+                        winmin = winmax = 18;
                         if(curHand > curRound)
                         {
                             winmin -= curHand;
@@ -348,81 +341,87 @@ public class Gzouca {
                             winmax -= setHand;
                         }
                     }
-                    else if(sum < winmin) return sum;
+                    else if(sum > winmax) return sum;
                 }
             }
 
-            System.out.println(name + " sum: "+ sum);
             if(sum >= winmin && sum <= winmax) return 18;
             else return sum;
         }
     }
 
+    private final String[] color = new String[] {"hole"     ,"pill"    ,"cystal"   ,"ghost"    ,"tome","kite","red"  ,"yellow" ,"green" ,"blue"  ,"titan"  ,"strong","weak",  "bittern","bugel"  ,"barley","hay"};
+    private final String[] shape = new String[] {"dark"     ,"stone"   ,"mite"     ,"snowflake","tree","cave","cube" ,"pyramid","prism" ,"sphere","statue" ,"mad"   ,"sane",  "night"  ,"morning","fate"  ,"feeling"};
+    private final String[] beast = new String[] {"whirlpool","jon boat","lodestone","tomb"     ,"sea" ,"wood","snake","frog"   ,"lizard","dragon","mansion","waxing","waning","cold"   ,"heat"   ,"gate"  ,"garnet"};
+    // private final String[] norma = new String[] {"0"        ,"1"       ,"2"        ,"3"        ,"4"   ,"5"   ,"6"    ,"7"      ,"8"     ,"9"     ,"10"     ,"+"     ,"-"     ,"Beast"  ,"Being"  ,"Arrow" ,"Broken"};
+
     private String stringOf(Card.Type t, Player p)
     {
-        //currently obfuscation is turned off
-        int first = 0, second = 0;
+        int fir = 0, sec = 0;
         switch (t) {
-            case Broken: return "Bro";//p.arr[16];
-            case Arrow : return "Arr";//p.arr[15];
-            case Being : return "Bei";//p.arr[14];
-            case Beast : return "Bea";//p.arr[13];
-            case Zero  : return "0";//p.arr[0];
-            case n1    : first = p.isFlipped ? 11 : 12; second = 1 ; break;
-            case n2    : first = p.isFlipped ? 11 : 12; second = 2 ; break;
-            case n3    : first = p.isFlipped ? 11 : 12; second = 3 ; break;
-            case n4    : first = p.isFlipped ? 11 : 12; second = 4 ; break;
-            case n5    : first = p.isFlipped ? 11 : 12; second = 5 ; break;
-            case n6    : first = p.isFlipped ? 11 : 12; second = 6 ; break;
-            case n7    : first = p.isFlipped ? 11 : 12; second = 7 ; break;
-            case n8    : first = p.isFlipped ? 11 : 12; second = 8 ; break;
-            case n9    : first = p.isFlipped ? 11 : 12; second = 9 ; break;
-            case n10   : first = p.isFlipped ? 11 : 12; second = 10; break;
-            case p1    : first = p.isFlipped ? 12 : 11; second = 1 ; break;
-            case p2    : first = p.isFlipped ? 12 : 11; second = 2 ; break;
-            case p3    : first = p.isFlipped ? 12 : 11; second = 3 ; break;
-            case p4    : first = p.isFlipped ? 12 : 11; second = 4 ; break;
-            case p5    : first = p.isFlipped ? 12 : 11; second = 5 ; break;
-            case p6    : first = p.isFlipped ? 12 : 11; second = 6 ; break;
-            case p7    : first = p.isFlipped ? 12 : 11; second = 7 ; break;
-            case p8    : first = p.isFlipped ? 12 : 11; second = 8 ; break;
-            case p9    : first = p.isFlipped ? 12 : 11; second = 9 ; break;
-            case p10   : first = p.isFlipped ? 12 : 11; second = 10; break;
+            case Broken: return p.arr[16];
+            case Arrow : return p.arr[15];
+            case Being : return p.arr[14];
+            case Beast : return p.arr[13];
+            case Zero  : return p.arr[0 ];
+            case n1    : fir = 12; sec = 1 ; break;
+            case n2    : fir = 12; sec = 2 ; break;
+            case n3    : fir = 12; sec = 3 ; break;
+            case n4    : fir = 12; sec = 4 ; break;
+            case n5    : fir = 12; sec = 5 ; break;
+            case n6    : fir = 12; sec = 6 ; break;
+            case n7    : fir = 12; sec = 7 ; break;
+            case n8    : fir = 12; sec = 8 ; break;
+            case n9    : fir = 12; sec = 9 ; break;
+            case n10   : fir = 12; sec = 10; break;
+            case p1    : fir = 11; sec = 1 ; break;
+            case p2    : fir = 11; sec = 2 ; break;
+            case p3    : fir = 11; sec = 3 ; break;
+            case p4    : fir = 11; sec = 4 ; break;
+            case p5    : fir = 11; sec = 5 ; break;
+            case p6    : fir = 11; sec = 6 ; break;
+            case p7    : fir = 11; sec = 7 ; break;
+            case p8    : fir = 11; sec = 8 ; break;
+            case p9    : fir = 11; sec = 9 ; break;
+            case p10   : fir = 11; sec = 10; break;
         }
-        return (first == 12 ? "-" : "+") + second;
-        // return p.arr[first] + " " + p.arr[second];
+        if(p.isFlipped) fir = 12 - i(fir == 12);
+        
+        return p.arr[fir] + " " + p.arr[sec];
     }
 
     static int valueOf(Card.Type t)
     {
         switch(t)
         {
-            case Broken: return 14;
-            case Arrow : return 13;
-            case Being : return 12;
-            case Beast : return 11;
-            case Zero  : return 0;
-            case n1    : return -1;
-            case n2    : return -2;
-            case n3    : return -3;
-            case n4    : return -4;
-            case n5    : return -5;
-            case n6    : return -6;
-            case n7    : return -7;
-            case n8    : return -8;
-            case n9    : return -9;
             case n10   : return -10;
-            case p1    : return 1;
-            case p2    : return 2;
-            case p3    : return 3;
-            case p4    : return 4;
-            case p5    : return 5;
-            case p6    : return 6;
-            case p7    : return 7;
-            case p8    : return 8;
-            case p9    : return 9;
-            case p10   : return 10;
-            default    : return 15;
+            case n9    : return -9 ;
+            case n8    : return -8 ;
+            case n7    : return -7 ;
+            case n6    : return -6 ;
+            case n5    : return -5 ;
+            case n4    : return -4 ;
+            case n3    : return -3 ;
+            case n2    : return -2 ;
+            case n1    : return -1 ;
+            case Zero  : return 0  ;
+            case p1    : return 1  ;
+            case p2    : return 2  ;
+            case p3    : return 3  ;
+            case p4    : return 4  ;
+            case p5    : return 5  ;
+            case p6    : return 6  ;
+            case p7    : return 7  ;
+            case p8    : return 8  ;
+            case p9    : return 9  ;
+            case p10   : return 10 ;
+            case Beast : return 11 ;
+            case Being : return 12 ;
+            case Arrow : return 13 ;
+            case Broken: return 14 ;
+            default    : return 15 ;
         }
     }
+
+    private int i(boolean b) { return b ? 1 : 0; }
 }

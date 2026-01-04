@@ -97,17 +97,27 @@ public class testclass {
                     c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n2));
                     c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n3));
                     Cards gopcards = new Cards(new ArrayList<>(c));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p1));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p2));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p3));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p10));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Arrow));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Broken));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Being));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Beast));
                     c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Zero));
                     c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n1));
                     c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n2));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n3));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n10));
                     Cards targincards = new Cards(new ArrayList<>(c));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p1));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p2));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p6));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p8));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Zero));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n1));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n2));
+                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n5));
+                    Cards tarrycards = new Cards(new ArrayList<>(c));
                     Map<String, Cards> peeps = Map.ofEntries(Map.entry("Gop", gopcards),
-                                                             Map.entry("Targin", targincards));
+                                                             Map.entry("Targin", targincards),
+                                                             Map.entry("Tarry", tarrycards));
                     new Gzouca(peeps);
                     break;
                 case "QTE":

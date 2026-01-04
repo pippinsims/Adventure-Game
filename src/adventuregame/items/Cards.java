@@ -38,16 +38,8 @@ public class Cards extends Item{
         public static enum Type
         {
             Zero, Being, Beast, Broken, Arrow,
-            p1,  n1,
-            p2,  n2,  
-            p3,  n3,  
-            p4,  n4,  
-            p5,  n5,  
-            p6,  n6,  
-            p7,  n7,  
-            p8,  n8,  
-            p9,  n9,  
-            p10, n10
+            n1, n2, n3, n4, n5, n6, n7, n8, n9, n10,
+            p1, p2, p3, p4, p5, p6, p7, p8, p9, p10
         }
     }
 }
