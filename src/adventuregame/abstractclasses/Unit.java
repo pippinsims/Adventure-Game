@@ -24,7 +24,7 @@ public abstract class Unit extends Effectable
     public void setRoom(Room r) { myRoom = r; } //don't use this, it is called in Room.add(Unit)
     public void attack(Unit targ, Damage d, String msg)
     { 
-        if(targ instanceof NonPlayer && !(targ instanceof Enemy)) ((NonPlayer)targ).enemies.add(this);
+        if(targ instanceof NonPlayer && !((NonPlayer)targ).enemies.contains(this)) ((NonPlayer)targ).enemies.add(this);
         Utils.slowPrintln(msg);
         targ.receiveDamage(d); 
     }

@@ -2,7 +2,6 @@ package adventuregame.items;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import adventuregame.Damage;
 import adventuregame.Player;
@@ -106,13 +105,13 @@ public class Armor extends Item {
                 d = 2;
                 outd.put(Damage.Type.BASIC, d);
                 outd.put(Damage.Type.BLUNT, d);
-                d = new Random().nextInt(2);
+                d = Utils.rand.nextInt(2);
                 for(int i = 2; i < Damage.Type.values().length - 1; i++) outd.put(Damage.Type.values()[i], d);
                 //50% chance of all first 2 tiers of spells on this unit fail
                 break;
             case ANCIENT_RUSTED:
                 d = 1;
-                d *= new Random().nextInt(2);
+                d *= Utils.rand.nextInt(2);
                 outd.put(Damage.Type.BASIC, d);
                 outd.put(Damage.Type.BLUNT, d);
                 break;

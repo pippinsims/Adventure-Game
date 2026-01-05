@@ -1,7 +1,5 @@
 package adventuregame.dynamicitems;
 
-import java.util.Random;
-
 import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
@@ -50,7 +48,7 @@ public class GoldenPot extends DynamicItem {
             
             {
                 String prep;
-                if(new Random().nextInt(2) == 1)
+                if(Utils.rand.nextInt(2) == 1)
                 {
                     prep = "on";
                     locReference = "the floor";
@@ -80,7 +78,7 @@ public class GoldenPot extends DynamicItem {
                     case 0:
                         Utils.slowPrint("You kick the pot and it ");
 
-                        switch (new Random().nextInt(3)) 
+                        switch (Utils.rand.nextInt(3)) 
                         {
                             default:
                                 Utils.slowPrintln("goes clattering against the wall.");

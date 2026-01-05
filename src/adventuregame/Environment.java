@@ -9,7 +9,6 @@ import adventuregame.dynamicitems.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Environment extends Game
 {
@@ -70,10 +69,10 @@ public class Environment extends Game
             public void action(Unit u)
             {
                 getRoom().remove(this);
-                if(new Random().nextInt(10) == 9)
+                if(Utils.rand.nextInt(10) == 9)
                 {
                     Utils.slowPrintln("You attempt to brush away the skeleton, but it reacts, bones clinking, and assumes a combat stance!");
-                    getRoom().add(new Enemy.Skeleton(inv));
+                    getRoom().add(new NonPlayer.Skeleton(inv));
                 }
                 else
                 {
@@ -118,11 +117,10 @@ public class Environment extends Game
                     case ATTACK: attack(); break;
                     case DIALOGUE: talk(); break;
                     case NORMAL:
-                        if(new Random().nextInt(2) == 1)
+                        if(Utils.rand.nextInt(2) == 1)
                         {
                             ArrayList<Door> d = myRoom.getDoors();
-                            d.get(new Random().nextInt(d.size())).action(this);
-                            System.out.println(myRoom.getName());
+                            d.get(Utils.rand.nextInt(d.size())).action(this);
                         }
                         else Utils.slowPrintln("Bofer does nothing.");
                         break;
@@ -144,11 +142,11 @@ public class Environment extends Game
                     case ATTACK: attack(); break;
                     case DIALOGUE: talk(); break;
                     case NORMAL:
-                        if(!Utils.contains(myRoom.all(), bofe))
+                        if(!myRoom.NPCs.contains(bofe))
                         {
                             for(Door d : myRoom.getDoors())
                             {
-                                if(Utils.contains(d.getNextRoom(myRoom).all(), bofe))
+                                if(d.getNextRoom(myRoom).NPCs.contains(bofe))
                                 {
                                     d.action(this);
                                     return;
@@ -173,15 +171,16 @@ public class Environment extends Game
             "Chamber"
         );
         
-        Enemy e = new Enemy.Goblin(3);
+        NonPlayer e = new NonPlayer.Goblin(3);
         chamber.add(e);
-        chamber.add(new Enemy.Goblin(3));
-        chamber.add(new Enemy.Goblin(3));
+        chamber.add(new NonPlayer.Goblin(3));
+        chamber.add(new NonPlayer.Goblin(3));
+        for(NonPlayer n : chamber.NPCs) for(NonPlayer n1 : chamber.NPCs) if(n != n1) n.friends.add(n1);
         e.dialogues.add(
             new Dialogue(
                 e,
                 new ArrayList<>(List.of(e)),
-                new Dialogue.Node.B(
+                new Dialogue.B(
                     0,
                     "You're not supposed to be out'n'about!", 
                     new String[] {
@@ -191,7 +190,7 @@ public class Environment extends Game
                     }, 
                     new Dialogue.Node[]
                     {
-                        new Dialogue.Node.B(
+                        new Dialogue.B(
                             0,
                             "Get the *BLORCK* back in your cell!", 
                             new String[] {
@@ -201,13 +200,24 @@ public class Environment extends Game
                             }, 
                             new Dialogue.Node[] 
                             {
-                                new Dialogue.Node.L<>(0, "Then you die."),
-                                new Dialogue.Node.L<Room>(0, "And don't you dare leave again...", null, curRoom, true),
-                                new Dialogue.Node.L<Room>(curRoom, true)
+                                new Dialogue.L<>(0, "Then you die.") { 
+                                    @Override public void process(Dialogue parent) 
+                                    {
+                                        Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
+                                        for(NonPlayer n : parent.to.getRoom().NPCs) if(parent.actors.get(actor).getClass() == n.getClass()) n.setHostile();
+                                    }},
+                                new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true) {
+                                    @Override public void process(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
+                                },
+                                new Dialogue.L<Room>(curRoom, true) {
+                                    @Override public void process(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
+                                }
                             }
                         ),
-                        new Dialogue.Node.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true),
-                        new Dialogue.Node.L<>()
+                        new Dialogue.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true) {
+                            @Override public void process(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
+                        },
+                        new Dialogue.X()
                     }
                 )
             )

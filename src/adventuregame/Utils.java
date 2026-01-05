@@ -7,7 +7,7 @@ import adventuregame.abstractclasses.Describable;
 
 public class Utils {
 
-    public static Random rand = new Random();
+    public static final Random rand = new Random();
     public static Scanner scanner = new Scanner(System.in);
     public static final int MAX_PRINT_DELAY = 1; //50 for normal gameplay
     public static int currentPrintDelay = MAX_PRINT_DELAY;

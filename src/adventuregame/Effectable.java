@@ -2,7 +2,6 @@ package adventuregame;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Random;
 
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
@@ -110,7 +109,7 @@ public abstract class Effectable extends Describable{
                 break;
             
             case PSYCHIC:
-                health -= new Random().nextFloat(newdamage.getValue() + 1); //from 0 to damage
+                health -= Utils.rand.nextFloat(newdamage.getValue() + 1); //from 0 to damage
                 break;
 
             case FIRE:

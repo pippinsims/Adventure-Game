@@ -64,7 +64,8 @@ public class Dialogue
         {
             next(a);
             atEnd = true;
-            processLeaf();
+            ((L<?>)current).process(this);
+            // processLeaf();
             return true;
         }
         return false;
@@ -73,9 +74,9 @@ public class Dialogue
     private void next(Unit actor)
     {   
         int path = current.prompt != null ? Utils.promptList(actor.getName() + " to " + to.getName() + ": " + current.prompt + (current.prompts != null ? "\n"+to.getName()+":" : ""), current.prompts) : -1;
-        if(current instanceof Node.B && ((Node.B)current).nodes != null)
+        if(current instanceof B && ((B)current).nodes != null)
         {
-            current = ((Node.B)current).nodes[path];
+            current = ((B)current).nodes[path];
             next(actors.get(current.actor));
         }
     }
@@ -85,55 +86,68 @@ public class Dialogue
         int actor;
         String prompt;
         String[] prompts;
-        
-        static class L<T extends Describable> extends Node //L for Leaf
+    }
+
+    static abstract class L<T extends Describable> extends Node //L for Leaf
+    {
+        T out;
+        boolean applyToAll;
+
+        public L(int actor, String prompt, String[] prompts, T out, boolean applyToAll)
         {
-            T out;
-            boolean applyToAll;
-
-            public L(int actor, String prompt, String[] prompts, T out, boolean applyToAll)
-            {
-                this.actor = actor;
-                this.prompt = prompt;
-                this.prompts = prompts;
-                this.out = out;
-                this.applyToAll = applyToAll;
-            }
-
-            public L(T out, boolean applyToAll)
-            {
-                this.out = out;
-                this.applyToAll = applyToAll;
-            }
-
-            public L(int actor, String prompt) 
-            {
-                this.actor = actor; 
-                this.prompt = prompt;
-            }
-
-            public L() {} 
+            this.actor = actor;
+            this.prompt = prompt;
+            this.prompts = prompts;
+            this.out = out;
+            this.applyToAll = applyToAll;
         }
 
-        static class B extends Node //B for Branch
+        public L(T out, boolean applyToAll)
         {
-            Node[] nodes;
+            this.out = out;
+            this.applyToAll = applyToAll;
+        }
 
-            public B(int actor, String prompt, String[] prompts, Node[] nodes)
-            {
-                this.actor = actor;
-                this.prompt = prompt;
-                this.prompts = prompts;
-                this.nodes = nodes;
-            }
+        public L(int actor, String prompt) 
+        {
+            this.actor = actor; 
+            this.prompt = prompt;
+        }
+
+        public L() {}
+
+        public abstract void process(Dialogue parent);
+    }
+
+    static class X extends L<Describable> //X denotes a leaf with no output
+    {
+        public X() {}
+        public X(int actor, String prompt) 
+        {
+            this.actor = actor; 
+            this.prompt = prompt;
+        }
+        @Override public void process(Dialogue parent) {}
+    }
+
+    static class B extends Node //B for Branch
+    {
+        Node[] nodes;
+
+        public B(int actor, String prompt, String[] prompts, Node[] nodes)
+        {
+            this.actor = actor;
+            this.prompt = prompt;
+            this.prompts = prompts;
+            this.nodes = nodes;
         }
     }
 
     public void processLeaf()
     {
-        if(current instanceof Dialogue.Node.L)
+        if(current instanceof L)
         {
-            Dialogue.Node.L<?> n = (Dialogue.Node.L<?>)current;
+            L<?> n = (L<?>)current;
             String name = to.getName();
             if(n.out instanceof Room)
             {
@@ -181,5 +195,12 @@ public class Dialogue
                 }
             }
         }
+    }
+
+    public static void playersToRoom(Player to, Room r)
+    {
+        Utils.slowPrintln("All players in " + to.getName() + "'s room moved back to " + r.getName());
+        for(Player p : to.getRoom().players) r.add(p);
+        to.getRoom().players.clear();
     }
 }

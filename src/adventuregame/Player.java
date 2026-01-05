@@ -1,7 +1,6 @@
 package adventuregame;
 
 import adventuregame.abstractclasses.Describable;
-import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.dynamicitems.GoldenPot;
@@ -100,7 +99,7 @@ public class Player extends Unit
             actions.add(Action.INTERACT);
         }
 
-        if(myRoom.enemies.size() + myRoom.NPCs.size() != 0) actions.add(Action.FIGHT);
+        if(myRoom.NPCs.size() != 0) actions.add(Action.FIGHT);
 
         actions.add(Action.TALK);
 
@@ -159,7 +158,7 @@ public class Player extends Unit
     {
         ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
 
-        ArrayList<NonPlayer> ens = myRoom.allNPCs();
+        ArrayList<NonPlayer> ens = myRoom.NPCs;
         for(Weapon w : inv.getWeapons()) if(w instanceof Sword) ((Sword)w).setNumAttacks();
         if(!ens.isEmpty())
         {
@@ -188,7 +187,6 @@ public class Player extends Unit
         ArrayList<Describable> descs = new ArrayList<>(myRoom.interactibles);
         descs.addAll(myRoom.players);
         descs.remove(this);
-        descs.addAll(myRoom.enemies);
         descs.addAll(myRoom.NPCs);
         Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
         if(d instanceof Interactible) ((Interactible)d).inspect(this);
@@ -224,10 +222,9 @@ public class Player extends Unit
         if(!myRoom.doFirstDialogue())
         {
             System.out.println("What do you say?");
-            String s = Utils.scanloop();
-            if(s.contains("stop")) for (Enemy e : myRoom.enemies) e.pleaResponse();
+            Utils.scanloop();
+            Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
         }
-        Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
     }
 
     public void ptolomyDoesSomething(String[] possibilities) 
@@ -260,8 +257,10 @@ public class Player extends Unit
                 int lvl = 1000;
                 String message = "a level " + lvl + " Psych Strike spell";
                 Utils.slowPrintln("You release " + message + " on all of your foes.");
-                if(myRoom.enemies.size() == 0) Utils.slowPrint("... but you have no enemies! Nothing happens.");
-                else for (Enemy e : new ArrayList<>(myRoom.enemies)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl)), message); //need to instantiate every time, otherwise they'd all have the same instance of the effect
+                ArrayList<Unit> targets = new ArrayList<>();
+                for(NonPlayer n : myRoom.NPCs) if(n.enemies.contains(this)) targets.add(n);
+                if(targets.size() == 0) Utils.slowPrint("... but you have no enemies! Nothing happens.");
+                else for (Unit e : new ArrayList<>(targets)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl)), message); //need to instantiate every time, otherwise they'd all have the same instance of the effect
                 break;
             case 1:
                 Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
@@ -380,9 +379,9 @@ public class Player extends Unit
 
     private void interact()
     {
-        ArrayList<Interactible> inters = myRoom.getUniqueInters();
+        ArrayList<Interactible> inters = new ArrayList<>(myRoom.interactibles);
         for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty() || !i.isEnabled) inters.remove(i);
-        if(!myRoom.enemies.isEmpty()) for(Interactible i : new ArrayList<>(inters)) if(i instanceof Door) inters.remove(i);
+        if(isInCombat) for(Interactible i : new ArrayList<>(inters)) if(i instanceof Door) inters.remove(i);
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
 
         ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
@@ -414,6 +413,7 @@ public class Player extends Unit
         return actionDescriptions;
     }
 
+    private boolean isInCombat;
     @Override
     public void updateUnit()
     {
@@ -430,6 +430,10 @@ public class Player extends Unit
         while(ableToAct) 
         {
             ableToAct = false;
+
+            isInCombat = false;
+            for(NonPlayer n : myRoom.NPCs) if(n.enemies.contains(this)) { isInCombat = true; break; }
+            
             //lists available actions, lets the player choose, then performs chosen action
             myRoom.updateDoors();
 

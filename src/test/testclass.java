@@ -16,8 +16,8 @@ import adventuregame.QuickTimeEvent.NoUpdateQTE;
 import adventuregame.QuickTimeEvent.Node;
 import adventuregame.QuickTimeEvent.Node.Output;
 import adventuregame.abstractclasses.Describable;
-import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.items.Cards;
 import adventuregame.items.Cards.Card;
@@ -37,14 +37,14 @@ public class testclass {
                 case "Room scenarios":
                     for(int i : new int[]{
                         0,
-            // case FIGHT:     fight();     break;
-            // case INSPECT:   inspect();   break;
-            // case TALK:      talk();      break;
-            // case CAST:      castSpell(); break;
-            // case INTERACT:  interact();  break;
-            // case COMMUNE:   commune();   break;
-            // case INVENTORY: inventory(); break;
-            // case LEAVE:     leave();     break;
+                        // case FIGHT:     fight();     break;
+                        // case INSPECT:   inspect();   break;
+                        // case TALK:      talk();      break;
+                        // case CAST:      castSpell(); break;
+                        // case INTERACT:  interact();  break;
+                        // case COMMUNE:   commune();   break;
+                        // case INVENTORY: inventory(); break;
+                        // case LEAVE:     leave();     break;
                     })
                     {
                         System.out.println("--Begin Test Room Scenarios--");
@@ -55,7 +55,7 @@ public class testclass {
                                 System.out.println("Test 1, kill enemy.");
                                 Game.curRoom  = new Room();
                                 Game.cur = new Player("Guy", 10);
-                                Game.curRoom.add(new Enemy.Goblin(1));
+                                Game.curRoom.add(new NonPlayer.Goblin(1));
                                 Game.cur.setRoom(Game.curRoom);
                                 Game.cur.updateUnit();
 
@@ -63,11 +63,11 @@ public class testclass {
                                 Game.curRoom  = new Room();
                                 Game.cur = new Player("Guy", 1);
                                 Game.curRoom.add(Game.cur);
-                                Game.curRoom.add(new Enemy.Goblin(10));
-                                for(Enemy e : Game.curRoom.enemies) e.setRoom(Game.curRoom);
+                                Game.curRoom.add(new NonPlayer.Goblin(10));
+                                for(NonPlayer e : Game.curRoom.NPCs) e.setRoom(Game.curRoom);
                                 Game.cur.setRoom(Game.curRoom);
                                 Game.cur.updateUnit();
-                                for(Enemy e : Game.curRoom.enemies) e.chooseAction();
+                                for(NonPlayer e : Game.curRoom.NPCs) e.chooseAction();
 
                                 break;
                         }

@@ -14,13 +14,23 @@ public abstract class Weapon extends Item {
 
     public static class Punch extends Weapon
     {
+        protected Damage damage;
+
         public Punch(String atkmsg)
         {
             description = "Punch";
             this.atkmsg = atkmsg;
+            damage = new Damage(1, Damage.Type.BASIC);
+        }
+
+        public Punch(String atkmsg, Damage d)
+        {
+            description = "Punch";
+            this.atkmsg = atkmsg;
+            damage = d;
         }
 
         @Override public void action(Unit u, boolean isFinal) {}
-        @Override public Damage getDamage() { return new Damage(1, Damage.Type.BASIC); }
+        @Override public Damage getDamage() { return damage; }
     }
 }

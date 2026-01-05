@@ -2,7 +2,6 @@ package adventuregame;
 
 import java.util.ArrayList;
 
-import adventuregame.abstractclasses.Enemy;
 import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 
@@ -45,30 +44,24 @@ public class Game
 
             ArrayList<NonPlayer> nonpCache = new ArrayList<>();
 
-            //all loaded enemies or in player rooms
+            //all npcs in player rooms by room
             for(Room r : playerRooms)
-            {
-                if(!r.enemies.isEmpty())
-                {
-                    curRoom = r;
-                    for(Enemy e : new ArrayList<>(r.enemies))
-                    {
-                        nonpCache.add(e);
-                        cur = e;
-                        e.updateUnit();
-                        System.out.println();
-                        if(r.players.isEmpty()) break;
-                    }
-                }
-            }
-
-            //all NPCs in player rooms
-            for(Room r : playerRooms) 
             {
                 if(!r.NPCs.isEmpty())
                 {
                     curRoom = r;
-                    for(NonPlayer n : new ArrayList<>(r.NPCs))
+                    //aggressive go first
+                    for(NonPlayer n : new ArrayList<>(r.NPCs)) for(Unit u : r.all()) if(n.enemies.contains(u))
+                    {
+                        nonpCache.add(n);
+                        cur = n;
+                        n.updateUnit();
+                        System.out.println();
+                        if(r.players.isEmpty()) break;
+                    }
+                    
+                    //then peaceful
+                    for(NonPlayer n : new ArrayList<>(r.NPCs)) if(!nonpCache.contains(n))
                     {
                         nonpCache.add(n);
                         cur = n;
@@ -78,18 +71,18 @@ public class Game
                     }
                 }
             }
-            
-            //all loaded NonPlayers
-            for(NonPlayer n : loaded)
+
+            //all npcs in rooms that haven't been updated yet, but contain loaded npcs, by room
+            for(NonPlayer n : loaded) for(NonPlayer n1 : new ArrayList<>(n.getRoom().NPCs)) if(!nonpCache.contains(n1))
             {
-                if(!Utils.contains(nonpCache, n))
-                {
-                    cur = n;
-                    curRoom = n.getRoom();
-                    n.updateUnit();
-                    System.out.println();
-                }
+                nonpCache.add(n1);
+                cur = n1;
+                curRoom = n1.getRoom();
+                n1.updateUnit();
+                System.out.println();
             }
+            
+            
 
             Utils.slowPrintln("\t\t\t\t\t\t\t\t--Round End--");
         }
@@ -105,17 +98,16 @@ public class Game
     {
         System.out.println("kill("+e.getName()+")");
         Unit u = (Unit)e; //currently theres no non-unit effectables
-        if(u instanceof Enemy)
-        {
-            if(isLaur) Utils.slowPrintln("You've murdered " + u.getName(), 0/*200*/);
-        }
-        else if(u instanceof Player)
+        if(u instanceof Player)
         {
             Utils.slowPrintln("you died.");
             allPlayers.remove(u);
         }
         else if(u instanceof NonPlayer)
+        {
+            if(isLaur) Utils.slowPrintln("You've murdered " + u.getName(), 0/*200*/);
             loaded.remove(u);
+        }
         u.getRoom().remove(u);
         u.setRoom(null);
         Utils.slowPrintln(u.getDeathMessage() + "------", 0/*200*/);
@@ -148,8 +140,6 @@ public class Game
         }
 
         Utils.slowPrintDescList(r.interactibles);
-
-        Utils.slowPrintDescList(r.enemies);
 
         Utils.slowPrintNameList(r.NPCs); //TODO integrate and test NPCs fully
 

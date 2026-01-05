@@ -1,20 +1,25 @@
 package adventuregame.abstractclasses;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.NoSuchElementException;
 
+import adventuregame.Damage;
 import adventuregame.Dialogue;
 import adventuregame.Effect;
+import adventuregame.Game;
 import adventuregame.Inventory;
+import adventuregame.Player;
 import adventuregame.Utils;
+import adventuregame.interactibles.SkeletonInteractible;
 import adventuregame.items.Weapon;
 
 public abstract class NonPlayer extends Unit {
     protected Inventory inv;
     protected int wisdom;
+    private boolean hostile = false;
     public ArrayList<Dialogue> dialogues = new ArrayList<>();
     public ArrayList<Unit> enemies = new ArrayList<>();
-    public ArrayList<NonPlayer> friends = new ArrayList<>();
+    public ArrayList<Unit> friends = new ArrayList<>();
 
     protected enum Action
     {
@@ -35,6 +40,17 @@ public abstract class NonPlayer extends Unit {
         this.pluralDescription = pluralDescription;
         this.name = name;
         deathMsg = "You ended " + getName();
+    }
+
+    public void setHostile()
+    {
+        hostile = true;
+    }
+
+    public void setNotHostile()
+    {
+        hostile = false;
+        for(Unit u : new ArrayList<>(enemies)) if(u instanceof Player) enemies.remove(u);
     }
 
     protected String pluralOf(String str)
@@ -64,7 +80,7 @@ public abstract class NonPlayer extends Unit {
 
     protected String generateName() 
     {
-        return Utils.names1[new Random().nextInt(Utils.names1.length)] + Utils.names2[new Random().nextInt(Utils.names2.length)];
+        return Utils.names1[Utils.rand.nextInt(Utils.names1.length)] + Utils.names2[Utils.rand.nextInt(Utils.names2.length)];
     }
 
     public String getModifiedDescription(String type)
@@ -98,7 +114,7 @@ public abstract class NonPlayer extends Unit {
             case "Goblin"          : names = new String[]{"Screebling Squabbler", "pale man", "bllork", "awkward fellow"}; break;
             case "Skeleton"        : names = new String[]{"Skeleton"}; break;
         }
-        return names[new Random().nextInt(names.length)];
+        return names[Utils.rand.nextInt(names.length)];
     }
 
     public Inventory getInventory() { return inv; }
@@ -112,16 +128,21 @@ public abstract class NonPlayer extends Unit {
         if(!didTalk) chooseAction();
     }
 
+    protected Weapon defaultWeapon()
+    {
+        return new Weapon.Punch("You punch!");
+    }
+
     protected void attack()
     {
         for(Unit u : myRoom.all())
         {
-            if(Utils.contains(enemies, u))
+            if(enemies.contains(u))
             {
                 //TODO just attacks first enemy
-                Weapon chsn = new Weapon.Punch(u instanceof Enemy ? "You heave a mighty blow at the " + ((Enemy)u).getModifiedDescription("sad") : "You attack " + u.getName() + "!");
+                Weapon chsn = defaultWeapon();
                 for(Weapon w : inv.getWeapons()) if(w.getDamage().getValue() > chsn.getDamage().getValue()) chsn = w;
-                this.attack(u, chsn.getDamage(), chsn.getAttackMessage());
+                this.attack(u, chsn.getDamage(), "You attack " + u.getName() + "!");
                 if(u.isDead()) enemies.remove(u);
                 break;
             }
@@ -132,8 +153,8 @@ public abstract class NonPlayer extends Unit {
 
     public void chooseAction()
     {
-        for(Enemy e : myRoom.enemies) if(!Utils.contains(enemies, e)) enemies.add(e);
-        for(NonPlayer f : friends) for(Unit e : f.enemies) if(!Utils.contains(enemies, e)) enemies.add(e);
+        if(hostile) for(Player p : myRoom.players) if(!enemies.contains(p)) enemies.add(p);
+        for(Unit f : friends) if(f instanceof NonPlayer) for(Unit e : ((NonPlayer)f).enemies) if(!enemies.contains(e)) enemies.add(e);
 
         if(isStunned || myRoom.players.isEmpty())
         {
@@ -155,5 +176,110 @@ public abstract class NonPlayer extends Unit {
         for(Effect e : new ArrayList<>(effects)) if(effectUpdate(e) == EffectUpdateResult.DEATH) return;
 
         chooseAction();
+    }
+
+    public static class Goblin extends NonPlayer {
+
+        { pluralDescription = "goblins"; }
+
+        public Goblin(int health) { 
+            super();
+            setDefaults(health, new Inventory(5), 20, "goblin with pointy ears", null);
+        }
+
+        public Goblin(int health, Inventory inventory, int wisdom) { 
+            super();
+            setDefaults(health, inventory, wisdom, "goblin with pointy ears", null);
+        }
+
+        @Override
+        public void setDefaults(int m, Inventory i, int w, String des, String name)
+        {
+            super.setDefaults(m, i, w, des, name);
+
+            int r = Utils.rand.nextInt(4);
+            descMap.put("Laur", (new String[] {"Screeblin Squabbler","pale man","awkward fellow","bllork"})[r]);
+            pDescMap.put("Laur", (new String[] {"Screeblin Squabblers","pale men","awkward fellas","bllorks"})[r]);
+        }
+
+
+        @Override protected Weapon defaultWeapon()
+        {
+            try{
+                return inv.getWeapons().getFirst();
+            }
+            catch(NoSuchElementException e)
+            {
+                return new Weapon.Punch("The " + getModifiedDescription("scary") + " raises it's fiendish arms and jumps at you with startling dexterity.", new Damage(4));
+            }
+        }
+
+        @Override
+        public void performAction(Action a) {
+            switch(a)
+            {
+                case NORMAL:
+                    Utils.slowPrintln("The " + getModifiedDescription("sad") + " stands still" + (Game.isLaur ? "." : ", sort of like a Zucchini Mushroom."));
+                    break;
+
+                case DIALOGUE: talk(); break;
+                case ATTACK: attack(); break;
+            }
+        }
+    }
+
+    public static class Skeleton extends NonPlayer{
+
+        {
+            pluralDescription = "skeletons";
+        }
+
+        public Skeleton()
+        {
+            super();
+            setDefaults(20, new Inventory(6), 0, "skeleton", "Oess");
+            setHostile();
+        }
+
+        public Skeleton(Inventory i)
+        {
+            super();
+            setDefaults(20, new Inventory(6), 0, "skeleton", "Oess");
+            inv = i;
+            setHostile();
+        }
+
+        @Override protected Weapon defaultWeapon()
+        {
+            try{
+                return inv.getWeapons().getFirst();
+            }
+            catch(NoSuchElementException e)
+            {
+                return new Weapon.Punch(getName() + " punches!", new Damage(5));
+            }
+        }
+
+        @Override
+        public EffectUpdateResult receiveDamage(Damage damage)
+        {
+            EffectUpdateResult out = super.receiveDamage(damage); 
+            if(out == EffectUpdateResult.DEATH && this instanceof Skeleton) new SkeletonInteractible(myRoom, inv);
+            
+            return out;
+        }
+
+        @Override
+        public void performAction(Action a) {
+            switch(a)
+            {
+                case NORMAL:
+                    Utils.slowPrintln("The " + getModifiedDescription("sad") + " is motionless.");
+                    break;
+
+                case DIALOGUE: talk(); break;
+                case ATTACK: attack(); break;
+            }
+        }
     }
 }

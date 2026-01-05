@@ -1,11 +1,10 @@
 package adventuregame.items;
 
-import java.util.Random;
-
 import adventuregame.Damage;
 import adventuregame.Game.Metal;
 import adventuregame.Game;
 import adventuregame.Player;
+import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
 
 public class Sword extends Weapon {
@@ -76,6 +75,6 @@ public class Sword extends Weapon {
     }
 
     @Override public Damage getDamage() { 
-        if(atkmsgs != null && Game.isLaur) atkmsg = atkmsgs[new Random().nextInt(atkmsgs.length)];
+        if(atkmsgs != null && Game.isLaur) atkmsg = atkmsgs[Utils.rand.nextInt(atkmsgs.length)];
         return dmg; }
 }
