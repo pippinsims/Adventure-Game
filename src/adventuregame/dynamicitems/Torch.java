@@ -52,8 +52,11 @@ public class Torch extends DynamicItem {
                     self.getPluralDescription(), 
                     "", 
                     "Take", 
-                    "from" //TODO Laur descs {"flaming stick", "blazing rod", "burny ol\' chunk o\' lumber"}
+                    "from"
                 );
+                int r = Utils.rand.nextInt(3);
+                descMap.put("Laur", (new String[]{"flaming stick", "blazing rod", "burny ol\' chunk o\' lumber"})[r]);
+                pDescMap.put("Laur", (new String[]{"flaming sticks", "blazing rods", "burny ol\' chunks o\' lumber"})[r]);
             }
 
             @Override

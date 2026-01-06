@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.interactibles.WallInteractible;
 
 public class Utils {
 
@@ -112,9 +113,15 @@ public class Utils {
 
     public static Map<Describable, Integer> countsOf(ArrayList<? extends Describable> arr)
     {
-        Map<Describable, Integer> m = new LinkedHashMap<>(); //preserve insertion order
-        for (Describable d : arr) m.put(d, m.getOrDefault(d, 0) + 1); //based on Description
-        return m;
+        Map<String, Tuple<Describable,Integer>> strs = new LinkedHashMap<>(); //preserve insertion order
+        for (Describable d : arr) 
+        {
+            String desc = d.getDescription() + (d instanceof WallInteractible ? ((WallInteractible)d).locReference : "");
+            strs.put(desc, new Tuple<Describable,Integer>(d, strs.getOrDefault(desc, new Tuple<Describable,Integer>(d,0)).t2 + 1));
+        }
+        Map<Describable,Integer> descs = new LinkedHashMap<>();
+        for(Tuple<Describable, Integer> v : strs.values()) descs.put(v.t1, v.t2);
+        return descs;
     }
 
     public static void slowPrint(String output)

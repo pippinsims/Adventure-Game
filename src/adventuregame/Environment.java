@@ -103,7 +103,7 @@ public class Environment extends Game
             new Sword(5)
         ))) cleskelly.add(i);
 
-        // for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
         Room cell14 = new Room(celld, celll, cellf, celln);
         new Door(cell14, hall, Wall.WEST);
         new ItemHolder(new Sword(4), cell14, "on", "the floor");

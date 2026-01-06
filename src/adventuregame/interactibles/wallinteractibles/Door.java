@@ -1,23 +1,17 @@
 package adventuregame.interactibles.wallinteractibles;
 
+import java.util.ArrayList;
 import adventuregame.Game;
 import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
+import adventuregame.Utils.Tuple;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallInteractible;
 
 public class Door extends WallInteractible
 {
     //TODO add doors locking from 1 or both sides, then make doors lock when in combat
-    //TODO add door diagram for rooms with multiple doors on the same wall like this:
-    /*
-        X6---X
-        |    1
-        5    |
-        4    |
-        X--32X
-     */
     Room myOtherRoom;
     static int doornum = 0;
 
@@ -113,11 +107,7 @@ public class Door extends WallInteractible
         if(u instanceof Player)
         {
             Player p = ((Player)u);
-            if(p.doorMoves-- > 0)
-            {
-                p.setActions();
-                p.ableToAct = true;
-            }
+            if(p.doorMoves-- > 0) p.ableToAct = true;
         }
     }
 
@@ -131,5 +121,66 @@ public class Door extends WallInteractible
         System.out.println(name + ": " + description + " doesn't contain " + room.getName() + ": " + room.getDescription());
         System.out.println(name + ": " + description + " contains both " + myRoom.getName() + ": " + myRoom.getDescription() + " and " + myOtherRoom.getName() + ": " + myOtherRoom.getDescription());
         throw new UnsupportedOperationException("Door d.getNextRoom(Room x) requires x to be in d");
+    }
+
+    public static class Diagram
+    {
+        /*  for a room with doors in the order: east, south, south, west, west, north
+            ╭6-----╮
+            5      1
+            4      |
+            ╰3--2--╯
+        */
+
+        public Diagram(ArrayList<Door> doors)
+        {
+            //TODO make it so you can input a 0 for the door you just came from, and then it would print "u" instead of a number there, allowing you to know a little more
+
+            ArrayList<Integer> n = new ArrayList<>(),
+                               s = new ArrayList<>(),
+                               e = new ArrayList<>(),
+                               w = new ArrayList<>();
+            for(int i = 0; i < doors.size(); i++) 
+            {
+                switch(doors.get(i).wall)
+                {
+                    case NORTH: n.add(i+1); break;
+                    case SOUTH: s.add(i+1); break;
+                    case EAST: e.add(i+1); break;
+                    case WEST: w.add(i+1); break;
+                    default: break;
+                }
+            }
+
+            Tuple<String,String> ns = equalize(tos(n), tos(s));
+            
+            System.out.println("╭"+ns.t1+"╮");
+            for(int i = 0; i < Math.max(e.size(), w.size()); i++)
+            {
+                String f = i < w.size() ? w.get(i).toString() : "|";
+                System.out.print(f);
+                for(int j = f.length() - 1; j < ns.t1.length(); j++) System.out.print(" ");
+                System.out.println(i < e.size() ? e.get(i) : "|");
+            }
+            System.out.println("╰"+ns.t2+"╯");
+        }
+
+        private String tos(ArrayList<Integer> arr)
+        {
+            String out = "";
+            for(int i : arr) out += i + (i > 9 ? "-" : "--");
+            return out;
+        }
+
+        private Tuple<String,String> equalize(String f, String s)
+        {
+            int lf = f.length(), ls = s.length();
+            int dif = Math.abs(lf-ls);
+            
+            String out="";
+            for(int i = 0; i < dif; i++) out+="-";
+
+            return lf > ls ? new Tuple<>(f,s+out) : new Tuple<>(f+out,s);
+        }
     }
 }

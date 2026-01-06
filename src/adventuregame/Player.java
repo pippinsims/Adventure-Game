@@ -16,7 +16,6 @@ public class Player extends Unit
     private int ptolomyPrintLength;
 
     private Inventory inv = new Inventory(10);
-    private Door firstDoor = null; //exists solely for Action.LEAVE
     public int doorMoves;
     public boolean ableToAct = false;
 
@@ -111,9 +110,7 @@ public class Player extends Unit
 
         if(inv.size() > 0) actions.add(Action.INVENTORY);
 
-        int numDoors = 0;
-        for(Interactible i : myRoom.interactibles) if(i instanceof Door) { firstDoor = (Door)i; numDoors++;}
-        if(numDoors == 1)actions.add(Action.LEAVE);
+        if(!isInCombat) actions.add(Action.LEAVE);
     }
 
     public void performAction(int i)
@@ -135,11 +132,6 @@ public class Player extends Unit
     public boolean getPtolomyIsPresent() 
     {
         return ptolomyIsPresent;
-    }
-
-    private void leave()
-    {
-        firstDoor.action(this);
     }
     
     /*
@@ -381,12 +373,30 @@ public class Player extends Unit
     {
         ArrayList<Interactible> inters = new ArrayList<>(myRoom.interactibles);
         for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty() || !i.isEnabled) inters.remove(i);
-        if(isInCombat) for(Interactible i : new ArrayList<>(inters)) if(i instanceof Door) inters.remove(i);
+        for(Interactible i : new ArrayList<>(inters)) if(i instanceof Door) inters.remove(i);
+
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
 
         ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
         chosen.action(this);
+    }
+
+    private void leave()
+    {
+        ArrayList<Interactible> inters = new ArrayList<>(myRoom.getDoors());
+
+        new Door.Diagram(myRoom.getDoors());
+
+        if(inters.size() == 1) inters.getFirst().action(this);
+        else
+        {
+            Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
+
+            ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
+
+            chosen.action(this);
+        }
     }
 
     private void inventory()
@@ -423,8 +433,6 @@ public class Player extends Unit
         doorMoves = 2;
         ableToAct = true;
 
-        setActions();
-
         if(ptolomyIsPresent) Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
 
         while(ableToAct) 
@@ -433,6 +441,7 @@ public class Player extends Unit
 
             isInCombat = false;
             for(NonPlayer n : myRoom.NPCs) if(n.enemies.contains(this)) { isInCombat = true; break; }
+            setActions();
             
             //lists available actions, lets the player choose, then performs chosen action
             myRoom.updateDoors();

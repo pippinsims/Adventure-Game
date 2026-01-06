@@ -82,8 +82,6 @@ public class Game
                 System.out.println();
             }
             
-            
-
             Utils.slowPrintln("\t\t\t\t\t\t\t\t--Round End--");
         }
     }
@@ -141,8 +139,9 @@ public class Game
 
         Utils.slowPrintDescList(r.interactibles);
 
-        Utils.slowPrintNameList(r.NPCs); //TODO integrate and test NPCs fully
-
+        if(isLaur) Utils.slowPrintDescList(r.NPCs); //TODO integrate and test NPCs fully
+        else Utils.slowPrintNameList(r.NPCs);
+        
         ArrayList<Player> p = new ArrayList<>(r.players);
         p.remove(cur);
         Utils.slowPrintNameList(p);

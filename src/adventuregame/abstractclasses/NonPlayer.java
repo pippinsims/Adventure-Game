@@ -111,8 +111,8 @@ public abstract class NonPlayer extends Unit {
         String[] names = new String[]{description};
         switch(description)
         {
-            case "Goblin"          : names = new String[]{"Screebling Squabbler", "pale man", "bllork", "awkward fellow"}; break;
-            case "Skeleton"        : names = new String[]{"Skeleton"}; break;
+            case "Goblin"  : names = new String[]{"Screebling Squabbler", "pale man", "bllork", "awkward fellow"}; break;
+            case "Skeleton": names = new String[]{"Skeleton"}; break;
         }
         return names[Utils.rand.nextInt(names.length)];
     }

@@ -1,6 +1,7 @@
 package test;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import adventuregame.Effect;
@@ -19,6 +20,8 @@ import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.interactibles.WallInteractible.Wall;
+import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.Cards;
 import adventuregame.items.Cards.Card;
 
@@ -28,7 +31,8 @@ public class testclass {
     {   
         for(String s : new String[] {
             // "Room scenarios",
-            "Gzouca",
+            // "Gzouca",
+            "DoorDiag",
             // "Dialogue",
             // "QTE" succeeded
         })
@@ -70,6 +74,60 @@ public class testclass {
                                 for(NonPlayer e : Game.curRoom.NPCs) e.chooseAction();
 
                                 break;
+                        }
+                    }
+                    break;
+                case "DoorDiag":
+                    for(int i : new int[]{
+                        0, //succeeded
+                        1
+                    })
+                    {
+                        System.out.println("--Begin Test Door--");
+                        switch(i)
+                        {
+                            case 0:
+                                Room r = new Room();
+                                new Door.Diagram(
+                                    new ArrayList<>(
+                                        List.of(
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.WEST),
+                                            new Door(r, new Room(), Wall.SOUTH),
+                                            new Door(r, new Room(), Wall.SOUTH),
+                                            new Door(r, new Room(), Wall.NORTH)
+                                        )
+                                    )
+                                );
+                            break;
+                            case 1:
+                                r = new Room();
+                                new Door.Diagram(
+                                    new ArrayList<>(
+                                        List.of(
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.WEST),
+                                            new Door(r, new Room(), Wall.SOUTH),
+                                            new Door(r, new Room(), Wall.NORTH),
+                                            new Door(r, new Room(), Wall.NORTH),
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.WEST),
+                                            new Door(r, new Room(), Wall.SOUTH),
+                                            new Door(r, new Room(), Wall.NORTH),
+                                            new Door(r, new Room(), Wall.NORTH),
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.WEST),
+                                            new Door(r, new Room(), Wall.SOUTH),
+                                            new Door(r, new Room(), Wall.SOUTH),
+                                            new Door(r, new Room(), Wall.NORTH)
+                                        )
+                                    )
+                                );
+                            break;
                         }
                     }
                     break;
