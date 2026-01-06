@@ -1,5 +1,6 @@
 package adventuregame;
 
+import adventuregame.Inventory.Trade;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
@@ -30,7 +31,8 @@ public class Player extends Unit
         CAST,
         COMMUNE,
         INVENTORY,
-        LEAVE
+        LEAVE,
+        TRADE
     }
     
     private final Map<Action, String> actionTypes = Map.ofEntries(Map.entry(Action.NOTHING,  "Do nothing."),
@@ -41,7 +43,8 @@ public class Player extends Unit
                                                                   Map.entry(Action.CAST,     "Utilize the power of the ancients"),
                                                                   Map.entry(Action.COMMUNE,  "Commune with Ptolomy's spirit"),
                                                                   Map.entry(Action.INVENTORY,"Inventory"),
-                                                                  Map.entry(Action.LEAVE,    "Leave"));
+                                                                  Map.entry(Action.LEAVE,    "Leave"),
+                                                                  Map.entry(Action.TRADE,    "Trade"));
 
     public List<Action> actions = new ArrayList<Action>();
 
@@ -98,6 +101,8 @@ public class Player extends Unit
             actions.add(Action.INTERACT);
         }
 
+        if(myRoom.all().size() > 1 && !inv.isEmpty()) actions.add(Action.TRADE);
+
         if(myRoom.NPCs.size() != 0) actions.add(Action.FIGHT);
 
         actions.add(Action.TALK);
@@ -125,6 +130,7 @@ public class Player extends Unit
             case COMMUNE:   commune();   break;
             case INVENTORY: inventory(); break;
             case LEAVE:     leave();     break;
+            case TRADE:     trade();     break;
             default:                     break;
         }
     }
@@ -174,12 +180,21 @@ public class Player extends Unit
         else System.out.println("No enemies.");
     }
 
+    private void trade()
+    {
+        ArrayList<Unit> peeps = myRoom.all();
+        peeps.remove(this);
+
+        Unit chsn = peeps.get(Utils.promptList("With whom?", Utils.namesOf(peeps)));
+
+        new Trade.Builder().one(this).another(chsn).build();
+    }
+
     private void inspect()
     {
         ArrayList<Describable> descs = new ArrayList<>(myRoom.interactibles);
-        descs.addAll(myRoom.players);
+        descs.addAll(myRoom.all());
         descs.remove(this);
-        descs.addAll(myRoom.NPCs);
         Describable d = descs.get(Utils.promptList("There " + ((descs.size() == 1) ? "is an object" : "are a few objects") + " in the room:", Utils.inspectTitlesOf(descs)));
         if(d instanceof Interactible) ((Interactible)d).inspect(this);
         else Utils.slowPrintln(d.getDescription());

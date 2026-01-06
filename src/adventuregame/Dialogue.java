@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 
 public class Dialogue
@@ -64,7 +65,7 @@ public class Dialogue
         {
             next(a);
             atEnd = true;
-            ((L<?>)current).process(this);
+            ((L<?>)current).output(this);
             // processLeaf();
             return true;
         }
@@ -108,15 +109,9 @@ public class Dialogue
             this.applyToAll = applyToAll;
         }
 
-        public L(int actor, String prompt) 
-        {
-            this.actor = actor; 
-            this.prompt = prompt;
-        }
-
         public L() {}
 
-        public abstract void process(Dialogue parent);
+        public abstract void output(Dialogue parent);
     }
 
     static class X extends L<Describable> //X denotes a leaf with no output
@@ -127,7 +122,7 @@ public class Dialogue
             this.actor = actor; 
             this.prompt = prompt;
         }
-        @Override public void process(Dialogue parent) {}
+        @Override public void output(Dialogue parent) {}
     }
 
     static class B extends Node //B for Branch
@@ -202,5 +197,10 @@ public class Dialogue
         Utils.slowPrintln("All players in " + to.getName() + "'s room moved back to " + r.getName());
         for(Player p : to.getRoom().players) r.add(p);
         to.getRoom().players.clear();
+    }
+
+    public static void aggroAllOfSameType(Unit from)
+    {
+        for(NonPlayer to : from.getRoom().NPCs) if(from.getClass() == to.getClass()) to.setHostile();
     }
 }

@@ -200,24 +200,27 @@ public class Environment extends Game
                             }, 
                             new Dialogue.Node[] 
                             {
-                                new Dialogue.L<>(0, "Then you die.") { 
-                                    @Override public void process(Dialogue parent) 
+                                new Dialogue.X(0, "Then you die.") { 
+                                    @Override public void output(Dialogue parent) 
                                     {
                                         Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
-                                        for(NonPlayer n : parent.to.getRoom().NPCs) if(parent.actors.get(actor).getClass() == n.getClass()) n.setHostile();
-                                    }},
-                                new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true) {
-                                    @Override public void process(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
+                                        Dialogue.aggroAllOfSameType(parent.actors.get(actor));
+                                    }
                                 },
-                                new Dialogue.L<Room>(curRoom, true) {
-                                    @Override public void process(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
-                                }
+                                new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); } },
+                                new Dialogue.L<Room>(curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); } }
                             }
                         ),
                         new Dialogue.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true) {
-                            @Override public void process(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
+                            @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
                         },
-                        new Dialogue.X()
+                        new Dialogue.X() { 
+                            @Override public void output(Dialogue parent) 
+                            {
+                                Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
+                                Dialogue.aggroAllOfSameType(parent.actors.get(actor));
+                            }
+                        }
                     }
                 )
             )

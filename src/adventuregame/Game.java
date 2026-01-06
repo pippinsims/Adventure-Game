@@ -139,7 +139,7 @@ public class Game
 
         Utils.slowPrintDescList(r.interactibles);
 
-        if(isLaur) Utils.slowPrintDescList(r.NPCs); //TODO integrate and test NPCs fully
+        if(isLaur) Utils.slowPrintDescList(r.NPCs);
         else Utils.slowPrintNameList(r.NPCs);
         
         ArrayList<Player> p = new ArrayList<>(r.players);

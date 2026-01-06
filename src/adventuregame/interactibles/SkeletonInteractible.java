@@ -1,13 +1,12 @@
 package adventuregame.interactibles;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import adventuregame.Inventory;
 import adventuregame.Player.Inspect;
 import adventuregame.Room;
 import adventuregame.Utils;
-import adventuregame.abstractclasses.Item;
+import adventuregame.Inventory.Trade;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.items.Armor;
 
@@ -68,41 +67,8 @@ public class SkeletonInteractible extends InventoryInteractible
             Utils.slowPrintln("Your inventory is full! You cannot loot this.");
         else
         {
-            ArrayList<Item> its = inv.getItems();
             Utils.slowPrintln("You check the skeleton for items...");
-            for(Item i : its) Utils.slowPrintln(i.getDescription());
-            String[] prompts = new String[] {"Take all", "Take one"};
-            if(prompts[Utils.promptList("You can:", prompts)].equals("Take one"))
-            {
-                Item i = its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its)));
-                if(i instanceof Armor && u.getInventory().hasUnequippedArmor())
-                    Utils.slowPrintln("You're already holding a piece of unequipped armor! Cannot take another."); //TODO add Trade action
-                else
-                {
-                    uinv.add(i);
-                    if(i instanceof Armor) i.action(u, true);
-                    inv.remove(i);
-                }
-            }
-            else
-            {
-                for(Item i : new ArrayList<>(its)) if(!uinv.isFull())
-                {
-                    if(i instanceof Armor && u.getInventory().hasUnequippedArmor())
-                        Utils.slowPrintln("You're already holding a piece of unequipped armor! Cannot take another."); //TODO add Trade action
-                    else
-                    {
-                        uinv.add(i);
-                        if(i instanceof Armor) i.action(u, true);
-                        inv.remove(i);
-                    }
-                }
-                else
-                {
-                    Utils.slowPrint("Your inventory is full! You only took some of the items.");
-                    break;
-                }
-            }
+            new Trade.Builder().one(u).another(this).build();
             setInspects();
             if(inv.isEmpty()) actionVerb = "";
         }

@@ -4,6 +4,7 @@ import adventuregame.Interactible;
 import adventuregame.Inventory;
 import adventuregame.Room;
 import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Unit;
 
 public abstract class InventoryInteractible extends Interactible {
     protected Inventory inv;
@@ -19,4 +20,10 @@ public abstract class InventoryInteractible extends Interactible {
     public void add(Item i) { inv.add(i); setInspects(); }
 
     public void remove(Item i) { inv.remove(i); setInspects(); }
+
+    @Override
+    public void action(Unit u)
+    {
+        new Inventory.Trade.Builder().one(u).another(this).build();
+    }
 }

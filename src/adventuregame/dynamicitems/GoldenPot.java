@@ -41,6 +41,8 @@ public class GoldenPot extends DynamicItem {
 
     @Override protected void init()
     {
+        description = descriptions[dmg];
+        pluralDescription = pluralDescs[dmg];
         GoldenPot parent = this;
         in = new InventoryInteractible() 
         {

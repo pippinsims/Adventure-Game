@@ -2,7 +2,11 @@ package adventuregame;
 
 import java.util.ArrayList;
 
+import adventuregame.Utils.Tuple;
+import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Unit;
+import adventuregame.interactibles.InventoryInteractible;
 import adventuregame.items.Armor;
 import adventuregame.items.Weapon;
 
@@ -95,6 +99,94 @@ public class Inventory {
     public void decreaseAt(int i)
     {
         if(items.get(i).dec()) items.remove(i);
+    }
+
+    public static class Trade
+    {
+        public static class Builder
+        {
+            private Tuple<Describable,Inventory> one, another; 
+            public Builder() {};
+            public Builder one(Unit one)                      { this.one     = new Tuple<>(one, one.getInventory()); return this; }
+            public Builder one(InventoryInteractible one)     { this.one     = new Tuple<>(one, one.getInventory()); return this; }
+            public Builder another(Unit ano)                  { this.another = new Tuple<>(ano, ano.getInventory()); return this; }
+            public Builder another(InventoryInteractible ano) { this.another = new Tuple<>(ano, ano.getInventory()); return this; }
+            public Trade build() { return new Trade(one, another); }
+        }
+
+        final Describable receiver, giver;
+        final Inventory rinv, ginv;
+        final String verb, action, pronoun, past, contraction;
+
+        /** {@code Type.GIVE} = one -> another
+            <p>{@code Type.TAKE} = one <- another
+        */
+        private Trade(Tuple<Describable, Inventory> one, Tuple<Describable, Inventory> another)
+        {
+            boolean take;
+            if(one.t2.isEmpty()) take = true;
+            else if(another.t2.isEmpty()) take = false;
+            else take = Utils.promptList("What do you do?", new String[] {"Take","Give"}) == 0;
+
+            if(take)
+            {
+                giver = another.t1;
+                ginv = another.t2;
+                receiver = one.t1;
+                rinv = one.t2;
+                verb = "Take";
+                action = "take";
+                past = "took";
+                pronoun = "Your";
+                contraction = "You're";
+            }
+            else
+            {
+                giver = one.t1;
+                ginv = one.t2;
+                receiver = another.t1;
+                rinv = another.t2;
+                verb = "Give";
+                action = "give them";
+                past = "gave";
+                pronoun = "Their";
+                contraction = "They're";
+            }
+
+            if(ginv.isEmpty() && rinv.isEmpty()) { Utils.slowPrintln("Neither you or them had items!"); return; }
+
+            if(rinv.isFull()) {Utils.slowPrintln(pronoun+" inventory is full! You cannot "+action+" items."); return;}
+            ArrayList<Item> its = ginv.getItems();
+            for(Item i : its) Utils.slowPrintln(i.getDescription());
+            if(its.size() == 1) transaction(its.getFirst());
+            
+            if(Utils.promptList("You can:", new String[] {verb+" all", verb+" one"}) == 1) 
+            {
+                transaction(its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its))));
+                return;
+            }
+            for(Item i : new ArrayList<>(its)) if(!rinv.isFull())
+                transaction(i);
+            else
+            {
+                Utils.slowPrint(pronoun+" inventory is full! You only "+past+" some of the items.");
+                break;
+            }
+        }
+
+        private void transaction(Item i)
+        {
+            boolean isArmorForUnit = receiver instanceof Unit && i instanceof Armor; 
+            if(isArmorForUnit && rinv.hasUnequippedArmor())
+                Utils.slowPrintln(contraction+" already holding a piece of unequipped armor! Cannot take another.");
+            else
+            {
+                rinv.add(i);
+                if(isArmorForUnit) i.action((Unit)receiver, true);
+                ginv.remove(i);
+                Utils.slowPrintln("You " + past + " " + receiver.getName() + " " + i.getName() + "!");
+            }
+        }
     }
 }
 
