@@ -126,10 +126,10 @@ public class Door extends WallInteractible
     public static class Diagram
     {
         /*  for a room with doors in the order: east, south, south, west, west, north
-            ╭6-----╮
-            5      1
-            4      |
-            ╰3--2--╯
+            ╭-6-╮
+            4   1
+            5   |
+            ╰3-2╯
         */
 
         public Diagram(ArrayList<Door> doors)
@@ -168,19 +168,18 @@ public class Door extends WallInteractible
         private String tos(ArrayList<Integer> arr)
         {
             String out = "";
-            for(int i : arr) out += i + (i > 9 ? "-" : "--");
+            for(int i : arr) out += i + (arr.indexOf(i) == arr.size() - 1 ? "" : "-");
             return out;
         }
 
         private Tuple<String,String> equalize(String f, String s)
         {
-            int lf = f.length(), ls = s.length();
-            int dif = Math.abs(lf-ls);
-            
-            String out="";
-            for(int i = 0; i < dif; i++) out+="-";
+            int dif = f.length() - s.length();
+            int mag = Math.abs(dif);
+            String start = "", end = "";
+            for(int i = 0; i < mag; i++) if(i < mag/2) start += "-"; else end += "-";
 
-            return lf > ls ? new Tuple<>(f,s+out) : new Tuple<>(f+out,s);
+            return dif > 0 ? new Tuple<>(f, start + s + end) : new Tuple<>(start + f + end, s);
         }
     }
 }

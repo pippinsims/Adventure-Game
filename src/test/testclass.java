@@ -80,7 +80,9 @@ public class testclass {
                 case "DoorDiag":
                     for(int i : new int[]{
                         0, //succeeded
-                        1
+                        1,
+                        2,
+                        3
                     })
                     {
                         System.out.println("--Begin Test Door--");
@@ -127,6 +129,25 @@ public class testclass {
                                         )
                                     )
                                 );
+                            break;
+                            case 2:
+                                r = new Room();
+                                new Door.Diagram(
+                                    new ArrayList<>(
+                                        List.of(
+                                            new Door(r, new Room(), Wall.EAST),
+                                            new Door(r, new Room(), Wall.SOUTH),
+                                            new Door(r, new Room(), Wall.SOUTH),
+                                            new Door(r, new Room(), Wall.WEST),
+                                            new Door(r, new Room(), Wall.WEST),
+                                            new Door(r, new Room(), Wall.NORTH)
+                                        )
+                                    )
+                                );
+                            break;
+                            case 3:
+                                r = new Room();
+                                new Door.Diagram(new ArrayList<>());
                             break;
                         }
                     }
