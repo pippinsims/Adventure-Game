@@ -6,6 +6,7 @@ import adventuregame.Effectable;
 import adventuregame.Inventory;
 import adventuregame.Room;
 import adventuregame.Utils;
+import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.Armor;
 
 //FOR PLAYER, FOLLOWERS, NPCS, AND ENEMIES
@@ -13,6 +14,9 @@ import adventuregame.items.Armor;
 public abstract class Unit extends Effectable
 {   
     public ArrayList<String> attributes = new ArrayList<>();
+    protected Door lastDoor = null;
+    public void setLastDoor(Door d) { lastDoor = d; }
+    public Door lastDoor() { return lastDoor; }
 
     public abstract void updateUnit();
     

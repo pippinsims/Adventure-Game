@@ -2,8 +2,11 @@ package adventuregame;
 
 import adventuregame.Inventory.Trade;
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.abstractclasses.Item.Actor;
+import adventuregame.abstractclasses.Item.Affector;
 import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.*;
@@ -98,7 +101,8 @@ public class Player extends Unit
         if(myRoom.interactibles.size() > 0)
         {
             actions.add(Action.INSPECT);
-            actions.add(Action.INTERACT);
+            if(myRoom.interactibles.size() - myRoom.getDoors().size() > 0)
+                actions.add(Action.INTERACT);
         }
 
         if(myRoom.all().size() > 1 && !inv.isEmpty()) actions.add(Action.TRADE);
@@ -188,6 +192,8 @@ public class Player extends Unit
         Unit chsn = peeps.get(Utils.promptList("With whom?", Utils.namesOf(peeps)));
 
         new Trade.Builder().one(this).another(chsn).build();
+
+        ableToAct = true;
     }
 
     private void inspect()
@@ -401,7 +407,7 @@ public class Player extends Unit
     {
         ArrayList<Interactible> inters = new ArrayList<>(myRoom.getDoors());
 
-        new Door.Diagram(myRoom.getDoors());
+        new Door.Diagram(myRoom.getDoors(), this);
 
         if(inters.size() == 1) inters.getFirst().action(this);
         else
@@ -421,7 +427,16 @@ public class Player extends Unit
                  prompts = new String[inv.size()];
         for(int i = 0; i < prompts.length; i++) prompts[i] = n[i] + ": " + d[i];
 
-        inv.at(Utils.promptList("Which item do you choose? (This is your inventory, you can hold " + inv.max() + " items total)", prompts)).action(this, false);
+        Item i = inv.at(Utils.promptList("Which item do you choose? (This is your inventory, you can hold " + inv.max() + " items total)", prompts));
+        if(i instanceof Affector) 
+        {
+            ArrayList<Describable> descs = new ArrayList<>(myRoom.all());
+            descs.addAll(myRoom.interactibles);
+            
+            ((Affector)i).action(this, descs.get(Utils.promptList("Use this item on what?", Utils.namesOf(descs))));
+        }
+        else if(i instanceof Actor)
+            ((Actor)i).action(this, false);
     }
 
     private String[] getPlayerActionDescriptions()
@@ -442,7 +457,7 @@ public class Player extends Unit
     @Override
     public void updateUnit()
     {
-        System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
+        System.out.println("\t\t\t\t\t\t\t\t--" + Utils.possessiveOf(name) + " Turn--");
         for(Effect e : new ArrayList<>(effects)) if(effectUpdate(e) == EffectUpdateResult.DEATH) return;
 
         doorMoves = 2;

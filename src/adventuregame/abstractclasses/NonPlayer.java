@@ -171,7 +171,7 @@ public abstract class NonPlayer extends Unit {
 
     @Override
     public void updateUnit() {
-        System.out.println("\t\t\t\t\t\t\t\t--" + name + "'" + (name.charAt(name.length() - 1) != 's' ? "s" : "") + " Turn--");
+        System.out.println("\t\t\t\t\t\t\t\t--" + Utils.possessiveOf(name) + " Turn--");
 
         for(Effect e : new ArrayList<>(effects)) if(effectUpdate(e) == EffectUpdateResult.DEATH) return;
 

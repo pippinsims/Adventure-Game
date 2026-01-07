@@ -66,8 +66,7 @@ public abstract class QuickTimeEvent
                     if(leaf.output(input, q) || leaf.out != Output.CHECK) break;
                 }
             }
-            main.interrupt();
-            this.interrupt();
+            main.interrupt(); //break the update loop if input was interrupted
         }
     }
 
@@ -82,13 +81,14 @@ public abstract class QuickTimeEvent
         String input = null;
         for(currentRound = 0; currentRound < maxLength || maxLength < 0; currentRound++)
         {
-            try { Thread.sleep(dur); }
-            catch (InterruptedException e) { input = inputThr.input; }
+            try { Thread.sleep(dur); } catch (InterruptedException e) { input = inputThr.input; }
 
-            if(input != null) return;
-            if(update()) return;
+            if(input != null) return; //thread already interrupted
+            if(update()) break; //interrupt the thread before ending
         }
-        timeout();
+        inputThr.interrupt();
+        try { Thread.sleep(100); } catch (InterruptedException e) {} //only exists to catch the interrupt from inputThr
+        if(currentRound == maxLength) timeout();
     }
 
     protected abstract void timeout();

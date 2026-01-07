@@ -150,7 +150,7 @@ public class Dialogue
                 Room out = (Room)n.out;
                 if(n.applyToAll)
                 {
-                    Utils.slowPrintln("All players in " + name + "'s room moved back to " + out.getName());
+                    Utils.slowPrintln("All players in " + Utils.possessiveOf(name) + " room moved back to " + out.getName());
                     for(Player p : Game.curRoom.players) out.add(p);
                     Game.curRoom.players.clear();
                 }
@@ -166,7 +166,7 @@ public class Dialogue
                 Effect out = (Effect)n.out;
                 if(n.applyToAll)
                 {
-                    Utils.slowPrintln("Effect '" + out.getName() + "' added to all in " + name + "'s room");
+                    Utils.slowPrintln("Effect '" + out.getName() + "' added to all in " + Utils.possessiveOf(name) + " room");
                     for(Player p : Game.curRoom.players) p.addEffect(new Effect(out));
                 }
                 else
@@ -180,7 +180,7 @@ public class Dialogue
                 Item out = (Item)n.out;
                 if(n.applyToAll)
                 {
-                    Utils.slowPrintln("Item '" + out.getName() + "' added to all in " + name + "'s room");
+                    Utils.slowPrintln("Item '" + out.getName() + "' added to all in " + Utils.possessiveOf(name) + " room");
                     for(Player p : Game.curRoom.players) p.getInventory().add(out);
                 }
                 else
@@ -194,7 +194,7 @@ public class Dialogue
 
     public static void playersToRoom(Player to, Room r)
     {
-        Utils.slowPrintln("All players in " + to.getName() + "'s room moved back to " + r.getName());
+        Utils.slowPrintln("All players in " + Utils.possessiveOf(to.getName()) + " room moved back to " + r.getName());
         for(Player p : to.getRoom().players) r.add(p);
         to.getRoom().players.clear();
     }

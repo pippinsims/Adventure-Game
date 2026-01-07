@@ -1,6 +1,9 @@
 package adventuregame.interactibles.wallinteractibles;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import adventuregame.Game;
 import adventuregame.Player;
 import adventuregame.Room;
@@ -11,9 +14,10 @@ import adventuregame.interactibles.WallInteractible;
 
 public class Door extends WallInteractible
 {
-    //TODO add doors locking from 1 or both sides, then make doors lock when in combat
     Room myOtherRoom;
     static int doornum = 0;
+    private Map<Room, Boolean> lockMap = new HashMap<>();
+    private String key;
 
     public Door(Room room1, Room room2, Wall wall)
     {
@@ -41,7 +45,16 @@ public class Door extends WallInteractible
         this.wall = wall;
 
         setLocationReference();
+
+        lockMap.put(myRoom, false);
+        lockMap.put(myOtherRoom, false);
+
+        key = "normal";
     }
+
+    public void setKey(String key) { this.key = key; }
+
+    public String getKey() { return key; }
 
     public Wall getWall(Room room)
     {
@@ -89,36 +102,63 @@ public class Door extends WallInteractible
     @Override
     public void inspect(Unit u)
     {
-        Utils.slowPrint("You peek through the door. ");
-        Game.printInfo(getNextRoom(u.getRoom()), true);
+        if(isLocked(u.getRoom())) Utils.slowPrintln("You attempt to peek through the door, but it's locked!");
+        else
+        {
+            Utils.slowPrint("You peek through the door. ");
+            Game.printInfo(getNextRoom(u.getRoom()), true);
+        }
     }
 
     @Override
     public void action(Unit u)
     {
-        Room r = u.getRoom();
-        if(r != myRoom && r != myOtherRoom) throw new UnsupportedOperationException();
-
-        Utils.slowPrint("you used " + (Game.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
-        
-        r.remove(u);
-        getNextRoom(r).add(u);
-
-        if(u instanceof Player)
+        if(isLocked(u.getRoom())) Utils.slowPrintln("You attempt to use the door, but it's locked!");
+        else
         {
-            Player p = ((Player)u);
-            if(p.doorMoves-- > 0) p.ableToAct = true;
+            Room r = u.getRoom();
+            if(r != myRoom && r != myOtherRoom) throw new UnsupportedOperationException();
+
+            Utils.slowPrint("you used " + (Game.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
+            
+            r.remove(u);
+            getNextRoom(r).add(u);
+
+            if(u instanceof Player)
+            {
+                Player p = ((Player)u);
+                if(p.doorMoves-- > 0) p.ableToAct = true;
+            }
+
+            u.setLastDoor(this);
         }
     }
 
-    final public Room getNextRoom(Room room)
+    final public void toggleLock(Room r) 
     {
-        if(room == myRoom)
-            return myOtherRoom;
-        else if(room == myOtherRoom) 
-            return myRoom;
+        if(lockMap.put(r, !lockMap.get(r)) == null) badRoomException(r);
+    }
 
-        System.out.println(name + ": " + description + " doesn't contain " + room.getName() + ": " + room.getDescription());
+    final public boolean isLocked(Room r)
+    {
+        if(lockMap.containsKey(r)) return lockMap.get(r);
+        
+        badRoomException(r);
+        return false;
+    }
+
+    final public Room getNextRoom(Room r)
+    {
+        if(r == myRoom) return myOtherRoom;
+        else if(r == myOtherRoom) return myRoom;
+
+        badRoomException(r);
+        return null;
+    }
+
+    private final void badRoomException(Room r)
+    {
+        System.out.println(name + ": " + description + " doesn't contain " + r.getName() + ": " + r.getDescription());
         System.out.println(name + ": " + description + " contains both " + myRoom.getName() + ": " + myRoom.getDescription() + " and " + myOtherRoom.getName() + ": " + myOtherRoom.getDescription());
         throw new UnsupportedOperationException("Door d.getNextRoom(Room x) requires x to be in d");
     }
@@ -126,49 +166,60 @@ public class Door extends WallInteractible
     public static class Diagram
     {
         /*  for a room with doors in the order: east, south, south, west, west, north
-            ╭-6-╮
+            ┌─6─┐
             4   1
-            5   |
-            ╰3-2╯
+            5   │
+            └3─2┘
         */
 
-        public Diagram(ArrayList<Door> doors)
+        public Diagram(ArrayList<Door> doors, Unit cur)
         {
-            //TODO make it so you can input a 0 for the door you just came from, and then it would print "u" instead of a number there, allowing you to know a little more
-
             ArrayList<Integer> n = new ArrayList<>(),
                                s = new ArrayList<>(),
                                e = new ArrayList<>(),
                                w = new ArrayList<>();
             for(int i = 0; i < doors.size(); i++) 
             {
+                int num = cur.lastDoor() == doors.get(i) ? 0 : (i + 1);
+
                 switch(doors.get(i).wall)
                 {
-                    case NORTH: n.add(i+1); break;
-                    case SOUTH: s.add(i+1); break;
-                    case EAST: e.add(i+1); break;
-                    case WEST: w.add(i+1); break;
+                    case NORTH: n.add(num); break;
+                    case SOUTH: s.add(num); break;
+                    case EAST: e.add(num); break;
+                    case WEST: w.add(num); break;
                     default: break;
                 }
             }
 
             Tuple<String,String> ns = equalize(tos(n), tos(s));
             
-            System.out.println("╭"+ns.t1+"╮");
+            System.out.println("┌"+ns.t1+"┐");
             for(int i = 0; i < Math.max(e.size(), w.size()); i++)
             {
-                String f = i < w.size() ? w.get(i).toString() : "|";
+                String f = checkInd(w, i);
                 System.out.print(f);
                 for(int j = f.length() - 1; j < ns.t1.length(); j++) System.out.print(" ");
-                System.out.println(i < e.size() ? e.get(i) : "|");
+                System.out.println(checkInd(e, i));
             }
-            System.out.println("╰"+ns.t2+"╯");
+            System.out.println("└"+ns.t2+"┘");
+        }
+
+        private String checkInd(ArrayList<Integer> arr, int index)
+        {
+            if(index > arr.size() - 1) return "│";
+            return checkVal(arr.get(index));
+        }
+
+        private String checkVal(Integer val)
+        {
+            return val == 0 ? "u" : val.toString();
         }
 
         private String tos(ArrayList<Integer> arr)
         {
             String out = "";
-            for(int i : arr) out += i + (arr.indexOf(i) == arr.size() - 1 ? "" : "-");
+            for(int i : arr) out += checkVal(i) + (arr.indexOf(i) == arr.size() - 1 ? "" : "─"); //arr has no repeats, so this works to determine the last print
             return out;
         }
 
@@ -177,7 +228,7 @@ public class Door extends WallInteractible
             int dif = f.length() - s.length();
             int mag = Math.abs(dif);
             String start = "", end = "";
-            for(int i = 0; i < mag; i++) if(i < mag/2) start += "-"; else end += "-";
+            for(int i = 0; i < mag; i++) if(i < mag/2) start += "─"; else end += "─";
 
             return dif > 0 ? new Tuple<>(f, start + s + end) : new Tuple<>(start + f + end, s);
         }

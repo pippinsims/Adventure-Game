@@ -4,11 +4,16 @@ import adventuregame.interactibles.*;
 import adventuregame.interactibles.WallInteractible.Wall;
 import adventuregame.interactibles.wallinteractibles.*;
 import adventuregame.items.*;
+import adventuregame.QuickTimeEvent.EffectQTE;
+import adventuregame.QuickTimeEvent.NoUpdateQTE;
+import adventuregame.QuickTimeEvent.Node;
+import adventuregame.QuickTimeEvent.Node.Output;
 import adventuregame.abstractclasses.*;
 import adventuregame.dynamicitems.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Environment extends Game
 {
@@ -49,7 +54,176 @@ public class Environment extends Game
             cell2,
             "stuck in",
             "the table"
-        );
+        ) {
+            @Override public void action(Unit u)
+            {
+                ItemHolder holder = this;
+        
+                if(u.getName().equals("Laur"))
+                    super.action(u);
+                else
+                {
+                    Consumer<Integer> effectu = (curRound) -> {
+                        u.removeAllOf(Effect.Type.VITALITYDRAIN);
+                        switch(curRound + 1)
+                        {
+                            case 1: case 2: case 3: 
+                                u.updateMaxHealth(u.getMaxHealth() + curRound);
+                                u.addEffect(new Effect(Effect.Type.WEAKNESS, 1, 1));
+                                break;
+                            case 4: case 5:
+                                u.addEffect(new Effect(Effect.Type.VITALITYGROW, 3, curRound/3));
+                                u.addEffect(new Effect(Effect.Type.WEAKNESS, 6, 1));
+                                break;
+                            case 6: case 7: 
+                                u.addEffect(new Effect(Effect.Type.WEAKNESS, 10, 1));
+                                break;
+                            case 8: case 9:
+                                u.addEffect(new Effect(Effect.Type.WEAKNESS, -1, 1));
+                                break;
+                        }
+                    };
+
+                    System.out.println(u.getName() + " takes the sword by the handle... ");
+
+                    Node.L cryoutNode = new Node.L(Output.CHECK) 
+                    { 
+                        @Override public boolean output(String in, QuickTimeEvent q)
+                        {
+                            if(u.getRoom().players.size() == 1) return false;
+                            else
+                            {
+                                Unit helper = null;
+                                for(Unit u : u.getRoom().players) if(u != q.getActor()) { helper = u; break; }
+                                new NoUpdateQTE(
+                                    helper,
+                                    new Describable() { { description = "helpcledobl"; } }, 
+                                    -1,
+                                    new Node.B(
+                                        helper.getName()+", do you help?", 
+                                        new String[] 
+                                        {
+                                            "Help.",
+                                            "Do not help."
+                                        },
+                                        new Node[] 
+                                        {
+                                            new Node.L(Output.END) 
+                                            {
+                                                @Override public boolean output(String in, QuickTimeEvent q) { 
+                                                    Utils.slowPrintln("You tear " + u.getName() + " their grip on the cursed blade.");
+                                                    effectu.accept(q.getCurrentRound());
+                                                    return true;
+                                                }
+                                            },
+                                            new Node.L(Output.END) 
+                                            {
+                                                @Override public boolean output(String in, QuickTimeEvent q) { 
+                                                    Utils.slowPrintln("You do nothing.");
+                                                    return true;
+                                                }
+                                            },
+                                        }
+                                    )
+                                ){ @Override protected void timeout() {} //timeless QTE
+                                }.run();
+                                return true;
+                            }
+                        }
+                    };
+                    
+                    new EffectQTE(
+                        u,
+                        item,
+                        new Effect(Effect.Type.VITALITYDRAIN, 10, u.getMaxHealth()/10),
+                        new Node.B(
+                            "YOU FEEL EXTREME PAIN. YOU ARE DYING",
+                            new String[] 
+                            {
+                                "Do nothing.",
+                                "Let go.",
+                                "Cry out.",
+                                "Relax your grip.",
+                                "Pry hand violently.",
+                                "Pull harder."
+                            },
+                            new Node[] 
+                            {
+                                new Node.X(),
+                                new Node.X(),
+                                cryoutNode,
+                                new Node.X(),
+                                new Node.L(Output.END) 
+                                { 
+                                    @Override public boolean output(String in, QuickTimeEvent q) { 
+                                        System.out.println("You pry your catatonic fingers from the lethal power of the blade's enchantment with your free hand.");
+                                        effectu.accept(q.getCurrentRound());
+                                        return true;
+                                    } 
+                                },
+                                new Node.B(
+                                    "YOU FEEL EXTREME PAIN. YOU ARE DYING",
+                                    new String[] {
+                                        "Freeze.",
+                                        "Let go.",
+                                        "Cry out.",
+                                        "PULL HARDER."
+                                    },
+                                    new Node[] {
+                                        new Node.X(),
+                                        new Node.X(),
+                                        cryoutNode,
+                                        new Node.X()
+                                    }
+                                )
+                            }
+                        ) 
+                    ) {
+                        @Override protected void timeout() 
+                        {
+                            holder.isEnabled = false;
+                            SkeletonInteractible yourBody = new SkeletonInteractible(
+                                actor.getRoom(),
+                                Utils.possessiveOf(actor.getName())+" body", 
+                                "new-looking skeleton",
+                                "gripped tightly to",
+                                "",
+                                "",
+                                "brush",
+                                "aside from it's grip on",
+                                "the sword"
+                            ) {
+                                @Override 
+                                public void action(Unit u)
+                                {
+                                    getRoom().remove(this);
+                                    Utils.slowPrintln("You brush the hand of the skeleton away from the sword, causing it to crumble to the floor.");
+                                    new SkeletonInteractible(
+                                        getRoom(), 
+                                        name, 
+                                        simpleDesc,
+                                        "on",
+                                        "new-looking skeletons",
+                                        "",
+                                        "loot",
+                                        "",
+                                        "the floor",
+                                        inv,
+                                        insMap
+                                    );
+                                    holder.isEnabled = true;
+                                }
+                            };
+                    
+                            for(Armor a : actor.getInventory().getArmor()) yourBody.add(a);
+                            Weapon w = Utils.getFirst(actor.getInventory().getWeapons(), Weapon.class);
+                            if(w != null) yourBody.add(w);
+                        }
+                    }.run();
+                }
+            }
+        };
+        
         cleholder.isEnabled = false;
         new Door(cell2, hall, Wall.EAST);
         SkeletonInteractible cleskelly = 
@@ -105,12 +279,13 @@ public class Environment extends Game
 
         for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
         Room cell14 = new Room(celld, celll, cellf, celln);
-        new Door(cell14, hall, Wall.WEST);
+        new Door(cell14, hall, Wall.WEST).toggleLock(cell14);
+        new ItemHolder(new DoorKey(), cell14, "on", "the floor");
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
         NonPlayer bofe = new NonPlayer(10, new Inventory(10), 0, "Grassy bofer", "Grassy bofers", "Bofer") 
         {
             @Override
-            public void performAction(Action a) 
+            public void performAction(Action a)
             {
                 switch(a)
                 {

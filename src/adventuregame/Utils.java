@@ -282,7 +282,6 @@ public class Utils {
         
         printOptions(listPrompts);
 
-
         String in = scanloop();
         if(in == null) return -1;
         
@@ -455,5 +454,10 @@ public class Utils {
         try { while ((s = scan()) == null); }
         catch (InterruptedException e) { return null; }
         return s;
+    }
+
+    public static String possessiveOf(String noun)
+    {
+        return noun + "'" + (noun.charAt(noun.length() - 1) != 's' ? "s" : "");
     }
 }

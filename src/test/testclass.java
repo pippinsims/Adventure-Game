@@ -19,7 +19,6 @@ import adventuregame.QuickTimeEvent.Node.Output;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.NonPlayer;
-import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallInteractible.Wall;
 import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.Cards;
@@ -32,9 +31,9 @@ public class testclass {
         for(String s : new String[] {
             // "Room scenarios",
             // "Gzouca",
-            "DoorDiag",
+            // "DoorDiag",
             // "Dialogue",
-            // "QTE" succeeded
+            "QTE"// succeeded
         })
             switch(s)
             {
@@ -100,7 +99,8 @@ public class testclass {
                                             new Door(r, new Room(), Wall.SOUTH),
                                             new Door(r, new Room(), Wall.NORTH)
                                         )
-                                    )
+                                    ), 
+                                    new Player()
                                 );
                             break;
                             case 1:
@@ -127,7 +127,8 @@ public class testclass {
                                             new Door(r, new Room(), Wall.SOUTH),
                                             new Door(r, new Room(), Wall.NORTH)
                                         )
-                                    )
+                                    ), 
+                                    new Player()
                                 );
                             break;
                             case 2:
@@ -142,12 +143,13 @@ public class testclass {
                                             new Door(r, new Room(), Wall.WEST),
                                             new Door(r, new Room(), Wall.NORTH)
                                         )
-                                    )
+                                    ), 
+                                    new Player()
                                 );
                             break;
                             case 3:
                                 r = new Room();
-                                new Door.Diagram(new ArrayList<>());
+                                new Door.Diagram(new ArrayList<>(), new Player());
                             break;
                         }
                     }
@@ -201,13 +203,13 @@ public class testclass {
                     break;
                 case "QTE":
                     for(int i : new int[]{
-                        //0, succeeded as far as I could tell 
-                        //1, succeeded
-                        //2, succeeded
-                        //3, succeeded
-                        //4, succeeded 
-                        //5, succeeded
-                        //6  succeeded as far as I could tell
+                        // 0, //succeeded as far as I could tell 
+                        1, //succeeded
+                        2, //succeeded
+                        3, //succeeded
+                        4, //succeeded 
+                        5, //succeeded
+                        6  //succeeded as far as I could tell
                     })
                     {
                         System.out.println("--Begin Test QTE--");
@@ -216,7 +218,7 @@ public class testclass {
                             case 0: //Timeless QTE
                                 new NoUpdateQTE(
                                     new Player("Guy", 10), 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     -1,
                                     new Node.B("Test timeless QTE", new String[]{""}, new Node[]{new Node.X()})
                                 ) { @Override protected void timeout() { throw new UnknownError("Timeless QTE timed out"); } }
@@ -225,7 +227,7 @@ public class testclass {
                             case 1: //QTE.timeout()
                                 new NoUpdateQTE(
                                     new Player("Guy", 10), 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     3,
                                     new Node.B("Test timeout after 3 ticks", new String[]{"",}, new Node[] {new Node.X()})
                                 ) { @Override protected void timeout() { System.out.println("timed out"); } }
@@ -234,7 +236,7 @@ public class testclass {
                             case 2: //Node.X and no-output Node.L
                                 new NoUpdateQTE(
                                     new Player("Guy", 10), 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     -1,
                                     new Node.B("Test Node.X and no-output Node.L", new String[]
                                     {
@@ -252,7 +254,7 @@ public class testclass {
                             case 3: //QTE.Node.L(END) output(String, QuickTimeEvent) override
                                 new NoUpdateQTE(
                                     new Player("Guy", 10), 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     -1,
                                     new Node.B("Test QTE.Node.L(END).output(..)", new String[]{"Test Output.END"}, 
                                     new Node[] { new Node.L(Output.END){@Override public boolean output(String in, QuickTimeEvent q){ System.out.println("got: " + in); return true; }}})
@@ -262,7 +264,7 @@ public class testclass {
                             case 4: //QTE.Node.L(CHECK) output(String, QuickTimeEvent) override
                                 new NoUpdateQTE(
                                     new Player("Guy", 10), 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     -1,
                                     new Node.B("Test QTE.Node.L(CHECK).output(..)", new String[]{"Test Output.CHECK"}, 
                                     new Node[]
@@ -280,7 +282,7 @@ public class testclass {
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
                                 new EffectQTE(
                                     p, 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     new Effect(Type.FIRE, 10, 1),
                                     new Node.B("Test QTE Effect death handling QTE.dur > health", new String[]{""}, new Node[] {new Node.X()})
                                 ) 
@@ -294,7 +296,7 @@ public class testclass {
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
                                 new EffectQTE(
                                     p, 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     new Effect(Type.FIRE, 3, 1),
                                     new Node.B("Test QTE Effect death handling duration == health", new String[]{""}, new Node[] {new Node.X()})
                                 ) 
@@ -308,7 +310,7 @@ public class testclass {
                                 System.out.println(p.getName() + ": " + p.getHealth() + " health.");
                                 new EffectQTE(
                                     p, 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     new Effect(Type.FIRE, 3, 1),
                                     new Node.B("Test QTE Effect handling QTE.dur < health", new String[]{""}, new Node[] {new Node.X()})
                                 ) 
@@ -322,7 +324,7 @@ public class testclass {
                                 System.out.println(p1.getName() + ": " + p1.getHealth() + " health.");
                                 new EffectQTE(
                                     p1, 
-                                    new Item() { @Override public void action(Unit u, boolean isFinal){} }, 
+                                    new Item(){}, 
                                     new Effect(Type.FIRE, -1, 1),
                                     new Node.B(
                                         "prompt for nested QTE", 

@@ -23,24 +23,4 @@ public abstract class Describable
         if(Game.cur instanceof Player && pDescMap.containsKey(Game.cur.getName())) return pDescMap.get(Game.cur.getName());
         else return pluralDescription; 
     }
-    
-
-    @Override
-    public int hashCode() 
-    {
-        if(getDescription() == null) throw new UnsupportedOperationException(name + " has no desc");
-        return getDescription().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj)
-    {
-        if(this == obj) return true;
-
-        if(obj == null || getClass() != obj.getClass()) return false;
-
-        Describable d = (Describable) obj;
-
-        return this == d;//this.getDescription().equals(d.getDescription());
-    }
 }

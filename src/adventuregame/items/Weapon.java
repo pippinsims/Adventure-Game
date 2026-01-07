@@ -1,10 +1,10 @@
 package adventuregame.items;
 
 import adventuregame.Damage;
-import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Item.Actor;
 import adventuregame.abstractclasses.Unit;
 
-public abstract class Weapon extends Item {
+public abstract class Weapon extends Actor {
 
     protected String atkmsg;
 

@@ -6,10 +6,10 @@ import java.util.Map;
 import adventuregame.Damage;
 import adventuregame.Player;
 import adventuregame.Utils;
-import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.abstractclasses.Item.Actor;
 
-public class Armor extends Item {
+public class Armor extends Actor {
 
     private String armorDesc; 
     Unit equippedTo = null;

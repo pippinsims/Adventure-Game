@@ -3,10 +3,10 @@ package adventuregame.items;
 import java.util.ArrayList;
 
 import adventuregame.Gzouca;
-import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.abstractclasses.Item.Actor;
 
-public class Cards extends Item{
+public class Cards extends Actor{
 
     ArrayList<Card> cards = new ArrayList<>();
     public ArrayList<Card> cards() { return cards; }

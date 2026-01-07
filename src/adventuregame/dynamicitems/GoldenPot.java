@@ -4,7 +4,7 @@ import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.DynamicItem;
-import adventuregame.abstractclasses.Item;
+import adventuregame.abstractclasses.Item.Actor;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.InventoryInteractible;
 
@@ -123,7 +123,7 @@ public class GoldenPot extends DynamicItem {
             }
         };
 
-        it = new Item() {
+        it = new Actor() {
             private GoldenPot self = parent;
 
             {

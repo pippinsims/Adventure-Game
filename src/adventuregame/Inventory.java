@@ -117,13 +117,13 @@ public class Inventory {
         final Describable receiver, giver;
         final Inventory rinv, ginv;
         final String verb, action, pronoun, past, contraction;
+        final boolean take;
 
         /** {@code Type.GIVE} = one -> another
             <p>{@code Type.TAKE} = one <- another
         */
         private Trade(Tuple<Describable, Inventory> one, Tuple<Describable, Inventory> another)
         {
-            boolean take;
             if(one.t2.isEmpty()) take = true;
             else if(another.t2.isEmpty()) take = false;
             else take = Utils.promptList("What do you do?", new String[] {"Take","Give"}) == 0;
@@ -182,9 +182,11 @@ public class Inventory {
             else
             {
                 rinv.add(i);
-                if(isArmorForUnit) i.action((Unit)receiver, true);
+                if(isArmorForUnit) ((Armor)i).action((Unit)receiver, true);
                 ginv.remove(i);
-                Utils.slowPrintln("You " + past + " " + receiver.getName() + " " + i.getName() + "!");
+
+                if(giver instanceof Unit && receiver instanceof Unit)
+                    Utils.slowPrintln("You " + past + " " + (take ? Utils.possessiveOf(giver.getName()) : receiver.getName()) + " " + i.getName() + "!");
             }
         }
     }
