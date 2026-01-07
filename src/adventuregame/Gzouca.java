@@ -62,10 +62,13 @@ public class Gzouca {
 
     static ArrayList<Card> dealt = new ArrayList<>();
 
-    public Gzouca(Map<String, Cards> playersMap)
+    public Gzouca(Map<String, Cards> playersMap, Cards toDeal)
     {
+        for(Entry<String, Cards> x : playersMap.entrySet())
+            if(x.getValue().cards().size() < 8 || toDeal.cards().size() < 5) 
+                { System.out.println("Each player needs 8 cards, and you need at least 5 cards to deal!"); return; }
+
         System.out.println("started game of Gzouca!");
-        Type t = Type.Gzouca;
         ArrayList<Player> players = new ArrayList<>();
         int j = 0;
         for(Entry<String, Cards> p : playersMap.entrySet())
@@ -90,6 +93,8 @@ public class Gzouca {
             {
                 p.hand = new ArrayList<>();
                 ArrayList<Card> submission = new ArrayList<>(playersMap.get(p.name).cards());
+                System.out.println("----");
+                for(Card c : submission) System.out.println(valueOf(c.type()));
                 while(p.hand.size() < 5)
                     for(Card c : new ArrayList<>(submission))
                     {
@@ -104,13 +109,15 @@ public class Gzouca {
                 p.played = new ArrayList<>();
             }
             dealt.clear();
+            ArrayList<Card> toDealForRound = shuffle(toDeal.cards());
             
             boolean doBreak = false;
             for(int round = 0; round < 5; round++)
             {
                 System.out.println("----------------Round " + (round + 1) + "!");
-                Card.Type[] cardvalues = Card.Type.values();
-                dealt.add(new Card(t, cardvalues[Utils.rand.nextInt(cardvalues.length-15)+15])); //no specials no negatives
+                Card chsn = toDealForRound.get(Utils.rand.nextInt(toDealForRound.size()));
+                dealt.add(chsn); //no specials no negatives
+                toDealForRound.remove(chsn);
                 
                 for(Player p : players)
                 {
@@ -177,6 +184,21 @@ public class Gzouca {
                 p.tiebreaks = 0;
             }
         }
+    }
+
+    private ArrayList<Card> shuffle(ArrayList<Card> cards)
+    {
+        ArrayList<Card> copy = new ArrayList<>(cards);
+        ArrayList<Card> newcards = new ArrayList<>();
+
+        while(!copy.isEmpty())
+        {
+            Card chosen = copy.get(Utils.rand.nextInt(copy.size()));
+            newcards.add(chosen);
+            copy.remove(chosen);
+        }
+
+        return newcards;
     }
 
     private Player getWinner(ArrayList<Player> players)
@@ -364,16 +386,16 @@ public class Gzouca {
             case Being : return p.arr[14];
             case Beast : return p.arr[13];
             case Zero  : return p.arr[0 ];
-            case n1  : case p1:  sec = 1 ; break;
-            case n2  : case p2:  sec = 2 ; break;
-            case n3  : case p3:  sec = 3 ; break;
-            case n4  : case p4:  sec = 4 ; break;
-            case n5  : case p5:  sec = 5 ; break;
-            case n6  : case p6:  sec = 6 ; break;
-            case n7  : case p7:  sec = 7 ; break;
-            case n8  : case p8:  sec = 8 ; break;
-            case n9  : case p9:  sec = 9 ; break;
-            case n10 : case p10: sec = 10; break;
+            case n1 : case p1 : sec = 1 ; break;
+            case n2 : case p2 : sec = 2 ; break;
+            case n3 : case p3 : sec = 3 ; break;
+            case n4 : case p4 : sec = 4 ; break;
+            case n5 : case p5 : sec = 5 ; break;
+            case n6 : case p6 : sec = 6 ; break;
+            case n7 : case p7 : sec = 7 ; break;
+            case n8 : case p8 : sec = 8 ; break;
+            case n9 : case p9 : sec = 9 ; break;
+            case n10: case p10: sec = 10; break;
         }
         switch (t) {
             case n1:case n2:case n3:case n4:case n5:case n6:case n7:case n8:case n9:case n10: fir = 12; break;

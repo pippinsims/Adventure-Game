@@ -30,10 +30,10 @@ public class testclass {
     {   
         for(String s : new String[] {
             // "Room scenarios",
-            // "Gzouca",
+            "Gzouca",
             // "DoorDiag",
             // "Dialogue",
-            "QTE"// succeeded
+            // "QTE"// succeeded
         })
             switch(s)
             {
@@ -168,48 +168,74 @@ public class testclass {
                     }
                     break;
                 case "Gzouca":
-                    ArrayList<Card> c = new ArrayList<>();
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p1));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p2));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p10));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p4));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Zero));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n1));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n2));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n3));
-                    Cards gopcards = new Cards(new ArrayList<>(c));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Arrow));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Broken));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Being));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Beast));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Zero));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n1));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n2));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n10));
-                    Cards targincards = new Cards(new ArrayList<>(c));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p1));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p2));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p6));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.p8));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.Zero));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n1));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n2));
-                    c.add(new Card(Gzouca.Type.Gzouca, Card.Type.n5));
-                    Cards tarrycards = new Cards(new ArrayList<>(c));
-                    Map<String, Cards> peeps = Map.ofEntries(Map.entry("Gop", gopcards),
-                                                             Map.entry("Targin", targincards),
-                                                             Map.entry("Tarry", tarrycards));
-                    new Gzouca(peeps);
+                    Map<String, Cards> peeps = Map.ofEntries(
+                        Map.entry(
+                            "Gop",
+                            new Cards(new ArrayList<>(List.of(
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p1),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p2),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p10),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p4),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.Zero),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.n1),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.n2),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.n3)
+                            )))
+                        ),
+                        Map.entry(
+                            "Targin",
+                            new Cards(new ArrayList<>(List.of(
+                                new Card(Gzouca.Type.Gzouca, Card.Type.Arrow),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p3),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.Being),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.Beast),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p9),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p8),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p10),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.n10)
+                            )))
+                        ),
+                        Map.entry(
+                            "Tarry",
+                            new Cards(new ArrayList<>(List.of(
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p1),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p2),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p6),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.p8),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.Zero),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.n1),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.n2),
+                                new Card(Gzouca.Type.Gzouca, Card.Type.n5)
+                            )))
+                        )
+                    );
+                    ArrayList<Card> standard = new ArrayList<>(List.of(
+                        new Card(Gzouca.Type.Gzouca, Card.Type.Zero),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p1),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p2),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p3),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p4),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p5),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p6),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p7),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p8),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p9),
+                        new Card(Gzouca.Type.Gzouca, Card.Type.p10)
+                    ));
+
+                    ArrayList<Card> all = new ArrayList<>();
+                    for(int i = 0; i < 6; i++) all.addAll(standard);
+                    new Gzouca(peeps, new Cards(all));
                     break;
                 case "QTE":
                     for(int i : new int[]{
                         // 0, //succeeded as far as I could tell 
-                        1, //succeeded
-                        2, //succeeded
-                        3, //succeeded
-                        4, //succeeded 
-                        5, //succeeded
-                        6  //succeeded as far as I could tell
+                        // 1, //succeeded
+                        // 2, //succeeded
+                        // 3, //succeeded
+                        // 4, //succeeded 
+                        // 5, //succeeded
+                        // 6  //succeeded as far as I could tell
                     })
                     {
                         System.out.println("--Begin Test QTE--");
