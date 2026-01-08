@@ -19,7 +19,6 @@ public class Player extends Unit
     private boolean ptolomyIsPresent = false;
     private int ptolomyPrintLength;
 
-    private Inventory inv = new Inventory(10);
     public int doorMoves;
     public boolean ableToAct = false;
 
@@ -50,6 +49,8 @@ public class Player extends Unit
                                                                   Map.entry(Action.TRADE,    "Trade"));
 
     public List<Action> actions = new ArrayList<Action>();
+
+    { inv = new Inventory.Whole(); }
 
     public Player()
     {
@@ -101,7 +102,7 @@ public class Player extends Unit
         if(myRoom.interactibles.size() > 0)
         {
             actions.add(Action.INSPECT);
-            if(myRoom.interactibles.size() - myRoom.getDoors().size() > 0)
+            if(myRoom.interactibles.size() - (myRoom.getDoors().size() - myRoom.getLockedDoors().size()) > 0)
                 actions.add(Action.INTERACT);
         }
 
@@ -171,7 +172,8 @@ public class Player extends Unit
                                                             : 0;
 
                 ArrayList<Weapon> weps = inv.getWeapons();
-                weps.addFirst(new Weapon.Punch("You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad")));
+                if(name.equals("Peili")) weps.addFirst(new Weapon.Punch("You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad"), new Damage(2)));
+                else weps.addFirst(new Weapon.Punch("You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad")));
                 if(chosen == null) chosen = Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", weps);                
 
                 Damage d = chosen.getDamage();
@@ -393,8 +395,7 @@ public class Player extends Unit
     private void interact()
     {
         ArrayList<Interactible> inters = new ArrayList<>(myRoom.interactibles);
-        for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty() || !i.isEnabled) inters.remove(i);
-        for(Interactible i : new ArrayList<>(inters)) if(i instanceof Door) inters.remove(i);
+        for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty() || !i.isEnabled || (i instanceof Door && !((Door)i).isLocked(myRoom))) Utils.remove(inters, i); //WallInteractibles override .equals() and need to be removed with Utils
 
         Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
 
@@ -405,19 +406,12 @@ public class Player extends Unit
 
     private void leave()
     {
-        ArrayList<Interactible> inters = new ArrayList<>(myRoom.getDoors());
+        ArrayList<Interactible> doors = new ArrayList<>(myRoom.getDoors());
 
         new Door.Diagram(myRoom.getDoors(), this);
 
-        if(inters.size() == 1) inters.getFirst().action(this);
-        else
-        {
-            Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
-
-            ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
-
-            chosen.action(this);
-        }
+        if(doors.size() == 1) doors.getFirst().action(this);
+        else doors.get(Utils.promptList("Which door?", Utils.actionDescsOf(doors))).action(this);
     }
 
     private void inventory()
@@ -465,6 +459,8 @@ public class Player extends Unit
 
         if(ptolomyIsPresent) Utils.slowPrintln(Utils.rand.nextFloat() <= .5 ? "You feel a strange presence... It's Ptolomy's spirit!" : "Ptolomy's spirit is lingering ever so elegantly", ptolomyPrintLength);
 
+        myRoom.update();
+
         while(ableToAct) 
         {
             ableToAct = false;
@@ -474,8 +470,6 @@ public class Player extends Unit
             setActions();
             
             //lists available actions, lets the player choose, then performs chosen action
-            myRoom.updateDoors();
-
             System.out.println();
             Game.printInfo(myRoom, false);
             System.out.println();
@@ -485,7 +479,7 @@ public class Player extends Unit
     }
 
     @Override
-    public Inventory getInventory() 
+    public Inventory.Whole getInventory() 
     {
         return inv;
     }

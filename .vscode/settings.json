@@ -1,0 +1,9 @@
+{
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-25",
+      "path": "C:\\Program Files\\Java\\jdk-25",
+      "default": true
+    }
+  ]
+}

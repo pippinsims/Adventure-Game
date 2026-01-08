@@ -14,12 +14,12 @@ public abstract class Describable
 
     public final String getName() { return name; }
     
-    public final String getDescription() { 
+    public String getDescription() { 
         if(Game.cur instanceof Player && descMap.containsKey(Game.cur.getName())) return descMap.get(Game.cur.getName());
         else return description;
     }
 
-    public final String getPluralDescription() { 
+    public String getPluralDescription() { 
         if(Game.cur instanceof Player && pDescMap.containsKey(Game.cur.getName())) return pDescMap.get(Game.cur.getName());
         else return pluralDescription; 
     }

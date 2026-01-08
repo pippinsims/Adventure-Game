@@ -16,7 +16,7 @@ public abstract class Interactible extends Describable
     public String actLocPrep;
     public String locReference;
     protected Room myRoom;
-    public boolean isEnabled = true;
+    protected boolean isEnabled = true;
 
     public Map<String,Inspect> insMap = new HashMap<>();
 
@@ -84,6 +84,8 @@ public abstract class Interactible extends Describable
     {
         myRoom = room;
     }
+
+    protected boolean trigger() { return false; }
     
     public String getActionDescription()
     {

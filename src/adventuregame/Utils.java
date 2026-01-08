@@ -117,7 +117,7 @@ public class Utils {
         for (Describable d : arr) 
         {
             String desc = d.getDescription() + (d instanceof WallInteractible ? ((WallInteractible)d).locReference : "");
-            strs.put(desc, new Tuple<Describable,Integer>(d, strs.getOrDefault(desc, new Tuple<Describable,Integer>(d,0)).t2 + 1));
+            strs.put(desc, new Tuple<>(d, strs.getOrDefault(desc, new Tuple<>(d,0)).t2 + 1));
         }
         Map<Describable,Integer> descs = new LinkedHashMap<>();
         for(Tuple<Describable, Integer> v : strs.values()) descs.put(v.t1, v.t2);
@@ -245,7 +245,6 @@ public class Utils {
 
     public static String[] actionDescsOf(ArrayList<Interactible> inters)
     {
-        // for(Interactible i:inters) System.out.println(i.getRoom());
         String[] d = new String[inters.size()];
         for(int i = 0; i < d.length; i++) d[i] = inters.get(i).getActionDescription();
         return d;
@@ -419,6 +418,12 @@ public class Utils {
         return false;
     }
 
+    public static boolean remove(ArrayList<? extends Describable> arr, Object toFind)
+    {
+        for(int i = 0; i < arr.size(); i++) if(arr.get(i) == toFind) { arr.remove(i); return true; }
+        return false;
+    }
+
     public static int cap(int n, int at)
     {
         return n > at ? at : n;
@@ -436,6 +441,12 @@ public class Utils {
         for (Object i : l) if (i.getClass().equals(c.getClass())) return true;
         return false;
     }
+
+    public static <T> boolean overlap(List<?> l1, List<?> l2) 
+    {
+        for(Object o1 : l1) for(Object o2 : l2) if(o1 == o2) return true;
+        return false;
+    } 
 
     public static <T, K extends T> K getFirst(ArrayList<? extends T> arr, Class<K> type) 
     {

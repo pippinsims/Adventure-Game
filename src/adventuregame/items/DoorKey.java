@@ -1,5 +1,6 @@
 package adventuregame.items;
 
+import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Unit;
@@ -14,14 +15,15 @@ public class DoorKey extends Affector {
     {
         code = "normal";
         name = "Door key";
-        description = "door key";
+        description = code + " door key";
     }
 
     public DoorKey(String code)
     {
+        if(code.equals("bar")) throw new UnsupportedOperationException("No such thing as a doorbar key");
         this.code = code;
         name = "Door key";
-        description = "door key";
+        description = code + " door key";
     }
 
     { types.add(Door.class); }
@@ -31,25 +33,21 @@ public class DoorKey extends Affector {
         if(check(d))
         {
             Door door = (Door)d;
-            if(door.getKey().equals(code))
+            Room r = u.getRoom(), o = door.getNextRoom(r);
+            if(door.getLocks(r).containsKey(code))
             {
-                if(door.isLocked(u.getRoom()) || door.isLocked(door.getNextRoom(u.getRoom())))
+                if(door.isLocked(r, code) || door.isLocked(o, code))
                 {
-                    if(door.isLocked(u.getRoom()))
-                        door.toggleLock(u.getRoom());
-                    if(door.isLocked(door.getNextRoom(u.getRoom())))
-                        door.toggleLock(door.getNextRoom(u.getRoom()));
+                    door.unlock(code);
                     Utils.slowPrintln("Door unlocked!");
                 }
                 else
                 {
-                    door.toggleLock(door.getNextRoom(u.getRoom()));
-                    door.toggleLock(u.getRoom());
+                    door.lock(code);
                     Utils.slowPrintln("Door locked!");
                 }
             }
         }
-        else
-            Utils.slowPrintln("This item can't be used for that!"); 
+        else super.action(u, d);
     }
 }

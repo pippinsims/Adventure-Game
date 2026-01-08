@@ -7,12 +7,8 @@ import adventuregame.Damage;
 import adventuregame.Player;
 import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
-import adventuregame.abstractclasses.Item.Actor;
 
-public class Armor extends Actor {
-
-    private String armorDesc; 
-    Unit equippedTo = null;
+public class Armor extends Equippable {
 
     public enum MaterialType
     {
@@ -21,79 +17,33 @@ public class Armor extends Actor {
         ANCIENT
     }
 
-    public enum PartType
-    {
-        HELMET,
-        TORSO,
-        GAUNTLETS,
-        LEGS,
-        BOOTS
-    }
-
     public final static Map<MaterialType,String> armorDescs = Map.ofEntries(Map.entry(MaterialType.RUSTED, "old armor, which has seen far better days, but now it's rusted and tarnished."),
                                                                             Map.entry(MaterialType.ANCIENT_RUSTED, "old rusted armor, you notice an ancient glyph."),
                                                                             Map.entry(MaterialType.ANCIENT, "lodestone-enhanced ancient soldier's armor."));
 
     protected MaterialType mat;
-    protected PartType type;
 
-    public Armor(String name, String description, String pluralDescription, MaterialType mat, PartType type)
+    public Armor(String name, String description, String pluralDescription, MaterialType mat, Type.Armor type)
     {
+        super(name, description, pluralDescription, null);
         this.name = name;
         this.description = description;
         this.pluralDescription = pluralDescription;
         this.mat = mat;
         this.type = type;
-        armorDesc = description;
-        equippedTo = null;
+        simpleDesc = description;
     }
 
     public MaterialType getMat() { return mat; }
-    public PartType getPart() { return type; }
-
-    public boolean isEquipped() { return equippedTo != null; }
 
     @Override
     public void action(Unit u, boolean isFinal) {
-        
-        if(u.getInventory().getArmor().isEmpty()) throw new IllegalAccessError("Tried to equip armor that wasn't in your inventory!");
 
-        if(equippedTo != null)
-        {
-            if(!u.getInventory().hasUnequippedArmor())
-            {
-                Utils.slowPrintln(armorDesc + " unequipped!");
-                equippedTo = null;
-                description = armorDesc;
-            }
-            else
-            {
-                Utils.slowPrintln("You're already holding a piece of unequipped armor! Cannot unequip.");
-            }
-        }
-        else
-        {
-            Armor samePiece = null;
-            for(Armor a : u.getInventory().getArmor()) if(a.isEquipped() && a.getPart() == getPart()) { samePiece = a; break;}
-            if(samePiece == null)
-            {
-                Utils.slowPrintln(armorDesc + " equipped!");
-                equippedTo = u;
-                description = armorDesc + " (Equipped)";
-            }
-            else
-            {
-                equippedTo = u;
-                description = armorDesc + " (Equipped)";
-                samePiece.action(u, true);
-                Utils.slowPrintln(armorDesc + " equipped!");
-            }
-        }
+        if(isEquipped()) u.getInventory().unequip(this);
+        else u.getInventory().equip(this);
 
         if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
     }
-
-    public String getArmorDesc() { return armorDesc; }
 
     public Map<Damage.Type,Float> getDefense()
     {
@@ -118,15 +68,17 @@ public class Armor extends Actor {
             case RUSTED:
                 break;
         }
-        switch(type)
+        switch((Type.Armor)type)
         {
             case BOOTS: case GAUNTLETS: case HELMET: case LEGS:
                 for(Map.Entry<Damage.Type,Float> e : outd.entrySet()) outd.put(e.getKey(), e.getValue()*0.25f);
                 break;
-            case TORSO:
-                break;
+            case CHESTPLATE: break;
+            default: break;
         }
 
         return outd;
     }
+
+    @Override public boolean isRequired() { return false; }
 }

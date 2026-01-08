@@ -7,6 +7,7 @@ import adventuregame.Player.Inspect;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.Inventory.Trade;
+import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.items.Armor;
 
@@ -24,7 +25,7 @@ public class SkeletonInteractible extends InventoryInteractible
               "loot",
               "",
               "the floor");
-        inv = new Inventory(6);
+        inv = new Inventory(6, 1);
         simpleDesc = description;
         setInspects();
     }
@@ -55,7 +56,7 @@ public class SkeletonInteractible extends InventoryInteractible
     public SkeletonInteractible(Room r, String n, String d, String p, String pd, String pp, String a, String ap, String l) {
         super(r, n, d, p, pd, pp, a, ap, l);
         simpleDesc = description;
-        inv = new Inventory(6);
+        inv = new Inventory(6, 1);
         setInspects();
     }
 
@@ -77,8 +78,10 @@ public class SkeletonInteractible extends InventoryInteractible
     @Override protected void setInspects() 
     {
         put(simpleDesc);
-        for(Armor a : inv.getArmor())
+
+        for(Item i : inv.getItems()) if(i instanceof Armor)
         {
+            Armor a = (Armor)i;
             Armor.MaterialType mat = a.getMat();
             switch(mat)
             {

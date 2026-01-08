@@ -35,7 +35,9 @@ public class Environment extends Game
         //average narwhal weight is 1.425 tons
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
         curRoom = new Room(celld, celll, cellf, celln);
-        new Door(curRoom, hall, Wall.EAST);
+        Door d = new Door(curRoom, hall, Wall.EAST); 
+        // d.addLock(hall, "bar", true);
+        // d.addLock(curRoom, "normal", true);
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
         Room cell2 = new Room(celld, celll, cellf, celln);
@@ -223,9 +225,11 @@ public class Environment extends Game
                 }
             }
         };
-        
         cleholder.isEnabled = false;
-        new Door(cell2, hall, Wall.EAST);
+        d = new Door(cell2, hall, Wall.EAST);
+        d.addBar(hall, true);
+        d.addLock("normal", true);
+
         SkeletonInteractible cleskelly = 
         new SkeletonInteractible(
             cell2,
@@ -246,7 +250,8 @@ public class Environment extends Game
                 if(Utils.rand.nextInt(10) == 9)
                 {
                     Utils.slowPrintln("You attempt to brush away the skeleton, but it reacts, bones clinking, and assumes a combat stance!");
-                    getRoom().add(new NonPlayer.Skeleton(inv));
+                    NonPlayer s = new NonPlayer.Skeleton(inv);
+                    getRoom().add(s);
                 }
                 else
                 {
@@ -269,20 +274,27 @@ public class Environment extends Game
             }
         };
         for(Item i : new ArrayList<>(List.of(
-            new Armor("Ancient Boot" , "rusty boots", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.BOOTS),
-            new Armor("Ancient Gaunt", "rusty gauntlets", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.GAUNTLETS),
-            new Armor("Ancient Helm" , "rusty helmet", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.HELMET),
-            new Armor("Ancient Legs" , "rusty greaves", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.LEGS),
-            new Armor("Ancient Torso", "rusty chestpiece", "", Armor.MaterialType.ANCIENT_RUSTED, Armor.PartType.TORSO),
+            new Armor("Ancient Boot" , "rusty boots", "", Armor.MaterialType.ANCIENT_RUSTED, Equippable.Type.Armor.BOOTS),
+            new Armor("Ancient Gaunt", "rusty gauntlets", "", Armor.MaterialType.ANCIENT_RUSTED, Equippable.Type.Armor.GAUNTLETS),
+            new Armor("Ancient Helm" , "rusty helmet", "", Armor.MaterialType.ANCIENT_RUSTED, Equippable.Type.Armor.HELMET),
+            new Armor("Ancient Legs" , "rusty greaves", "", Armor.MaterialType.ANCIENT_RUSTED, Equippable.Type.Armor.LEGS),
+            new Armor("Ancient Torso", "rusty chestpiece", "", Armor.MaterialType.ANCIENT_RUSTED, Equippable.Type.Armor.CHESTPLATE),
             new Sword(5)
         ))) cleskelly.add(i);
 
-        for (int i = 2; i < 13; i++) new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
+        for (int i = 2; i < 13; i++) 
+        {
+            d = new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST); 
+            d.addLock("normal", true);
+            d.addBar(hall, true);
+        }
         Room cell14 = new Room(celld, celll, cellf, celln);
-        new Door(cell14, hall, Wall.WEST).toggleLock(cell14);
+        d = new Door(cell14, hall, Wall.WEST);
+        // d.addLock(cell14, "normal", true);
+        // d.addLock(hall, "bar", true);
         new ItemHolder(new DoorKey(), cell14, "on", "the floor");
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
-        NonPlayer bofe = new NonPlayer(10, new Inventory(10), 0, "Grassy bofer", "Grassy bofers", "Bofer") 
+        NonPlayer bofe = new NonPlayer(10, new Inventory.Whole(), 0, "Grassy bofer", "Grassy bofers", "Bofer") 
         {
             @Override
             public void performAction(Action a)
@@ -305,12 +317,12 @@ public class Environment extends Game
         loaded.add(bofe);
         cell14.add(bofe);
 
-        NonPlayer daed = new NonPlayer(10, new Inventory(10), 0, "An interesting looking fellow who has greenish eyes", "Interesting fellows", "Daedalus") 
+        NonPlayer daed = new NonPlayer(10, new Inventory.Whole(), 0, "interesting looking fellow who has greenish eyes", "Interesting fellows", "Daedalus") 
         {
             @Override
             public void performAction(Action a) 
             {
-                for(Unit u : bofe.enemies) if(!Utils.contains(enemies, u)) enemies.add(u);
+                for(Unit u : bofe.enemies) if(!enemies.contains(u)) enemies.add(u);
 
                 switch(a)
                 {
@@ -346,10 +358,15 @@ public class Environment extends Game
             "Chamber"
         );
         
-        NonPlayer e = new NonPlayer.Goblin(3);
+        ArrayList<NonPlayer> ens = new ArrayList<>();
+        ens.add(new NonPlayer.Goblin(3));
+        ens.add(new NonPlayer.Goblin(3));
+        ens.add(new NonPlayer.Goblin(3));
+
+        NonPlayer e = ens.get(0);
+        e.getInventory().add(new DoorKey("fancy"));
+
         chamber.add(e);
-        chamber.add(new NonPlayer.Goblin(3));
-        chamber.add(new NonPlayer.Goblin(3));
         for(NonPlayer n : chamber.NPCs) for(NonPlayer n1 : chamber.NPCs) if(n != n1) n.friends.add(n1);
         e.dialogues.add(
             new Dialogue(
@@ -400,7 +417,8 @@ public class Environment extends Game
                 )
             )
         );
-        new Door(hall, chamber, Wall.NORTH);
+        d = new Door(hall, chamber, Wall.NORTH);
+        d.addLock("normal", true);
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,",
                                   "Shroom Room.",
@@ -419,13 +437,16 @@ public class Environment extends Game
             { descMap.put("Laur", "toad-sized TABLEstool"); }
             @Override public void action(Unit u) {}
             @Override protected void setInspects() { put(name, description); }
+            @Override protected boolean trigger() { return true; }
         };
         
         Room joiner1 = new Room();
 
         new Door(chamber, mossyRuin, Wall.NORTH);
-        new Door(chamber, new Room(), Wall.WEST);
+        new Door(chamber, new Room(), Wall.WEST).addLock("fancy", true);
         new Door(chamber, joiner1, Wall.EAST);
+
+        for(Door d1 : chamber.getDoors()) for(NonPlayer n : ens) d1.disabler(n);
 
         Room treasureRoom = new Room("a room filled to the brim in a plenteous manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion",
                                      "Treasure Room");
@@ -441,7 +462,10 @@ public class Environment extends Game
         addPlayer(new Player());
         addPlayer(new Player("Nuel", 10));
         addPlayer(new Player("Valeent", 10));
-        addPlayer(new Player("Peili", 12));
+        // addPlayer(new Player("Peili", 12));
+        Player peili = new Player("Peili", 12);
+        allPlayers.add(peili);
+        cell2.add(peili);
         addPlayer(new Player("Dormaah", 10));
     }
 }

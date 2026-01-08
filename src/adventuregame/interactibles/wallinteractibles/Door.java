@@ -16,8 +16,8 @@ public class Door extends WallInteractible
 {
     Room myOtherRoom;
     static int doornum = 0;
-    private Map<Room, Boolean> lockMap = new HashMap<>();
-    private String key;
+    private ArrayList<Unit> disablers = new ArrayList<>();
+    private final Map<Room, Map<String, Boolean>> lockMap;
 
     public Door(Room room1, Room room2, Wall wall)
     {
@@ -36,25 +36,21 @@ public class Door extends WallInteractible
 
         name = "door"+doornum++;
 
+        this.wall = wall;
+
         myRoom = room1;
         myRoom.add(this);
 
         myOtherRoom = room2;
         myOtherRoom.add(this);
-        
-        this.wall = wall;
 
         setLocationReference();
 
-        lockMap.put(myRoom, false);
-        lockMap.put(myOtherRoom, false);
-
-        key = "normal";
+        lockMap = Map.ofEntries(
+            Map.entry(myRoom, new HashMap<>()), 
+            Map.entry(myOtherRoom, new HashMap<>())
+        );
     }
-
-    public void setKey(String key) { this.key = key; }
-
-    public String getKey() { return key; }
 
     public Wall getWall(Room room)
     {
@@ -81,6 +77,16 @@ public class Door extends WallInteractible
         else if(room != myRoom) throw new RuntimeException("urk, you plugged in a room this door wasn't in, in getWall");
     }
 
+    @Override
+    public String getDescription() {
+        return (isLocked(myRoom, "bar") ? "barred " : "") + super.getDescription();
+    }
+
+    @Override
+    public String getPluralDescription() {
+        return (isLocked(myRoom, "bar") ? "barred " : "") + super.getPluralDescription();
+    }
+
     private Wall complementOf(Wall wall)
     {
         switch (wall) 
@@ -91,6 +97,11 @@ public class Door extends WallInteractible
             case EAST : return Wall.WEST;
             default   : return wall;
         } 
+    }
+    
+    public void disabler(Unit u)
+    {
+        disablers.add(u);
     }
 
     @Override
@@ -113,12 +124,20 @@ public class Door extends WallInteractible
     @Override
     public void action(Unit u)
     {
-        if(isLocked(u.getRoom())) Utils.slowPrintln("You attempt to use the door, but it's locked!");
+        Room r = u.getRoom();
+        if(isLocked(r, "bar")) 
+        {
+            Utils.slowPrintln("You unbar the door.");
+            unlock(r, "bar");
+            if(u instanceof Player) ((Player)u).ableToAct = true;
+        }
+        else if(isLocked(r) || isLocked(getNextRoom(r), "bar")) 
+        {
+            Utils.slowPrintln("You attempt to use the door, but it's locked!");
+            if(u instanceof Player) ((Player)u).ableToAct = true;
+        }
         else
         {
-            Room r = u.getRoom();
-            if(r != myRoom && r != myOtherRoom) throw new UnsupportedOperationException();
-
             Utils.slowPrint("you used " + (Game.isLaur && getDescription().equals("Boris") ? "" : "the ") + getDescription());
             
             r.remove(u);
@@ -134,20 +153,68 @@ public class Door extends WallInteractible
         }
     }
 
-    final public void toggleLock(Room r) 
+    public final void unlock(Room r, String key)
     {
-        if(lockMap.put(r, !lockMap.get(r)) == null) badRoomException(r);
+        if(checkKey(r, key)) lockMap.get(r).put(key, false);
+        else Utils.slowPrintln("That key doesn't work on this door.");
     }
 
-    final public boolean isLocked(Room r)
+    public final void unlock(String key)
     {
-        if(lockMap.containsKey(r)) return lockMap.get(r);
-        
-        badRoomException(r);
-        return false;
+        unlock(myRoom, key);
+        unlock(myOtherRoom, key);
     }
 
-    final public Room getNextRoom(Room r)
+    public final void lock(Room r, String key)
+    {
+        if(checkKey(r, key)) lockMap.get(r).put(key, true);
+        else Utils.slowPrintln("That key doesn't work on this door.");
+    }
+    
+    public final void lock(String key)
+    {
+        lock(myRoom, key);
+        lock(myOtherRoom, key);
+    }
+
+    public final void addLock(String key, boolean lock)
+    {
+        lockMap.get(myRoom).put(key, lock);
+        lockMap.get(myOtherRoom).put(key, lock);
+    }
+
+    public final void addBar(Room r, boolean lock)
+    {
+        if(!lockMap.containsKey(r)) badRoomException(r);
+
+        lockMap.get(r).put("bar", lock);
+    }
+
+    public final boolean isLocked(Room r)
+    {
+        if(!lockMap.containsKey(r)) badRoomException(r);
+
+        return lockMap.get(r).containsValue(true);
+    }
+
+    public final boolean isLocked(Room r, String key)
+    {
+        return checkKey(r, key) && lockMap.get(r).get(key);
+    }
+
+    public final Map<String, Boolean> getLocks(Room r)
+    {
+        return lockMap.get(r);
+    }
+
+    public final boolean checkKey(Room r, String k)
+    {
+        if(!lockMap.containsKey(r)) badRoomException(r);
+
+        return lockMap.get(r).containsKey(k);
+    }
+
+    public final Room getNextRoom(Room r)
     {
         if(r == myRoom) return myOtherRoom;
         else if(r == myOtherRoom) return myRoom;
@@ -156,11 +223,27 @@ public class Door extends WallInteractible
         return null;
     }
 
+    public final Room getNextRoom()
+    {
+        return getNextRoom(myRoom);
+    }
+
     private final void badRoomException(Room r)
     {
         System.out.println(name + ": " + description + " doesn't contain " + r.getName() + ": " + r.getDescription());
         System.out.println(name + ": " + description + " contains both " + myRoom.getName() + ": " + myRoom.getDescription() + " and " + myOtherRoom.getName() + ": " + myOtherRoom.getDescription());
         throw new UnsupportedOperationException("Door d.getNextRoom(Room x) requires x to be in d");
+    }
+
+    @Override
+    public String getActionDescription() {
+        return (isLocked(myRoom, "bar") ? "Unbar" : actionVerb) + " " + getArticle() + " " + getDescription() + " " + actLocPrep + " " + locReference; 
+    }
+
+    @Override 
+    protected boolean trigger() 
+    {
+        return !Utils.overlap(disablers, myRoom.all());
     }
 
     public static class Diagram

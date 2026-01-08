@@ -7,7 +7,6 @@ import adventuregame.Inventory;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.interactibles.wallinteractibles.Door;
-import adventuregame.items.Armor;
 
 //FOR PLAYER, FOLLOWERS, NPCS, AND ENEMIES
 
@@ -20,7 +19,8 @@ public abstract class Unit extends Effectable
 
     public abstract void updateUnit();
     
-    public abstract Inventory getInventory();
+    protected Inventory.Whole inv;
+    public abstract Inventory.Whole getInventory();
     public abstract int getWisdom();
 
     protected Room myRoom;
@@ -35,6 +35,4 @@ public abstract class Unit extends Effectable
 
     protected String deathMsg;
     public String getDeathMessage() { return deathMsg; }
-
-    protected Armor held = null;
 }

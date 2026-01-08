@@ -40,7 +40,7 @@ public class Game
             cur = null; isLaur = false;
 
             ArrayList<Room> playerRooms = new ArrayList<>();
-            for(Player p : allPlayers) if(!Utils.contains(playerRooms, p.getRoom())) playerRooms.add(p.getRoom());
+            for(Player p : allPlayers) if(!playerRooms.contains(p.getRoom())) playerRooms.add(p.getRoom());
 
             ArrayList<NonPlayer> nonpCache = new ArrayList<>();
 
@@ -94,7 +94,6 @@ public class Game
 
     public static void kill(Effectable e)
     {
-        System.out.println("kill("+e.getName()+")");
         Unit u = (Unit)e; //currently theres no non-unit effectables
         if(u instanceof Player)
         {

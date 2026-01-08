@@ -82,7 +82,7 @@ public abstract class Effectable extends Describable{
                 for(Map.Entry<Damage.Type,Float> def : ((Armor)i).getDefense().entrySet()) if(def.getKey() == d.getType()) 
                 {
                     float v = def.getValue();
-                    if(v > 0) Utils.slowPrintln(((Armor)i).getArmorDesc() + " blocked " + v + " " + Damage.descMap.get(def.getKey()) + " damage.");
+                    if(v > 0) Utils.slowPrintln(((Armor)i).getSimpleDesc() + " blocked " + v + " " + Damage.descMap.get(def.getKey()) + " damage.");
                     val -= v;
                 }
             }

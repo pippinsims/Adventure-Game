@@ -11,10 +11,11 @@ import adventuregame.Inventory;
 import adventuregame.Player;
 import adventuregame.Utils;
 import adventuregame.interactibles.SkeletonInteractible;
+import adventuregame.items.Armor;
 import adventuregame.items.Weapon;
 
 public abstract class NonPlayer extends Unit {
-    protected Inventory inv;
+    protected Inventory.Whole inv;
     protected int wisdom;
     private boolean hostile = false;
     public ArrayList<Dialogue> dialogues = new ArrayList<>();
@@ -30,7 +31,7 @@ public abstract class NonPlayer extends Unit {
 
     protected NonPlayer() {}
 
-    public NonPlayer(int health, Inventory inventory, int wisdom, String description, String pluralDescription, String name) 
+    public NonPlayer(int health, Inventory.Whole inventory, int wisdom, String description, String pluralDescription, String name) 
     { 
         this.maxHealth = health;
         this.health = health;
@@ -67,7 +68,7 @@ public abstract class NonPlayer extends Unit {
         }
     }
 
-    public void setDefaults(int m, Inventory i, int w, String des, String name)
+    public void setDefaults(int m, Inventory.Whole i, int w, String des, String name)
     {
         maxHealth = m;
         health = maxHealth;
@@ -117,7 +118,7 @@ public abstract class NonPlayer extends Unit {
         return names[Utils.rand.nextInt(names.length)];
     }
 
-    public Inventory getInventory() { return inv; }
+    public Inventory.Whole getInventory() { return inv; }
 
     public int getWisdom() { return wisdom; }
 
@@ -163,7 +164,7 @@ public abstract class NonPlayer extends Unit {
         }
         else if (!dialogues.isEmpty() && dialogues.getFirst().getInitiator() == this)
             performAction(Action.DIALOGUE);
-        else if (!enemies.isEmpty() && Utils.contains(myRoom.all(), enemies.getFirst()))
+        else if (!Utils.overlap(enemies, myRoom.all()))
             performAction(Action.ATTACK);
         else
             performAction(Action.NORMAL);
@@ -184,16 +185,16 @@ public abstract class NonPlayer extends Unit {
 
         public Goblin(int health) { 
             super();
-            setDefaults(health, new Inventory(5), 20, "goblin with pointy ears", null);
+            setDefaults(health, new Inventory.Whole(5), 20, "goblin with pointy ears", null);
         }
 
-        public Goblin(int health, Inventory inventory, int wisdom) { 
+        public Goblin(int health, Inventory.Whole inventory, int wisdom) { 
             super();
             setDefaults(health, inventory, wisdom, "goblin with pointy ears", null);
         }
 
         @Override
-        public void setDefaults(int m, Inventory i, int w, String des, String name)
+        public void setDefaults(int m, Inventory.Whole i, int w, String des, String name)
         {
             super.setDefaults(m, i, w, des, name);
 
@@ -237,15 +238,20 @@ public abstract class NonPlayer extends Unit {
         public Skeleton()
         {
             super();
-            setDefaults(20, new Inventory(6), 0, "skeleton", "Oess");
+            setDefaults(20, new Inventory.Whole(6), 0, "skeleton", "Oess");
             setHostile();
         }
 
         public Skeleton(Inventory i)
         {
             super();
-            setDefaults(20, new Inventory(6), 0, "skeleton", "Oess");
-            inv = i;
+            Inventory.Whole inv = new Inventory.Whole();
+            for(Item i1 : i.getItems()) 
+            {
+                inv.add(i1);
+                if(i1 instanceof Armor) inv.equip((Armor)i1);
+            }
+            setDefaults(20, inv, 0, "skeleton", "Oess");
             setHostile();
         }
 

@@ -89,26 +89,36 @@ public class Room extends Describable
     {
         if(i instanceof Door) doors.add((Door)i);
         interactibles.add(i);
+
+        update();
     }
 
     public void add(Unit u)
     {
-        if(u instanceof Player) 
-            players.add((Player)u);
-        else
-            NPCs.add((NonPlayer)u);
+        if(u instanceof Player) players.add((Player)u);
+        else NPCs.add((NonPlayer)u);
         u.setRoom(this);
+
+        update();
     }
 
     public boolean remove(Interactible i)
     {
-        return interactibles.remove(i);
+        boolean out = Utils.remove(interactibles, i);
+        if(i instanceof Door) Utils.remove(doors, i);
+        
+        update(); 
+        return out;
     }
 
     public boolean remove(Unit u)
     {
-        if(u instanceof Player) return players.remove(u);
-        else return NPCs.remove(u);
+        boolean out;
+        if(u instanceof Player) out = players.remove(u);
+        else out = NPCs.remove(u);
+        
+        update();
+        return out;
     }
 
     public ArrayList<Door> getDoors()
@@ -116,8 +126,25 @@ public class Room extends Describable
         return doors;
     }
 
-    public void updateDoors()
+    public ArrayList<Door> getLockedDoors()
     {
-        for (Door door : doors) door.setWall(this);
+        ArrayList<Door> locked = new ArrayList<>();
+        for(Door d : doors) if(d.isLocked(this)) locked.add(d);
+        return locked;
+    }
+
+    public void update()
+    {
+        updateDoors();
+
+        for(Interactible i : interactibles) if(i.trigger()) i.enable();
+    }
+
+    private void updateDoors()
+    {
+        for(Door d : doors) 
+        {
+            d.setWall(this);
+        }
     }
 }
