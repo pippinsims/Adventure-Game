@@ -7,7 +7,6 @@ import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.abstractclasses.Item.Actor;
 import adventuregame.abstractclasses.Item.Affector;
-import adventuregame.dynamicitems.GoldenPot;
 import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.*;
 
@@ -55,9 +54,6 @@ public class Player extends Unit
     public Player()
     {
         name = "Laur";
-        
-        inv.add(new Bananarang());
-        new GoldenPot(this);
 
         chanceOfPtolomy = 1f;
         ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
@@ -85,11 +81,11 @@ public class Player extends Unit
     {
         switch(name)
         {
-            case "Laur"   : description = "He is a strange-looking man with grimy fingernails"; break;
-            case "Nuel"   : description = "He is a tallish impolite man with a perminent sneer"; break; // He can pick locks
-            case "Valeent": description = "She is a perilous-looking woman with anger issues"; break; // Notes on Valeent, skill where she randomly increments her place in the turn order by 1
-            case "Peili"  : description = "She is a consternated woman with a bewildered look and a horrendous scar across her forehead"; break; // Lodestones in her baggage
-            case "Dormaah": description = "He is a stout fish of a man, knows wild things"; break;
+            case "Laur"   : male(); description = pronounsubj + " is a strange-looking man with grimy fingernails"; break;
+            case "Nuel"   : male(); description = pronounsubj + " is a tallish impolite man with a perminent sneer"; break; // He can pick locks
+            case "Valeent": female(); description = pronounsubj + " is a perilous-looking woman with anger issues"; break; // Notes on Valeent, skill where she randomly increments her place in the turn order by 1
+            case "Peili"  : female(); description = pronounsubj + " is a consternated woman with a bewildered look and a horrendous scar across her forehead"; break; // Lodestones in her baggage
+            case "Dormaah": male(); description = pronounsubj + " is a stout fish of a man, knows wild things"; break;
             default       : description = "They are a person"; break;
         }
     }
@@ -265,7 +261,7 @@ public class Player extends Unit
         
         ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
         
-        String[] spellTypes = new String[]{"mind death all foes", "FERDINAND'S FLAMBERGE"};
+        String[] spellTypes = new String[]{"mind death all foes", "relocate door bar open", "relocate all door bars open", "FERDINAND'S FLAMBERGE"};
         switch(Utils.linearFind(spellTypes, input))
         {
             case 0:
@@ -278,6 +274,27 @@ public class Player extends Unit
                 else for (Unit e : new ArrayList<>(targets)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl)), message); //need to instantiate every time, otherwise they'd all have the same instance of the effect
                 break;
             case 1:
+                boolean yes = false;
+                for(Door d : myRoom.getDoors()) if(d.isLocked(d.getNextRoom(myRoom), "bar"))
+                {    
+                    d.unlock(d.getNextRoom(myRoom), "bar");
+                    yes = true;
+                    break;
+                }
+                if(yes) Utils.slowPrintln("You successfully removed "+(myRoom.getDoors().size() == 1 ? "the" : "a")+" door bar.");
+                else Utils.slowPrintln("That does nothing.");
+                break;
+            case 2:
+                yes = false;
+                for(Door d : myRoom.getDoors()) if(d.isLocked(d.getNextRoom(myRoom), "bar"))
+                {    
+                    d.unlock(d.getNextRoom(myRoom), "bar");
+                    yes = true;
+                }
+                if(yes) Utils.slowPrintln("You successfully removed all door bars.");
+                else Utils.slowPrintln("That does nothing.");
+                break;
+            case 3:
                 Utils.slowPrintln("You are currently not powerful enough to use \""+spellTypes[1]+"\"");
                 break;
         }
@@ -416,8 +433,9 @@ public class Player extends Unit
 
     private void inventory()
     {
-        String[] n = Utils.namesOf(inv.getItems()),
-                 d = Utils.descriptionsOf(inv.getItems()),
+        ArrayList<Item> its = inv.all();
+        String[] n = Utils.namesOf(its),
+                 d = Utils.descriptionsOf(its),
                  prompts = new String[inv.size()];
         for(int i = 0; i < prompts.length; i++) prompts[i] = n[i] + ": " + d[i];
 

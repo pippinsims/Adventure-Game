@@ -86,10 +86,10 @@ public class Game
         }
     }
 
-    protected final static void addPlayer(Player p)
+    protected final static void addPlayer(Player p, Room r)
     {
         allPlayers.add(p);
-        curRoom.add(p); //TODO for now, all players spawn in curRoom
+        r.add(p);
     }
 
     public static void kill(Effectable e)

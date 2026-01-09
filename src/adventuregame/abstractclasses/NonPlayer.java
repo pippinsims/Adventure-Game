@@ -242,16 +242,11 @@ public abstract class NonPlayer extends Unit {
             setHostile();
         }
 
-        public Skeleton(Inventory i)
+        public Skeleton(Inventory.Whole i)
         {
             super();
-            Inventory.Whole inv = new Inventory.Whole();
-            for(Item i1 : i.getItems()) 
-            {
-                inv.add(i1);
-                if(i1 instanceof Armor) inv.equip((Armor)i1);
-            }
-            setDefaults(20, inv, 0, "skeleton", "Oess");
+            setDefaults(20, i, 0, "skeleton", "Oess");
+            for(Armor a : i.getArmor()) i.equip(a, true);
             setHostile();
         }
 

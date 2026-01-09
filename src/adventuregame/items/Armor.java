@@ -4,9 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import adventuregame.Damage;
-import adventuregame.Player;
 import adventuregame.Utils;
-import adventuregame.abstractclasses.Unit;
 
 public class Armor extends Equippable {
 
@@ -25,25 +23,11 @@ public class Armor extends Equippable {
 
     public Armor(String name, String description, String pluralDescription, MaterialType mat, Type.Armor type)
     {
-        super(name, description, pluralDescription, null);
-        this.name = name;
-        this.description = description;
-        this.pluralDescription = pluralDescription;
+        super(name, description, pluralDescription, type);
         this.mat = mat;
-        this.type = type;
-        simpleDesc = description;
     }
 
     public MaterialType getMat() { return mat; }
-
-    @Override
-    public void action(Unit u, boolean isFinal) {
-
-        if(isEquipped()) u.getInventory().unequip(this);
-        else u.getInventory().equip(this);
-
-        if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
-    }
 
     public Map<Damage.Type,Float> getDefense()
     {
@@ -68,7 +52,7 @@ public class Armor extends Equippable {
             case RUSTED:
                 break;
         }
-        switch((Type.Armor)type)
+        switch((Type.Armor)getPart())
         {
             case BOOTS: case GAUNTLETS: case HELMET: case LEGS:
                 for(Map.Entry<Damage.Type,Float> e : outd.entrySet()) outd.put(e.getKey(), e.getValue()*0.25f);
@@ -79,6 +63,4 @@ public class Armor extends Equippable {
 
         return outd;
     }
-
-    @Override public boolean isRequired() { return false; }
 }

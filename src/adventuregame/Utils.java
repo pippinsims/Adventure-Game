@@ -412,11 +412,23 @@ public class Utils {
         return false;
     }
 
-    public static boolean contains(ArrayList<? extends Describable> arr, Object toFind)
+    public static <T extends Describable> boolean contains(List<T> l, T toFind)
     {
-        for(Object o : arr) { if(o == toFind) return true; }
+        for(T o : l) { if(o == toFind) return true; }
         return false;
     }
+
+    public static boolean contains(List<?> l, Class<?> c) 
+    {
+        for(Object o : l) if(c.isInstance(o)) return true;
+        return false;
+    }
+
+    public static <T> boolean overlap(List<?> l1, List<?> l2) 
+    {
+        for(Object o1 : l1) for(Object o2 : l2) if(o1 == o2) return true;
+        return false;
+    } 
 
     public static boolean remove(ArrayList<? extends Describable> arr, Object toFind)
     {
@@ -435,18 +447,6 @@ public class Utils {
     //     scanner.close();
     //     scanner = new Scanner(System.in);
     // }
-
-    public static <T> boolean contains(List<?> l, Class<T> c) 
-    {
-        for (Object i : l) if (i.getClass().equals(c.getClass())) return true;
-        return false;
-    }
-
-    public static <T> boolean overlap(List<?> l1, List<?> l2) 
-    {
-        for(Object o1 : l1) for(Object o2 : l2) if(o1 == o2) return true;
-        return false;
-    } 
 
     public static <T, K extends T> K getFirst(ArrayList<? extends T> arr, Class<K> type) 
     {

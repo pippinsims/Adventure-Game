@@ -36,8 +36,8 @@ public class Environment extends Game
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
         curRoom = new Room(celld, celll, cellf, celln);
         Door d = new Door(curRoom, hall, Wall.EAST); 
-        // d.addLock(hall, "bar", true);
-        // d.addLock(curRoom, "normal", true);
+        d.addBar(hall, true);
+        d.addLock("normal", true);
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
         Room cell2 = new Room(celld, celll, cellf, celln);
@@ -250,7 +250,7 @@ public class Environment extends Game
                 if(Utils.rand.nextInt(10) == 9)
                 {
                     Utils.slowPrintln("You attempt to brush away the skeleton, but it reacts, bones clinking, and assumes a combat stance!");
-                    NonPlayer s = new NonPlayer.Skeleton(inv);
+                    NonPlayer s = new NonPlayer.Skeleton(new Inventory.Whole(inv));
                     getRoom().add(s);
                 }
                 else
@@ -459,13 +459,32 @@ public class Environment extends Game
 
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
-        addPlayer(new Player());
-        addPlayer(new Player("Nuel", 10));
-        addPlayer(new Player("Valeent", 10));
-        // addPlayer(new Player("Peili", 12));
-        Player peili = new Player("Peili", 12);
-        allPlayers.add(peili);
-        cell2.add(peili);
-        addPlayer(new Player("Dormaah", 10));
+        addPlayer(new Player(), curRoom);
+        allPlayers.getLast().getInventory().add(new Bananarang());
+        new GoldenPot(allPlayers.getLast());
+        
+        addPlayer(new Player("Nuel", 10), curRoom);
+        allPlayers.getLast().canPickLocks = true;
+        allPlayers.getLast().needsGlasses = true;
+        //TODO test inventory size limits
+
+        addPlayer(new Player("Valeent", 10), curRoom);
+        allPlayers.getLast().hasLongHair = true;
+        Equippable hairpin = new Equippable.Hat.Hairpin();
+        allPlayers.getLast().getInventory().add(hairpin);
+        allPlayers.getLast().getInventory().equip(hairpin, true);
+        
+        addPlayer(new Player("Peili", 12), cell2);
+        allPlayers.getLast().hasLongHair = true;
+        
+        addPlayer(new Player("Dormaah", 10), curRoom);
+        allPlayers.getLast().hasLongHair = true;
+
+        for(Player p : allPlayers)
+        {
+            Equippable rag = new Equippable.Dress("Prison Rag", "dirty, disgusting scrap of linen sewn for clothing", "prison rags");
+            p.getInventory().add(rag);
+            p.getInventory().equip(rag, true);
+        }
     }
 }

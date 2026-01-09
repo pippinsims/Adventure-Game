@@ -12,6 +12,21 @@ import adventuregame.interactibles.wallinteractibles.Door;
 
 public abstract class Unit extends Effectable
 {   
+    public boolean hasLongHair = false;
+    public boolean needsGlasses = false;
+    public boolean canPickLocks = false;
+
+    public String pronounsubj = "they", pronounobj = "them", possessiveadj = "their", possessivepro = "theirs", contraction = "they're";
+
+    protected void male()
+    {
+        pronounsubj = "he"; pronounobj = "him"; possessiveadj = "his"; possessivepro = "his"; contraction = "he's"; 
+    }
+    protected void female()
+    {
+        pronounsubj = "she"; pronounobj = "her"; possessiveadj = "her"; possessivepro = "hers"; contraction = "she's"; 
+    }
+
     public ArrayList<String> attributes = new ArrayList<>();
     protected Door lastDoor = null;
     public void setLastDoor(Door d) { lastDoor = d; }

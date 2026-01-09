@@ -9,8 +9,11 @@ import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.Utils.Tuple;
+import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallInteractible;
+import adventuregame.items.Equippable;
+import adventuregame.items.Equippable.Hat.Hairpin;
 
 public class Door extends WallInteractible
 {
@@ -125,15 +128,35 @@ public class Door extends WallInteractible
     public void action(Unit u)
     {
         Room r = u.getRoom();
-        if(isLocked(r, "bar")) 
+        if(isLocked(r, "bar"))
         {
             Utils.slowPrintln("You unbar the door.");
             unlock(r, "bar");
             if(u instanceof Player) ((Player)u).ableToAct = true;
         }
-        else if(isLocked(r) || isLocked(getNextRoom(r), "bar")) 
+        else if(isLocked(r))  
         {
-            Utils.slowPrintln("You attempt to use the door, but it's locked!");
+            if(u.canPickLocks && Utils.contains(u.getInventory().getItems(), Equippable.Hat.Hairpin.class))
+            {
+                Equippable.Hat.Hairpin h = null;
+                for(Item i : u.getInventory().getItems()) if(i instanceof Hairpin) { h = (Hairpin)i; break; }
+                if(new Lockpick(u, h).outcome)
+                {
+                    Utils.slowPrintln("You picked the lock!");
+                    for(String k : lockMap.get(r).keySet()) if(!k.equals("bar")) { unlock(k); break; }
+                }
+                else
+                    Utils.slowPrintln("You failed to pick the lock.");
+            }
+            else
+            {
+                Utils.slowPrintln("You attempt to use the door, but it's locked!");
+                if(u instanceof Player) ((Player)u).ableToAct = true;
+            }
+        }
+        else if((isLocked(getNextRoom(r), "bar")))
+        {
+            Utils.slowPrintln("You attempt to use the door, but it's barred from the other side!");
             if(u instanceof Player) ((Player)u).ableToAct = true;
         }
         else
@@ -177,17 +200,17 @@ public class Door extends WallInteractible
         lock(myOtherRoom, key);
     }
 
-    public final void addLock(String key, boolean lock)
+    public final void addLock(String key, boolean doLock)
     {
-        lockMap.get(myRoom).put(key, lock);
-        lockMap.get(myOtherRoom).put(key, lock);
+        lockMap.get(myRoom).put(key, doLock);
+        lockMap.get(myOtherRoom).put(key, doLock);
     }
 
-    public final void addBar(Room r, boolean lock)
+    public final void addBar(Room r, boolean doLock)
     {
         if(!lockMap.containsKey(r)) badRoomException(r);
 
-        lockMap.get(r).put("bar", lock);
+        lockMap.get(r).put("bar", doLock);
     }
 
     public final boolean isLocked(Room r)
@@ -237,7 +260,10 @@ public class Door extends WallInteractible
 
     @Override
     public String getActionDescription() {
-        return (isLocked(myRoom, "bar") ? "Unbar" : actionVerb) + " " + getArticle() + " " + getDescription() + " " + actLocPrep + " " + locReference; 
+        String verb = actionVerb;
+        if(isLocked(myRoom, "bar")) verb = "Unbar";
+        else if(isLocked(myRoom) && Game.cur.canPickLocks) verb = "Pick the lock of";
+        return verb + " " + getArticle() + " " + getDescription() + " " + actLocPrep + " " + locReference; 
     }
 
     @Override 
@@ -314,6 +340,28 @@ public class Door extends WallInteractible
             for(int i = 0; i < mag; i++) if(i < mag/2) start += "─"; else end += "─";
 
             return dif > 0 ? new Tuple<>(f, start + s + end) : new Tuple<>(start + f + end, s);
+        }
+    }
+
+    /*
+    ─│┌┐└┘━┃┏┓┗┛═║╔╗╚╝
+    maybe a rotate thing?
+            ┌─━─┐
+            │┌─╗│
+            ││ ││
+            │└━┘║
+            └───┘
+     */
+    public static class Lockpick
+    {
+        public final boolean outcome;
+
+        public Lockpick(Unit u, Item pick)
+        {
+            int chance = 0;
+            if(pick instanceof Hairpin) chance = 3;
+
+            outcome = Utils.rand.nextInt(10) < chance;
         }
     }
 }
