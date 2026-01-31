@@ -10,7 +10,7 @@ public class Utils {
 
     public static final Random rand = new Random();
     public static Scanner scanner = new Scanner(System.in);
-    public static final int MAX_PRINT_DELAY = 1; //50 for normal gameplay
+    public static final int MAX_PRINT_DELAY = 50;//1; //50 for normal gameplay
     public static int currentPrintDelay = MAX_PRINT_DELAY;
 
     public static String[] names1 = new String[]{"Bo","Kua","An","Lis","Yi"};
@@ -81,11 +81,11 @@ public class Utils {
 
             i++;
         }
-    }
+    }//TODO generalize these two
 
     public static void slowPrintNameList(ArrayList<? extends Describable> arr)
     {
-        Map<Describable, Integer> m = countsOf(arr);
+        Map<Describable, Integer> m = countsOfByName(arr);
 
         int i = 0;
         String a, d;
@@ -122,6 +122,19 @@ public class Utils {
         Map<Describable,Integer> descs = new LinkedHashMap<>();
         for(Tuple<Describable, Integer> v : strs.values()) descs.put(v.t1, v.t2);
         return descs;
+    }//TODO generalize these two
+
+    public static Map<Describable, Integer> countsOfByName(ArrayList<? extends Describable> arr)
+    {
+        Map<String, Tuple<Describable,Integer>> strs = new LinkedHashMap<>(); //preserve insertion order
+        for (Describable d : arr) 
+        {
+            String desc = d.getName() + (d instanceof WallInteractible ? ((WallInteractible)d).locReference : "");
+            strs.put(desc, new Tuple<>(d, strs.getOrDefault(desc, new Tuple<>(d,0)).t2 + 1));
+        }
+        Map<Describable,Integer> descs = new LinkedHashMap<>();
+        for(Tuple<Describable, Integer> v : strs.values()) descs.put(v.t1, v.t2);
+        return descs;
     }
 
     public static void slowPrint(String output)
@@ -148,8 +161,10 @@ public class Utils {
     {   
         for(char c : output.toCharArray())
         {  
+            
             try
             {
+                if(c == '.') System.out.print(c);
                 if(c == '\n' || c == '.') Thread.sleep(sleepDuration * 5);
                 else Thread.sleep(sleepDuration);
             }
@@ -158,7 +173,7 @@ public class Utils {
                 throw new Error(e.getMessage() + " while trying to slowPrint '" + output + "'");
             }
 
-            System.out.print(c);
+            if(c != '.') System.out.print(c);
         }
     }
 

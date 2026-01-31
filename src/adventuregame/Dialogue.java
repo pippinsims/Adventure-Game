@@ -194,12 +194,13 @@ public class Dialogue
     public static void playersToRoom(Player to, Room r)
     {
         Utils.slowPrintln("All players in " + Utils.possessiveOf(to.getName()) + " room moved back to " + r.getName());
-        for(Player p : to.getRoom().players) r.add(p);
+        for(Player p : to.getRoom().players) r.add(p); //TODO doesn't work at all
         to.getRoom().players.clear();
     }
 
     public static void aggroAllOfSameType(Unit from)
     {
-        for(NonPlayer to : from.getRoom().NPCs) if(from.getClass() == to.getClass()) to.setHostile();
+        //TODO make this work for any type
+        for(NonPlayer to : from.getRoom().NPCs) if(to instanceof NonPlayer.Goblin) to.setHostile();
     }
 }

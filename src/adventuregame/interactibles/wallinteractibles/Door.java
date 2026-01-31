@@ -18,7 +18,7 @@ import adventuregame.items.Equippable.Hat.Hairpin;
 public class Door extends WallInteractible
 {
     Room myOtherRoom;
-    static int doornum = 0;
+    private static int doornum = 0;
     private ArrayList<Unit> disablers = new ArrayList<>();
     private final Map<Room, Map<String, Boolean>> lockMap;
 
@@ -37,7 +37,7 @@ public class Door extends WallInteractible
         descMap.put("Laur", new String[]{"ordinary ol\' creaky slab o\' wood" , "regular ol\' creaky plank" , "unassuming, decrepit wooden door" , "Boris"  , "doors"}[r]);
         pDescMap.put("Laur", new String[]{"ordinary ol\' creaky slabs o\' wood", "regular ol\' creaky planks", "unassuming, decrepit wooden doors", "Borises", "doorses"}[r]);
 
-        name = "door"+doornum++;
+        // name = "door"+doornum++;
 
         this.wall = wall;
 
@@ -136,12 +136,17 @@ public class Door extends WallInteractible
         }
         else if(isLocked(r))  
         {
-            if(u.canPickLocks && Utils.contains(u.getInventory().getItems(), Equippable.Hat.Hairpin.class))
+            if(u.canPickLocks && Utils.contains(u.getInventory().items, Equippable.Hat.Hairpin.class))
             {
                 Equippable.Hat.Hairpin h = null;
-                for(Item i : u.getInventory().getItems()) if(i instanceof Hairpin) { h = (Hairpin)i; break; }
+                for(Item i : u.getInventory().items) if(i instanceof Hairpin) { h = (Hairpin)i; break; }
                 if(new Lockpick(u, h).outcome)
                 {
+                    if(h.level < 9) 
+                    {
+                        Utils.slowPrintln("You became more proficient at using this hairpin as a lock pick!");
+                        h.level++; //TODO temporary leveling system
+                    }
                     Utils.slowPrintln("You picked the lock!");
                     for(String k : lockMap.get(r).keySet()) if(!k.equals("bar")) { unlock(k); break; }
                 }
@@ -359,7 +364,7 @@ public class Door extends WallInteractible
         public Lockpick(Unit u, Item pick)
         {
             int chance = 0;
-            if(pick instanceof Hairpin) chance = 3;
+            if(pick instanceof Hairpin) chance = ((Hairpin)pick).level;
 
             outcome = Utils.rand.nextInt(10) < chance;
         }

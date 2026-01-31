@@ -11,7 +11,7 @@ public abstract class Item extends Describable
     protected Inventory parentInv;
     public void setParentInv(Inventory i) { parentInv = i; } 
 
-    public final Item clone() { return new ArrayList<Item>(List.of(this)).getFirst(); };
+    public static <T extends Item> T clone(T toClone) { return new ArrayList<T>(List.of(toClone)).getFirst(); };
     public boolean isDynamicItem() { return false; }
 
     public static abstract class Affector extends Item

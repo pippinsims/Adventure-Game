@@ -358,15 +358,12 @@ public class Environment extends Game
             "Chamber"
         );
         
-        ArrayList<NonPlayer> ens = new ArrayList<>();
-        ens.add(new NonPlayer.Goblin(3));
-        ens.add(new NonPlayer.Goblin(3));
-        ens.add(new NonPlayer.Goblin(3));
-
-        NonPlayer e = ens.get(0);
-        e.getInventory().add(new DoorKey("fancy"));
+        NonPlayer e = new NonPlayer.Goblin(3);
+        e.getInventory().add(new DoorKey("fancy")); //TODO make a way of getting this even if he dies
 
         chamber.add(e);
+        chamber.add(new NonPlayer.Goblin(3));
+        chamber.add(new NonPlayer.Goblin(3));
         for(NonPlayer n : chamber.NPCs) for(NonPlayer n1 : chamber.NPCs) if(n != n1) n.friends.add(n1);
         e.dialogues.add(
             new Dialogue(
@@ -399,12 +396,33 @@ public class Environment extends Game
                                         Dialogue.aggroAllOfSameType(parent.actors.get(actor));
                                     }
                                 },
-                                new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); } },
-                                new Dialogue.L<Room>(curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); } }
+                                //new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); } },
+                                new Dialogue.X(0, "You die!!") { 
+                                    @Override public void output(Dialogue parent) 
+                                    {
+                                        Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
+                                        Dialogue.aggroAllOfSameType(parent.actors.get(actor));
+                                    }
+                                },
+                                //new Dialogue.L<Room>(curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); } }
+                                new Dialogue.X(0, "You die!!") { 
+                                    @Override public void output(Dialogue parent) 
+                                    {
+                                        Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
+                                        Dialogue.aggroAllOfSameType(parent.actors.get(actor));
+                                    }
+                                }
                             }
-                        ),
-                        new Dialogue.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true) {
-                            @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
+                        ),//TODO MAKE DIALOGUE NODES ALL FUNCTION!
+                        // new Dialogue.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true) {
+                        //     @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
+                        // },
+                        new Dialogue.X(0, "You shold shut that trap and gloink back into your cell is what!") { 
+                            @Override public void output(Dialogue parent) 
+                            {
+                                Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
+                                Dialogue.aggroAllOfSameType(parent.actors.get(actor));
+                            }
                         },
                         new Dialogue.X() { 
                             @Override public void output(Dialogue parent) 
@@ -446,7 +464,7 @@ public class Environment extends Game
         new Door(chamber, new Room(), Wall.WEST).addLock("fancy", true);
         new Door(chamber, joiner1, Wall.EAST);
 
-        for(Door d1 : chamber.getDoors()) for(NonPlayer n : ens) d1.disabler(n);
+        for(Door d1 : chamber.getDoors()) for(NonPlayer n : chamber.NPCs) if(n instanceof NonPlayer.Goblin) d1.disabler(n);
 
         Room treasureRoom = new Room("a room filled to the brim in a plenteous manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion",
                                      "Treasure Room");
@@ -459,32 +477,35 @@ public class Environment extends Game
 
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
         
-        addPlayer(new Player(), curRoom);
-        allPlayers.getLast().getInventory().add(new Bananarang());
-        new GoldenPot(allPlayers.getLast());
-        
-        addPlayer(new Player("Nuel", 10), curRoom);
-        allPlayers.getLast().canPickLocks = true;
-        allPlayers.getLast().needsGlasses = true;
-        //TODO test inventory size limits
+        Player laur = new Player(),
+               nuel = new Player("Nuel", 10),
+            valeent = new Player("Valeent",10), 
+              peili = new Player("Peili", 12); 
+            // dormaah = new Player("Dormaah", 10);
 
-        addPlayer(new Player("Valeent", 10), curRoom);
-        allPlayers.getLast().hasLongHair = true;
-        Equippable hairpin = new Equippable.Hat.Hairpin();
-        allPlayers.getLast().getInventory().add(hairpin);
-        allPlayers.getLast().getInventory().equip(hairpin, true);
+        Equippable.Dress rag = new Equippable.Dress("Prison Rag", "dirty, disgusting scrap of linen sewn for clothing", "prison rags");
         
-        addPlayer(new Player("Peili", 12), cell2);
-        allPlayers.getLast().hasLongHair = true;
-        
-        addPlayer(new Player("Dormaah", 10), curRoom);
-        allPlayers.getLast().hasLongHair = true;
+        laur.getInventory().addAndEquip(Item.clone(rag), true);
+        laur.getInventory().add(new Bananarang());
+        new GoldenPot(laur);
+        addPlayer(laur, curRoom);
 
-        for(Player p : allPlayers)
-        {
-            Equippable rag = new Equippable.Dress("Prison Rag", "dirty, disgusting scrap of linen sewn for clothing", "prison rags");
-            p.getInventory().add(rag);
-            p.getInventory().equip(rag, true);
-        }
+        nuel.canPickLocks = true;
+        nuel.needsGlasses = true;
+        nuel.getInventory().addAndEquip(Item.clone(rag), true);
+        addPlayer(nuel, curRoom);
+
+        valeent.hasLongHair = true;
+        valeent.getInventory().addAndEquip(Item.clone(rag), true);
+        valeent.getInventory().addAndEquip(new Equippable.Hat.Hairpin(), true);
+        addPlayer(valeent, curRoom);
+        
+        peili.hasLongHair = true;
+        peili.getInventory().addAndEquip(Item.clone(rag), true);
+        addPlayer(peili, cell2);
+        
+        // dormaah.hasLongHair = true;
+        // dormaah.getInventory().addAndEquip(Item.clone(rag), true);
+        // addPlayer(dormaah, curRoom);
     }
 }

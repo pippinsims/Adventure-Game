@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Room extends Describable
 {
     public static ArrayList<Room> rooms = new ArrayList<>();
+    private static int roomnum = 0;
 
     public  ArrayList<Player>       players       = new ArrayList<>();
     public  ArrayList<NonPlayer>    NPCs          = new ArrayList<>();
@@ -18,8 +19,6 @@ public class Room extends Describable
     private ArrayList<Player>       familiars     = new ArrayList<>();
     private String familiarDescription;
 
-    private static int roomnum = 0;
-
     public Room()
     {
         name = "Bare";
@@ -27,7 +26,7 @@ public class Room extends Describable
         descMap.put("Laur", "an... empty place");
         familiarDescription = "Bare room.";
         rooms.add(this);
-        name = "room"+roomnum++;
+        // name = "room"+roomnum++;
     }
 
     public Room(String d, String l, String f, String n)
@@ -37,7 +36,7 @@ public class Room extends Describable
         familiarDescription = f;
         name = n;
         rooms.add(this);
-        name = "room"+roomnum++;
+        // name = "room"+roomnum++;
     }
 
     public Room(String d, String f, String n)
@@ -46,7 +45,7 @@ public class Room extends Describable
         familiarDescription = f;
         name = n;
         rooms.add(this);
-        name = "room"+roomnum++;
+        // name = "room"+roomnum++;
     }
 
     public Room(String d, String n)
@@ -55,7 +54,7 @@ public class Room extends Describable
         familiarDescription = n + ".";
         name = n;
         rooms.add(this);
-        name = "room"+roomnum++;
+        // name = "room"+roomnum++;
     }
 
     public ArrayList<Unit> all()
@@ -74,7 +73,7 @@ public class Room extends Describable
 
     public boolean doFirstDialogue()
     {
-        for(NonPlayer n : NPCs) if(n.dialogues.getFirst() != null) 
+        for(NonPlayer n : NPCs) if(!n.dialogues.isEmpty()) 
         { 
             n.dialogues.getFirst().next();
             n.dialogues.remove(0); 

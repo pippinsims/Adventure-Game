@@ -14,89 +14,67 @@ import adventuregame.items.Equippable.Type.Clothes;
 import adventuregame.items.Weapon;
 
 public class Inventory {
-    protected ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+    public final ArrayList<Item> items;
     protected int maxSize;
     private int maxUnequippedArmor;
 
     public Inventory(int size) 
     { 
+        items = new ArrayList<>();
         maxSize = size; 
         maxUnequippedArmor = size; 
     }
 
     public Inventory(int size, int uarmor) 
     { 
+        items = new ArrayList<>();
         maxSize = size; 
         maxUnequippedArmor = uarmor; 
     }
 
     public Inventory(Inventory i)
     {
-        maxSize = i.size();
-        maxUnequippedArmor = i.maxUnequippedArmor;
         items = new ArrayList<>(i.items);
-        for(Item i1 : getItems()) i1.setParentInv(this);
+        maxSize = items.size();
+        maxUnequippedArmor = i.maxUnequippedArmor;
+        for(Item i1 : items) i1.setParentInv(this);
     }
 
     public int getMaxUnequippedArmor() { return maxUnequippedArmor; }
 
+    public Item at(int i)
+    {
+        return items.get(i);
+    }
+
     public int size() { return items.size(); }
-
-    public Item at(int i) { return items.get(i).item(); }
-
-    public int countOf(Item i)
-    {
-        for(ItemStack s : items) if(s.is(i)) return s.count();
-        return 0;
-    }
-
-    public int indexOf(Item i)
-    {
-        for(int j = 0; j < items.size(); j++) if(items.get(j).is(i)) return j;
-        return -1;
-    }
-
-    public int countAt(int i) { return items.get(i).count(); }
-
-    public ArrayList<Item> getItems()
-    {
-        ArrayList<Item> items = new ArrayList<>();
-        for(ItemStack s : this.items) items.add(s.item());
-        return items;
-    }
 
     public ArrayList<Weapon> getWeapons()
     {
         ArrayList<Weapon> weps = new ArrayList<>();
-        for(ItemStack s : this.items) if(s.item() instanceof Weapon) weps.add((Weapon)s.item());
+        for(Item i : this.items) if(i instanceof Weapon) weps.add((Weapon)i);
         return weps;
     }
 
     public boolean fullUnequippedArmor()
     {
         int sum = 0;
-        for(Item i : getItems()) if(i instanceof Armor && ((Armor)i).isEquipped()) { sum++; if(sum == maxUnequippedArmor) return true;}
+        for(Item i : items) if(i instanceof Armor) { sum++; if(sum == maxUnequippedArmor) return true;} //items wouldn't contain equipped armor
         return false;
     }
 
     public boolean isEmpty() { return items.isEmpty(); }
 
-    public boolean isFull() { return size() == max(); }
+    public boolean isFull() { return items.size() == max(); }
 
     public int max() { return maxSize; }
 
     public boolean add(Item i)
     {
-        for (ItemStack s : items) if(s.is(i))
-        {
-            s.inc();
-            return true;
-        }
-        
         if(max() > items.size()) 
         {
             i.setParentInv(this);
-            items.add(new ItemStack(i, 1));
+            items.add(i);
             return true;
         }
 
@@ -105,17 +83,9 @@ public class Inventory {
 
     public boolean remove(Item i)
     {
-        for(ItemStack s : items) if(s.is(i) && s.dec()) 
-        {
-            s.i.setParentInv(null);
-            return items.remove(s);
-        }
-        return false;
-    }
-
-    public void decreaseAt(int i)
-    {
-        if(items.get(i).dec()) items.remove(i);
+        boolean out = items.remove(i);
+        if(out) i.setParentInv(null);
+        return out;
     }
 
     public static class Trade
@@ -133,7 +103,7 @@ public class Inventory {
 
         final Describable receiver, giver;
         final Inventory rinv, ginv;
-        final String verb, action, pronoun, past, contraction;
+        final String verb, action, possessiveadj, past, contraction, pronoun;
         final boolean take;
 
         /** {@code Type.GIVE} = one -> another
@@ -145,6 +115,7 @@ public class Inventory {
             else if(isEmpty(another.t2)) take = false;
             else take = Utils.promptList("What do you do?", new String[] {"Take","Give"}) == 0;
 
+            pronoun = ((another.t1 instanceof Unit) ? ((Unit)another.t1).pronounobj : "");
             if(take)
             {
                 giver = another.t1;
@@ -154,7 +125,7 @@ public class Inventory {
                 verb = "Take";
                 action = "take";
                 past = "took";
-                pronoun = "Your";
+                possessiveadj = "Your";
                 contraction = "You're";
             }
             else
@@ -164,31 +135,33 @@ public class Inventory {
                 receiver = another.t1;
                 rinv = another.t2;
                 verb = "Give";
-                action = "give " + ((another.t1 instanceof Unit) ? ((Unit)another.t1).pronounobj : ""); 
+                action = "give " + pronoun;
                 past = "gave";
-                pronoun = ((another.t1 instanceof Unit) ? ((Unit)another.t1).possessiveadj : "Its");
+                possessiveadj = ((another.t1 instanceof Unit) ? ((Unit)another.t1).possessiveadj : "Its");
                 contraction = ((another.t1 instanceof Unit) ? ((Unit)another.t1).contraction : "It's");
             }
 
             if(isEmpty(ginv) && isEmpty(rinv)) { Utils.slowPrintln("Neither of you have items!"); return; }
 
-            if(rinv.isFull()) {Utils.slowPrintln(pronoun+" inventory is full! You cannot "+action+" items."); return;}
+            if(rinv.isFull()) {Utils.slowPrintln(possessiveadj+" inventory is full! You cannot "+action+" items."); return;}
             
-            ArrayList<Item> its = ginv.getItems();
+            ArrayList<Item> its = ginv.items;
             for(Item i : its) Utils.slowPrintln(i.getDescription());
             if(its.size() == 1) { transaction(its.getFirst()); return; }
             
             if(Utils.promptList("You can:", new String[] {verb+" all", verb+" one"}) == 1) 
-            {
                 transaction(its.get(Utils.promptList("Which item?", Utils.descriptionsOf(its))));
-                return;
-            }
-            for(Item i : new ArrayList<>(its)) if(!rinv.isFull())
-                transaction(i);
             else
             {
-                Utils.slowPrint(pronoun+" inventory is full! You only "+past+" some of the items.");
-                break;
+                for(Item i : new ArrayList<>(its)) 
+                {
+                    if(rinv.isFull())
+                    {
+                        Utils.slowPrint(possessiveadj+" inventory is full! You only " + past + (!take ? " " + pronoun : "") + " some of the items.");
+                        break;
+                    }
+                    else transaction(i);
+                }
             }
         }
 
@@ -203,6 +176,7 @@ public class Inventory {
                 if(isArmorForUnit) ((Armor)i).action((Unit)receiver, true);
                 ginv.remove(i);
 
+                
                 if(giver instanceof Unit && receiver instanceof Unit)
                     Utils.slowPrintln("You " + past + " " + (take ? Utils.possessiveOf(giver.getName()) : receiver.getName()) + " " + i.getName() + "!");
             }
@@ -210,7 +184,7 @@ public class Inventory {
 
         private boolean isEmpty(Inventory i)
         {
-            if(i instanceof Whole) return i.getItems().isEmpty();
+            if(i instanceof Whole) return i.items.isEmpty();
             else return i.isEmpty();
         }
     }
@@ -239,20 +213,18 @@ public class Inventory {
 
         public Whole(Inventory i)
         {
-            super(i.size(), i.getMaxUnequippedArmor());
+            super(i);
             wrists  = new Inventory(2);
             rings   = new Inventory(6);
             beltInv = new Inventory(10);
-            items   = new ArrayList<>(i.items);
         }
 
         public Whole(Whole i)
         {
-            super(i.size(), i.getMaxUnequippedArmor());
+            super(i);
             wrists  = new Inventory(i.wrists);
             rings   = new Inventory(i.rings);
             beltInv = new Inventory(i.beltInv);
-            items   = new ArrayList<>(i.items);
         }
 
         public ArrayList<Armor> getArmor()
@@ -313,9 +285,9 @@ public class Inventory {
         public ArrayList<Equippable> getEquipped()
         {
             ArrayList<Equippable> eqs = getNonArmor();
-            for(Item i : wrists .getItems()) eqs.add((Equippable)i);
-            for(Item i : rings  .getItems()) eqs.add((Equippable)i);
-            for(Item i : beltInv.getItems()) eqs.add((Equippable)i);
+            for(Item i : wrists .items) eqs.add((Equippable)i);
+            for(Item i : rings  .items) eqs.add((Equippable)i);
+            for(Item i : beltInv.items) eqs.add((Equippable)i);
             eqs.addAll(getArmor());
 
             return eqs;
@@ -383,28 +355,22 @@ public class Inventory {
         }
 
         public ArrayList<Item> all() {
-            ArrayList<Item> out = super.getItems();
+            ArrayList<Item> out = new ArrayList<>(items);
             out.addAll(getEquipped());
             return out;
+        }
+
+        public void addAndEquip(Equippable e, boolean silent)
+        {
+            //TODO add fullness detection so this can still work if full
+            add(e);
+            equip(e, silent);
         }
 
         @Override public int size() { return all().size(); }
 
         @Override public Item at(int i) { return all().get(i); }
 
-        @Override public boolean isFull() { return size() == max() + 15; }
-
         @Override public boolean isEmpty() { return all().isEmpty(); }
     }
-}
-
-class ItemStack
-{
-    Item i; int c;
-    ItemStack(Item item, int count) { i = item; c = count; }
-    void    inc()                   { c++;                 }
-    boolean dec()                   { return --c == 0;     }
-    Item    item()                  { return i;            }
-    int     count()                 { return c;            }
-    boolean is(Item i)              { return this.i == i;  }
 }

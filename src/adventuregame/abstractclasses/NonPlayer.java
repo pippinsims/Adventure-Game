@@ -154,7 +154,16 @@ public abstract class NonPlayer extends Unit {
 
     public void chooseAction()
     {
-        if(hostile) for(Player p : myRoom.players) if(!enemies.contains(p)) enemies.add(p);
+        if(hostile)
+        {
+            for(Player p : myRoom.players)
+            { 
+                if(!enemies.contains(p)) 
+                {
+                    enemies.add(p);
+                }
+            }
+        }
         for(Unit f : friends) if(f instanceof NonPlayer) for(Unit e : ((NonPlayer)f).enemies) if(!enemies.contains(e)) enemies.add(e);
 
         if(isStunned || myRoom.players.isEmpty())
@@ -164,7 +173,7 @@ public abstract class NonPlayer extends Unit {
         }
         else if (!dialogues.isEmpty() && dialogues.getFirst().getInitiator() == this)
             performAction(Action.DIALOGUE);
-        else if (!Utils.overlap(enemies, myRoom.all()))
+        else if (Utils.overlap(enemies, myRoom.all()))
             performAction(Action.ATTACK);
         else
             performAction(Action.NORMAL);

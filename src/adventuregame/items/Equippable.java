@@ -92,6 +92,8 @@ public abstract class Equippable extends Actor {
 
         public static class Hairpin extends Hat
         {
+            public int level = 3;
+
             public Hairpin()
             {
                 super("Hair pin", "tapering wooden pin to hold back long hair", "hair pins");

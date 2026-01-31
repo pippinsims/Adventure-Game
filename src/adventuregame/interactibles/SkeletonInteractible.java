@@ -79,7 +79,7 @@ public class SkeletonInteractible extends InventoryInteractible
     {
         put(simpleDesc);
 
-        for(Item i : inv.getItems()) if(i instanceof Armor)
+        for(Item i : inv.items) if(i instanceof Armor)
         {
             Armor a = (Armor)i;
             Armor.MaterialType mat = a.getMat();

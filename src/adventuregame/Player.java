@@ -16,7 +16,7 @@ public class Player extends Unit
 {
     private float chanceOfPtolomy = .0f;
     private boolean ptolomyIsPresent = false;
-    private int ptolomyPrintLength;
+    private int ptolomyPrintLength = Utils.currentPrintDelay;
 
     public int doorMoves;
     public boolean ableToAct = false;
@@ -57,7 +57,6 @@ public class Player extends Unit
 
         chanceOfPtolomy = 1f;
         ptolomyIsPresent = Utils.rand.nextFloat() <= chanceOfPtolomy;
-        ptolomyPrintLength = 0;//50;
         deathMsg = name + " died.";
         setDescription();
     }
@@ -244,7 +243,7 @@ public class Player extends Unit
         {
             if(possibilities.length == 2) 
             {
-                Utils.slowPrintln("Ptolomy's spirit... " + (Utils.rand.nextFloat() <= .5 ? possibilities[0] : possibilities[1]), ptolomyPrintLength + '\n');
+                Utils.slowPrintln("Ptolomy's spirit... " + (Utils.rand.nextFloat() <= .5 ? possibilities[0] : possibilities[1]) + '\n', ptolomyPrintLength);
             }
             else 
             {
@@ -286,9 +285,12 @@ public class Player extends Unit
                 break;
             case 2:
                 yes = false;
-                for(Door d : myRoom.getDoors()) if(d.isLocked(d.getNextRoom(myRoom), "bar"))
+                for(Door d : myRoom.getDoors()) if(d.isLocked(d.getNextRoom(myRoom), "bar") || d.isLocked(myRoom, "bar"))
                 {    
-                    d.unlock(d.getNextRoom(myRoom), "bar");
+                    if(d.isLocked(d.getNextRoom(myRoom), "bar"))
+                        d.unlock(d.getNextRoom(myRoom), "bar");
+                    if(d.isLocked(myRoom, "bar"))//TODO optimize this mess
+                        d.unlock(d.myRoom, "bar");
                     yes = true;
                 }
                 if(yes) Utils.slowPrintln("You successfully removed all door bars.");
