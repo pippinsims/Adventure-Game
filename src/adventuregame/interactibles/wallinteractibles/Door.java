@@ -18,7 +18,7 @@ import adventuregame.items.Equippable.Hat.Hairpin;
 public class Door extends WallInteractible
 {
     Room myOtherRoom;
-    private static int doornum = 0;
+    // private static int doornum = 0; //TODO make "playtest" functionality
     private ArrayList<Unit> disablers = new ArrayList<>();
     private final Map<Room, Map<String, Boolean>> lockMap;
 
@@ -37,7 +37,7 @@ public class Door extends WallInteractible
         descMap.put("Laur", new String[]{"ordinary ol\' creaky slab o\' wood" , "regular ol\' creaky plank" , "unassuming, decrepit wooden door" , "Boris"  , "doors"}[r]);
         pDescMap.put("Laur", new String[]{"ordinary ol\' creaky slabs o\' wood", "regular ol\' creaky planks", "unassuming, decrepit wooden doors", "Borises", "doorses"}[r]);
 
-        // name = "door"+doornum++;
+        // name = "door"+doornum++; //TODO make "playtest" functionality
 
         this.wall = wall;
 

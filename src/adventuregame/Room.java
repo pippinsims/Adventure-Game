@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Room extends Describable
 {
     public static ArrayList<Room> rooms = new ArrayList<>();
-    private static int roomnum = 0;
+    // private static int roomnum = 0; //TODO make "playtest" functionality
 
     public  ArrayList<Player>       players       = new ArrayList<>();
     public  ArrayList<NonPlayer>    NPCs          = new ArrayList<>();
@@ -26,7 +26,7 @@ public class Room extends Describable
         descMap.put("Laur", "an... empty place");
         familiarDescription = "Bare room.";
         rooms.add(this);
-        // name = "room"+roomnum++;
+        // name = "room"+roomnum++; //TODO make "playtest" functionality
     }
 
     public Room(String d, String l, String f, String n)
@@ -36,7 +36,7 @@ public class Room extends Describable
         familiarDescription = f;
         name = n;
         rooms.add(this);
-        // name = "room"+roomnum++;
+        // name = "room"+roomnum++; //TODO make "playtest" functionality
     }
 
     public Room(String d, String f, String n)
@@ -45,7 +45,7 @@ public class Room extends Describable
         familiarDescription = f;
         name = n;
         rooms.add(this);
-        // name = "room"+roomnum++;
+        // name = "room"+roomnum++; //TODO make "playtest" functionality
     }
 
     public Room(String d, String n)
@@ -54,7 +54,7 @@ public class Room extends Describable
         familiarDescription = n + ".";
         name = n;
         rooms.add(this);
-        // name = "room"+roomnum++;
+        // name = "room"+roomnum++; //TODO make "playtest" functionality
     }
 
     public ArrayList<Unit> all()

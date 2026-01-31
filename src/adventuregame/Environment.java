@@ -31,6 +31,95 @@ public class Environment extends Game
 
     private static void generateMap()
     {
+        // Room room5 = new Room("A hallway lined with cells for prisoners; none hold anything of import.","Hallway of Prison cells");
+        
+        // //cledobl room, Room room4 = new Room("A old room left to what ever hides in the corners of this keep", "The wriggler has had his picnic with this Bort", "It is the old hidden room", "Cledobl", false);
+        // // new Door(room5, room4, Wall.SOUTH);
+
+        // Room room2 = new Room("A small hall containing half of a tapestry. This half shows an empty throne for a queen. The throne is extravagant. the tapestry is ornately  with different twisting designs. This Hall leads to a door to the east", "A winding trail contains The clothing of a bull, spotted with mean thoughts; a wrong place for little clouds is holds no vapor. A vertical lid is located at the end of the way.", "The hall with a half of a tapestry showing an empty queens throne. At the end of the hall is a door.", "A hall with the Torn Tapestry");
+        // new Door(room2, room5, Wall.WEST);
+        // new Torch(room2, Wall.SOUTH);
+
+        // Room room3 = new Room("A bare room of little interest", "a bag of flies", "an empty room", "iron sword room");
+        // new Door(room3, room2, Wall.WEST);
+        // new ItemHolder(new Sword(4), room3, "on", "the floor");
+
+        // Room room6 = new Room("A room that stinks of goblins", "The stinky room.", "goblin room");
+        // new Door(room5, room6, Wall.NORTH);
+        // Room room8 = new Room("A hallway that is missing its north wall. From here you can see that you are deep underground due to a large cavern.", "A hollow cube missing its nose, and eyes, and mouth, and other stuff", "Its the hallway missing a wall showing the deep cavern", "the broken wall room");
+        // new Door(room6, room8, Wall.NORTH);
+        
+        // // Room room9 = mushroomroom
+        // // new Door(room8, room9, Wall.EAST);
+
+        // Room room10 = new Room("There is dining hall with a crackling fireplace. The room’s smells make your stomachs churn due to the lack of real food.", "A Trystal shines, on a place for things with legs. ", "Its the dining hall", "dining hall");
+        // new Door(room8, room10, Wall.SOUTH);
+
+        // Room room11 = new Room("A plain old hallway", "a walk for old men", "still a boring hallway", "a hallway");
+        // new Door(room10, room11, Wall.SOUTH);
+
+        // Room room12 = new Room("A tall stairway connecting the first and second floors, some of the stairs have fallen to disrepair. Stay close to the wall or risk falling to your death.", "A quarrelsome bird", "it's the stairwell", "stairwell to the second floor");
+        // new Door(room11, room12, Wall.EAST);
+
+        // Room room13 = new Room("room 13", "It's Bugmar's coin", "It's the quarter's the goblins sleep... well... slept in.", "The goblin's barrak's");
+        // new Door(room11, room13, Wall.SOUTH);
+
+        // //floor 2
+        // Room room201 = new Room("", "", "", "");
+        // new Door(room12, room201, Wall.WEST);
+        // Room room202 = new Room("", "", "", "");
+        // new Door(room202, room201, Wall.EAST);
+        // Room room203 = new Room("", "", "", "");
+        // Room room204 = new Room("", "", "", "");
+        // Room room205 = new Room("", "", "", "");
+        // Room room206 = new Room("", "", "", "");
+        // Room room207 = new Room("", "", "", "");
+        // Room room208 = new Room("", "", "", "");
+        // Room room209 = new Room("", "", "", "");
+        // Room room210 = new Room("", "", "", "");
+        // Room room211 = new Room("", "", "", "");
+        // Room room212 = new Room("", "", "", "");
+        // Room room213 = new Room("", "", "", "");
+        // Room room214 = new Room("", "", "", "");
+        // Room room215 = new Room("", "", "", "");
+        // Room room216 = new Room("", "", "", "");
+        // Room room217 = new Room("", "", "", "");
+        // Room room218 = new Room("", "", "", "");
+        // Room room219 = new Room("", "", "", "");
+        // new Door(room202, room203, Wall.EAST);
+        // new Door(room202, room205, Wall.EAST);
+        // new Door(room202, room212, Wall.SOUTH);
+        // new Door(room202, room204, Wall.NORTH);
+        // new Door(room202, room201, Wall.EAST);
+        // new Door(room212, room213, Wall.EAST);
+        // new Door(room212, room211, Wall.NORTH);
+        // new Door(room212, room214, Wall.WEST);
+        // new Door(room202, room201, Wall.EAST);
+        // new Door(room202, room201, Wall.EAST);
+        // new Door(room202, room201, Wall.EAST);
+        // new Door(room202, room201, Wall.EAST);
+        // new ViewablePicture(room2, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Room hall = new Room("a long hall with many cells","Prison hallway");
         //average narwhal weight is 1.425 tons
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
