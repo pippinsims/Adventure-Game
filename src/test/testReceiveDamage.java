@@ -3,8 +3,8 @@ package test;
 import org.junit.Test;
 
 import adventuregame.*;
-import adventuregame.dynamicitems.Torch;
 import adventuregame.items.Weapon;
+import adventuregame.placeables.Torch;
 
 public class testReceiveDamage {    
 

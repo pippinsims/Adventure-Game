@@ -83,9 +83,9 @@ public class Inventory {
 
     public boolean remove(Item i)
     {
-        boolean out = items.remove(i);
-        if(out) i.setParentInv(null);
-        return out;
+        boolean isInInv = items.remove(i);
+        if(isInInv) i.setParentInv(null);
+        return isInInv;
     }
 
     public static class Trade
@@ -115,7 +115,6 @@ public class Inventory {
             else if(isEmpty(another.t2)) take = false;
             else take = Utils.promptList("What do you do?", new String[] {"Take","Give"}) == 0;
 
-            pronoun = ((another.t1 instanceof Unit) ? ((Unit)another.t1).pronounobj : "");
             if(take)
             {
                 giver = another.t1;
@@ -123,6 +122,7 @@ public class Inventory {
                 receiver = one.t1;
                 rinv = one.t2;
                 verb = "Take";
+                pronoun = "";
                 action = "take";
                 past = "took";
                 possessiveadj = "Your";
@@ -135,10 +135,11 @@ public class Inventory {
                 receiver = another.t1;
                 rinv = another.t2;
                 verb = "Give";
+                pronoun = toUnit() ? receiver().pronounobj : "";
                 action = "give " + pronoun;
                 past = "gave";
-                possessiveadj = ((another.t1 instanceof Unit) ? ((Unit)another.t1).possessiveadj : "Its");
-                contraction = ((another.t1 instanceof Unit) ? ((Unit)another.t1).contraction : "It's");
+                possessiveadj = toUnit() ? receiver().possessiveadj : "Its";
+                contraction = toUnit() ? receiver().contraction : "It's";
             }
 
             if(isEmpty(ginv) && isEmpty(rinv)) { Utils.slowPrintln("Neither of you have items!"); return; }
@@ -157,7 +158,7 @@ public class Inventory {
                 {
                     if(rinv.isFull())
                     {
-                        Utils.slowPrint(possessiveadj+" inventory is full! You only " + past + (!take ? " " + pronoun : "") + " some of the items.");
+                        Utils.slowPrint(possessiveadj+" inventory is full! You only " + past + pronoun + " some of the items.");
                         break;
                     }
                     else transaction(i);
@@ -165,19 +166,23 @@ public class Inventory {
             }
         }
 
+        private boolean toUnit() { return receiver instanceof Unit; }
+        private Unit receiver() { return (Unit)receiver; };
+
         private void transaction(Item i)
         {
-            boolean isArmorForUnit = receiver instanceof Unit && i instanceof Armor; 
+            boolean isArmorForUnit = toUnit() && i instanceof Armor; 
             if(isArmorForUnit && rinv.fullUnequippedArmor())
                 Utils.slowPrintln(contraction+" already holding enough unequipped armor! Cannot take another.");
             else
             {
+                if(i.isPlaceable() && toUnit()) i.getSelf().transferOwnership(receiver());
                 rinv.add(i);
-                if(isArmorForUnit) ((Armor)i).action((Unit)receiver, true);
+                if(isArmorForUnit) ((Armor)i).action(receiver(), true);
                 ginv.remove(i);
 
                 
-                if(giver instanceof Unit && receiver instanceof Unit)
+                if(giver instanceof Unit && toUnit())
                     Utils.slowPrintln("You " + past + " " + (take ? Utils.possessiveOf(giver.getName()) : receiver.getName()) + " " + i.getName() + "!");
             }
         }

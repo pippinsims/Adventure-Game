@@ -11,7 +11,7 @@ public class ItemHolder extends InventoryInteractible {
 
     public ItemHolder(Item i, Room r, String preposition, String location)
     {
-        if(i.isDynamicItem()) throw new UnsupportedOperationException("DynamicItem x must be in a room as x.interactible, not ItemHolder(x.item)");
+        if(i.isPlaceable()) throw new UnsupportedOperationException("DynamicItem x must be in a room as x.interactible, not ItemHolder(x.item)");
         setDefaults(
             i.getName(),
             i.getDescription(),

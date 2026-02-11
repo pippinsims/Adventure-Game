@@ -1,16 +1,16 @@
-package adventuregame.dynamicitems;
+package adventuregame.placeables;
 
 import adventuregame.Damage;
 import adventuregame.Effect;
 import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
-import adventuregame.abstractclasses.DynamicItem;
+import adventuregame.abstractclasses.Placeable;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallInteractible;
 import adventuregame.items.Weapon;
 
-public class Torch extends DynamicItem {
+public class Torch extends Placeable {
 
     {
         name = "Torch";
@@ -73,11 +73,11 @@ public class Torch extends DynamicItem {
         };
 
         it = new Weapon() {
-            Torch self = parent;
             {
-                pluralDescription = self.pluralDescription;
-                description = self.description;
-                name = self.name;
+                setSelf(self);
+                pluralDescription = self.getPluralDescription();
+                description = self.getDescription();
+                name = self.getName();
                 atkmsg = "You swing the torch at your enemy!";
             }
 
@@ -91,7 +91,7 @@ public class Torch extends DynamicItem {
                 return new Damage(1, Damage.Type.FIRE, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.FIRE, 3, 1));
             }
             
-            @Override public boolean isDynamicItem() { return true; }
+            @Override public boolean isPlaceable() { return true; }
         };
     }
 }

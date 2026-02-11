@@ -9,10 +9,13 @@ import adventuregame.Utils;
 public abstract class Item extends Describable
 {   
     protected Inventory parentInv;
-    public void setParentInv(Inventory i) { parentInv = i; } 
+    private Placeable self;
+    public Placeable getSelf() { return self; }
+    protected void setSelf(Placeable self) { this.self = self; } 
+    public void setParentInv(Inventory i) { parentInv = i; }
 
     public static <T extends Item> T clone(T toClone) { return new ArrayList<T>(List.of(toClone)).getFirst(); };
-    public boolean isDynamicItem() { return false; }
+    public boolean isPlaceable() { return false; }
 
     public static abstract class Affector extends Item
     {

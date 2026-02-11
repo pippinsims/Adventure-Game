@@ -1,14 +1,14 @@
-package adventuregame.dynamicitems;
+package adventuregame.placeables;
 
 import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
-import adventuregame.abstractclasses.DynamicItem;
+import adventuregame.abstractclasses.Placeable;
 import adventuregame.abstractclasses.Item.Actor;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.InventoryInteractible;
 
-public class GoldenPot extends DynamicItem {
+public class GoldenPot extends Placeable {
     
     public static final String[] descriptions = new String[]{"smooth, curvaceous golden pot. It has a spherical base which curves into a neck that widens at the mouth", "golden pot, no longer smooth, it has a large dent", "vaguely pot-shaped vessel, made of gold", "crumpled piece of gold"};
     public static final String[] pluralDescs  = new String[]{"golden pots","dented gold pots","heavily damaged gold pots","hunks of deformed goldwork"};
@@ -124,12 +124,11 @@ public class GoldenPot extends DynamicItem {
         };
 
         it = new Actor() {
-            private GoldenPot self = parent;
-
             {
-                pluralDescription = self.pluralDescription;
-                description = self.description;
-                name = self.name;
+                setSelf(self);
+                pluralDescription = self.getPluralDescription();
+                description = self.getDescription();
+                name = self.getName();
             }
 
             @Override
@@ -141,9 +140,7 @@ public class GoldenPot extends DynamicItem {
                 if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
             }
 
-            @Override public boolean isDynamicItem() { return true; }
+            @Override public boolean isPlaceable() { return true; }
         };
-
-        
     }
 }

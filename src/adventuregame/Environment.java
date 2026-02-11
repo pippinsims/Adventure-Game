@@ -4,16 +4,18 @@ import adventuregame.interactibles.*;
 import adventuregame.interactibles.WallInteractible.Wall;
 import adventuregame.interactibles.wallinteractibles.*;
 import adventuregame.items.*;
+import adventuregame.placeables.*;
 import adventuregame.QuickTimeEvent.EffectQTE;
 import adventuregame.QuickTimeEvent.NoUpdateQTE;
 import adventuregame.QuickTimeEvent.Node;
 import adventuregame.QuickTimeEvent.Node.Output;
 import adventuregame.abstractclasses.*;
-import adventuregame.dynamicitems.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import javax.swing.*;
 
 public class Environment extends Game
 {
@@ -569,13 +571,14 @@ public class Environment extends Game
         Player laur = new Player(),
                nuel = new Player("Nuel", 10),
             valeent = new Player("Valeent",10), 
-              peili = new Player("Peili", 12); 
-            // dormaah = new Player("Dormaah", 10);
+              peili = new Player("Peili", 12),
+            dormaah = new Player("Dormaah", 10);
 
         Equippable.Dress rag = new Equippable.Dress("Prison Rag", "dirty, disgusting scrap of linen sewn for clothing", "prison rags");
         
         laur.getInventory().addAndEquip(Item.clone(rag), true);
         laur.getInventory().add(new Bananarang());
+        new GoldenPot(laur);
         new GoldenPot(laur);
         addPlayer(laur, curRoom);
 
@@ -584,6 +587,7 @@ public class Environment extends Game
         nuel.getInventory().addAndEquip(Item.clone(rag), true);
         addPlayer(nuel, curRoom);
 
+        var f = new JFrame();
         valeent.hasLongHair = true;
         valeent.getInventory().addAndEquip(Item.clone(rag), true);
         valeent.getInventory().addAndEquip(new Equippable.Hat.Hairpin(), true);
@@ -593,8 +597,72 @@ public class Environment extends Game
         peili.getInventory().addAndEquip(Item.clone(rag), true);
         addPlayer(peili, cell2);
         
-        // dormaah.hasLongHair = true;
-        // dormaah.getInventory().addAndEquip(Item.clone(rag), true);
-        // addPlayer(dormaah, curRoom);
+        dormaah.hasLongHair = true;
+        dormaah.getInventory().addAndEquip(Item.clone(rag), true);
+        addPlayer(dormaah, curRoom);
+
+        //The beginnings of graphics:
+        // valeent.getInventory().add(new Actor() {
+        //     @Override
+        //     public void action(Unit u, boolean isFinal) {
+                
+        //         if(f.isVisible())
+        //         {
+        //             f.add(new JPanel()
+        //             {
+        //                 protected void paintComponent(Graphics g)
+        //                 {
+        //                     try { g.drawImage(ImageIO.read(new File("src/adventuregame/asciiart/Skin_Undercut_Slick_Back.png")), 0, 0, null);
+        //                     } catch (IOException e) {e.printStackTrace();}
+        //                 }
+        //             });
+        //         }
+        //         f.setVisible(!f.isVisible());
+        //         if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
+        //     }
+        // });
+
+        // BufferedImage img;
+        // try {
+        //     img = ImageIO.read(new File("src/adventuregame/asciiart/Slick-Back-With-Side-Part.png"));    
+        // } catch (Exception exc) {
+        //     exc.printStackTrace();
+        //     return;
+        // }
+        
+        // f.add(
+        //     new JPanel()
+        //     {
+        //         protected void paintComponent(Graphics g)
+        //         {
+        //             g.drawImage(img, 0, 0, null);
+        //         }
+        //     }
+        // );
+        // f.setSize(img.getWidth()/3,img.getHeight()/3);
+        // f.setDefaultCloseOperation(3);
+        // f.setVisible(false);
+
+        /*
+        1. golden pot duplication: when placed from inventory (nuel) FIXED
+        2. when both other goblins died, the last one got 4 turns and killed people
+        3. NOTE trade has no back-out
+        4. NOTE enemies don't drop stuff
+        5. NOTE more intuitive spell system (multiple ways to cast?)
+        6. "mind death" didn't work on the first time it was used against new foes, except it did work on Daedalus after killing Bofer
+        7. Oess crash game when try to instantiate body after being "mind death"-ed
+        8. NOTE any curiosity with Peili's spawn causes death
+        9. NOTE descriptions are vague 
+        10. door inspection should show door number
+        11. it's hard to tell the state of doors without interacting
+        12. MAP!!
+        13. lockpicking doesn't tell you that you have a chance when you fail
+        14. NOTE back-out of any action
+        15. shouldn't be called "trade", (take/give etc.)
+        16. Familiar descriptions of rooms/don't need to describe everything on each new turn
+        17. NOTE fire is too weak
+        18. test if you can unlock the south chamber door with "normal key"
+        19. hard to tell if people are damaged and to what extent 
+        */
     }
 }
