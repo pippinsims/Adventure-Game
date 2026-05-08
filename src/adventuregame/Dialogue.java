@@ -16,21 +16,19 @@ public class Dialogue
     Player to;
     int num;
     boolean atEnd = false;              //atEnd when on last Node
-    boolean doRepeat;
+    boolean doRepeat = false;
     private boolean isComplete = false; //isComplete when Player has moved after Dialogue
 
-    public Dialogue(Unit initiator, ArrayList<Unit> actors, Node start, boolean doRepeat)
+    public Dialogue(Unit initiator, ArrayList<Unit> actors, Node start)
     {
         this.initiator = initiator;
         this.actors = actors;
         this.start = current = start;
-        this.doRepeat = doRepeat;
     }
 
     private boolean allActorsAlive()
     {
-        for(Unit a : actors) if(a.isDead()) return false;
-        return true;
+        return actors.stream().anyMatch(a -> a.isDead());
     }
 
     public Unit getCurrentActor()
@@ -48,17 +46,13 @@ public class Dialogue
         isComplete = true;
     }
 
+    public void setRepeat() { doRepeat = true; }
+
     public Node getCurrent() { return current; }
 
-    public boolean isAtEnd()
-    {
-        return atEnd;
-    }
+    public boolean isAtEnd() { return atEnd; }
 
-    public boolean isComplete()
-    {
-        return isComplete;
-    }
+    public boolean isComplete() { return isComplete; }
 
     public boolean next() 
     { 
@@ -92,18 +86,17 @@ public class Dialogue
         String[] prompts;
     }
 
-    static abstract class L<T extends Describable> extends Node //L for Leaf
+    static class L<T extends Describable> extends Node //L for Leaf
     {
         T out;
         boolean applyToAll;
 
         public L(int actor, String prompt, String[] prompts, T out, boolean applyToAll)
         {
+            this(out, applyToAll);
             this.actor = actor;
             this.prompt = prompt;
             this.prompts = prompts;
-            this.out = out;
-            this.applyToAll = applyToAll;
         }
 
         public L(T out, boolean applyToAll)
@@ -114,7 +107,54 @@ public class Dialogue
 
         public L() {}
 
-        public abstract void output(Dialogue parent);
+        public void output(Dialogue parent) 
+        {
+            Player to = parent.to;
+            if(out instanceof Room)
+            {
+                Room r = (Room)out;
+                //TODO add pathfinding to make it be able to say "All players in rooms between curp.getName's room and out.getName moved back to out.getName"
+                if(applyToAll)
+                {
+                    Utils.slowPrintln("All players in " + Utils.possessiveOf(to.getName()) + " room moved back to " + r.getName());
+                    for(Player p : to.getRoom().clearPlayers()) r.add(p);
+                }
+                else
+                {
+                    Utils.slowPrintln(to.getName() + " room moved back to " + r.getName());
+                    to.getRoom().remove(to); r.add(to);
+                }
+                parent.setRepeat();
+            }
+            else if(out instanceof Effect)
+            {
+                Effect e = (Effect)out;
+                if(applyToAll)
+                {
+                    Utils.slowPrintln("Effect '" + e.getName() + "' added to all in " + Utils.possessiveOf(to.getName()) + " room");
+                    for(Player p : Game.curRoom.players) p.addEffect(new Effect(e));
+                }
+                else
+                {
+                    Utils.slowPrintln("Effect '" + e.getName() + "' added to " + to.getName());
+                    to.addEffect(e);
+                }
+            }
+            else if(out instanceof Item)
+            {
+                Item i = (Item)out;
+                if(applyToAll)
+                {
+                    Utils.slowPrintln("Item '" + i.getName() + "' added to all in " + Utils.possessiveOf(to.getName()) + " room");
+                    for(Player p : Game.curRoom.players) p.getInventory().add(Item.clone(i));
+                }
+                else
+                {
+                    Utils.slowPrintln("Item '" + i.getName() + "' added to " + to.getName());
+                    to.getInventory().add(i);
+                }
+            }
+        }
     }
 
     static class X extends L<Describable>
@@ -139,44 +179,6 @@ public class Dialogue
             this.prompts = prompts;
             this.nodes = nodes;
         }
-    }
-
-    //TODO the next SIX methods follow a pattern, and each use Node.out indirectly! make it way better!
-    public static void playerToRoom(Player to, Room r)
-    {
-        //TODO add pathfinding to make it be able to say "All players in rooms between curp.getName's room and out.getName moved back to out.getName"
-        Utils.slowPrintln(to.getName() + " room moved back to " + r.getName());
-        to.getRoom().remove(to); r.add(to);
-    }
-
-    public static void playersToRoom(Player to, Room r)
-    {
-        Utils.slowPrintln("All players in " + Utils.possessiveOf(to.getName()) + " room moved back to " + r.getName());
-        for(Player p : to.getRoom().clearPlayers()) r.add(p);
-    }
-
-    public static void effectPlayers(Player to, Effect e)
-    {
-        Utils.slowPrintln("Effect '" + e.getName() + "' added to all in " + Utils.possessiveOf(to.getName()) + " room");
-        for(Player p : Game.curRoom.players) p.addEffect(new Effect(e));
-    }
-
-    public static void effectPlayer(Player to, Effect e)
-    {
-        Utils.slowPrintln("Effect '" + e.getName() + "' added to " + to.getName());
-        to.addEffect(e);
-    }
-
-    public static void itemsToPlayers(Player to, Item i)
-    {
-        Utils.slowPrintln("Item '" + i.getName() + "' added to all in " + Utils.possessiveOf(to.getName()) + " room");
-        for(Player p : Game.curRoom.players) p.getInventory().add(Item.clone(i));
-    }
-    
-    public static void itemToPlayer(Player to, Item i)
-    {
-        Utils.slowPrintln("Item '" + i.getName() + "' added to " + to.getName());
-        to.getInventory().add(i);
     }
 
     public static void aggroAllOfSameType(Unit from)

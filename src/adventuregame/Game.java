@@ -1,6 +1,7 @@
 package adventuregame;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
@@ -42,7 +43,7 @@ public class Game
             ArrayList<Room> playerRooms = new ArrayList<>();
             for(Player p : allPlayers) if(!playerRooms.contains(p.getRoom())) playerRooms.add(p.getRoom());
 
-            ArrayList<NonPlayer> nonpCache = new ArrayList<>();
+            ArrayList<NonPlayer> done = new ArrayList<>();
 
             //all npcs in player rooms by room
             for(Room r : playerRooms)
@@ -50,39 +51,34 @@ public class Game
                 if(!r.NPCs.isEmpty())
                 {
                     curRoom = r;
-                    //aggressive go first
-                    for(NonPlayer n : new ArrayList<>(r.NPCs)) for(Unit u : r.all()) if(n.enemies.contains(u))
-                    {
-                        nonpCache.add(n);
-                        cur = n;
-                        n.updateUnit();
-                        System.out.println();
-                        if(r.players.isEmpty()) break;
-                    }
-                    
-                    //then peaceful
-                    for(NonPlayer n : new ArrayList<>(r.NPCs)) if(!nonpCache.contains(n))
-                    {
-                        nonpCache.add(n);
-                        cur = n;
-                        n.updateUnit();
-                        System.out.println();
-                        if(r.players.isEmpty()) break;
-                    }
+                    updateNPCsWhere(n -> Utils.overlap(r.all(), n.enemies), r, done); //aggressive go first
+                    updateNPCsWhere(n -> !done.contains(n), r, done); //then peaceful
                 }
             }
 
-            //all npcs in rooms that haven't been updated yet, but contain loaded npcs, by room
-            for(NonPlayer n : loaded) for(NonPlayer n1 : new ArrayList<>(n.getRoom().NPCs)) if(!nonpCache.contains(n1))
+            //all npcs in rooms that haven't been updated yet, but contain loaded non-done npcs, by room
+            for(NonPlayer l : loaded) for(NonPlayer n : new ArrayList<>(l.getRoom().NPCs)) if(!done.contains(n))
             {
-                nonpCache.add(n1);
-                cur = n1;
-                curRoom = n1.getRoom();
-                n1.updateUnit();
+                done.add(n);
+                cur = n;
+                curRoom = n.getRoom();
+                n.updateUnit();
                 System.out.println();
             }
             
             Utils.slowPrintln("\t\t\t\t\t\t\t\t--Round End--");
+        }
+    }
+
+    private static final void updateNPCsWhere(Predicate<NonPlayer> condition, Room r, ArrayList<NonPlayer> done)
+    {
+        for(NonPlayer n : new ArrayList<>(r.NPCs)) if(condition.test(n))
+        {        
+            done.add(n);
+            cur = n;
+            n.updateUnit();
+            System.out.println();
+            if(r.players.isEmpty()) break;
         }
     }
 

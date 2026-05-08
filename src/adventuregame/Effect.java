@@ -7,12 +7,12 @@ import adventuregame.abstractclasses.Describable;
 
 public class Effect extends Describable{
 
-    public static Map<Type, Tuple<String, String>> effectDescriptions = Map.ofEntries(Map.entry(Type.FIRE         , new Tuple<String,String>("fire"                , "BURNINGNESS")),
-                                                                                      Map.entry(Type.PSYCHSTRIKE  , new Tuple<String,String>("psychstrike"         , "strong vexation of mind")),
-                                                                                      Map.entry(Type.POISON       , new Tuple<String,String>("poison"              , "an ill feeling in thy body")),
-                                                                                      Map.entry(Type.VITALITYDRAIN, new Tuple<String,String>("draining"            , "a deep physical sense of mortality")),
-                                                                                      Map.entry(Type.VITALITYGROW , new Tuple<String,String>("physically enriching", "a deep physical sense of immortality")),
-                                                                                      Map.entry(Type.WEAKNESS     , new Tuple<String,String>("weakness"            , "frailty")));
+    public static final Map<Type, Tuple<String, String>> effectDescriptions = Map.ofEntries(Map.entry(Type.FIRE         , new Tuple<String,String>("fire"                , "BURNINGNESS")),
+                                                                                            Map.entry(Type.PSYCHSTRIKE  , new Tuple<String,String>("psychstrike"         , "strong vexation of mind")),
+                                                                                            Map.entry(Type.POISON       , new Tuple<String,String>("poison"              , "an ill feeling in thy body")),
+                                                                                            Map.entry(Type.VITALITYDRAIN, new Tuple<String,String>("draining"            , "a deep physical sense of mortality")),
+                                                                                            Map.entry(Type.VITALITYGROW , new Tuple<String,String>("physically enriching", "a deep physical sense of immortality")),
+                                                                                            Map.entry(Type.WEAKNESS     , new Tuple<String,String>("weakness"            , "frailty")));
 
     //TODO fill descriptions map at start of Environment.main() using file
     Type type;
@@ -21,30 +21,22 @@ public class Effect extends Describable{
 
     public Effect(Effect e)
     {
-        type = e.type;
+        this(e.type, 0, e.strength, e.name);
         cooldown = new Cooldown(e.cooldown.getRemainingDuration(), e.cooldown.getType());
         description = new String(e.description);
-        strength = e.strength;
-        name = e.name;
-        pluralDescription = effectDescriptions.get(type).t1 + " effects";
     }
 
     public Effect(Type t, int duration, float strength)
     {
-        type = t;
-        cooldown = new Cooldown(duration, t);
-        this.strength = strength;
-        description = effectDescriptions.get(type).t2;
-        name = effectDescriptions.get(type).t1;
-        pluralDescription = effectDescriptions.get(type).t1 + " effects";
+        this(t, duration, strength, effectDescriptions.get(t).t1);
     }
 
     public Effect(Type t, int duration, float strength, String name) 
     {
         type = t;
         cooldown = new Cooldown(duration, t);
-        this.strength = strength;
         description = effectDescriptions.get(type).t2;
+        this.strength = strength;
         this.name = name;
         pluralDescription = effectDescriptions.get(type).t1 + " effects";
     }

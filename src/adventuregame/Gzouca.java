@@ -158,8 +158,7 @@ public class Gzouca {
 
                     if(Utils.promptList("Do you settle?", new String[] {"Yes","No"}) == 0) p.set(round, hand);
 
-                    boolean allSet = true;
-                    for(Player p1 : players) if(!p1.isSet) { allSet = false; break; }
+                    boolean allSet = players.stream().allMatch(p1 -> p1.isSet);
 
                     if(allSet)
                     {

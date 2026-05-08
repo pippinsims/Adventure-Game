@@ -163,8 +163,7 @@ public class Player extends Unit
             Weapon chosen = null;
             while(!ens.isEmpty())
             {   
-                final int chosenEnemyIndex = ens.size() > 1 ? Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens)) 
-                                                            : 0;
+                final int chosenEnemyIndex = ens.size() > 1 ? Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens)) : 0;
 
                 ArrayList<Weapon> weps = inv.getWeapons();
                 if(name.equals("Peili")) weps.addFirst(new Weapon.Punch("You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad"), new Damage(2)));
@@ -172,7 +171,7 @@ public class Player extends Unit
                 if(chosen == null) chosen = Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", weps);                
 
                 Damage d = chosen.getDamage();
-                if(hasEffect(Effect.Type.WEAKNESS)) { d = new Damage(d); d.setValue(d.getValue() - 1); }
+                if(hasEffect(Effect.Type.WEAKNESS)) { d = new Damage(d); d.setValue(d.getValue() - firstEffectOf(Effect.Type.WEAKNESS).strength); }
                 this.attack(ens.get(chosenEnemyIndex), d, chosen.getAttackMessage());
                 if(chosen instanceof Sword && ((Sword)chosen).use() && !ens.isEmpty()) System.out.println("Attack again!");
                 else break;
@@ -485,8 +484,7 @@ public class Player extends Unit
         {
             ableToAct = false;
 
-            isInCombat = false;
-            for(NonPlayer n : myRoom.NPCs) if(n.enemies.contains(this)) { isInCombat = true; break; }
+            isInCombat = myRoom.NPCs.stream().anyMatch(n -> n.enemies.contains(this));
             setActions();
             
             //lists available actions, lets the player choose, then performs chosen action

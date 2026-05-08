@@ -19,43 +19,21 @@ public class Room extends Describable
     private ArrayList<Player>       familiars     = new ArrayList<>();
     private String familiarDescription;
 
-    public Room()
-    {
-        name = "Bare";
-        description = "a bare room";
-        descMap.put("Laur", "an... empty place");
-        familiarDescription = "Bare room.";
-        rooms.add(this);
-        if(Utils.PLAYTEST) name = "room"+roomnum++;
-    }
-
     public Room(String d, String l, String f, String n)
     {
         description = d;
-        descMap.put("Laur", l);
+        if(l != null) descMap.put("Laur", l);
         familiarDescription = f;
         name = n;
         rooms.add(this);
         if(Utils.PLAYTEST) name = "room"+roomnum++;
     }
 
-    public Room(String d, String f, String n)
-    {
-        description = d;
-        familiarDescription = f;
-        name = n;
-        rooms.add(this);
-        if(Utils.PLAYTEST) name = "room"+roomnum++;
-    }
-
-    public Room(String d, String n)
-    {
-        description = d;
-        familiarDescription = n + ".";
-        name = n;
-        rooms.add(this);
-        if(Utils.PLAYTEST) name = "room"+roomnum++;
-    }
+    public Room(String d, String f, String n) { this(d,null,f,n); }
+    
+    public Room(String d, String n) { this(d, n + ".",n); }
+    
+    public Room() { this("a bare room","an... empty place","Bare room.","Bare"); }
 
     public ArrayList<Unit> all()
     {
@@ -150,9 +128,6 @@ public class Room extends Describable
 
     private void updateDoors()
     {
-        for(Door d : doors) 
-        {
-            d.setWall(this);
-        }
+        for(Door d : doors) d.setWall(this);
     }
 }

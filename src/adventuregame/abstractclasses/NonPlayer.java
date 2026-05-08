@@ -29,17 +29,15 @@ public abstract class NonPlayer extends Unit {
         ATTACK
     }
 
-    protected NonPlayer() {}
-
     public NonPlayer(int health, Inventory.Whole inventory, int wisdom, String description, String pluralDescription, String name) 
     { 
-        this.maxHealth = health;
+        maxHealth = health;
         this.health = health;
         inv = inventory;
         this.wisdom = wisdom;
+        this.name = name == null ? generateName() : name;
         this.description = description;
-        this.pluralDescription = pluralDescription;
-        this.name = name;
+        this.pluralDescription = pluralDescription == null ? description + "s" : pluralDescription;
         deathMsg = "You ended " + getName();
     }
 
@@ -66,17 +64,6 @@ public abstract class NonPlayer extends Unit {
             case "pale man": return "pale men";
             default: throw new UnsupportedOperationException("No plural for '"+str+"'");
         }
-    }
-
-    public void setDefaults(int m, Inventory.Whole i, int w, String des, String name)
-    {
-        maxHealth = m;
-        health = maxHealth;
-        inv = i;
-        wisdom = w;
-        description = des;
-        this.name = name == null ? generateName() : name;
-        deathMsg = "You ended " + getName();
     }
 
     protected String generateName() 
@@ -191,28 +178,16 @@ public abstract class NonPlayer extends Unit {
 
     public static class Goblin extends NonPlayer {
 
-        { pluralDescription = "goblins"; }
-
-        public Goblin(int health) { 
-            super();
-            setDefaults(health, new Inventory.Whole(5), 20, "goblin with pointy ears", null);
-        }
-
         public Goblin(int health, Inventory.Whole inventory, int wisdom) { 
-            super();
-            setDefaults(health, inventory, wisdom, "goblin with pointy ears", null);
-        }
-
-        @Override
-        public void setDefaults(int m, Inventory.Whole i, int w, String des, String name)
-        {
-            super.setDefaults(m, i, w, des, name);
-
+            super(health, inventory, wisdom, "goblin with pointy ears", "goblins", null);
             int r = Utils.rand.nextInt(4);
             descMap.put("Laur", (new String[] {"Screeblin Squabbler","pale man","awkward fellow","bllork"})[r]);
             pDescMap.put("Laur", (new String[] {"Screeblin Squabblers","pale men","awkward fellas","bllorks"})[r]);
         }
 
+        public Goblin(int health) { 
+            this(health, new Inventory.Whole(5), 20);
+        }
 
         @Override protected Weapon defaultWeapon()
         {
@@ -240,25 +215,14 @@ public abstract class NonPlayer extends Unit {
     }
 
     public static class Skeleton extends NonPlayer{
-
-        {
-            pluralDescription = "skeletons";
-        }
-
-        public Skeleton()
-        {
-            super();
-            setDefaults(20, new Inventory.Whole(6), 0, "skeleton", "Oess");
-            setHostile();
-        }
-
         public Skeleton(Inventory.Whole i)
         {
-            super();
-            setDefaults(20, i, 0, "skeleton", "Oess");
+            super(20, i, 0, "skeleton", "skeletons", "Oess");
             for(Armor a : i.getArmor()) i.equip(a, true);
             setHostile();
         }
+
+        public Skeleton(){ this(new Inventory.Whole(6)); }
 
         @Override protected Weapon defaultWeapon()
         {

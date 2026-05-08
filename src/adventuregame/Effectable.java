@@ -150,7 +150,7 @@ public abstract class Effectable extends Describable{
         if(dur >= 0)
             Utils.slowPrintln(", and will be effected by it for " + dur + " more turn" + (dur != 1 ? "s" : "") + ".");
         else
-            Utils.slowPrintln(", and will be effect by it forever.");
+            Utils.slowPrintln(", and will be effected by it forever.");
     }
 
     final public boolean hasEffect(Effect.Type t)
@@ -177,6 +177,12 @@ public abstract class Effectable extends Describable{
     final public void updateMaxHealth(float h)
     {
         maxHealth = h;
+    }
+
+    protected Effect firstEffectOf(Effect.Type t)
+    {
+        for(Effect e : effects) if(e.type == t) return e;
+        return null;
     }
 
     //MARK: for testing

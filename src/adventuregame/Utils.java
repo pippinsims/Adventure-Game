@@ -2,6 +2,7 @@ package adventuregame;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Predicate;
 
 import adventuregame.abstractclasses.Describable;
 import adventuregame.interactibles.WallInteractible;
@@ -440,7 +441,7 @@ public class Utils {
         return false;
     }
 
-    public static <T> boolean overlap(List<?> l1, List<?> l2) 
+    public static boolean overlap(List<?> l1, List<?> l2) 
     {
         for(Object o1 : l1) for(Object o2 : l2) if(o1 == o2) return true;
         return false;
@@ -451,6 +452,11 @@ public class Utils {
         for(int i = 0; i < arr.size(); i++) if(arr.get(i) == toFind) { arr.remove(i); return true; }
         return false;
     }
+
+    //A b = Utils.where(x, y -> y == z));
+    //A b; for(A a : x) if(a == z) { b = a; break; }
+    public static <T> T where(List<T> l, Predicate<T> condition) { return l.stream().filter(condition).findFirst().orElse(null); }
+    public static <T> T where(Set<T> l,  Predicate<T> condition) { return l.stream().filter(condition).findFirst().orElse(null); }
 
     public static int cap(int n, int at)
     {

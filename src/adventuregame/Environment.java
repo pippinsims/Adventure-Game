@@ -189,8 +189,7 @@ public class Environment extends Game
                             if(u.getRoom().players.size() == 1) return false;
                             else
                             {
-                                Unit helper = null;
-                                for(Unit u : u.getRoom().players) if(u != q.getActor()) { helper = u; break; }
+                                Unit helper = Utils.where(u.getRoom().players, x -> x != q.getActor());
                                 new NoUpdateQTE(
                                     helper,
                                     new Describable() { { description = "helpcledobl"; } }, 
@@ -487,16 +486,15 @@ public class Environment extends Game
                             }, 
                             new Dialogue.Node[] 
                             {
-                                new Dialogue.X(0, "Then you die.")                                                { @Override public void output(Dialogue parent) { Dialogue.aggroAllOfSameType(parent.actors.get(actor)); } },
-                                new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out);                } },
-                                new Dialogue.L<Room>(curRoom, true)                                               { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out);                } }
+                                new Dialogue.X(0, "Then you die.") { @Override public void output(Dialogue parent) { Dialogue.aggroAllOfSameType(parent.actors.get(actor)); } },
+                                new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true),
+                                new Dialogue.L<Room>(curRoom, true)
                             }
                         ),
-                        new Dialogue.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out);                } },
-                        new Dialogue.X()                                                                                                 { @Override public void output(Dialogue parent) { Dialogue.aggroAllOfSameType(parent.actors.get(actor)); } }
+                        new Dialogue.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true),
+                        new Dialogue.X() { @Override public void output(Dialogue parent) { Dialogue.aggroAllOfSameType(parent.actors.get(actor)); } }
                     }
-                ),
-                true
+                )
             )
         );
         d = new Door(hall, chamber, Wall.NORTH);
@@ -621,10 +619,10 @@ public class Environment extends Game
         /*
         TODO all these
         1.  golden pot duplication: when placed from inventory (nuel) FIXED
+        2.  when both other goblins died, the last one got 4 turns and killed people FIXED
         6.  "mind death" didn't work on the first time it was used against new foes, except it did work on Daedalus after killing Bofer
         7.  Oess crash game when try to instantiate body after being "mind death"-ed
         20. insMap for name: 'Big mushroom' description: 'table-sized toadstool' is null
-        2.  when both other goblins died, the last one got 4 turns and killed people
         18. test if you can unlock the south chamber door with "normal key"
         10. door inspection should show door number
         11. it's hard to tell the state of doors without interacting

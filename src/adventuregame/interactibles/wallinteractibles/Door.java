@@ -139,8 +139,7 @@ public class Door extends WallInteractible
         {
             if(u.canPickLocks && Utils.contains(u.getInventory().items, Equippable.Hat.Hairpin.class))
             {
-                Equippable.Hat.Hairpin h = null;
-                for(Item i : u.getInventory().items) if(i instanceof Hairpin) { h = (Hairpin)i; break; }
+                Equippable.Hat.Hairpin h = (Hairpin)Utils.where(u.getInventory().items, i -> i instanceof Hairpin);
                 if(new Lockpick(u, h).outcome)
                 {
                     if(h.level < 9) 
@@ -149,7 +148,7 @@ public class Door extends WallInteractible
                         h.level++; //TODO temporary leveling system
                     }
                     Utils.slowPrintln("You picked the lock!");
-                    for(String k : lockMap.get(r).keySet()) if(!k.equals("bar")) { unlock(k); break; }
+                    unlock(Utils.where(lockMap.get(r).keySet(), k -> !k.equals("bar")));
                 }
                 else
                     Utils.slowPrintln("You failed to pick the lock.");
