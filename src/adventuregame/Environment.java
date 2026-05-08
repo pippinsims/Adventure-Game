@@ -619,13 +619,13 @@ public class Environment extends Game
         // f.setVisible(false);
 
         /*
+        TODO all these
         1.  golden pot duplication: when placed from inventory (nuel) FIXED
         6.  "mind death" didn't work on the first time it was used against new foes, except it did work on Daedalus after killing Bofer
         7.  Oess crash game when try to instantiate body after being "mind death"-ed
         20. insMap for name: 'Big mushroom' description: 'table-sized toadstool' is null
         2.  when both other goblins died, the last one got 4 turns and killed people
         18. test if you can unlock the south chamber door with "normal key"
-
         10. door inspection should show door number
         11. it's hard to tell the state of doors without interacting
         12. MAP!!
