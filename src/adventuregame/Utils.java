@@ -8,9 +8,10 @@ import adventuregame.interactibles.WallInteractible;
 
 public class Utils {
 
+    public static final boolean PLAYTEST = true;
     public static final Random rand = new Random();
     public static Scanner scanner = new Scanner(System.in);
-    public static final int MAX_PRINT_DELAY =1;// 50;//TODO make "playtest" functionality //1; //50 for normal gameplay
+    public static final int MAX_PRINT_DELAY = PLAYTEST ? 1 : 50;
     public static int currentPrintDelay = MAX_PRINT_DELAY;
 
     public static String[] names1 = new String[]{"Bo","Kua","An","Lis","Yi"};
@@ -469,6 +470,13 @@ public class Utils {
         return null;
     }
 
+    public static <T, K extends T> ArrayList<K> subarray(ArrayList<? extends T> arr, Class<K> type) 
+    {
+        ArrayList<K> out = new ArrayList<>();
+        for (T element : arr) if(type.isInstance(element)) out.add(type.cast(element));
+        return out;
+    }
+
     public static String scan() throws InterruptedException 
     { 
         return in.poll(2000, TimeUnit.MILLISECONDS);
@@ -485,5 +493,10 @@ public class Utils {
     public static String possessiveOf(String noun)
     {
         return noun + "'" + (noun.charAt(noun.length() - 1) != 's' ? "s" : "");
+    }
+
+    public static abstract class Doer
+    {
+        protected abstract boolean act();
     }
 }

@@ -134,6 +134,12 @@ public abstract class NonPlayer extends Unit {
         return new Weapon.Punch("You punch!");
     }
 
+    public void updateAwareness()
+    {
+        if(hostile) for(Player p : myRoom.players) if(!enemies.contains(p)) enemies.add(p);
+        for(Unit f : friends) if(f instanceof NonPlayer) for(Unit e : ((NonPlayer)f).enemies) if(!enemies.contains(e)) enemies.add(e);
+    }
+
     protected void attack()
     {
         for(Unit u : myRoom.all())
@@ -154,17 +160,7 @@ public abstract class NonPlayer extends Unit {
 
     public void chooseAction()
     {
-        if(hostile)
-        {
-            for(Player p : myRoom.players)
-            { 
-                if(!enemies.contains(p)) 
-                {
-                    enemies.add(p);
-                }
-            }
-        }
-        for(Unit f : friends) if(f instanceof NonPlayer) for(Unit e : ((NonPlayer)f).enemies) if(!enemies.contains(e)) enemies.add(e);
+        updateAwareness();
 
         if(isStunned || myRoom.players.isEmpty())
         {

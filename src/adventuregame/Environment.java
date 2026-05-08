@@ -644,25 +644,30 @@ public class Environment extends Game
         // f.setVisible(false);
 
         /*
-        1. golden pot duplication: when placed from inventory (nuel) FIXED
-        2. when both other goblins died, the last one got 4 turns and killed people
-        3. NOTE trade has no back-out
-        4. NOTE enemies don't drop stuff
-        5. NOTE more intuitive spell system (multiple ways to cast?)
-        6. "mind death" didn't work on the first time it was used against new foes, except it did work on Daedalus after killing Bofer
-        7. Oess crash game when try to instantiate body after being "mind death"-ed
-        8. NOTE any curiosity with Peili's spawn causes death
-        9. NOTE descriptions are vague 
+        1.  golden pot duplication: when placed from inventory (nuel) FIXED
+        6.  "mind death" didn't work on the first time it was used against new foes, except it did work on Daedalus after killing Bofer
+        7.  Oess crash game when try to instantiate body after being "mind death"-ed
+        20. insMap for name: 'Big mushroom' description: 'table-sized toadstool' is null
+        2.  when both other goblins died, the last one got 4 turns and killed people
+        18. test if you can unlock the south chamber door with "normal key"
+
         10. door inspection should show door number
         11. it's hard to tell the state of doors without interacting
         12. MAP!!
         13. lockpicking doesn't tell you that you have a chance when you fail
-        14. NOTE back-out of any action
         15. shouldn't be called "trade", (take/give etc.)
         16. Familiar descriptions of rooms/don't need to describe everything on each new turn
-        17. NOTE fire is too weak
-        18. test if you can unlock the south chamber door with "normal key"
         19. hard to tell if people are damaged and to what extent 
+        
+        21. NOTE trade>take should be steal
+        22. NOTE make cledobl qte whenever they try to put it in inventory
+        8.  NOTE any curiosity with Peili's spawn causes death
+        9.  NOTE descriptions are vague 
+        14. NOTE back-out of any action
+        17. NOTE fire is too weak
+        3.  NOTE trade has no back-out
+        4.  NOTE enemies don't drop stuff
+        5.  NOTE more intuitive spell system (multiple ways to cast?)
         */
     }
 }

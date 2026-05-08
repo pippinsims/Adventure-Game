@@ -9,7 +9,7 @@ import adventuregame.interactibles.wallinteractibles.Door;
 
 public class DoorKey extends Affector {
     
-    final String code;
+    public final String code;
 
     public DoorKey()
     {

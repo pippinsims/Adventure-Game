@@ -12,13 +12,14 @@ import adventuregame.Utils.Tuple;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 import adventuregame.interactibles.WallInteractible;
+import adventuregame.items.DoorKey;
 import adventuregame.items.Equippable;
 import adventuregame.items.Equippable.Hat.Hairpin;
 
 public class Door extends WallInteractible
 {
     Room myOtherRoom;
-    // private static int doornum = 0; //TODO make "playtest" functionality
+    private static int doornum = 0; //playtest
     private ArrayList<Unit> disablers = new ArrayList<>();
     private final Map<Room, Map<String, Boolean>> lockMap;
 
@@ -37,7 +38,7 @@ public class Door extends WallInteractible
         descMap.put("Laur", new String[]{"ordinary ol\' creaky slab o\' wood" , "regular ol\' creaky plank" , "unassuming, decrepit wooden door" , "Boris"  , "doors"}[r]);
         pDescMap.put("Laur", new String[]{"ordinary ol\' creaky slabs o\' wood", "regular ol\' creaky planks", "unassuming, decrepit wooden doors", "Borises", "doorses"}[r]);
 
-        // name = "door"+doornum++; //TODO make "playtest" functionality
+        if(Utils.PLAYTEST) name = "door"+doornum++;
 
         this.wall = wall;
 
@@ -155,8 +156,16 @@ public class Door extends WallInteractible
             }
             else
             {
-                Utils.slowPrintln("You attempt to use the door, but it's locked!");
-                if(u instanceof Player) ((Player)u).ableToAct = true;
+                boolean noKeys = true;
+                for(DoorKey k : Utils.subarray(u.getInventory().items, DoorKey.class))
+                    if(lockMap.get(r).keySet().contains(k.code)) 
+                        { k.action(u, this); noKeys = false; }
+
+                if(noKeys)
+                {
+                    Utils.slowPrintln("You attempt to use the door, but it's locked!");
+                    if(u instanceof Player) ((Player)u).ableToAct = true;
+                }
             }
         }
         else if((isLocked(getNextRoom(r), "bar")))
