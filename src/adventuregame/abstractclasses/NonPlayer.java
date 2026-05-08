@@ -124,14 +124,19 @@ public abstract class NonPlayer extends Unit {
 
     protected void talk()
     {
-        boolean didTalk = dialogues.getFirst().next();
-        dialogues.remove(0);
-        if(!didTalk) chooseAction();
+        if(getFirstActiveDialogue() != null) getFirstActiveDialogue().next();
+        else chooseAction();
     }
 
     protected Weapon defaultWeapon()
     {
         return new Weapon.Punch("You punch!");
+    }
+
+    protected Dialogue getFirstActiveDialogue()
+    {
+        for(Dialogue d : dialogues) if(!d.isAtEnd()) return d;
+        return null;
     }
 
     public void updateAwareness()
@@ -167,7 +172,7 @@ public abstract class NonPlayer extends Unit {
             performAction(Action.NORMAL);
             isStunned = false;
         }
-        else if (!dialogues.isEmpty() && dialogues.getFirst().getInitiator() == this)
+        else if (getFirstActiveDialogue() != null && getFirstActiveDialogue().getInitiator() == this)
             performAction(Action.DIALOGUE);
         else if (Utils.overlap(enemies, myRoom.all()))
             performAction(Action.ATTACK);

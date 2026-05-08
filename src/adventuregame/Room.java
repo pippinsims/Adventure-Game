@@ -120,6 +120,13 @@ public class Room extends Describable
         return out;
     }
 
+    public ArrayList<Player> clearPlayers()
+    {
+        ArrayList<Player> ps = new ArrayList<>(players);
+        for (Player p : ps) remove(p);
+        return ps;
+    }
+
     public ArrayList<Door> getDoors()
     {
         return doors;

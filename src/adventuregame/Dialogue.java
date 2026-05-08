@@ -3,6 +3,7 @@ package adventuregame;
 import java.util.ArrayList;
 
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.NonPlayer;
 import adventuregame.abstractclasses.Unit;
 
@@ -10,17 +11,20 @@ public class Dialogue
 {
     Unit initiator;
     ArrayList<Unit> actors;
+    Node start;
     Node current;
     Player to;
     int num;
     boolean atEnd = false;              //atEnd when on last Node
+    boolean doRepeat;
     private boolean isComplete = false; //isComplete when Player has moved after Dialogue
 
-    public Dialogue(Unit initiator, ArrayList<Unit> actors, Node start)
+    public Dialogue(Unit initiator, ArrayList<Unit> actors, Node start, boolean doRepeat)
     {
         this.initiator = initiator;
         this.actors = actors;
-        current = start;
+        this.start = current = start;
+        this.doRepeat = doRepeat;
     }
 
     private boolean allActorsAlive()
@@ -63,9 +67,9 @@ public class Dialogue
         if(allActorsAlive()) 
         {
             next(a);
-            atEnd = true;
             ((L<?>)current).output(this);
-            // processLeaf();
+            if(allActorsAlive() && doRepeat) current = start;
+            else atEnd = true;
             return true;
         }
         return false;
@@ -113,7 +117,7 @@ public class Dialogue
         public abstract void output(Dialogue parent);
     }
 
-    static class X extends L<Describable> //X denotes a leaf with no output
+    static class X extends L<Describable>
     {
         public X() {}
         public X(int actor, String prompt) 
@@ -137,70 +141,47 @@ public class Dialogue
         }
     }
 
-    // public void processLeaf()
-    // {
-    //     if(current instanceof L)
-    //     {
-    //         L<?> n = (L<?>)current;
-    //         String name = to.getName();
-    //         if(n.out instanceof Room)
-    //         {
-    //             //TODO add pathfinding to make it be able to say "All players in rooms between curp.getName's room and out.getName moved back to out.getName"
-    //             Room out = (Room)n.out;
-    //             if(n.applyToAll)
-    //             {
-    //                 Utils.slowPrintln("All players in " + Utils.possessiveOf(name) + " room moved back to " + out.getName());
-    //                 for(Player p : Game.curRoom.players) out.add(p);
-    //                 Game.curRoom.players.clear();
-    //             }
-    //             else
-    //             {
-    //                 Utils.slowPrintln(name + " moved back to " + out.getName());
-    //                 out.add(to);
-    //                 Game.curRoom.remove(to);
-    //             }
-    //         }
-    //         else if(n.out instanceof Effect)
-    //         {
-    //             Effect out = (Effect)n.out;
-    //             if(n.applyToAll)
-    //             {
-    //                 Utils.slowPrintln("Effect '" + out.getName() + "' added to all in " + Utils.possessiveOf(name) + " room");
-    //                 for(Player p : Game.curRoom.players) p.addEffect(new Effect(out));
-    //             }
-    //             else
-    //             {
-    //                 Utils.slowPrintln("Effect '" + out.getName() + "' added to " + name);
-    //                 to.addEffect(out);
-    //             }
-    //         }
-    //         else if(n.out instanceof Item)
-    //         {
-    //             Item out = (Item)n.out;
-    //             if(n.applyToAll)
-    //             {
-    //                 Utils.slowPrintln("Item '" + out.getName() + "' added to all in " + Utils.possessiveOf(name) + " room");
-    //                 for(Player p : Game.curRoom.players) p.getInventory().add(out);
-    //             }
-    //             else
-    //             {
-    //                 Utils.slowPrintln("Item '" + out.getName() + "' added to " + name);
-    //                 to.getInventory().add(out.clone());
-    //             }
-    //         }
-    //     }
-    // }
+    //TODO the next SIX methods follow a pattern, and each use Node.out indirectly! make it way better!
+    public static void playerToRoom(Player to, Room r)
+    {
+        //TODO add pathfinding to make it be able to say "All players in rooms between curp.getName's room and out.getName moved back to out.getName"
+        Utils.slowPrintln(to.getName() + " room moved back to " + r.getName());
+        to.getRoom().remove(to); r.add(to);
+    }
 
     public static void playersToRoom(Player to, Room r)
     {
         Utils.slowPrintln("All players in " + Utils.possessiveOf(to.getName()) + " room moved back to " + r.getName());
-        for(Player p : to.getRoom().players) r.add(p); //TODO doesn't work at all
-        to.getRoom().players.clear();
+        for(Player p : to.getRoom().clearPlayers()) r.add(p);
+    }
+
+    public static void effectPlayers(Player to, Effect e)
+    {
+        Utils.slowPrintln("Effect '" + e.getName() + "' added to all in " + Utils.possessiveOf(to.getName()) + " room");
+        for(Player p : Game.curRoom.players) p.addEffect(new Effect(e));
+    }
+
+    public static void effectPlayer(Player to, Effect e)
+    {
+        Utils.slowPrintln("Effect '" + e.getName() + "' added to " + to.getName());
+        to.addEffect(e);
+    }
+
+    public static void itemsToPlayers(Player to, Item i)
+    {
+        Utils.slowPrintln("Item '" + i.getName() + "' added to all in " + Utils.possessiveOf(to.getName()) + " room");
+        for(Player p : Game.curRoom.players) p.getInventory().add(Item.clone(i));
+    }
+    
+    public static void itemToPlayer(Player to, Item i)
+    {
+        Utils.slowPrintln("Item '" + i.getName() + "' added to " + to.getName());
+        to.getInventory().add(i);
     }
 
     public static void aggroAllOfSameType(Unit from)
     {
-        //TODO make this work for any type
-        for(NonPlayer to : from.getRoom().NPCs) if(to instanceof NonPlayer.Goblin) to.setHostile();
+        Utils.slowPrintln("All the " + from.getPluralDescription() + " prepare to fight!");
+        for(NonPlayer to : from.getRoom().NPCs) if(from.getClass().isInstance(to)) to.setHostile();
     }
 }

@@ -127,8 +127,11 @@ public class Environment extends Game
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
         curRoom = new Room(celld, celll, cellf, celln);
         Door d = new Door(curRoom, hall, Wall.EAST); 
-        d.addBar(hall, true);
-        d.addLock("normal", true);
+        if(!Utils.PLAYTEST)
+        {
+            d.addBar(hall, true);
+            d.addLock("normal", true);
+        }
         new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
         Room cell2 = new Room(celld, celll, cellf, celln);
@@ -318,8 +321,11 @@ public class Environment extends Game
         };
         cleholder.isEnabled = false;
         d = new Door(cell2, hall, Wall.EAST);
-        d.addBar(hall, true);
-        d.addLock("normal", true);
+        if(!Utils.PLAYTEST)
+        {
+            d.addBar(hall, true);
+            d.addLock("normal", true);
+        }
 
         SkeletonInteractible cleskelly = 
         new SkeletonInteractible(
@@ -375,14 +381,15 @@ public class Environment extends Game
 
         for (int i = 2; i < 13; i++) 
         {
-            d = new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST); 
-            d.addLock("normal", true);
-            d.addBar(hall, true);
+            d = new Door(new Room(celld, celll, cellf, celln), hall, i < 7 ? Wall.EAST : Wall.WEST);
+            if(!Utils.PLAYTEST)
+            {
+                d.addLock("normal", true);
+                d.addBar(hall, true);
+            }
         }
         Room cell14 = new Room(celld, celll, cellf, celln);
         d = new Door(cell14, hall, Wall.WEST);
-        // d.addLock(cell14, "normal", true);
-        // d.addLock(hall, "bar", true);
         new ItemHolder(new DoorKey(), cell14, "on", "the floor");
         new ItemHolder(new Sword(4), cell14, "on", "the floor");
         NonPlayer bofe = new NonPlayer(10, new Inventory.Whole(), 0, "Grassy bofer", "Grassy bofers", "Bofer") 
@@ -480,54 +487,20 @@ public class Environment extends Game
                             }, 
                             new Dialogue.Node[] 
                             {
-                                new Dialogue.X(0, "Then you die.") { 
-                                    @Override public void output(Dialogue parent) 
-                                    {
-                                        Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
-                                        Dialogue.aggroAllOfSameType(parent.actors.get(actor));
-                                    }
-                                },
-                                //new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); } },
-                                new Dialogue.X(0, "You die!!") { 
-                                    @Override public void output(Dialogue parent) 
-                                    {
-                                        Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
-                                        Dialogue.aggroAllOfSameType(parent.actors.get(actor));
-                                    }
-                                },
-                                //new Dialogue.L<Room>(curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); } }
-                                new Dialogue.X(0, "You die!!") { 
-                                    @Override public void output(Dialogue parent) 
-                                    {
-                                        Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
-                                        Dialogue.aggroAllOfSameType(parent.actors.get(actor));
-                                    }
-                                }
+                                new Dialogue.X(0, "Then you die.")                                                { @Override public void output(Dialogue parent) { Dialogue.aggroAllOfSameType(parent.actors.get(actor)); } },
+                                new Dialogue.L<Room>(0, "And don't you dare leave again...", null, curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out);                } },
+                                new Dialogue.L<Room>(curRoom, true)                                               { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out);                } }
                             }
-                        ),//TODO MAKE DIALOGUE NODES ALL FUNCTION!
-                        // new Dialogue.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true) {
-                        //     @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out); }
-                        // },
-                        new Dialogue.X(0, "You shold shut that trap and gloink back into your cell is what!") { 
-                            @Override public void output(Dialogue parent) 
-                            {
-                                Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
-                                Dialogue.aggroAllOfSameType(parent.actors.get(actor));
-                            }
-                        },
-                        new Dialogue.X() { 
-                            @Override public void output(Dialogue parent) 
-                            {
-                                Utils.slowPrintln("All the " + parent.actors.get(0).getPluralDescription() + " prepare to fight!");
-                                Dialogue.aggroAllOfSameType(parent.actors.get(actor));
-                            }
-                        }
+                        ),
+                        new Dialogue.L<Room>(0, "You shold shut that trap and gloink back into your cell is what!", null, curRoom, true) { @Override public void output(Dialogue parent) { Dialogue.playersToRoom(parent.to, out);                } },
+                        new Dialogue.X()                                                                                                 { @Override public void output(Dialogue parent) { Dialogue.aggroAllOfSameType(parent.actors.get(actor)); } }
                     }
-                )
+                ),
+                true
             )
         );
         d = new Door(hall, chamber, Wall.NORTH);
-        d.addLock("normal", true);
+        if(!Utils.PLAYTEST) d.addLock("normal", true);
         
         Room mossyRuin = new Room("a room with shrooms, a shroom room if you will.\n       \t\t\t\tAre you afraid of large spaces? Becausesss there's a mush-a-room if you catch my drift,",
                                   "Shroom Room.",
@@ -552,7 +525,8 @@ public class Environment extends Game
         Room joiner1 = new Room();
 
         new Door(chamber, mossyRuin, Wall.NORTH);
-        new Door(chamber, new Room(), Wall.WEST).addLock("fancy", true);
+        Door d0 = new Door(chamber, new Room(), Wall.WEST);
+        if(!Utils.PLAYTEST) d0.addLock("fancy", true);
         new Door(chamber, joiner1, Wall.EAST);
 
         for(Door d1 : chamber.getDoors()) for(NonPlayer n : chamber.NPCs) if(n instanceof NonPlayer.Goblin) d1.disabler(n);
@@ -585,6 +559,7 @@ public class Environment extends Game
         nuel.canPickLocks = true;
         nuel.needsGlasses = true;
         nuel.getInventory().addAndEquip(Item.clone(rag), true);
+        if(Utils.PLAYTEST) nuel.getInventory().add(new Equippable.Hat.Hairpin());
         addPlayer(nuel, curRoom);
 
         var f = new JFrame();

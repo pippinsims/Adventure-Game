@@ -375,7 +375,7 @@ public class Door extends WallInteractible
             int chance = 0;
             if(pick instanceof Hairpin) chance = ((Hairpin)pick).level;
 
-            outcome = Utils.rand.nextInt(10) < chance;
+            outcome = Utils.PLAYTEST ? true : Utils.rand.nextInt(10) < chance;
         }
     }
 }
