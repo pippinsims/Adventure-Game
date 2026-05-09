@@ -132,14 +132,14 @@ public class Game
             Utils.slowPrintln(r.getDescription());
         }
 
-        Utils.slowPrintDescList(r.interactibles);
+        Utils.slowPrintDescList(r.interactibles, false);
 
-        if(isLaur) Utils.slowPrintDescList(r.NPCs);
-        else Utils.slowPrintNameList(r.NPCs);
+        if(isLaur) Utils.slowPrintDescList(r.NPCs, false);
+        else Utils.slowPrintDescList(r.NPCs, true);
         
         ArrayList<Player> p = new ArrayList<>(r.players);
         p.remove(cur);
-        Utils.slowPrintNameList(p);
+        Utils.slowPrintDescList(p, true);
         
         r.discover();
         Utils.currentPrintDelay = 3;

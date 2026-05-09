@@ -2,6 +2,7 @@ package adventuregame;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import adventuregame.abstractclasses.Describable;
@@ -57,87 +58,61 @@ public class Utils {
             return "a";
     }
 
-    public static void slowPrintDescList(ArrayList<? extends Describable> arr)
+    public static void slowPrintDescList(ArrayList<? extends Describable> arr, boolean useName)
     {
-        Map<Describable, Integer> m = countsOf(arr);
+        Function<Describable, String> singular = useName ? Describable::getName : Describable::getDescription,
+                                      plural   = useName ? n -> n.getName()+"s" : Describable::getPluralDescription;
+        
+        Map<Describable, Integer> m = countsOf(arr, singular);
 
         int i = 0;
-        String a, d;
-        for (Map.Entry<Describable, Integer> e : m.entrySet())
+        for (Map.Entry<Describable, Integer> e : m.entrySet()) 
         {
-            Interactible k = e.getKey() instanceof Interactible ? (Interactible)e.getKey() : null;
-            if(e.getValue() > 1)
-            {
-                d = e.getKey().getPluralDescription();
-                if(k != null) d += " " + k.plurLocPrep + " " + k.locReference;
-                a = (i == 0 ? "There are " : "") + e.getValue();
-            }
-            else
-            {
-                d = e.getKey().getDescription();
-                if(k != null) d += " " + k.normalLocPrep + " " + k.locReference;
-                a = (i == 0 ? "There is " : "") + Utils.articleOf(d);
-            }
-       
-            Utils.slowPrintlnAsListEntry(a + " " + d, m.size(), i);
+            Interactible k = e.getKey() instanceof Interactible in ? in : null;
 
-            i++;
-        }
-    }//TODO generalize these two
-
-    public static void slowPrintNameList(ArrayList<? extends Describable> arr)
-    {
-        Map<Describable, Integer> m = countsOfByName(arr);
-
-        int i = 0;
-        String a, d;
-        for (Map.Entry<Describable, Integer> e : m.entrySet())
-        {
-            Interactible k = e.getKey() instanceof Interactible ? (Interactible)e.getKey() : null;
-            if(e.getValue() > 1)
-            {
-                d = e.getKey().getName() + "s";
-                if(k != null) d += " " + k.plurLocPrep + " " + k.locReference;
+            String a, d;
+            if (e.getValue() > 1) {
+                d = plural.apply(e.getKey());
+                if (k != null) d += " " + k.plurLocPrep + " " + k.locReference;
                 a = (i == 0 ? "There are " : "") + e.getValue() + " ";
+            } else {
+                d = singular.apply(e.getKey());
+                if (k != null) d += " " + k.normalLocPrep + " " + k.locReference;
+                a = (i == 0 ? "There is " : "") + (!useName ? Utils.articleOf(d) + " " : "");
             }
-            else
-            {
-                d = e.getKey().getName();
-                if(k != null) d += " " + k.normalLocPrep + " " + k.locReference;
-                a = (i == 0 ? "There is " : "");
-            }
-       
-            Utils.slowPrintlnAsListEntry(a + d, m.size(), i);
 
-            i++;
+            Utils.slowPrintlnAsListEntry(a + d, m.size(), i++);
         }
     }
 
-    public static Map<Describable, Integer> countsOf(ArrayList<? extends Describable> arr)
+    public static Map<Describable, Integer> countsOf(ArrayList<? extends Describable> arr, Function<Describable, String> f)
     {
-        Map<String, Tuple<Describable,Integer>> strs = new LinkedHashMap<>(); //preserve insertion order
+        Map<String, Tuple<Describable, Integer>> strs = new LinkedHashMap<>(); //preserve insertion order
         for (Describable d : arr) 
         {
-            String desc = d.getDescription() + (d instanceof WallInteractible ? ((WallInteractible)d).locReference : "");
-            strs.put(desc, new Tuple<>(d, strs.getOrDefault(desc, new Tuple<>(d,0)).t2 + 1));
+            String key = f.apply(d) + (d instanceof WallInteractible w ? w.locReference : "");
+            strs.put(key, new Tuple<>(d, strs.getOrDefault(key, new Tuple<>(d, 0)).t2 + 1));
         }
-        Map<Describable,Integer> descs = new LinkedHashMap<>();
-        for(Tuple<Describable, Integer> v : strs.values()) descs.put(v.t1, v.t2);
-        return descs;
-    }//TODO generalize these two
 
-    public static Map<Describable, Integer> countsOfByName(ArrayList<? extends Describable> arr)
-    {
-        Map<String, Tuple<Describable,Integer>> strs = new LinkedHashMap<>(); //preserve insertion order
-        for (Describable d : arr) 
-        {
-            String desc = d.getName() + (d instanceof WallInteractible ? ((WallInteractible)d).locReference : "");
-            strs.put(desc, new Tuple<>(d, strs.getOrDefault(desc, new Tuple<>(d,0)).t2 + 1));
-        }
-        Map<Describable,Integer> descs = new LinkedHashMap<>();
-        for(Tuple<Describable, Integer> v : strs.values()) descs.put(v.t1, v.t2);
-        return descs;
+        Map<Describable, Integer> result = new LinkedHashMap<>();
+        for (Tuple<Describable, Integer> v : strs.values()) result.put(v.t1, v.t2);
+        return result;
     }
+
+    //TODO learn this implementation. Also inspecting door15 says there's 2 doors in the north wall in the Chamber
+    // public static Map<Describable, Integer> countsOf(ArrayList<? extends Describable> arr, Function<Describable, String> f)
+    // {
+    //     Map<String, Describable> seen = new LinkedHashMap<>();
+    //     Map<Describable, Integer> result = new LinkedHashMap<>();
+
+    //     for (Describable d : arr) 
+    //     {
+    //         String key = f.apply(d) + (d instanceof WallInteractible w ? w.locReference : "");
+    //         Describable canonical = seen.computeIfAbsent(key, k -> d);
+    //         result.merge(canonical, 1, Integer::sum);
+    //     }
+    //     return result;
+    // }
 
     public static void slowPrint(String output)
     {
