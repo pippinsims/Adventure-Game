@@ -7,6 +7,7 @@ import adventuregame.Inventory;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.interactibles.wallinteractibles.Door;
+import adventuregame.items.Equippable;
 
 //FOR PLAYER, FOLLOWERS, NPCS, AND ENEMIES
 
@@ -47,6 +48,7 @@ public abstract class Unit extends Effectable
         Utils.slowPrintln(msg);
         targ.receiveDamage(d); 
     }
+    public boolean isEquippedToPickLocks() { return canPickLocks && Utils.containsAny(getInventory().items, new Class[] {Equippable.Hat.Hairpin.class});} //TODO lockpick class
 
     protected String deathMsg;
     public String getDeathMessage() { return deathMsg; }

@@ -17,6 +17,8 @@ public class Player extends Unit
     private float chanceOfPtolomy = .0f;
     private boolean ptolomyIsPresent = false;
     private int ptolomyPrintLength = Utils.currentPrintDelay;
+    private boolean isInCombat;
+    private Interactible[] relevantInteractibles;
 
     public int doorMoves;
     public boolean ableToAct = false;
@@ -97,8 +99,8 @@ public class Player extends Unit
         if(myRoom.interactibles.size() > 0)
         {
             actions.add(Action.INSPECT);
-            if(myRoom.interactibles.size() - (myRoom.getDoors().size() - myRoom.getLockedDoors().size()) > 0)
-                actions.add(Action.INTERACT);
+
+            if(relevantInteractibles.length > 0) actions.add(Action.INTERACT);
         }
 
         if(myRoom.all().size() > 1 && !inv.isEmpty()) actions.add(Action.TRADE);
@@ -412,14 +414,9 @@ public class Player extends Unit
 
     private void interact()
     {
-        ArrayList<Interactible> inters = new ArrayList<>(myRoom.interactibles);
-        for(Interactible i : new ArrayList<>(inters)) if(i.actionVerb.isEmpty() || !i.isEnabled || (i instanceof Door && !((Door)i).isLocked(myRoom))) Utils.remove(inters, i); //WallInteractibles override .equals() and need to be removed with Utils
-
-        Interactible chosen = inters.get(Utils.promptList("What do you interact with?", Utils.actionDescsOf(inters)));
-
         ptolomyDoesSomething(new String[] {"lurks ominously","seems pleased"});
 
-        chosen.action(this);
+        relevantInteractibles[Utils.promptList("What do you interact with?", Utils.actionDescsOf(relevantInteractibles))].action(this);
     }
 
     private void leave()
@@ -466,7 +463,6 @@ public class Player extends Unit
         return actionDescriptions;
     }
 
-    private boolean isInCombat;
     @Override
     public void updateUnit()
     {
@@ -483,8 +479,14 @@ public class Player extends Unit
         while(ableToAct) 
         {
             ableToAct = false;
-
             isInCombat = myRoom.NPCs.stream().anyMatch(n -> n.enemies.contains(this));
+            relevantInteractibles = new ArrayList<>(myRoom.interactibles).stream()
+                .filter(i -> 
+                    (!(i instanceof Door) && !i.actionVerb.isEmpty()) ||
+                    (i instanceof Door && ((Door)i).isLocked(myRoom) && isEquippedToPickLocks()) && 
+                    i.isEnabled
+                ).toArray(Interactible[]::new);
+
             setActions();
             
             //lists available actions, lets the player choose, then performs chosen action

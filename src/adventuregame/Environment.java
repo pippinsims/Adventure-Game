@@ -527,7 +527,8 @@ public class Environment extends Game
         if(!Utils.PLAYTEST) d0.addLock("fancy", true);
         new Door(chamber, joiner1, Wall.EAST);
 
-        for(Door d1 : chamber.getDoors()) for(NonPlayer n : chamber.NPCs) if(n instanceof NonPlayer.Goblin) d1.disabler(n);
+        //TODO maybe disable all doors when in combat?
+        for(Door d1 : chamber.getDoors()) for(NonPlayer n : chamber.NPCs) if(n instanceof NonPlayer.Goblin) d1.addDisabler(n);
 
         Room treasureRoom = new Room("a room filled to the brim in a plenteous manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion",
                                      "Treasure Room");
@@ -615,32 +616,5 @@ public class Environment extends Game
         // f.setSize(img.getWidth()/3,img.getHeight()/3);
         // f.setDefaultCloseOperation(3);
         // f.setVisible(false);
-
-        /*
-        TODO all these
-        1.  golden pot duplication: when placed from inventory (nuel) FIXED
-        2.  when both other goblins died, the last one got 4 turns and killed people FIXED
-        6.  "mind death" didn't work on the first time it was used against new foes, except it did work on Daedalus after killing Bofer
-        7.  Oess crash game when try to instantiate body after being "mind death"-ed
-        20. insMap for name: 'Big mushroom' description: 'table-sized toadstool' is null
-        18. test if you can unlock the south chamber door with "normal key"
-        10. door inspection should show door number
-        11. it's hard to tell the state of doors without interacting
-        12. MAP!!
-        13. lockpicking doesn't tell you that you have a chance when you fail
-        15. shouldn't be called "trade", (take/give etc.)
-        16. Familiar descriptions of rooms/don't need to describe everything on each new turn
-        19. hard to tell if people are damaged and to what extent 
-        
-        21. NOTE trade>take should be steal
-        22. NOTE make cledobl qte whenever they try to put it in inventory
-        8.  NOTE any curiosity with Peili's spawn causes death
-        9.  NOTE descriptions are vague 
-        14. NOTE back-out of any action
-        17. NOTE fire is too weak
-        3.  NOTE trade has no back-out
-        4.  NOTE enemies don't drop stuff
-        5.  NOTE more intuitive spell system (multiple ways to cast?)
-        */
     }
 }

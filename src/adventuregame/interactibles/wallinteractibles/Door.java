@@ -103,7 +103,7 @@ public class Door extends WallInteractible
         } 
     }
     
-    public void disabler(Unit u)
+    public void addDisabler(Unit u)
     {
         disablers.add(u);
     }
@@ -137,8 +137,9 @@ public class Door extends WallInteractible
         }
         else if(isLocked(r))  
         {
-            if(u.canPickLocks && Utils.contains(u.getInventory().items, Equippable.Hat.Hairpin.class))
+            if(u.isEquippedToPickLocks())
             {
+                //TODO choose your lockpick if you dont just have one
                 Equippable.Hat.Hairpin h = (Hairpin)Utils.where(u.getInventory().items, i -> i instanceof Hairpin);
                 if(new Lockpick(u, h).outcome)
                 {

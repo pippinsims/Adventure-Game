@@ -28,7 +28,7 @@ public class Dialogue
 
     private boolean allActorsAlive()
     {
-        return actors.stream().anyMatch(a -> a.isDead());
+        return !actors.stream().anyMatch(a -> a.isDead());
     }
 
     public Unit getCurrentActor()

@@ -10,7 +10,7 @@ import adventuregame.interactibles.WallInteractible;
 
 public class Utils {
 
-    public static final boolean PLAYTEST = true;
+    public static final boolean PLAYTEST = false;
     public static final Random rand = new Random();
     public static Scanner scanner = new Scanner(System.in);
     public static final int MAX_PRINT_DELAY = PLAYTEST ? 1 : 50;
@@ -179,6 +179,7 @@ public class Utils {
     {
         String cur = "";
         int min = 0;
+        if(options.length == 0) throw new RuntimeException("no options to print!");
         for(int i = 0; i < options.length + 1; i++) if(i == options.length || !cur.equals(options[i]))
         {
             if(!cur.isEmpty()) System.out.println("(" + (i - min > 1 ? min + 1 + "-" : "") + i + ") " + cur);
@@ -235,10 +236,12 @@ public class Utils {
         return strings;
     }
 
-    public static String[] actionDescsOf(ArrayList<Interactible> inters)
+    public static String[] actionDescsOf(ArrayList<Interactible> inters) { return actionDescsOf(inters.toArray(Interactible[]::new)); }
+    
+    public static String[] actionDescsOf(Interactible[] inters)
     {
-        String[] d = new String[inters.size()];
-        for(int i = 0; i < d.length; i++) d[i] = inters.get(i).getActionDescription();
+        String[] d = new String[inters.length];
+        for(int i = 0; i < d.length; i++) d[i] = inters[i].getActionDescription();
         return d;
     }
 
@@ -319,7 +322,7 @@ public class Utils {
         int i = cap(index, listPrompts[0].length - 1), l = 0;
         while(l < listPrompts.length && !listPrompts[l][i].isEmpty()) outPromptsAsList.add(listPrompts[l++][i]);
         
-        String[] outPrompts = outPromptsAsList.toArray(new String[0]);
+        String[] outPrompts = outPromptsAsList.toArray(String[]::new);
         printOptions(outPrompts);
 
         String in = scanloop();
@@ -413,6 +416,12 @@ public class Utils {
     public static boolean contains(List<?> l, Class<?> c) 
     {
         for(Object o : l) if(c.isInstance(o)) return true;
+        return false;
+    }
+    
+    public static boolean containsAny(List<?> l, Class<?>[] c) 
+    {
+        for(Object o : l) for (int i = 0; i < c.length; i++) if(c[i].isInstance(o)) return true;
         return false;
     }
 

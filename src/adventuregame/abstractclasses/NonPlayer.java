@@ -9,6 +9,7 @@ import adventuregame.Effect;
 import adventuregame.Game;
 import adventuregame.Inventory;
 import adventuregame.Player;
+import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.interactibles.SkeletonInteractible;
 import adventuregame.items.Armor;
@@ -111,8 +112,7 @@ public abstract class NonPlayer extends Unit {
 
     protected void talk()
     {
-        if(getFirstActiveDialogue() != null) getFirstActiveDialogue().next();
-        else chooseAction();
+        if(getFirstActiveDialogue() == null || !getFirstActiveDialogue().next()) chooseAction();
     }
 
     protected Weapon defaultWeapon()
@@ -238,8 +238,9 @@ public abstract class NonPlayer extends Unit {
         @Override
         public EffectUpdateResult receiveDamage(Damage damage)
         {
+            Room r = myRoom;
             EffectUpdateResult out = super.receiveDamage(damage); 
-            if(out == EffectUpdateResult.DEATH && this instanceof Skeleton) new SkeletonInteractible(myRoom, inv);
+            if(out == EffectUpdateResult.DEATH && this instanceof Skeleton) new SkeletonInteractible(r, inv);
             
             return out;
         }

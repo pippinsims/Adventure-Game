@@ -89,6 +89,7 @@ public abstract class Interactible extends Describable
     
     public String getActionDescription()
     {
+        if(actionVerb.isEmpty()) throw new RuntimeException("Interactible in list has no action verb");
         return actionVerb + " " + getArticle() + " " + getDescription() + " " + actLocPrep + " " + locReference; 
     }
 

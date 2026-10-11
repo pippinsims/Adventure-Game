@@ -51,9 +51,8 @@ public class Room extends Describable
 
     public boolean doFirstDialogue()
     {
-        for(NonPlayer n : NPCs) if(!n.dialogues.isEmpty()) 
-        { 
-            n.dialogues.getFirst().next();
+        for(NonPlayer n : NPCs) if(!n.dialogues.isEmpty() && n.dialogues.getFirst().next() && n.dialogues.getFirst().atEnd)
+        {
             n.dialogues.remove(0); 
             return true;
         }
