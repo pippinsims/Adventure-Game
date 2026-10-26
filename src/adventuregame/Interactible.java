@@ -85,7 +85,7 @@ public abstract class Interactible extends Describable
         myRoom = room;
     }
 
-    protected boolean trigger() { return false; }
+    protected boolean trigger() { return false; } //TODO method names are verbs, but i think "trigger" in this case is used as a variable name, "trigger()" should be called "isEnabled()" er something
     
     public String getActionDescription()
     {
@@ -120,5 +120,12 @@ public abstract class Interactible extends Describable
             Utils.slowPrintln(insMap.get("").get());
         else
             throw new UnsupportedOperationException("insMap for name: '" + name + "' description: '" + description + "' is null");
+        //TODO Exception in thread "main" java.lang.UnsupportedOperationException: insMap for name: 'Big mushroom' description: 'table-sized toadstool' is null
+        // at adventuregame.Interactible.inspect(Interactible.java:122)
+        // at adventuregame.Player.inspect(Player.java:203)
+        // at adventuregame.Player.performAction(Player.java:128)
+        // at adventuregame.Player.updateUnit(Player.java:497)
+        // at adventuregame.Game.run(Game.java:38)
+        // at adventuregame.Environment.main(Environment.java:30)
     }
 }

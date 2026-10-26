@@ -53,6 +53,8 @@ public class Game
                     curRoom = r;
                     updateNPCsWhere(n -> Utils.overlap(r.all(), n.enemies), r, done); //aggressive go first
                     updateNPCsWhere(n -> !done.contains(n), r, done); //then peaceful
+
+                    //TODO instead of lambdas, sort so aggro are first and then peaceful, but sustain the previous sorting as well
                 }
             }
 
@@ -74,9 +76,9 @@ public class Game
     {
         for(NonPlayer n : new ArrayList<>(r.NPCs)) if(condition.test(n))
         {        
-            done.add(n);
             cur = n;
             n.updateUnit();
+            done.add(n);
             System.out.println();
             if(r.players.isEmpty()) break;
         }
@@ -122,14 +124,16 @@ public class Game
     {
         if(!peek) Utils.slowPrintln("--Info--");
 
-        if(!r.isFamiliarTo(cur))
+        //TODO print which door you came from
+
+        if(!r.isFamiliarTo(cur)) //TODO make this actually work, not just familiar description, but also print speed
         {
             Utils.currentPrintDelay = Utils.MAX_PRINT_DELAY;
             Utils.slowPrintln("You" + (peek ? " see " : "'re in ") + r.getDescription() + ".");
         }
         else
         {
-            Utils.slowPrintln(r.getDescription());
+            System.out.println(r.getDescription());
         }
 
         Utils.slowPrintDescList(r.interactibles, false);

@@ -29,7 +29,7 @@ public abstract class QuickTimeEvent
     {
         this.actor = actor;
         this.sender = sender;
-        maxLength = e.cooldown.getRemainingDuration();
+        maxLength = e.getDuration();
         effectToApply = e;
         current = answerTree;
     }
@@ -105,7 +105,7 @@ public abstract class QuickTimeEvent
         @Override
         protected boolean update()
         {
-            return effectToApply != null && actor.effectUpdate(effectToApply) == EffectUpdateResult.DEATH;
+            return effectToApply != null && effectToApply.update() == EffectUpdateResult.DEATH;
         }
     }
 

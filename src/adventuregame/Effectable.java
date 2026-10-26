@@ -22,54 +22,6 @@ public abstract class Effectable extends Describable{
         NONE
     }
 
-    final public EffectUpdateResult effectUpdate(Effect e)
-    {
-        //System.out.println("Health: " + health + " (temporary println)");
-
-        boolean effectIsOver = false;
-        EffectUpdateResult result = EffectUpdateResult.NONE;
-        switch (e.getType()) 
-        {
-            case FIRE:
-                result = receiveDamage(new Damage(e.strength, Damage.Type.FIRE, e, "You're burned by fire"));
-                effectIsOver = e.cooldown.decrement();
-                break;
-
-            case POISON:
-                result = receiveDamage(new Damage(e.strength, Damage.Type.BLUNT, e, "You're pierced through with poison"));
-                effectIsOver = e.cooldown.decrement();
-                break;
-
-            case PSYCHSTRIKE:
-                result = receiveDamage(new Damage(e.strength, Damage.Type.PSYCHIC, e, "Your mind is vexed of the psychic strike"));
-                isStunned = true;
-                effectIsOver = e.cooldown.decrement();
-                break;
-
-            case VITALITYDRAIN:
-                maxHealth -= e.strength;
-                //health > maxHealth would never happen
-                Utils.slowPrintln("You're stuck by Drain, max health decreased by " + e.strength);
-                result = receiveDamage(new Damage(e.strength, Damage.Type.UNBLOCKABLE));
-                effectIsOver = e.cooldown.decrement();
-                break;
-            
-            case VITALITYGROW:
-                maxHealth += e.strength;
-                Utils.slowPrintln("Max health increased by " + e.strength);
-                effectIsOver = e.cooldown.decrement();
-                break;
-
-            case WEAKNESS:
-                effectIsOver = e.cooldown.decrement();
-                break;
-        }
-
-        if(effectIsOver) effects.remove(e);
-
-        return result;
-    }
-
     private Damage computeDefenseVal(Damage d)
     {
         float val = d.getValue();
@@ -144,9 +96,10 @@ public abstract class Effectable extends Describable{
     public final void addEffect(Effect e)
     {
         effects.add(e);
+        e.effectee = this;
 
         Utils.slowPrint("You have been effected by " + e.getName());
-        int dur = e.cooldown.getRemainingDuration();
+        int dur = e.getDuration();
         if(dur >= 0)
             Utils.slowPrintln(", and will be effected by it for " + dur + " more turn" + (dur != 1 ? "s" : "") + ".");
         else
@@ -188,6 +141,6 @@ public abstract class Effectable extends Describable{
     //MARK: for testing
     public void updateAllEffectsWithoutResult()
     {
-        for (int i = effects.size() - 1; i >= 0; i--) effectUpdate(effects.get(i));
+        for (int i = effects.size() - 1; i >= 0; i--) effects.get(i).update();
     }
 }

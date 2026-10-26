@@ -11,6 +11,7 @@ import adventuregame.QuickTimeEvent.Node;
 import adventuregame.QuickTimeEvent.Node.Output;
 import adventuregame.abstractclasses.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -126,13 +127,13 @@ public class Environment extends Game
         //average narwhal weight is 1.425 tons
         String celld = "a barren, empty, disgusting prison cell", celll = celld + ".\nThe walls are made of massive stone bricks (each probably weighs more than 25 Narwhals and a Unicorn). The ceiling is 24 feet high.\nNot a place for happy thoughts", cellf = "Stone brick prison cell.", celln = "Cell";
         curRoom = new Room(celld, celll, cellf, celln);
-        Door d = new Door(curRoom, hall, Wall.EAST); 
+        Door d = new Door(curRoom, hall, Wall.EAST);
         if(!Utils.PLAYTEST)
         {
             d.addBar(hall, true);
             d.addLock("normal", true);
         }
-        new Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
+        new adventuregame.interactibles.wallinteractibles.Window(curRoom, "a gloomy landscape through the close, glittering, impeccable steel bars. Dull reddish light gleams from above a mountain in the foggy distance.", Wall.WEST);
 
         Room cell2 = new Room(celld, celll, cellf, celln);
         new Table(cell2);
@@ -561,7 +562,6 @@ public class Environment extends Game
         if(Utils.PLAYTEST) nuel.getInventory().add(new Equippable.Hat.Hairpin());
         addPlayer(nuel, curRoom);
 
-        var f = new JFrame();
         valeent.hasLongHair = true;
         valeent.getInventory().addAndEquip(Item.clone(rag), true);
         valeent.getInventory().addAndEquip(new Equippable.Hat.Hairpin(), true);
@@ -575,6 +575,26 @@ public class Environment extends Game
         dormaah.getInventory().addAndEquip(Item.clone(rag), true);
         addPlayer(dormaah, curRoom);
 
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame();            
+            frame.setUndecorated(true);
+            frame.setSize(400, 300);
+            
+            JPanel panel = new JPanel();
+            frame.add(panel);
+            
+            GraphicsConfiguration config = frame.getGraphicsConfiguration();
+            Rectangle bounds = config.getBounds();
+            Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(config);
+            frame.setLocation(
+                bounds.x + bounds.width - insets.right - frame.getWidth(), 
+                bounds.y + bounds.height - insets.bottom - frame.getHeight()
+            );
+            
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+        });
+         
         //The beginnings of graphics:
         // valeent.getInventory().add(new Actor() {
         //     @Override

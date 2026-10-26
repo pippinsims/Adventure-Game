@@ -4,6 +4,7 @@ import java.util.Map;
 
 import adventuregame.Utils.Tuple;
 import adventuregame.abstractclasses.Describable;
+import adventuregame.Effectable.EffectUpdateResult;
 
 public class Effect extends Describable{
 
@@ -15,31 +16,10 @@ public class Effect extends Describable{
                                                                                             Map.entry(Type.WEAKNESS     , new Tuple<String,String>("weakness"            , "frailty")));
 
     //TODO fill descriptions map at start of Environment.main() using file
-    Type type;
-    Cooldown cooldown;
+    private int duration;
     float strength;
-
-    public Effect(Effect e)
-    {
-        this(e.type, 0, e.strength, e.name);
-        cooldown = new Cooldown(e.cooldown.getRemainingDuration(), e.cooldown.getType());
-        description = new String(e.description);
-    }
-
-    public Effect(Type t, int duration, float strength)
-    {
-        this(t, duration, strength, effectDescriptions.get(t).t1);
-    }
-
-    public Effect(Type t, int duration, float strength, String name) 
-    {
-        type = t;
-        cooldown = new Cooldown(duration, t);
-        description = effectDescriptions.get(type).t2;
-        this.strength = strength;
-        this.name = name;
-        pluralDescription = effectDescriptions.get(type).t1 + " effects";
-    }
+    Type type;
+    Effectable effectee;
 
     public enum Type{
         FIRE,
@@ -50,39 +30,77 @@ public class Effect extends Describable{
         WEAKNESS
     }
 
+    public Effect(Effect e)
+    {
+        this(e.type, e.duration, e.strength, e.effectee);
+    }
+    
+    public Effect(Type t, int duration, float strength)
+    {
+        this(t, duration, strength, null);
+    }
+
+    private Effect(Type t, int duration, float strength, Effectable effectee) 
+    {
+        type = t;
+        this.duration = duration;
+        this.strength = strength;
+        this.effectee = effectee;
+        Tuple<String, String> d = effectDescriptions.get(type); 
+        name = d.t1;
+        description = d.t2;
+        pluralDescription = d.t1 + " effects";
+    }
+
+    public final EffectUpdateResult update()
+    {
+        if(effectee == null) throw new RuntimeException("Cannot update an Effect that has no effectee");
+        //System.out.println("Health: " + e.health + " (temporary println)");
+
+        EffectUpdateResult result = EffectUpdateResult.NONE;
+        switch (getType()) 
+        {
+            case FIRE:
+                result = effectee.receiveDamage(new Damage(strength, Damage.Type.FIRE, this, "You're burned by fire"));
+                break;
+
+            case POISON:
+                result = effectee.receiveDamage(new Damage(strength, Damage.Type.BLUNT, this, "You're pierced through with poison"));
+                break;
+
+            case PSYCHSTRIKE:
+                result = effectee.receiveDamage(new Damage(strength, Damage.Type.PSYCHIC, this, "Your mind is vexed of the psychic strike"));
+                effectee.isStunned = true;
+                break;
+
+            case VITALITYDRAIN:
+                effectee.maxHealth -= strength;
+                //health > maxHealth would never happen
+                Utils.slowPrintln("You're stuck by Drain, max health decreased by " + strength);
+                result = effectee.receiveDamage(new Damage(strength, Damage.Type.UNBLOCKABLE));
+                break;
+            
+            case VITALITYGROW:
+                effectee.maxHealth += strength;
+                Utils.slowPrintln("Max health increased by " + strength);
+                break;
+
+            case WEAKNESS:
+                break;
+        }
+
+        if(--duration == 0) effectee.effects.remove(this);
+
+        return result;
+    }
+
     public Type getType()
     {
         return type;
     }
 
-    public Cooldown getCooldown()
-    {
-        return cooldown;
-    }
-}
-
-class Cooldown{
-    private int duration;
-    private Effect.Type type;
-
-    public Cooldown(int duration, Effect.Type t)
-    {
-        this.duration = duration;
-        type = t;
-    }
-
-    public Effect.Type getType()
-    {
-        return type;
-    }
-
-    public int getRemainingDuration()
-    {
+    public int getDuration() 
+    { 
         return duration;
-    }
-
-    public boolean decrement()
-    {
-        return --duration == 0;
     }
 }
