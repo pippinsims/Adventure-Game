@@ -66,6 +66,7 @@ public class Player extends Unit
     public Player(String n, int health)
     {
         name = n;        
+        this.maxHealth = health;
         this.health = health;
         deathMsg = name + " died.";
         setDescription();
@@ -482,8 +483,8 @@ public class Player extends Unit
             isInCombat = myRoom.NPCs.stream().anyMatch(n -> n.enemies.contains(this));
             relevantInteractibles = new ArrayList<>(myRoom.interactibles).stream()
                 .filter(i -> 
-                    (!(i instanceof Door) && !i.actionVerb.isEmpty()) ||
-                    (i instanceof Door && ((Door)i).isLocked(myRoom) && isEquippedToPickLocks()) && 
+                    ((!(i instanceof Door) && !i.actionVerb.isEmpty()) ||
+                    (i instanceof Door && ((Door)i).isLocked(myRoom) && isEquippedToPickLocks())) && 
                     i.isEnabled
                 ).toArray(Interactible[]::new);
 

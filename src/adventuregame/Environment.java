@@ -175,7 +175,7 @@ public class Environment extends Game
                             case 6: case 7: 
                                 u.addEffect(new Effect(Effect.Type.WEAKNESS, 10, 1));
                                 break;
-                            case 8: case 9:
+                            default:
                                 u.addEffect(new Effect(Effect.Type.WEAKNESS, -1, 1));
                                 break;
                         }
@@ -231,7 +231,7 @@ public class Environment extends Game
                     new EffectQTE(
                         u,
                         item,
-                        new Effect(Effect.Type.VITALITYDRAIN, 10, u.getMaxHealth()/10),
+                        new Effect(Effect.Type.VITALITYDRAIN, (int)u.getHealth(), 1),
                         new Node.B(
                             "YOU FEEL EXTREME PAIN. YOU ARE DYING",
                             new String[] 
@@ -518,7 +518,7 @@ public class Environment extends Game
             { descMap.put("Laur", "toad-sized TABLEstool"); }
             @Override public void action(Unit u) {}
             @Override protected void setInspects() { put(name, description); }
-            @Override protected boolean trigger() { return true; }
+            @Override protected boolean checkEnableOnUpdate() { return true; }
         };
         
         Room joiner1 = new Room();

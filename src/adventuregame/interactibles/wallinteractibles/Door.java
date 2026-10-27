@@ -281,7 +281,7 @@ public class Door extends WallInteractible
     }
 
     @Override 
-    protected boolean trigger() 
+    protected boolean checkEnableOnUpdate() 
     {
         return !Utils.overlap(disablers, myRoom.all());
     }

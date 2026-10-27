@@ -85,7 +85,7 @@ public abstract class Interactible extends Describable
         myRoom = room;
     }
 
-    protected boolean trigger() { return false; } //TODO method names are verbs, but i think "trigger" in this case is used as a variable name, "trigger()" should be called "isEnabled()" er something
+    protected boolean checkEnableOnUpdate() { return false; } //TODO method names are verbs, but i think "trigger" in this case is used as a variable name, "trigger()" should be called "isEnabled()" er something
     
     public String getActionDescription()
     {

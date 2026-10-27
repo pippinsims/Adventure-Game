@@ -5,8 +5,8 @@ BUG - FIXED when both other goblins died, the last one got 4 turns and killed pe
 BUG - FIXED "mind death" didn't work on the first time it was used against new foes, except it did work on Daedalus after killing Bofer  
 BUG - FIXED Oess crash game when try to instantiate body after being "mind death"-ed  
 BUG - FIXED insMap for name: 'Big mushroom' description: 'table-sized toadstool' is null  
-BUG peili still runs her turn after she dies (doesn't get to go, but still)  
-BUG you can take sword even if the old skelly is there  
+BUG - FIXED peili still runs her turn after she dies  
+BUG - FIXED you can take sword even if the old skelly is there  
     
 FEAT Familiar descriptions of rooms/don't need to describe everything on each new turn. in addition, when you learn something like the fact that a door is locked, everyone in the room should learn and remember that for next description  
 FEAT add MAP!!  

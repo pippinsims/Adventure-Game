@@ -10,7 +10,7 @@ import adventuregame.interactibles.WallInteractible;
 
 public class Utils {
 
-    public static final boolean PLAYTEST = false;
+    public static final boolean PLAYTEST = true;
     public static final Random rand = new Random();
     public static Scanner scanner = new Scanner(System.in);
     public static final int MAX_PRINT_DELAY = PLAYTEST ? 1 : 50;

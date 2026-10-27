@@ -120,7 +120,7 @@ public class Room extends Describable
     {
         updateDoors();
 
-        for(Interactible i : interactibles) if(i.trigger()) i.enable();
+        for(Interactible i : interactibles) if(i.checkEnableOnUpdate()) i.enable();
 
         for(NonPlayer n : NPCs) n.updateAwareness();
     }
