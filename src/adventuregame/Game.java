@@ -148,4 +148,9 @@ public class Game
         r.discover();
         Utils.currentPrintDelay = 3;
     }
+
+    protected final static void doScreen()
+    {
+        new AnimationWindow();
+    }
 }

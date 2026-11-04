@@ -11,17 +11,15 @@ import adventuregame.QuickTimeEvent.Node;
 import adventuregame.QuickTimeEvent.Node.Output;
 import adventuregame.abstractclasses.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
-import javax.swing.*;
 
 public class Environment extends Game
 {
     public static void main(String[] args)
     {
+        doScreen();
         generateMap();
 
         printIntroduction();
@@ -574,67 +572,5 @@ public class Environment extends Game
         dormaah.hasLongHair = true;
         dormaah.getInventory().addAndEquip(Item.clone(rag), true);
         addPlayer(dormaah, curRoom);
-
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame();            
-            frame.setUndecorated(true);
-            frame.setSize(400, 300);
-            
-            JPanel panel = new JPanel();
-            frame.add(panel);
-            
-            GraphicsConfiguration config = frame.getGraphicsConfiguration();
-            Rectangle bounds = config.getBounds();
-            Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(config);
-            frame.setLocation(
-                bounds.x + bounds.width - insets.right - frame.getWidth(), 
-                bounds.y + bounds.height - insets.bottom - frame.getHeight()
-            );
-            
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-        });
-         
-        //The beginnings of graphics:
-        // valeent.getInventory().add(new Actor() {
-        //     @Override
-        //     public void action(Unit u, boolean isFinal) {
-                
-        //         if(f.isVisible())
-        //         {
-        //             f.add(new JPanel()
-        //             {
-        //                 protected void paintComponent(Graphics g)
-        //                 {
-        //                     try { g.drawImage(ImageIO.read(new File("src/adventuregame/asciiart/Skin_Undercut_Slick_Back.png")), 0, 0, null);
-        //                     } catch (IOException e) {e.printStackTrace();}
-        //                 }
-        //             });
-        //         }
-        //         f.setVisible(!f.isVisible());
-        //         if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
-        //     }
-        // });
-
-        // BufferedImage img;
-        // try {
-        //     img = ImageIO.read(new File("src/adventuregame/asciiart/Slick-Back-With-Side-Part.png"));    
-        // } catch (Exception exc) {
-        //     exc.printStackTrace();
-        //     return;
-        // }
-        
-        // f.add(
-        //     new JPanel()
-        //     {
-        //         protected void paintComponent(Graphics g)
-        //         {
-        //             g.drawImage(img, 0, 0, null);
-        //         }
-        //     }
-        // );
-        // f.setSize(img.getWidth()/3,img.getHeight()/3);
-        // f.setDefaultCloseOperation(3);
-        // f.setVisible(false);
     }
 }
