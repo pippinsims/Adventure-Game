@@ -1,10 +1,12 @@
 package adventuregame;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,39 +39,44 @@ class AnimationPanel extends JPanel implements ActionListener {
 
     private Image cur1 = i1;
 
-    private int clickx = 0, clicky = 0, dragx = 0, dragy = 0;
-    private boolean stretchTop,stretchBottom,stretchRight,stretchLeft;
+    private int clickX = 0, clickY = 0, dragX = 0, dragY = 0;
+    private boolean stretchTop, stretchBottom, stretchRight, stretchLeft;
     private Box toDrag;
 
     private final Timer animationTimer;
     private static final int FPS = 60; 
     private static final int DELAY = 1000 / FPS;
 
-    public AnimationPanel() {
-        setPreferredSize(new Dimension(4*400, 4*225));
+    private Font customFont;
+    private BufferedImage customIcon;
 
-        backgroundImage = scaleImageIcon(new ImageIcon(AnimationWindow.path+"background.png"), 4).getImage();
+    public AnimationPanel() {
+        // setPreferredSize(new Dimension(1920, 1080));
+        setPreferredSize(new Dimension(1540, 820));
+
+        backgroundImage = scaleImageIcon(new ImageIcon(AnimationWindow.path+"background2.png"), 4).getImage();
+        System.out.println(new ImageIcon(AnimationWindow.path+"background2.png").getIconHeight());
 
         MouseAdapter a = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                clickx = e.getX() / 20;
-                clicky = e.getY() / 20;
+                clickX = e.getX() / 20;
+                clickY = e.getY() / 20;
 
                 toDrag = null;
                 stretchTop = stretchBottom = stretchRight = stretchLeft = false;
                 for(Box box : boxes.reversed()) if(box.draggable || box.stretchable)
                 {
-                    if(clickx == box.left()) stretchLeft = true;
-                    else if(clickx == box.right()) stretchRight = true;
+                    if(clickX == box.left()) stretchLeft = true;
+                    else if(clickX == box.right()) stretchRight = true;
                     
-                    if(clicky == box.top()) stretchTop = true;
-                    else if(clicky == box.bottom()) stretchBottom = true;
+                    if(clickY == box.top()) stretchTop = true;
+                    else if(clickY == box.bottom()) stretchBottom = true;
                     
-                    if(clickx == box.left() && box.top() <= clicky && clicky <= box.bottom() || 
-                       clickx == box.right() && box.top() <= clicky && clicky <= box.bottom() ||
-                       clicky == box.top() && box.left() <= clickx && clickx <= box.right() ||
-                       clicky == box.bottom() && box.left() <= clickx && clickx <= box.right()) 
+                    if(clickX == box.left() && box.top() <= clickY && clickY <= box.bottom() || 
+                       clickX == box.right() && box.top() <= clickY && clickY <= box.bottom() ||
+                       clickY == box.top() && box.left() <= clickX && clickX <= box.right() ||
+                       clickY == box.bottom() && box.left() <= clickX && clickX <= box.right()) 
                     {
                         toDrag = box;
                         break;
@@ -81,16 +88,15 @@ class AnimationPanel extends JPanel implements ActionListener {
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                dragx = e.getX() / 20;
-                dragy = e.getY() / 20;
-                System.err.println(dragx+","+dragy+":"+toDrag);
+                dragX = e.getX() / 20;
+                dragY = e.getY() / 20;
 
                 if(toDrag != null) 
                 {
                     if(stretchLeft && stretchTop && toDrag.draggable)
                     {
-                        toDrag.x = dragx;
-                        toDrag.y = dragy;
+                        toDrag.x = dragX;
+                        toDrag.y = dragY;
                     }
                     else if(toDrag.stretchable)
                     {
@@ -99,18 +105,18 @@ class AnimationPanel extends JPanel implements ActionListener {
                         {
                             if(stretchLeft)
                             {
-                                toDrag.width += toDrag.x - dragx;
-                                toDrag.x = dragx;
+                                toDrag.width += toDrag.x - dragX;
+                                toDrag.x = dragX;
                             }
                             
                             if(stretchTop)
                             {
-                                toDrag.height += toDrag.y - dragy;
-                                toDrag.y = dragy;
+                                toDrag.height += toDrag.y - dragY;
+                                toDrag.y = dragY;
                             }    
                         }
-                        if(stretchRight) toDrag.width += dragx - toDrag.right();
-                        if(stretchBottom) toDrag.height += dragy - toDrag.bottom();  
+                        if(stretchRight) toDrag.width += dragX - toDrag.right();
+                        if(stretchBottom) toDrag.height += dragY - toDrag.bottom();  
                         
                         int min = toDrag.border == Box.Border.NONE ? 3 : 1;
                         if(toDrag.height < min) { toDrag.height = min; toDrag.y = oldy; }
@@ -125,8 +131,9 @@ class AnimationPanel extends JPanel implements ActionListener {
         addMouseMotionListener(a);
     
         boxes = new ArrayList<>(List.of(
-            new Box(Box.Mode.EMPTY, 5, 5, 7, 9, Box.Border.BLUE, true, true),
+            new Box(Box.Mode.TEXTOUT, 5, 5, 7, 9, Box.Border.BLUE, true, true),
             new Box(Box.Mode.EMPTY, 10, 10, 5, 13, Box.Border.NONE, true, true),
+            new Box(Box.Mode.TEXTOUT, 10, 10, 5, 13, Box.Border.NONE, true, true),
             new Box(Box.Mode.EMPTY, 50, 5, 20, 2, Box.Border.BLUE, true, true),
             new Box(Box.Mode.EMPTY, 0, 0, 2, 20, Box.Border.BLUE, true, true)
         ));
@@ -138,6 +145,28 @@ class AnimationPanel extends JPanel implements ActionListener {
         // invbutton = Box(button)
         // mapb = box(button)
         // map=box(textout)
+        
+        try {
+            File fontFile = new File("src/resources/my-custom-font.ttf"); 
+            
+            customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            customFont = customFont.deriveFont(Font.PLAIN, 28f);
+            
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(customFont);
+        } catch (IOException | FontFormatException e) {
+            customFont = new Font("Serif", Font.PLAIN, 28);
+        }
+
+        // try { customIcon = ImageIO.read(new File(AnimationWindow.path+"peili.png")); } 
+        try { customIcon = ImageIO.read(new File("src/resources/icon.png")); } 
+        catch (IOException e) {
+            customIcon = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = customIcon.createGraphics();
+            g.setColor(Color.YELLOW);
+            g.fillOval(0, 0, 24, 24);
+            g.dispose();
+        }
 
         animationTimer = new Timer(DELAY, this);
         animationTimer.start();
@@ -161,17 +190,63 @@ class AnimationPanel extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g;
 
         // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
         if (backgroundImage != null) g2d.drawImage(backgroundImage, 0, 0, this);
         for (Box b : boxes)
+        {
+            boolean noborder = b.border == Box.Border.NONE;
+            
             for (int c = 0; c < b.tiles.length; c++)
                 for (int r = 0; r < b.tiles[0].length; r++)
                     g2d.drawImage(b.tiles[c][r].getImage(), (c + b.x)*20, (r + b.y)*20, this);
+
+            if(b.mode == Box.Mode.TEXTOUT)
+            {
+                g2d.setColor(Color.WHITE);
+                g2d.setFont(customFont);
+                FontMetrics metrics = g2d.getFontMetrics(customFont);
+
+                //int lineHeight = metrics.getHeight();
+                //int iconSize = metrics.getAscent();
+                int charSpace = 20;
+                int startX = (b.x)*20;
+                int currentY = (b.y+1)*20;
+                if(!noborder)
+                {
+                    startX += 20;
+                    currentY += 20;
+                }
+
+                for (String line : b.outText.split("\n")) 
+                {
+                    int currentX = startX;
+                    for(char c : line.toCharArray()) 
+                    {
+                        if(currentY > (b.bottom() + 1 - (noborder ? 0 : 1)) * 20) break;
+                        if (c == '@') g2d.drawImage(customIcon, currentX, currentY - charSpace, charSpace, charSpace, null);
+                        else {
+                            String s = String.valueOf(c);
+                            g2d.drawString(s, currentX + (charSpace - metrics.stringWidth(s)) / 2, currentY);
+                        }
+                        
+                        currentX += charSpace;
+                        if(currentX > (b.right() - (noborder ? 0 : 1)) * 20)
+                        {
+                            currentY += charSpace *2;
+                            currentX = startX;
+                        }
+                    }
+                    currentY += charSpace * 2;
+                }
+            }
+        }
+        
         if (cur1 != null)
         { 
             int w = cur1.getWidth(null);
             int h = cur1.getHeight(null);
-            g2d.drawImage(cur1, clickx*20, clicky*20, w, h, this);
+            g2d.drawImage(cur1, clickX*20, clickY*20, w, h, this);
         }
     }
 
@@ -190,7 +265,11 @@ class Box {
         BLUE
     }
     enum Mode {
-        EMPTY
+        EMPTY,
+        TEXTOUT,
+        TEXTIN,
+        IMAGE,
+        BUTTON
     }
 
     public ImageIcon[][] tiles;
@@ -207,7 +286,8 @@ class Box {
     public final boolean draggable;
     public int x, y, width, height;
     public Border border;
-    private Mode m;
+    public final Mode mode;
+    public String outText = "Heyo, buddy!eeeeeeeeeeee\nnice to@@sight@thee there.";
 
     public int left() { return x; }
     public int top() { return y; }
@@ -235,7 +315,7 @@ class Box {
         this.width = width;
         this.height = height;
         this.border = border;
-        this.m = mode;
+        this.mode = mode;
 
         update();
     }
@@ -248,13 +328,13 @@ class Box {
         return b;
     }
 
-    public static ImageIcon scaleImage(ImageIcon i, double scalex, double scaley) {
-        if (scalex == 0 || scaley == 0) throw new IllegalArgumentException("Scale factors must be non-zero");
+    public static ImageIcon scaleImage(ImageIcon i, double scaleX, double scaleY) {
+        if (scaleX == 0 || scaleY == 0) throw new IllegalArgumentException("Scale factors must be non-zero");
         BufferedImage b = imageIconToBufferedImage(i);
         AffineTransform t = new AffineTransform();
-        t.scale(scalex, scaley);
-        if (scalex < 0) t.translate(-b.getWidth(), 0);
-        if (scaley < 0) t.translate(0, -b.getHeight());
+        t.scale(scaleX, scaleY);
+        if (scaleX < 0) t.translate(-b.getWidth(), 0);
+        if (scaleY < 0) t.translate(0, -b.getHeight());
         return new ImageIcon(new AffineTransformOp(t, AffineTransformOp.TYPE_BILINEAR).filter(b, null));
     }
 
