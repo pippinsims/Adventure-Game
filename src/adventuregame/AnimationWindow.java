@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AnimationWindow extends JFrame {
 
-    public static final String path = "C:/Users/kuhns/Documents/gimp/export/laur/";
+    public static final String path = "src/adventuregame/asciiart/local/";
 
     public AnimationWindow() {
         setTitle("Moving Image Animation");
@@ -54,8 +54,8 @@ class AnimationPanel extends JPanel implements ActionListener {
         // setPreferredSize(new Dimension(1920, 1080));
         setPreferredSize(new Dimension(1540, 820));
 
-        backgroundImage = scaleImageIcon(new ImageIcon(AnimationWindow.path+"background2.png"), 4).getImage();
-        System.out.println(new ImageIcon(AnimationWindow.path+"background2.png").getIconHeight());
+        backgroundImage = scaleImageIcon(new ImageIcon(AnimationWindow.path+"background.png"), 4).getImage();
+        System.out.println(new ImageIcon(AnimationWindow.path+"background.png").getIconHeight());
 
         MouseAdapter a = new MouseAdapter() {
             @Override
@@ -130,13 +130,13 @@ class AnimationPanel extends JPanel implements ActionListener {
         addMouseListener(a);
         addMouseMotionListener(a);
     
-	boxes = new ArrayList<>(List.of(
-            new Box(Box.Mode.TEXTOUT, 5, 5, 7, 9, Box.Border.BLUE, true, true),
-            new Box(Box.Mode.EMPTY, 10, 10, 5, 13, Box.Border.NONE, true, true),
-            new Box(Box.Mode.TEXTOUT, 10, 10, 5, 13, Box.Border.NONE, true, true),
-            new Box(Box.Mode.EMPTY, 50, 5, 20, 2, Box.Border.BLUE, true, true),
-            new Box(Box.Mode.EMPTY, 0, 0, 2, 20, Box.Border.BLUE, true, true)
-	));
+        boxes = new ArrayList<>(List.of(
+                new Box(Box.Mode.TEXTOUT, 5, 5, 7, 9, Box.Border.BLUE, true, true),
+                new Box(Box.Mode.EMPTY, 10, 10, 5, 13, Box.Border.NONE, true, true),
+                new Box(Box.Mode.TEXTOUT, 10, 10, 5, 13, Box.Border.NONE, true, true),
+                new Box(Box.Mode.EMPTY, 50, 5, 20, 2, Box.Border.BLUE, true, true),
+                new Box(Box.Mode.EMPTY, 0, 0, 2, 20, Box.Border.BLUE, true, true)
+        ));
 
         // printer = Box(mode=textout,x,y,w,h,border=blue)
         // input = Box(mode=textin,x,y,w,h,border=null)
