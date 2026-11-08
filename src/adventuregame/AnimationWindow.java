@@ -130,13 +130,13 @@ class AnimationPanel extends JPanel implements ActionListener {
         addMouseListener(a);
         addMouseMotionListener(a);
     
-        boxes = new ArrayList<>(List.of(
+	boxes = new ArrayList<>(List.of(
             new Box(Box.Mode.TEXTOUT, 5, 5, 7, 9, Box.Border.BLUE, true, true),
             new Box(Box.Mode.EMPTY, 10, 10, 5, 13, Box.Border.NONE, true, true),
             new Box(Box.Mode.TEXTOUT, 10, 10, 5, 13, Box.Border.NONE, true, true),
             new Box(Box.Mode.EMPTY, 50, 5, 20, 2, Box.Border.BLUE, true, true),
             new Box(Box.Mode.EMPTY, 0, 0, 2, 20, Box.Border.BLUE, true, true)
-        ));
+	));
 
         // printer = Box(mode=textout,x,y,w,h,border=blue)
         // input = Box(mode=textin,x,y,w,h,border=null)
