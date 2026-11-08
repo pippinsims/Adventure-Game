@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AnimationWindow extends JFrame {
 
-    public static final String path = "src/adventuregame/asciiart/local/";
+    public static final String path = "src/adventuregame/asciiart/assets/";
 
     public AnimationWindow() {
         setTitle("Moving Image Animation");
