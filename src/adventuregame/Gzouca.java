@@ -66,14 +66,14 @@ public class Gzouca {
     {
         for(Entry<String, Cards> x : playersMap.entrySet())
             if(x.getValue().cards().size() < 8 || toDeal.cards().size() < 5) 
-                { System.out.println("Each player needs 8 cards, and you need at least 5 cards to deal!"); return; }
+                { Utils.slowPrintln("Each player needs 8 cards, and you need at least 5 cards to deal!", 0); return; }
 
-        System.out.println("started game of Gzouca!");
+        Utils.slowPrintln("started game of Gzouca!", 0);
         ArrayList<Player> players = new ArrayList<>();
         int j = 0;
         for(Entry<String, Cards> p : playersMap.entrySet())
         {
-            System.out.println("choosing obfuscation for " + p.getKey());
+            Utils.slowPrintln("choosing obfuscation for " + p.getKey(), 0);
             String[] mode;
             switch (j) {
                 case 0: mode = color; break;
@@ -88,13 +88,13 @@ public class Gzouca {
 
         for(int hand = 0; hand < 3; hand++)
         {
-            System.out.println("----------------Hand " + (hand + 1) + "!");
+            Utils.slowPrintln("----------------Hand " + (hand + 1) + "!", 0);
             for(Player p : players) 
             {
                 p.hand = new ArrayList<>();
                 ArrayList<Card> submission = new ArrayList<>(playersMap.get(p.name).cards());
-                System.out.println("----");
-                for(Card c : submission) System.out.println(valueOf(c.type()));
+                Utils.slowPrintln("----", 0);
+                for(Card c : submission) Utils.slowPrintln(valueOf(c.type()), 0);
                 while(p.hand.size() < 5)
                     for(Card c : new ArrayList<>(submission))
                     {
@@ -114,7 +114,7 @@ public class Gzouca {
             boolean doBreak = false;
             for(int round = 0; round < 5; round++)
             {
-                System.out.println("----------------Round " + (round + 1) + "!");
+                Utils.println("----------------Round " + (round + 1) + "!");
                 Card chsn = toDealForRound.get(Utils.rand.nextInt(toDealForRound.size()));
                 dealt.add(chsn); //no specials no negatives
                 toDealForRound.remove(chsn);
@@ -122,22 +122,22 @@ public class Gzouca {
                 for(Player p : players)
                 {
                     if(p.isSet) continue;
-                    System.out.println("dealt:");
+                    Utils.println("dealt:");
                     for(Card c : dealt) System.out.print(stringOf(c.type(), p) + ", ");
-                    System.out.println();
+                    Utils.println();
                     for(Player p1 : players)
                     {
                         if(!p1.played.isEmpty())
                         {
-                            System.out.println(p1.name+"------------");
+                            Utils.println(p1.name+"------------");
                             for(Card c : p1.played) System.out.print(stringOf(c.type(), p) + ", ");
-                            System.out.println("\n------------");
+                            Utils.println("\n------------");
                         }
                     }
 
                     String[] cardsStr = new String[p.hand.size()];
                     for(int i = 0; i < p.hand.size(); i++) cardsStr[i] = stringOf(p.hand.get(i).type(), p);
-                    System.out.println();
+                    Utils.println();
                     
                     Card cardPlayed = p.hand.get(Utils.promptList(p.name + ", this is your hand, which do you play?", cardsStr));
                     p.played.add(cardPlayed);
@@ -162,7 +162,7 @@ public class Gzouca {
 
                     if(allSet)
                     {
-                        System.out.println("That's everyone!");
+                        Utils.slowPrintln("That's everyone!", 0);
                         getWinner(players);
                         doBreak = true;
                     }
@@ -170,7 +170,7 @@ public class Gzouca {
                 if(doBreak) break;
                 if(round == 4)
                 {
-                    System.out.println("That's the Round!");
+                    Utils.slowPrintln("That's the Round!", 0);
                     getWinner(players);
                 }
             }
@@ -240,10 +240,10 @@ public class Gzouca {
             }
         }
 
-        if(winner == null) System.out.println("Tie!! nobody wins.");
+        if(winner == null) Utils.slowPrintln("Tie!! nobody wins.", 0);
         else 
         {
-            System.out.println(winner.name + " wins! They gain 1 point.");
+            Utils.slowPrintln(winner.name + " wins! They gain 1 point.", 0);
             winner.points++;
         }
         return winner;
@@ -274,7 +274,7 @@ public class Gzouca {
 
         public void set(int round, int hand)
         {
-            System.out.println("settling!");
+            Utils.slowPrintln("settling!", 0);
             isSet = true;
             setHand = hand;
             setRound = round;
@@ -305,7 +305,7 @@ public class Gzouca {
                     default: sum += v;
                 }
             }
-            System.out.println(name + " sum: "+ sum);
+            Utils.slowPrintln(name + " sum: "+ sum, 0);
 
             if(hasBeast && hasBeing)
             {

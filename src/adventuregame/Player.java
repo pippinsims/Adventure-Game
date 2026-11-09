@@ -176,11 +176,11 @@ public class Player extends Unit
                 Damage d = chosen.getDamage();
                 if(hasEffect(Effect.Type.WEAKNESS)) { d = new Damage(d); d.setValue(d.getValue() - firstEffectOf(Effect.Type.WEAKNESS).strength); }
                 this.attack(ens.get(chosenEnemyIndex), d, chosen.getAttackMessage());
-                if(chosen instanceof Sword && ((Sword)chosen).use() && !ens.isEmpty()) System.out.println("Attack again!");
+                if(chosen instanceof Sword && ((Sword)chosen).use() && !ens.isEmpty()) Utils.slowPrintln("Attack again!", 0);
                 else break;
             }
         }
-        else System.out.println("No enemies.");
+        else Utils.slowPrintln("No enemies.", 0);
     }
 
     private void trade()
@@ -211,13 +211,13 @@ public class Player extends Unit
 
     private void commune()
     {
-        System.out.println();
+        Utils.println();
 
-        System.out.println("What do you say to Ptolomy's spirit?\n");
+        Utils.slowPrintln("What do you say to Ptolomy's spirit?\n", 0);
         Utils.scanloop();
 
-        System.out.println();
-        System.out.print("The reply: ");
+        Utils.println();
+        Utils.slowPrint("The reply: ", 0);
 
         switch(Utils.rand.nextInt(10)) {
             case 0: Utils.slowPrint("You anger ME!!!", 75); break;
@@ -226,14 +226,14 @@ public class Player extends Unit
             default: Utils.slowPrintln("Ptolomy smiles... like this: =)", 75); break;
         }
 
-        System.out.println();
+        Utils.println();
     }
 
     private void talk()
     {
         if(!myRoom.doFirstDialogue())
         {
-            System.out.println("What do you say?");
+            Utils.slowPrintln("What do you say?", 0);
             Utils.scanloop();
             Utils.slowPrintln(ptolomyIsPresent ? "You sense Ptolomy's spirit chuckle deeply... Nothing else occurs." : "Interesting...\nWell, that does nothing.", ptolomyPrintLength);
         }
@@ -256,8 +256,8 @@ public class Player extends Unit
 
     private void castSpell()
     {        
-        System.out.println("Focus...");
-        System.out.print("Speak: ");
+        Utils.slowPrintln("Focus...", 0);
+        Utils.slowPrintln("Speak: ", 0);
         String input = Utils.scanloop();
         
         ptolomyDoesSomething(new String[] {"raises an eyebrow","nods slowly"});
@@ -467,7 +467,7 @@ public class Player extends Unit
     @Override
     public void updateUnit()
     {
-        System.out.println("\t\t\t\t\t\t\t\t--" + Utils.possessiveOf(name) + " Turn--");
+        Utils.slowPrintln("\t\t\t\t\t\t\t\t--" + Utils.possessiveOf(name) + " Turn--", 0);
         for(Effect e : new ArrayList<>(effects)) if(e.update() == EffectUpdateResult.DEATH) return;
 
         doorMoves = 2;
@@ -491,9 +491,9 @@ public class Player extends Unit
             setActions();
             
             //lists available actions, lets the player choose, then performs chosen action
-            System.out.println();
+            Utils.println();
             Game.printInfo(myRoom, false);
-            System.out.println();
+            Utils.println();
 
             performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
         }

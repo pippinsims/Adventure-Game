@@ -70,7 +70,7 @@ public class Sword extends Weapon {
     }
 
     @Override public void action(Unit u, boolean isFinal) { 
-        System.out.println("You inspect this sword: " + description); 
+        Utils.slowPrint("You inspect this sword: " + description, 0);
         if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
     }
 

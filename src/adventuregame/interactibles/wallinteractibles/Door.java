@@ -267,8 +267,8 @@ public class Door extends WallInteractible
 
     private final void badRoomException(Room r)
     {
-        System.out.println(name + ": " + description + " doesn't contain " + r.getName() + ": " + r.getDescription());
-        System.out.println(name + ": " + description + " contains both " + myRoom.getName() + ": " + myRoom.getDescription() + " and " + myOtherRoom.getName() + ": " + myOtherRoom.getDescription());
+        Utils.slowPrintln(name + ": " + description + " doesn't contain " + r.getName() + ": " + r.getDescription(), 0);
+        Utils.slowPrintln(name + ": " + description + " contains both " + myRoom.getName() + ": " + myRoom.getDescription() + " and " + myOtherRoom.getName() + ": " + myOtherRoom.getDescription(), 0);
         throw new UnsupportedOperationException("Door d.getNextRoom(Room x) requires x to be in d");
     }
 
@@ -317,15 +317,15 @@ public class Door extends WallInteractible
 
             Tuple<String,String> ns = equalize(tos(n), tos(s));
             
-            System.out.println("┌"+ns.t1+"┐");
+            Utils.slowPrintln("┌"+ns.t1+"┐", 0);
             for(int i = 0; i < Math.max(e.size(), w.size()); i++)
             {
                 String f = checkInd(w, i);
-                System.out.print(f);
-                for(int j = f.length() - 1; j < ns.t1.length(); j++) System.out.print(" ");
-                System.out.println(checkInd(e, i));
+                Utils.slowPrint(f, 0);
+                for(int j = f.length() - 1; j < ns.t1.length(); j++) Utils.slowPrint(" ", 0);
+                Utils.slowPrintln(checkInd(e, i), 0);
             }
-            System.out.println("└"+ns.t2+"┘");
+            Utils.slowPrintln("└"+ns.t2+"┘", 0);
         }
 
         private String checkInd(ArrayList<Integer> arr, int index)

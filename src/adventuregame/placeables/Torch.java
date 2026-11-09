@@ -82,7 +82,7 @@ public class Torch extends Placeable {
             }
 
             @Override public void action(Unit u, boolean isFinal) { 
-                System.out.println("The torch is fiery... You stare deeply into the flames.");
+                Utils.slowPrint("The torch is fiery... You stare deeply into the flames.", 0);
                 if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
              }
 

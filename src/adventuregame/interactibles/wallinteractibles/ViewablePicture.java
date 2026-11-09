@@ -36,8 +36,8 @@ public class ViewablePicture extends WallInteractible {
     {
         Utils.slowPrintln("You take a closer look at the depiction:\n");
         String s = Utils.readFile(txtFileName);
-        System.out.println(s);
-        System.out.println("\"" + name + "\"");
+        Utils.slowPrintln(s, 0);
+        Utils.slowPrintln("\"" + name + "\"", 0);
     }
 
     @Override public void setInspects() {}

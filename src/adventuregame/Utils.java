@@ -12,6 +12,8 @@ public class Utils {
 
     public static final boolean PLAYTEST = true;
     public static final Random rand = new Random();
+    public static String getOut() {return out;}
+    private static String out = "";
     public static Scanner scanner = new Scanner(System.in);
     public static final int MAX_PRINT_DELAY = PLAYTEST ? 1 : 50;
     public static int currentPrintDelay = MAX_PRINT_DELAY;
@@ -114,25 +116,15 @@ public class Utils {
     //     return result;
     // }
 
-    public static void slowPrint(String output)
-    {
-        slowPrint(output, currentPrintDelay);
-    }
-
-    public static void slowPrintln(String output, int sleepDuration)
-    {
-        slowPrint(output + '\n', sleepDuration);
-    }
-
-    public static void slowPrintln(String output)
-    {
-        slowPrintln(output, currentPrintDelay);
-    }
-
-    public static void slowPrintln()
-    {
-        slowPrintln("", currentPrintDelay);
-    }
+    public static void slowPrintln(String output, int sleepDuration) { slowPrint(output + '\n', sleepDuration); }
+    public static void slowPrintln(int output, int sleepDuration) { slowPrint(String.valueOf(output) + '\n', sleepDuration); }
+    public static void slowPrintln(String output) { slowPrintln(output, currentPrintDelay); }
+    public static void slowPrintln(int output) { slowPrint(String.valueOf(output)); }
+    public static void slowPrintln() { slowPrintln("", currentPrintDelay); }
+    public static void slowPrint(String output) { slowPrint(output, currentPrintDelay); }
+    public static void println(String output) { slowPrintln(output, 0); }
+    public static void println(int output) { println(String.valueOf(output)); }
+    public static void println() { slowPrintln("", 0); }
 
     public static void slowPrint(String output, int sleepDuration)
     {   
@@ -141,7 +133,11 @@ public class Utils {
             
             try
             {
-                if(c == '.') System.out.print(c);
+                if(c == '.') 
+                {
+                    System.out.print(c);
+                    out += String.valueOf(c);
+                }
                 if(c == '\n' || c == '.') Thread.sleep(sleepDuration * 5);
                 else Thread.sleep(sleepDuration);
             }
@@ -150,7 +146,11 @@ public class Utils {
                 throw new Error(e.getMessage() + " while trying to slowPrint '" + output + "'");
             }
 
-            if(c != '.') System.out.print(c);
+            if(c != '.') 
+            {
+                System.out.print(c);
+                out += String.valueOf(c);
+            }
         }
     }
 
@@ -182,7 +182,7 @@ public class Utils {
         if(options.length == 0) throw new RuntimeException("no options to print!");
         for(int i = 0; i < options.length + 1; i++) if(i == options.length || !cur.equals(options[i]))
         {
-            if(!cur.isEmpty()) System.out.println("(" + (i - min > 1 ? min + 1 + "-" : "") + i + ") " + cur);
+            if(!cur.isEmpty()) println("(" + (i - min > 1 ? min + 1 + "-" : "") + i + ") " + cur);
             min = i;
             cur = options[i % options.length];
         }
@@ -271,7 +271,7 @@ public class Utils {
      */
     public static int promptList(String question, String[] listPrompts)
     {
-        System.out.println(question);
+        println(question);
         if(listPrompts == null) return -1;
         
         printOptions(listPrompts);
@@ -288,7 +288,7 @@ public class Utils {
 
     public static <T extends Describable> T promptList(String question, ArrayList<T> prompters)
     {
-        System.out.println(question);
+        println(question);
         String[] listPrompts = descriptionsOf(prompters);
         if(listPrompts == null) return null;
         
@@ -317,7 +317,7 @@ public class Utils {
         //    {"b","e","h"} or 
         //    {"c","f"} depending on index
 
-        System.out.println(questions[cap(index, questions.length-1)]);
+        println(questions[cap(index, questions.length-1)]);
         ArrayList<String> outPromptsAsList = new ArrayList<>();
         int i = cap(index, listPrompts[0].length - 1), l = 0;
         while(l < listPrompts.length && !listPrompts[l][i].isEmpty()) outPromptsAsList.add(listPrompts[l++][i]);
@@ -363,7 +363,7 @@ public class Utils {
                 inputInt = null;
                 String question = "Incorrect input! Please input a given answer number."; //TODO: maybe "b" for back (yeah that'd be hard to add but also great), "l" for last, "f" for first, maybe chars for specific commands like ("i" for Inventory) and allow stringing them together?
 
-                System.out.println(question);
+                println(question);
                 printOptions(options);
 
                 inputString = scanloop();
@@ -446,13 +446,6 @@ public class Utils {
     {
         return n > at ? at : n;
     }
-
-    // public static void restartScanner()
-    // {
-    //     System.out.println("Restarting Scanner");
-    //     scanner.close();
-    //     scanner = new Scanner(System.in);
-    // }
 
     public static <T, K extends T> K getFirst(ArrayList<? extends T> arr, Class<K> type) 
     {

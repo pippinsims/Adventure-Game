@@ -2,6 +2,7 @@ package adventuregame.abstractclasses;
 
 import adventuregame.Interactible;
 import adventuregame.Room;
+import adventuregame.Utils;
 public abstract class Placeable extends Describable {
     protected Item it;
     protected Interactible in;
@@ -15,7 +16,7 @@ public abstract class Placeable extends Describable {
         if(currentOwner != null) 
         {
             currentOwner.getInventory().remove(it);
-            System.out.println(currentOwner.getName());
+            Utils.slowPrintln(currentOwner.getName(), 0);
         }
         currentOwner = null;
     }

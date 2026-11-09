@@ -355,8 +355,7 @@ public class Inventory {
                     case Clothes.WRIST        : wrists .remove(e); break;
                 }
             }
-            else
-                System.out.println("Cannot unequip. Inventory full."); 
+            else Utils.slowPrintln("Cannot unequip. Inventory full.", 0); 
         }
 
         public ArrayList<Item> all() {

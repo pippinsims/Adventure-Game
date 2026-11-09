@@ -34,7 +34,6 @@ public abstract class Interactible extends Describable
             else nodepath[i] = new Node.Branch(inspects[i], nodepath[i+1]);
         }
 
-        // System.out.println(this.getClass()+".insMap.put("+(name.equals("")?"\"\"":name)+", "+nodepath[0].msg+")"); MARK: for insMap checking
         insMap.put(name, new Inspect(new Node.Head(nodepath[0])));
     }
 

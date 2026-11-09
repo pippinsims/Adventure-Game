@@ -23,7 +23,7 @@ public class Environment extends Game
         generateMap();
 
         printIntroduction();
-        System.out.println();
+        Utils.println();
 
         run();
         
@@ -179,7 +179,7 @@ public class Environment extends Game
                         }
                     };
 
-                    System.out.println(u.getName() + " takes the sword by the handle... ");
+                    Utils.println(u.getName() + " takes the sword by the handle... ");
 
                     Node.L cryoutNode = new Node.L(Output.CHECK) 
                     { 
@@ -250,7 +250,7 @@ public class Environment extends Game
                                 new Node.L(Output.END) 
                                 { 
                                     @Override public boolean output(String in, QuickTimeEvent q) { 
-                                        System.out.println("You pry your catatonic fingers from the lethal power of the blade's enchantment with your free hand.");
+                                        Utils.println("You pry your catatonic fingers from the lethal power of the blade's enchantment with your free hand.");
                                         effectu.accept(q.getCurrentRound());
                                         return true;
                                     } 

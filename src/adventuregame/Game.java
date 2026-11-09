@@ -36,7 +36,7 @@ public class Game
                 curRoom = p.getRoom(); 
                 isLaur = p.getName().equals("Laur");
                 p.updateUnit();
-                System.out.println();
+                Utils.println();
             }
             cur = null; isLaur = false;
 
@@ -65,7 +65,7 @@ public class Game
                 cur = n;
                 curRoom = n.getRoom();
                 n.updateUnit();
-                System.out.println();
+                Utils.println();
             }
             
             Utils.slowPrintln("\t\t\t\t\t\t\t\t--Round End--");
@@ -79,7 +79,7 @@ public class Game
             cur = n;
             n.updateUnit();
             done.add(n);
-            System.out.println();
+            Utils.println();
             if(r.players.isEmpty()) break;
         }
     }
@@ -133,7 +133,7 @@ public class Game
         }
         else
         {
-            System.out.println(r.getDescription());
+            Utils.println(r.getDescription());
         }
 
         Utils.slowPrintDescList(r.interactibles, false);

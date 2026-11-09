@@ -2,6 +2,7 @@ package adventuregame.interactibles;
 
 import adventuregame.Inventory;
 import adventuregame.Room;
+import adventuregame.Utils;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
 
@@ -34,7 +35,7 @@ public class ItemHolder extends InventoryInteractible {
     @Override
     public void action(Unit u)
     {
-        System.out.println(u.getName() + " took " + name + " " + actLocPrep + " " + locReference);
+        Utils.slowPrintln(u.getName() + " took " + name + " " + actLocPrep + " " + locReference, 0);
 
         myRoom.remove(this);
         u.getInventory().add(item);

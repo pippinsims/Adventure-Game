@@ -1,6 +1,7 @@
 package adventuregame.items;
 import adventuregame.Damage;
 import adventuregame.Player;
+import adventuregame.Utils;
 import adventuregame.abstractclasses.Unit;
 
 public class Bananarang extends Weapon
@@ -14,7 +15,7 @@ public class Bananarang extends Weapon
     @Override
     public void action(Unit u, boolean isFinal) 
     {
-        System.out.println("You go to take a bite... but then... you probably shouldn't");
+        Utils.slowPrintln("You go to take a bite... but then... you probably shouldn't", 0);
         if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
     }
 

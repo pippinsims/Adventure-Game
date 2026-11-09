@@ -34,11 +34,6 @@ class AnimationPanel extends JPanel implements ActionListener {
 
     private ArrayList<Box> boxes;
     
-    private final Image i1 = scaleImageIcon(new ImageIcon(AnimationWindow.path+"corner.png"), 4).getImage();
-    private final Image i2 = scaleImageIcon(new ImageIcon(AnimationWindow.path+"side.png"), 4).getImage();
-
-    private Image cur1 = i1;
-
     private int clickX = 0, clickY = 0, dragX = 0, dragY = 0;
     private boolean stretchTop, stretchBottom, stretchRight, stretchLeft;
     private Box toDrag;
@@ -46,6 +41,7 @@ class AnimationPanel extends JPanel implements ActionListener {
     private final Timer animationTimer;
     private static final int FPS = 60; 
     private static final int DELAY = 1000 / FPS;
+    private final int cellPixels = 16;
 
     private Font customFont;
     private BufferedImage customIcon;
@@ -55,13 +51,13 @@ class AnimationPanel extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(1540, 820));
 
         backgroundImage = scaleImageIcon(new ImageIcon(AnimationWindow.path+"background.png"), 4).getImage();
-        System.out.println(new ImageIcon(AnimationWindow.path+"background.png").getIconHeight());
+        Utils.println(new ImageIcon(AnimationWindow.path+"background.png").getIconHeight());
 
         MouseAdapter a = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                clickX = e.getX() / 20;
-                clickY = e.getY() / 20;
+                clickX = e.getX() / cellPixels;
+                clickY = e.getY() / cellPixels;
 
                 toDrag = null;
                 stretchTop = stretchBottom = stretchRight = stretchLeft = false;
@@ -82,14 +78,12 @@ class AnimationPanel extends JPanel implements ActionListener {
                         break;
                     }
                 }
-                
-                cur1 = i2;
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                dragX = e.getX() / 20;
-                dragY = e.getY() / 20;
+                dragX = e.getX() / cellPixels;
+                dragY = e.getY() / cellPixels;
 
                 if(toDrag != null) 
                 {
@@ -121,20 +115,41 @@ class AnimationPanel extends JPanel implements ActionListener {
                         int min = toDrag.border == Box.Border.NONE ? 3 : 1;
                         if(toDrag.height < min) { toDrag.height = min; toDrag.y = oldy; }
                         if(toDrag.width < min) { toDrag.width = min; toDrag.x = oldx; }
+                        if(toDrag.mode == Box.Mode.IMAGE)
+                        {
+                            int maxX = toDrag.image.getWidth(null);
+                            int maxY = toDrag.image.getHeight(null);
+                            if(toDrag.height * cellPixels > maxY) { toDrag.height = maxY / cellPixels; toDrag.y = oldy; }
+                            if(toDrag.width * cellPixels > maxX) { toDrag.width = maxX / cellPixels; toDrag.x = oldx; }
+                        }
 
-                        toDrag.update();
+                        toDrag.build();
                     }
                 }
             }
         };
         addMouseListener(a);
         addMouseMotionListener(a);
+
+        addMouseWheelListener(e -> {
+            for (int i = boxes.size() - 1; i >= 0; i--) {
+                Box b = boxes.get(i);
+                if (b.contains(e.getX(), e.getY())) {
+                    Utils.println(b.scrollHeight);
+                    int visible = (b.bottom() - b.y + 1) * 16;
+                    int max = Math.max(0, b.contentHeight - visible);
+                    b.scrollHeight += e.getUnitsToScroll() * 16;
+                    b.scrollHeight = Math.max(0, Math.min(max, b.scrollHeight));
+                    repaint();
+                    break;
+                }
+            }
+        });
     
         boxes = new ArrayList<>(List.of(
-                new Box(Box.Mode.TEXTOUT, 5, 5, 7, 9, Box.Border.BLUE, true, true),
+                new Box(Box.Mode.TEXTOUT, 5, 5, 80, 25, Box.Border.BLUE, true, false),
                 new Box(Box.Mode.EMPTY, 10, 10, 5, 13, Box.Border.NONE, true, true),
-                new Box(Box.Mode.TEXTOUT, 10, 10, 5, 13, Box.Border.NONE, true, true),
-                new Box(Box.Mode.EMPTY, 50, 5, 20, 2, Box.Border.BLUE, true, true),
+                new Box(Box.Mode.IMAGE, 50, 5, 20, 2, Box.Border.BLUE, true, true),
                 new Box(Box.Mode.EMPTY, 0, 0, 2, 20, Box.Border.BLUE, true, true)
         ));
 
@@ -147,7 +162,7 @@ class AnimationPanel extends JPanel implements ActionListener {
         // map=box(textout)
         
         try {
-            File fontFile = new File("src/resources/my-custom-font.ttf"); 
+            File fontFile = new File("src/adventuregame/asciiart/assets/fonts/KiwiSoda.ttf"); 
             
             customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
             customFont = customFont.deriveFont(Font.PLAIN, 28f);
@@ -172,17 +187,7 @@ class AnimationPanel extends JPanel implements ActionListener {
         animationTimer.start();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // 
-        // printer.update
-        // charview.update
-        // inv.update
-        // map.border=brown
-        // map.update
-        // 
-        repaint();
-    }
+    @Override public void actionPerformed(ActionEvent e) { repaint(); }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -199,54 +204,49 @@ class AnimationPanel extends JPanel implements ActionListener {
             
             for (int c = 0; c < b.tiles.length; c++)
                 for (int r = 0; r < b.tiles[0].length; r++)
-                    g2d.drawImage(b.tiles[c][r].getImage(), (c + b.x)*20, (r + b.y)*20, this);
+                    g2d.drawImage(b.tiles[c][r], (c + b.x)*cellPixels, (r + b.y)*cellPixels, this);
 
-            if(b.mode == Box.Mode.TEXTOUT)
+            switch(b.mode)
             {
-                g2d.setColor(Color.WHITE);
-                g2d.setFont(customFont);
-                FontMetrics metrics = g2d.getFontMetrics(customFont);
+                case TEXTOUT: 
+                    b.outText = Utils.getOut();
+                    g2d.setColor(Color.WHITE);
+                    g2d.setFont(customFont.deriveFont((float)cellPixels));
 
-                //int lineHeight = metrics.getHeight();
-                //int iconSize = metrics.getAscent();
-                int charSpace = 20;
-                int startX = (b.x)*20;
-                int currentY = (b.y+1)*20;
-                if(!noborder)
-                {
-                    startX += 20;
-                    currentY += 20;
-                }
+                    int startX = b.left() + (noborder ? 0 : 1);
+                    int currentY = b.top() + 1 + (noborder ? 0 : 1);
 
-                for (String line : b.outText.split("\n")) 
-                {
-                    int currentX = startX;
-                    for(char c : line.toCharArray()) 
+                    displaystring: for (String line : b.outText.split("\n"))
                     {
-                        if(currentY > (b.bottom() + 1 - (noborder ? 0 : 1)) * 20) break;
-                        if (c == '@') g2d.drawImage(customIcon, currentX, currentY - charSpace, charSpace, charSpace, null);
-                        else {
-                            String s = String.valueOf(c);
-                            g2d.drawString(s, currentX + (charSpace - metrics.stringWidth(s)) / 2, currentY);
-                        }
-                        
-                        currentX += charSpace;
-                        if(currentX > (b.right() - (noborder ? 0 : 1)) * 20)
+                        int currentX = startX;
+                        for (String c : line.split("")) 
                         {
-                            currentY += charSpace *2;
-                            currentX = startX;
+                            if (currentY > b.bottom() + (noborder ? 1 : 0)) break displaystring;
+
+                            if(c.equals("@")) g2d.drawImage(customIcon, currentX * cellPixels, (currentY - 1)*cellPixels, cellPixels, cellPixels, null);
+                            else g2d.drawString(c, currentX * cellPixels + (cellPixels - g2d.getFontMetrics().stringWidth(c)) / 2, currentY * cellPixels);
+                            currentX++;
+
+                            if (currentX >= b.right() + (noborder ? 1 : 0))
+                            {
+                                currentX = startX;
+                                currentY++;
+                            }
                         }
+                        currentY++;
                     }
-                    currentY += charSpace * 2;
-                }
+                break;
+                case IMAGE:
+                    Image i = b.image;
+                    int t = (b.top() + (noborder ? 0 : 1)) * cellPixels;
+                    int l = (b.left() + (noborder ? 0 : 1)) * cellPixels;
+                    int fromX2 = Math.min(b.width * cellPixels, i.getWidth(null));
+                    int fromY2 = Math.min(b.height * cellPixels, i.getHeight(null));
+                    g2d.drawImage(i, l, t, l + fromX2, t + fromY2, 0, 0, fromX2, fromY2, null);
+                break;
+                case INPUT: break;
+                default: break;
             }
-        }
-        
-        if (cur1 != null)
-        { 
-            int w = cur1.getWidth(null);
-            int h = cur1.getHeight(null);
-            g2d.drawImage(cur1, clickX*20, clickY*20, w, h, this);
         }
     }
 
@@ -267,12 +267,11 @@ class Box {
     enum Mode {
         EMPTY,
         TEXTOUT,
-        TEXTIN,
-        IMAGE,
-        BUTTON
+        INPUT,
+        IMAGE
     }
 
-    public ImageIcon[][] tiles;
+    public Image[][] tiles;
     public final Image tside;
     public final Image bside;
     public final Image rside;
@@ -288,6 +287,7 @@ class Box {
     public Border border;
     public final Mode mode;
     public String outText = "Heyo, buddy!eeeeeeeeeeee\nnice to@@sight@thee there.";
+    public Image image = AnimationPanel.scaleImageIcon(new ImageIcon(AnimationWindow.path+"peili.png"), 4).getImage();
 
     public int left() { return x; }
     public int top() { return y; }
@@ -317,9 +317,17 @@ class Box {
         this.border = border;
         this.mode = mode;
 
-        update();
+        build();
     }
     
+    int scrollHeight = 0;
+    int contentHeight = 0;   // total text height, filled in during painting
+
+    boolean contains(int px, int py) {
+        return px >= x * 16 && px < (right() + 1) * 16
+            && py >= y * 16 && py < (bottom() + 1) * 16;
+    }
+
     public static BufferedImage imageIconToBufferedImage(ImageIcon i) {
         BufferedImage b = new BufferedImage(i.getIconWidth(), i.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = b.createGraphics();        
@@ -355,29 +363,25 @@ class Box {
         return new ImageIcon(new AffineTransformOp(t, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(b, null));
     }
 
-    public void update()
+    public void build()
     {
         if(border != Border.NONE)
         {
-            tiles = new ImageIcon[width+2][height+2];
-            tiles[ 0 ][ 0 ] = new ImageIcon(tlcorner);
-            tiles[ 0 ][height+1] = new ImageIcon(blcorner);
-            tiles[width+1][ 0 ] = new ImageIcon(trcorner);
-            tiles[width+1][height+1] = new ImageIcon(brcorner);
-            for (int i = 1; i < width+1; i++) tiles[i][0] = new ImageIcon(tside);
-            for (int i = 1; i < height+1; i++) tiles[0][i] = new ImageIcon(lside);
-            for (int i = 1; i < height+1; i++) tiles[width+1][i] = new ImageIcon(rside);
-            for (int i = 1; i < width+1; i++) tiles[i][height+1] = new ImageIcon(bside);
-            for (int i = 1; i < width+1; i++) for (int j = 1; j < height+1; j++) tiles[i][j] = new ImageIcon(center);
+            tiles = new Image[width+2][height+2];
+            tiles[ 0 ][ 0 ] = tlcorner;
+            tiles[ 0 ][height+1] = blcorner;
+            tiles[width+1][ 0 ] = trcorner;
+            tiles[width+1][height+1] = brcorner;
+            for (int i = 1; i < width+1; i++) tiles[i][0] = tside;
+            for (int i = 1; i < height+1; i++) tiles[0][i] = lside;
+            for (int i = 1; i < height+1; i++) tiles[width+1][i] = rside;
+            for (int i = 1; i < width+1; i++) tiles[i][height+1] = bside;
+            for (int i = 1; i < width+1; i++) for (int j = 1; j < height+1; j++) tiles[i][j] = center;
         }
         else
         {            
-            tiles = new ImageIcon[width][height];
-            for (int i = 0; i < width; i++) for (int j = 0; j < height; j++) tiles[i][j] = new ImageIcon(center);
+            tiles = new Image[width][height];
+            for (int i = 0; i < width; i++) for (int j = 0; j < height; j++) tiles[i][j] = center;
         }
-
-        // for(int a = 0; a < w+2; a++){
-        //     for(int d = 0; d < h+2; d++) System.out.print(tiles[a][d] == null ? "n" : ".");
-        //         System.out.println();}
     }
 }

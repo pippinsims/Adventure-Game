@@ -55,7 +55,6 @@ public class Effect extends Describable{
     public final EffectUpdateResult update()
     {
         if(effectee == null) throw new RuntimeException("Cannot update an Effect that has no effectee");
-        //System.out.println("Health: " + e.health + " (temporary println)");
 
         EffectUpdateResult result = EffectUpdateResult.NONE;
         switch (getType()) 
