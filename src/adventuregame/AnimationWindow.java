@@ -41,17 +41,15 @@ class AnimationPanel extends JPanel implements ActionListener {
     private final Timer animationTimer;
     private static final int FPS = 60; 
     private static final int DELAY = 1000 / FPS;
-    private final int cellPixels = 16;
+    public static final int cellPixels = 16;
 
     private Font customFont;
     private BufferedImage customIcon;
 
     public AnimationPanel() {
-        // setPreferredSize(new Dimension(1920, 1080));
         setPreferredSize(new Dimension(1540, 820));
 
         backgroundImage = scaleImageIcon(new ImageIcon(AnimationWindow.path+"background.png"), 4).getImage();
-        Utils.println(new ImageIcon(AnimationWindow.path+"background.png").getIconHeight());
 
         MouseAdapter a = new MouseAdapter() {
             @Override
@@ -99,7 +97,7 @@ class AnimationPanel extends JPanel implements ActionListener {
                         {
                             if(stretchLeft)
                             {
-                                toDrag.width += toDrag.x - dragX;
+                                toDrag.width += toDrag.x - dragX; //TODO sus if you slam it closed from the left
                                 toDrag.x = dragX;
                             }
                             
@@ -132,23 +130,17 @@ class AnimationPanel extends JPanel implements ActionListener {
         addMouseMotionListener(a);
 
         addMouseWheelListener(e -> {
-            for (int i = boxes.size() - 1; i >= 0; i--) {
-                Box b = boxes.get(i);
-                if (b.contains(e.getX(), e.getY())) {
-                    Utils.println(b.scrollHeight);
-                    int visible = (b.bottom() - b.y + 1) * 16;
-                    int max = Math.max(0, b.contentHeight - visible);
-                    b.scrollHeight += e.getUnitsToScroll() * 16;
-                    b.scrollHeight = Math.max(0, Math.min(max, b.scrollHeight));
-                    repaint();
-                    break;
-                }
+            for(Box b : boxes) if (b.contains(e.getX(), e.getY())) {
+                b.changeStartLine(e.getUnitsToScroll());
+                repaint();
+                break;
             }
         });
     
+        //bounds 95x50
         boxes = new ArrayList<>(List.of(
+                new Box(Box.Mode.TEXTOUT, 25, 5, 80, 25, Box.Border.NONE, true, false),
                 new Box(Box.Mode.TEXTOUT, 5, 5, 80, 25, Box.Border.BLUE, true, false),
-                new Box(Box.Mode.EMPTY, 10, 10, 5, 13, Box.Border.NONE, true, true),
                 new Box(Box.Mode.IMAGE, 50, 5, 20, 2, Box.Border.BLUE, true, true),
                 new Box(Box.Mode.EMPTY, 0, 0, 2, 20, Box.Border.BLUE, true, true)
         ));
@@ -162,7 +154,7 @@ class AnimationPanel extends JPanel implements ActionListener {
         // map=box(textout)
         
         try {
-            File fontFile = new File("src/adventuregame/asciiart/assets/fonts/KiwiSoda.ttf"); 
+            File fontFile = new File("src/adventuregame/asciiart/assets/fonts/KiwiSoa.ttf"); 
             
             customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
             customFont = customFont.deriveFont(Font.PLAIN, 28f);
@@ -170,7 +162,7 @@ class AnimationPanel extends JPanel implements ActionListener {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(customFont);
         } catch (IOException | FontFormatException e) {
-            customFont = new Font("Serif", Font.PLAIN, 28);
+            customFont = new Font("Courier New", Font.BOLD, 28);
         }
 
         // try { customIcon = ImageIO.read(new File(AnimationWindow.path+"peili.png")); } 
@@ -209,29 +201,42 @@ class AnimationPanel extends JPanel implements ActionListener {
             switch(b.mode)
             {
                 case TEXTOUT: 
-                    b.outText = Utils.getOut();
                     g2d.setColor(Color.WHITE);
                     g2d.setFont(customFont.deriveFont((float)cellPixels));
 
                     int startX = b.left() + (noborder ? 0 : 1);
                     int currentY = b.top() + 1 + (noborder ? 0 : 1);
 
-                    displaystring: for (String line : b.outText.split("\n"))
+                    b.updateText(Utils.getOut());
+                    String[] lines = b.getTextLines();
+                    displaystring: for (int i = b.getStartLine(); i < lines.length; i++)
                     {
-                        int currentX = startX;
+                        String line = lines[i];
+                        int currentX = startX*2;
                         for (String c : line.split("")) 
                         {
-                            if (currentY > b.bottom() + (noborder ? 1 : 0)) break displaystring;
+                            if (currentY > b.bottom() + (noborder ? 1 : 0) - 1) break displaystring;
 
-                            if(c.equals("@")) g2d.drawImage(customIcon, currentX * cellPixels, (currentY - 1)*cellPixels, cellPixels, cellPixels, null);
-                            else g2d.drawString(c, currentX * cellPixels + (cellPixels - g2d.getFontMetrics().stringWidth(c)) / 2, currentY * cellPixels);
-                            currentX++;
-
-                            if (currentX >= b.right() + (noborder ? 1 : 0))
-                            {
-                                currentX = startX;
-                                currentY++;
+                            if(c.equals("@")) 
+                            { 
+                                g2d.drawImage(customIcon, currentX * cellPixels/2 + cellPixels/4, (currentY - 1)*cellPixels, cellPixels, cellPixels, null);
+                                currentX++; 
                             }
+                            else 
+                            {
+                                int gy = currentY * cellPixels;
+                                g2d.setPaint(new LinearGradientPaint(0, gy - cellPixels, 0, gy,
+                                    new float[]{0f, 0.5f, 1f},
+                                    new Color[]{
+                                        new Color(255, 240, 150), 
+                                        new Color(218, 165, 32), 
+                                        new Color(255, 240, 150)//new Color(139, 90, 0)
+                                    }
+                                ));
+                                g2d.drawString(c, currentX * cellPixels/2 + (cellPixels - g2d.getFontMetrics().stringWidth(c)) / 2, gy);
+                            }
+                                // g2d.drawString(c, currentX * cellPixels/2 + (cellPixels - g2d.getFontMetrics().stringWidth(c)) / 2, currentY * cellPixels);
+                            currentX++;
                         }
                         currentY++;
                     }
@@ -271,7 +276,6 @@ class Box {
         IMAGE
     }
 
-    public Image[][] tiles;
     public final Image tside;
     public final Image bside;
     public final Image rside;
@@ -283,17 +287,29 @@ class Box {
     public final Image center;
     public final boolean stretchable;
     public final boolean draggable;
-    public int x, y, width, height;
-    public Border border;
     public final Mode mode;
-    public String outText = "Heyo, buddy!eeeeeeeeeeee\nnice to@@sight@thee there.";
+    public int x, y, width, height;
+    public Image[][] tiles;
+    public Border border;
     public Image image = AnimationPanel.scaleImageIcon(new ImageIcon(AnimationWindow.path+"peili.png"), 4).getImage();
+    private String outText = "Heyo, buddy!eeeeeeeeeeee\nnice to@@sight@thee there.";
+    private int startLine = -1;
 
     public int left() { return x; }
     public int top() { return y; }
     public int right() { return border == Border.NONE? x + width - 1 : x + width + 1; }
     public int bottom() { return border == Border.NONE? y + height - 1 : y + height + 1; }
 
+    public void updateText(String newtext) { outText = newtext; }
+    public String[] getTextLines() { return Utils.splitLines(outText.split("\n"), width*2-1); }
+    public int getStartLine() { return startLine == -1 ? maxStartLine() : startLine; }
+    public void changeStartLine(int toAdd) {
+        startLine = getStartLine() + toAdd;
+        if(startLine >= maxStartLine()) startLine = -1;
+        else if(startLine < 0) startLine = 0;
+    }
+    private int maxStartLine() { return Math.max(getTextLines().length - height + 1, 0); } //plus 1 because of that extra - 1 for margin when printing
+    
     public Box(Mode mode, int x, int y, int width, int height, Border border, boolean draggable, boolean stretchable)
     {
         ImageIcon c = AnimationPanel.scaleImageIcon(new ImageIcon(AnimationWindow.path+"corner.png"), 4);
@@ -319,13 +335,13 @@ class Box {
 
         build();
     }
-    
-    int scrollHeight = 0;
-    int contentHeight = 0;   // total text height, filled in during painting
 
-    boolean contains(int px, int py) {
-        return px >= x * 16 && px < (right() + 1) * 16
-            && py >= y * 16 && py < (bottom() + 1) * 16;
+    boolean contains(int x, int y) {
+        int p = AnimationPanel.cellPixels;
+        return x >= left()   * p && 
+               x <= right()  * p && 
+               y >= top()    * p && 
+               y <= bottom() * p;
     }
 
     public static BufferedImage imageIconToBufferedImage(ImageIcon i) {

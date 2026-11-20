@@ -478,6 +478,18 @@ public class Utils {
         return noun + "'" + (noun.charAt(noun.length() - 1) != 's' ? "s" : "");
     }
 
+    public static String[] splitLines(String[] in, int max) 
+    {
+        List<String> out = new ArrayList<>();
+        for (String line : in) 
+        {
+            int charIndex = 0;
+            do out.add(line.substring(charIndex, Math.min(line.length(), charIndex += max)));
+            while (charIndex < line.length());
+        }
+        return out.toArray(new String[0]);
+    }
+
     public static abstract class Doer
     {
         protected abstract boolean act();
