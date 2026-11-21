@@ -23,6 +23,8 @@ public class Player extends Unit
     public int doorMoves;
     public boolean ableToAct = false;
 
+    private ArrayList<Action> impedes = new ArrayList<>();
+
     //FOR EACH ENUM, MAKE A MAP ENTRY
     enum Action 
     {
@@ -35,7 +37,8 @@ public class Player extends Unit
         COMMUNE,
         INVENTORY,
         LEAVE,
-        TRADE
+        TRADE,
+        IMPEDE
     }
     
     private final Map<Action, String> actionTypes = Map.ofEntries(Map.entry(Action.NOTHING,  "Do nothing."),
@@ -47,7 +50,8 @@ public class Player extends Unit
                                                                   Map.entry(Action.COMMUNE,  "Commune with Ptolomy's spirit"),
                                                                   Map.entry(Action.INVENTORY,"Inventory"),
                                                                   Map.entry(Action.LEAVE,    "Leave"),
-                                                                  Map.entry(Action.TRADE,    "Trade"));
+                                                                  Map.entry(Action.TRADE,    "Trade"),
+                                                                  Map.entry(Action.IMPEDE,    "Impede"));
 
     public List<Action> actions = new ArrayList<Action>();
 
@@ -96,6 +100,7 @@ public class Player extends Unit
     {
         actions.clear();
         actions.add(Action.NOTHING);
+        actions.add(Action.IMPEDE);
 
         if(myRoom.interactibles.size() > 0)
         {
@@ -119,6 +124,9 @@ public class Player extends Unit
         if(inv.size() > 0) actions.add(Action.INVENTORY);
 
         if(!isInCombat) actions.add(Action.LEAVE);
+
+        for(Action a : impedes) actions.remove(a);
+        impedes.clear();
     }
 
     public void performAction(int i)
@@ -134,6 +142,7 @@ public class Player extends Unit
             case INVENTORY: inventory(); break;
             case LEAVE:     leave();     break;
             case TRADE:     trade();     break;
+            case IMPEDE:    impede();     break;
             default:                     break;
         }
     }
@@ -155,7 +164,7 @@ public class Player extends Unit
     can place objects in positions. Maybe every room has a list of local unique positions, and you get a list of them when you want
     to place something
     */
-    private void fight()
+    private void fight() //TODO: can fight anybody
     {
         ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
 
@@ -229,7 +238,7 @@ public class Player extends Unit
         Utils.println();
     }
 
-    private void talk()
+    private void talk() //TODO: should parse on words and 20 or greater is a full turn otherwise you can move again, if total words adds up to 20 you can't keep moving
     {
         if(!myRoom.doFirstDialogue())
         {
@@ -430,7 +439,7 @@ public class Player extends Unit
         else doors.get(Utils.promptList("Which door?", Utils.actionDescsOf(doors))).action(this);
     }
 
-    private void inventory()
+    private void inventory() //TODO: checking down one path of inventory (seeing whats in a certain bag on a certain belt) takes whole turn
     {
         ArrayList<Item> its = inv.all();
         String[] n = Utils.namesOf(its),
@@ -448,6 +457,19 @@ public class Player extends Unit
         }
         else if(i instanceof Actor)
             ((Actor)i).action(this, false);
+    }
+
+    private void impede()
+    {
+        Action[] acts = actionTypes.keySet().toArray(new Action[0]);
+        String[] actStrs = new String[acts.length]; 
+        for (int i = 0; i < acts.length; i++) actStrs[i] = actionTypes.get(acts[i]);
+        ArrayList<Player> toImpede = new ArrayList<>(myRoom.players);
+        toImpede.remove(this);
+        Player who = toImpede.get(Utils.promptList("Who do you impede?", Utils.namesOf(toImpede)));
+        Action how = acts[Utils.promptList("How do you impede them?", actStrs)];
+        who.impedes.add(how);
+        Utils.slowPrintln("You impede " + who.possessiveadj + " ability to " + actionTypes.get(how));
     }
 
     private String[] getPlayerActionDescriptions()
@@ -492,7 +514,7 @@ public class Player extends Unit
             
             //lists available actions, lets the player choose, then performs chosen action
             Utils.println();
-            Game.printInfo(myRoom, false);
+            Game.printInfo(myRoom, false); //TODO: only print info once per room
             Utils.println();
 
             performAction(Utils.promptList("You can:", getPlayerActionDescriptions()));
