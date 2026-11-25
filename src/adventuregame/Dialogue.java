@@ -184,6 +184,6 @@ public class Dialogue
     public static void aggroAllOfSameType(Unit from)
     {
         Utils.slowPrintln("All the " + from.getPluralDescription() + " prepare to fight!");
-        for(NonPlayer to : from.getRoom().NPCs) if(from.getClass().isInstance(to)) to.setHostile();
+        for(NonPlayer to : from.getRoom().NPs) if(from.getClass().isInstance(to)) to.setHostile();
     }
 }

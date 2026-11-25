@@ -106,7 +106,7 @@ public class Player extends Unit
 
         if(myRoom.all().size() > 1 && !inv.isEmpty()) actions.add(Action.TRADE);
 
-        if(myRoom.NPCs.size() != 0) actions.add(Action.FIGHT);
+        if(myRoom.NPs.size() != 0) actions.add(Action.FIGHT);
 
         actions.add(Action.TALK);
 
@@ -159,7 +159,7 @@ public class Player extends Unit
     {
         ptolomyDoesSomething(new String[] {"smiles upon you","shrinks away like a weak little coward"});
 
-        ArrayList<NonPlayer> ens = myRoom.NPCs;
+        ArrayList<NonPlayer> ens = myRoom.NPs;
         for(Weapon w : inv.getWeapons()) if(w instanceof Sword) ((Sword)w).setNumAttacks();
         if(!ens.isEmpty())
         {
@@ -270,7 +270,7 @@ public class Player extends Unit
                 String message = "a level " + lvl + " Psych Strike spell";
                 Utils.slowPrintln("You release " + message + " on all of your foes.");
                 ArrayList<Unit> targets = new ArrayList<>();
-                for(NonPlayer n : myRoom.NPCs) if(n.enemies.contains(this)) targets.add(n);
+                for(NonPlayer n : myRoom.NPs) if(n.enemies.contains(this)) targets.add(n);
                 if(targets.size() == 0) Utils.slowPrint("... but you have no enemies! Nothing happens.");
                 else for (Unit e : new ArrayList<>(targets)) this.attack(e, new Damage(lvl, Damage.Type.PSYCHIC, Damage.Mode.INFLICTEFFECT, new Effect(Effect.Type.PSYCHSTRIKE, lvl, lvl)), message); //need to instantiate every time, otherwise they'd all have the same instance of the effect
                 break;
@@ -480,7 +480,7 @@ public class Player extends Unit
         while(ableToAct) 
         {
             ableToAct = false;
-            isInCombat = myRoom.NPCs.stream().anyMatch(n -> n.enemies.contains(this));
+            isInCombat = myRoom.NPs.stream().anyMatch(n -> n.enemies.contains(this));
             relevantInteractibles = new ArrayList<>(myRoom.interactibles).stream()
                 .filter(i -> 
                     ((!(i instanceof Door) && !i.actionVerb.isEmpty()) ||

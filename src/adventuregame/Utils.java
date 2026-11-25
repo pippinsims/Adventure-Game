@@ -424,11 +424,11 @@ public class Utils {
         for(Object o : l) for (int i = 0; i < c.length; i++) if(c[i].isInstance(o)) return true;
         return false;
     }
-
-    public static boolean overlap(List<?> l1, List<?> l2) 
+    
+    public static boolean disjoint(List<?> l1, List<?> l2) 
     {
-        for(Object o1 : l1) for(Object o2 : l2) if(o1 == o2) return true;
-        return false;
+        for(Object o1 : l1) for(Object o2 : l2) if(o1 == o2) return false;
+        return true;
     } 
 
     public static boolean remove(ArrayList<? extends Describable> arr, Object toFind)

@@ -13,7 +13,7 @@ public class Room extends Describable
     private static int roomnum = 0; //playtest
 
     public  ArrayList<Player>       players       = new ArrayList<>();
-    public  ArrayList<NonPlayer>    NPCs          = new ArrayList<>();
+    public  ArrayList<NonPlayer>    NPs          = new ArrayList<>();
     public  ArrayList<Interactible> interactibles = new ArrayList<>();
     private ArrayList<Door>         doors         = new ArrayList<>();
     private ArrayList<Player>       familiars     = new ArrayList<>();
@@ -38,7 +38,7 @@ public class Room extends Describable
     public ArrayList<Unit> all()
     {
         ArrayList<Unit> all = new ArrayList<>();
-        all.addAll(NPCs);
+        all.addAll(NPs);
         all.addAll(players);
 
         return all;
@@ -51,7 +51,7 @@ public class Room extends Describable
 
     public boolean doFirstDialogue()
     {
-        for(NonPlayer n : NPCs) if(!n.dialogues.isEmpty() && n.dialogues.getFirst().next() && n.dialogues.getFirst().atEnd)
+        for(NonPlayer n : NPs) if(!n.dialogues.isEmpty() && n.dialogues.getFirst().next() && n.dialogues.getFirst().atEnd)
         {
             n.dialogues.remove(0); 
             return true;
@@ -72,7 +72,7 @@ public class Room extends Describable
     public void add(Unit u)
     {
         if(u instanceof Player) players.add((Player)u);
-        else NPCs.add((NonPlayer)u);
+        else NPs.add((NonPlayer)u);
         u.setRoom(this);
 
         update();
@@ -91,7 +91,7 @@ public class Room extends Describable
     {
         boolean out;
         if(u instanceof Player) out = players.remove(u);
-        else out = NPCs.remove(u);
+        else out = NPs.remove(u);
         
         update();
         return out;
@@ -122,7 +122,7 @@ public class Room extends Describable
 
         for(Interactible i : interactibles) if(i.checkEnableOnUpdate()) i.enable();
 
-        for(NonPlayer n : NPCs) n.updateAwareness();
+        for(NonPlayer n : NPs) n.updateAwareness();
     }
 
     private void updateDoors()

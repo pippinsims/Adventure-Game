@@ -161,7 +161,7 @@ public abstract class NonPlayer extends Unit {
         }
         else if (getFirstActiveDialogue() != null && getFirstActiveDialogue().getInitiator() == this)
             performAction(Action.DIALOGUE);
-        else if (Utils.overlap(enemies, myRoom.all()))
+        else if (!Utils.disjoint(enemies, myRoom.all()))
             performAction(Action.ATTACK);
         else
             performAction(Action.NORMAL);

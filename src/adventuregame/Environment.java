@@ -427,11 +427,11 @@ public class Environment extends Game
                     case ATTACK: attack(); break;
                     case DIALOGUE: talk(); break;
                     case NORMAL:
-                        if(!myRoom.NPCs.contains(bofe))
+                        if(!myRoom.NPs.contains(bofe))
                         {
                             for(Door d : myRoom.getDoors())
                             {
-                                if(d.getNextRoom(myRoom).NPCs.contains(bofe))
+                                if(d.getNextRoom(myRoom).NPs.contains(bofe))
                                 {
                                     d.action(this);
                                     return;
@@ -462,7 +462,7 @@ public class Environment extends Game
         chamber.add(e);
         chamber.add(new NonPlayer.Goblin(3));
         chamber.add(new NonPlayer.Goblin(3));
-        for(NonPlayer n : chamber.NPCs) for(NonPlayer n1 : chamber.NPCs) if(n != n1) n.friends.add(n1);
+        for(NonPlayer n : chamber.NPs) for(NonPlayer n1 : chamber.NPs) if(n != n1) n.friends.add(n1);
         e.dialogues.add(
             new Dialogue(
                 e,
@@ -529,7 +529,7 @@ public class Environment extends Game
         new Door(chamber, joiner1, Wall.EAST);
 
         //TODO maybe disable all doors when in combat?
-        for(Door d1 : chamber.getDoors()) for(NonPlayer n : chamber.NPCs) if(n instanceof NonPlayer.Goblin) d1.addDisabler(n);
+        for(Door d1 : chamber.getDoors()) for(NonPlayer n : chamber.NPs) if(n instanceof NonPlayer.Goblin) d1.addDisabler(n);
 
         Room treasureRoom = new Room("a room filled to the brim in a plenteous manner. Old swords and worn chalices adorned with gems sparkle, and set your heart in motion",
                                      "Treasure Room");

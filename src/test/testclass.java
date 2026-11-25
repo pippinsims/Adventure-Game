@@ -67,10 +67,10 @@ public class testclass {
                                 Game.cur = new Player("Guy", 1);
                                 Game.curRoom.add(Game.cur);
                                 Game.curRoom.add(new NonPlayer.Goblin(10));
-                                for(NonPlayer e : Game.curRoom.NPCs) e.setRoom(Game.curRoom);
+                                for(NonPlayer e : Game.curRoom.NPs) e.setRoom(Game.curRoom);
                                 Game.cur.setRoom(Game.curRoom);
                                 Game.cur.updateUnit();
-                                for(NonPlayer e : Game.curRoom.NPCs) e.chooseAction();
+                                for(NonPlayer e : Game.curRoom.NPs) e.chooseAction();
 
                                 break;
                         }
@@ -194,20 +194,21 @@ public class testclass {
                                 new Card(Gzouca.Type.Gzouca, Card.Type.p10),
                                 new Card(Gzouca.Type.Gzouca, Card.Type.n10)
                             )))
-                        ),
-                        Map.entry(
-                            "Tarry",
-                            new Cards(new ArrayList<>(List.of(
-                                new Card(Gzouca.Type.Gzouca, Card.Type.p1),
-                                new Card(Gzouca.Type.Gzouca, Card.Type.p2),
-                                new Card(Gzouca.Type.Gzouca, Card.Type.p6),
-                                new Card(Gzouca.Type.Gzouca, Card.Type.p8),
-                                new Card(Gzouca.Type.Gzouca, Card.Type.Zero),
-                                new Card(Gzouca.Type.Gzouca, Card.Type.n1),
-                                new Card(Gzouca.Type.Gzouca, Card.Type.n2),
-                                new Card(Gzouca.Type.Gzouca, Card.Type.n5)
-                            )))
                         )
+                        // ,
+                        // Map.entry(
+                        //     "Tarry",
+                        //     new Cards(new ArrayList<>(List.of(
+                        //         new Card(Gzouca.Type.Gzouca, Card.Type.p1),
+                        //         new Card(Gzouca.Type.Gzouca, Card.Type.p2),
+                        //         new Card(Gzouca.Type.Gzouca, Card.Type.p6),
+                        //         new Card(Gzouca.Type.Gzouca, Card.Type.p8),
+                        //         new Card(Gzouca.Type.Gzouca, Card.Type.Zero),
+                        //         new Card(Gzouca.Type.Gzouca, Card.Type.n1),
+                        //         new Card(Gzouca.Type.Gzouca, Card.Type.n2),
+                        //         new Card(Gzouca.Type.Gzouca, Card.Type.n5)
+                        //     )))
+                        // )
                     );
                     ArrayList<Card> standard = new ArrayList<>(List.of(
                         new Card(Gzouca.Type.Gzouca, Card.Type.Zero),

@@ -9,7 +9,7 @@ import adventuregame.Utils;
 import adventuregame.interactibles.wallinteractibles.Door;
 import adventuregame.items.Equippable;
 
-//FOR PLAYER, FOLLOWERS, NPCS, AND ENEMIES
+//FOR PLAYER, FOLLOWERS, NPS, AND ENEMIES
 
 public abstract class Unit extends Effectable
 {   

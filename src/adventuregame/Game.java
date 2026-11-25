@@ -45,21 +45,21 @@ public class Game
 
             ArrayList<NonPlayer> done = new ArrayList<>();
 
-            //all npcs in player rooms by room
+            //all nps in player rooms by room
             for(Room r : playerRooms)
             {
-                if(!r.NPCs.isEmpty())
+                if(!r.NPs.isEmpty())
                 {
                     curRoom = r;
-                    updateNPCsWhere(n -> Utils.overlap(r.all(), n.enemies), r, done); //aggressive go first
-                    updateNPCsWhere(n -> !done.contains(n), r, done); //then peaceful
+                    updateNPsWhere(n -> !Utils.disjoint(r.all(), n.enemies), r, done); //aggressive go first
+                    updateNPsWhere(n -> !done.contains(n), r, done); //then peaceful
 
                     //TODO instead of lambdas, sort so aggro are first and then peaceful, but sustain the previous sorting as well
                 }
             }
 
-            //all npcs in rooms that haven't been updated yet, but contain loaded non-done npcs, by room
-            for(NonPlayer l : loaded) for(NonPlayer n : new ArrayList<>(l.getRoom().NPCs)) if(!done.contains(n))
+            //all nps in rooms that haven't been updated yet, but contain loaded non-done nps, by room
+            for(NonPlayer l : loaded) for(NonPlayer n : new ArrayList<>(l.getRoom().NPs)) if(!done.contains(n))
             {
                 done.add(n);
                 cur = n;
@@ -72,9 +72,9 @@ public class Game
         }
     }
 
-    private static final void updateNPCsWhere(Predicate<NonPlayer> condition, Room r, ArrayList<NonPlayer> done)
+    private static final void updateNPsWhere(Predicate<NonPlayer> condition, Room r, ArrayList<NonPlayer> done)
     {
-        for(NonPlayer n : new ArrayList<>(r.NPCs)) if(condition.test(n))
+        for(NonPlayer n : new ArrayList<>(r.NPs)) if(condition.test(n))
         {        
             cur = n;
             n.updateUnit();
@@ -138,8 +138,8 @@ public class Game
 
         Utils.slowPrintDescList(r.interactibles, false);
 
-        if(isLaur) Utils.slowPrintDescList(r.NPCs, false);
-        else Utils.slowPrintDescList(r.NPCs, true);
+        if(isLaur) Utils.slowPrintDescList(r.NPs, false);
+        else Utils.slowPrintDescList(r.NPs, true);
         
         ArrayList<Player> p = new ArrayList<>(r.players);
         p.remove(cur);

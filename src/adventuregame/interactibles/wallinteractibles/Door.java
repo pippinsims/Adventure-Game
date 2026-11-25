@@ -283,7 +283,7 @@ public class Door extends WallInteractible
     @Override 
     protected boolean checkEnableOnUpdate() 
     {
-        return !Utils.overlap(disablers, myRoom.all());
+        return Utils.disjoint(disablers, myRoom.all());
     }
 
     public static class Diagram
