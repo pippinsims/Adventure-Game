@@ -5,6 +5,7 @@ import java.util.Map;
 
 import adventuregame.Damage;
 import adventuregame.Utils;
+import adventuregame.abstractclasses.Equippable;
 
 public class Armor extends Equippable {
 

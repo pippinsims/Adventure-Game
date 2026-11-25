@@ -9,12 +9,12 @@ import adventuregame.Player;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.Utils.Tuple;
+import adventuregame.abstractclasses.Equippable;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.abstractclasses.Equippable.Hat.Hairpin;
 import adventuregame.interactibles.WallInteractible;
 import adventuregame.items.DoorKey;
-import adventuregame.items.Equippable;
-import adventuregame.items.Equippable.Hat.Hairpin;
 
 public class Door extends WallInteractible
 {

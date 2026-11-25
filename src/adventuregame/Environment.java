@@ -541,6 +541,14 @@ public class Environment extends Game
         new Torch(chamber, Wall.WEST);
 
         new ViewablePicture(chamber, "mad_king.txt", Wall.WEST, "patchwork depiction", "Lord Gareth the Mad");
+
+        Room belongingsRoom = new Room("a room with a jumbled mass of possessions on the floor, all familiar", "Cache of stuff", "Storeroom");
+        ArrayList<Cards.Card> nuelDeck = new ArrayList<>(Cards.standard);
+        new ItemHolder(new Cards(nuelDeck), belongingsRoom, "on", "the floor");
+        new Door(treasureRoom, belongingsRoom, Wall.EAST);
+
+        // new ItemHolder()
+
         
         Player laur = new Player(),
                nuel = new Player("Nuel", 10),

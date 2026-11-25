@@ -7,7 +7,6 @@ import adventuregame.Inventory;
 import adventuregame.Room;
 import adventuregame.Utils;
 import adventuregame.interactibles.wallinteractibles.Door;
-import adventuregame.items.Equippable;
 
 //FOR PLAYER, FOLLOWERS, NPS, AND ENEMIES
 

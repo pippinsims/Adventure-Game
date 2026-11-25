@@ -13,7 +13,7 @@ public class Room extends Describable
     private static int roomnum = 0; //playtest
 
     public  ArrayList<Player>       players       = new ArrayList<>();
-    public  ArrayList<NonPlayer>    NPs          = new ArrayList<>();
+    public  ArrayList<NonPlayer>    NPs           = new ArrayList<>();
     public  ArrayList<Interactible> interactibles = new ArrayList<>();
     private ArrayList<Door>         doors         = new ArrayList<>();
     private ArrayList<Player>       familiars     = new ArrayList<>();
@@ -74,7 +74,7 @@ public class Room extends Describable
         if(u instanceof Player) players.add((Player)u);
         else NPs.add((NonPlayer)u);
         u.setRoom(this);
-
+        
         update();
     }
 

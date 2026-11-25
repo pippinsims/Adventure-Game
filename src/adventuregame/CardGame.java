@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import adventuregame.items.Cards;
 import adventuregame.items.Cards.Card;
 
-public class Gzouca {
+public class CardGame {
     //games
     /*
     Gzouca
@@ -62,11 +62,11 @@ public class Gzouca {
 
     static ArrayList<Card> dealt = new ArrayList<>();
 
-    public Gzouca(Map<String, Cards> playersMap, Cards toDeal)
+    public CardGame(Map<String, Cards> playersMap, Cards toDeal)
     {
         for(Entry<String, Cards> x : playersMap.entrySet())
             if(x.getValue().cards().size() < 8 || toDeal.cards().size() < 5) 
-                { System.out.println("Each player needs 8 cards, and you need at least 5 cards to deal!"); return; }
+                { System.out.println("Each player needs 8 shells, and you need at least 5 shells to deal!"); return; }
 
         System.out.println("started game of Gzouca!");
         ArrayList<Player> players = new ArrayList<>();
@@ -297,7 +297,7 @@ public class Gzouca {
                     default: sum += v;
                 }
             }
-            for(Card c : Gzouca.dealt)
+            for(Card c : CardGame.dealt)
             {
                 int v = valueOf(c.type());
                 switch (v) {
@@ -376,7 +376,7 @@ public class Gzouca {
     private final String[] beast = new String[] {"whirlpool","jon boat","lodestone","tomb"     ,"sea" ,"wood","snake","frog"   ,"lizard","dragon","mansion","waxing","waning","cold"   ,"heat"   ,"gate"  ,"garnet"};
     // private final String[] norma = new String[] {"0"        ,"1"       ,"2"        ,"3"        ,"4"   ,"5"   ,"6"    ,"7"      ,"8"     ,"9"     ,"10"     ,"+"     ,"-"     ,"Beast"  ,"Being"  ,"Arrow" ,"Broken"};
 
-    private String stringOf(Card.Type t, Player p)
+    private String stringOf(Cards.Type t, Player p)
     {
         int fir = 0, sec = 0;
         switch (t) {
@@ -407,7 +407,7 @@ public class Gzouca {
         return p.arr[fir] + " " + p.arr[sec];
     }
 
-    static int valueOf(Card.Type t)
+    static int valueOf(Cards.Type t)
     {
         switch(t)
         {

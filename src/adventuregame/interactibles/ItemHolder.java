@@ -44,4 +44,14 @@ public class ItemHolder extends InventoryInteractible {
     {
         put(name + ": " + description);
     }
+
+    @Override 
+    public String getDescription() {
+        return item.getDescription();
+    }
+
+    @Override
+    public String getPluralDescription() {
+        return item.getPluralDescription();
+    }
 }

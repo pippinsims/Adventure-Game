@@ -1,11 +1,10 @@
-package adventuregame.items;
+package adventuregame.abstractclasses;
 
 import adventuregame.Inventory;
 import adventuregame.Player;
 import adventuregame.Utils;
+import adventuregame.abstractclasses.Equippable.Type.Clothes;
 import adventuregame.abstractclasses.Item.Actor;
-import adventuregame.items.Equippable.Type.Clothes;
-import adventuregame.abstractclasses.Unit;
 
 public abstract class Equippable extends Actor {
 

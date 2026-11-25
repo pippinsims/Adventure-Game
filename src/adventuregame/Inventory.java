@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import adventuregame.Utils.Tuple;
 import adventuregame.abstractclasses.Describable;
+import adventuregame.abstractclasses.Equippable;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.Unit;
+import adventuregame.abstractclasses.Equippable.Type;
+import adventuregame.abstractclasses.Equippable.Type.Clothes;
 import adventuregame.interactibles.InventoryInteractible;
 import adventuregame.items.Armor;
-import adventuregame.items.Equippable;
-import adventuregame.items.Equippable.Type;
-import adventuregame.items.Equippable.Type.Clothes;
 import adventuregame.items.Weapon;
 
 public class Inventory {
