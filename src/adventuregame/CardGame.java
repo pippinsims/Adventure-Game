@@ -1,9 +1,9 @@
 package adventuregame;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.List;
 
+import adventuregame.Utils.Tuple;
 import adventuregame.items.Cards;
 import adventuregame.items.Cards.Card;
 
@@ -62,29 +62,22 @@ public class CardGame {
 
     static ArrayList<Card> dealt = new ArrayList<>();
 
-    public CardGame(Map<String, Cards> playersMap, Cards toDeal)
+    public CardGame(List<Tuple<String, Cards>> playersMap, Cards toDeal)
     {
-        for(Entry<String, Cards> x : playersMap.entrySet())
-            if(x.getValue().cards().size() < 8 || toDeal.cards().size() < 5) 
-                { System.out.println("Each player needs 8 shells, and you need at least 5 shells to deal!"); return; }
-
-        System.out.println("started game of Gzouca!");
-        ArrayList<Player> players = new ArrayList<>();
-        int j = 0;
-        for(Entry<String, Cards> p : playersMap.entrySet())
+        if(toDeal.cards().size() < 5)
         {
-            System.out.println("choosing obfuscation for " + p.getKey());
-            String[] mode;
-            switch (j) {
-                case 0: mode = color; break;
-                case 1: mode = shape; break;
-                case 2: mode = beast; break;
-                default: mode = null;
-            }
-
-            players.add(new Player(p.getKey(), mode, null));
-            j++;
+            System.out.println("You need at least 5 cards to deal!");
+            return;
         }
+        for(Tuple<String, Cards> x : playersMap) if(x.t2.cards().size() < 8) 
+        {
+            System.out.println(x.t1 + ", each player needs 8 cards!"); 
+            return; 
+        }
+        System.out.println("started game of Gzouca!");
+        
+        ArrayList<Player> players = new ArrayList<>();
+        for(int j = 0; j < playersMap.size(); j++) players.add(new Player(playersMap.get(j).t1, modes[j], null));
 
         for(int hand = 0; hand < 3; hand++)
         {
@@ -92,7 +85,7 @@ public class CardGame {
             for(Player p : players) 
             {
                 p.hand = new ArrayList<>();
-                ArrayList<Card> submission = new ArrayList<>(playersMap.get(p.name).cards());
+                ArrayList<Card> submission = new ArrayList<>(Utils.linearFind(playersMap, p.name).t2.cards());
                 System.out.println("----");
                 for(Card c : submission) System.out.println(valueOf(c.type()));
                 while(p.hand.size() < 5)
@@ -371,10 +364,16 @@ public class CardGame {
         }
     }
 
-    private final String[] color = new String[] {"hole"     ,"pill"    ,"cystal"   ,"ghost"    ,"tome","kite","red"  ,"yellow" ,"green" ,"blue"  ,"titan"  ,"strong","weak",  "bittern","bugel"  ,"barley","hay"};
-    private final String[] shape = new String[] {"dark"     ,"stone"   ,"mite"     ,"snowflake","tree","cave","cube" ,"pyramid","prism" ,"sphere","statue" ,"mad"   ,"sane",  "night"  ,"morning","fate"  ,"feeling"};
-    private final String[] beast = new String[] {"whirlpool","jon boat","lodestone","tomb"     ,"sea" ,"wood","snake","frog"   ,"lizard","dragon","mansion","waxing","waning","cold"   ,"heat"   ,"gate"  ,"garnet"};
+    // private final String[] color = new String[] {"hole"     ,"pill"    ,"cystal"   ,"ghost"    ,"tome","kite","red"  ,"yellow" ,"green" ,"blue"  ,"titan"  ,"strong","weak",  "bittern","bugel"  ,"barley","hay"};
+    // private final String[] shape = new String[] {"dark"     ,"stone"   ,"mite"     ,"snowflake","tree","cave","cube" ,"pyramid","prism" ,"sphere","statue" ,"mad"   ,"sane",  "night"  ,"morning","fate"  ,"feeling"};
+    // private final String[] beast = new String[] {"whirlpool","jon boat","lodestone","tomb"     ,"sea" ,"wood","snake","frog"   ,"lizard","dragon","mansion","waxing","waning","cold"   ,"heat"   ,"gate"  ,"garnet"};
     // private final String[] norma = new String[] {"0"        ,"1"       ,"2"        ,"3"        ,"4"   ,"5"   ,"6"    ,"7"      ,"8"     ,"9"     ,"10"     ,"+"     ,"-"     ,"Beast"  ,"Being"  ,"Arrow" ,"Broken"};
+
+    private final String[][] modes = new String[][] {
+        new String[] {"hole"     ,"pill"    ,"cystal"   ,"ghost"    ,"tome","kite","red"  ,"yellow" ,"green" ,"blue"  ,"titan"  ,"strong","weak",  "bittern","bugel"  ,"barley","hay"},
+        new String[] {"dark"     ,"stone"   ,"mite"     ,"snowflake","tree","cave","cube" ,"pyramid","prism" ,"sphere","statue" ,"mad"   ,"sane",  "night"  ,"morning","fate"  ,"feeling"},
+        new String[] {"whirlpool","jon boat","lodestone","tomb"     ,"sea" ,"wood","snake","frog"   ,"lizard","dragon","mansion","waxing","waning","cold"   ,"heat"   ,"gate"  ,"garnet"}
+    };
 
     private String stringOf(Cards.Type t, Player p)
     {

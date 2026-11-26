@@ -16,6 +16,7 @@ import adventuregame.QuickTimeEvent.EffectQTE;
 import adventuregame.QuickTimeEvent.NoUpdateQTE;
 import adventuregame.QuickTimeEvent.Node;
 import adventuregame.QuickTimeEvent.Node.Output;
+import adventuregame.Utils.Tuple;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
 import adventuregame.abstractclasses.NonPlayer;
@@ -168,8 +169,8 @@ public class testclass {
                     }
                     break;
                 case "Gzouca":
-                    Map<String, Cards> peeps = Map.ofEntries(
-                        Map.entry(
+                    List<Tuple<String, Cards>> peeps = List.of(
+                        new Tuple<String, Cards>(
                             "Gop",
                             new Cards(new ArrayList<>(List.of(
                                 new Card(CardGame.Type.Gzouca, Cards.Type.p1),
@@ -182,7 +183,7 @@ public class testclass {
                                 new Card(CardGame.Type.Gzouca, Cards.Type.n3)
                             )))
                         ),
-                        Map.entry(
+                        new Tuple<String, Cards>(
                             "Targin",
                             new Cards(new ArrayList<>(List.of(
                                 new Card(CardGame.Type.Gzouca, Cards.Type.Arrow),
@@ -193,6 +194,19 @@ public class testclass {
                                 new Card(CardGame.Type.Gzouca, Cards.Type.p8),
                                 new Card(CardGame.Type.Gzouca, Cards.Type.p10),
                                 new Card(CardGame.Type.Gzouca, Cards.Type.n10)
+                            )))
+                        ),
+                        new Tuple<String, Cards>(
+                            "Tarry",
+                            new Cards(new ArrayList<>(List.of(
+                                new Card(CardGame.Type.Gzouca, Cards.Type.p1),
+                                new Card(CardGame.Type.Gzouca, Cards.Type.p2),
+                                new Card(CardGame.Type.Gzouca, Cards.Type.p6),
+                                new Card(CardGame.Type.Gzouca, Cards.Type.p8),
+                                new Card(CardGame.Type.Gzouca, Cards.Type.Zero),
+                                new Card(CardGame.Type.Gzouca, Cards.Type.n1),
+                                new Card(CardGame.Type.Gzouca, Cards.Type.n2),
+                                new Card(CardGame.Type.Gzouca, Cards.Type.n5)
                             )))
                         )
                         // ,

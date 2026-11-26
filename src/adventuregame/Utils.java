@@ -393,12 +393,32 @@ public class Utils {
             Tuple<?, ?> t = (Tuple<?, ?>)o;
             return t1.equals(t.t1) && t2.equals(t.t2);
         }
+
+        public static <T1, T2> ArrayList<T1> t1(List<Tuple<T1, T2>> l)
+        {
+            ArrayList<T1> n = new ArrayList<>();
+            for (Tuple<T1, T2> t : l) n.add(t.t1);
+            return n;
+        }
+
+        public static <T1, T2> ArrayList<T2> t2(List<Tuple<T1, T2>> l)
+        {
+            ArrayList<T2> n = new ArrayList<>();
+            for (Tuple<T1, T2> t : l) n.add(t.t2);
+            return n;
+        }
     }
 
-    public static int linearFind(String[] arr, String s)
+    public static <T> int linearFind(T[] arr, T s)
     {
         for(int i = 0; i < arr.length; i++) if(arr[i].equals(s)) return i;
         return -1;
+    }
+    
+    public static <T1, T2> Tuple<T1, T2> linearFind(List<Tuple<T1, T2>> l, T1 s)
+    {
+        for (Tuple<T1,T2> tuple : l) if(tuple.t1.equals(s)) return tuple;
+        return null;
     }
 
     public static boolean contains(String toCheck, String[] potentials)
