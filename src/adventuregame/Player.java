@@ -1,5 +1,6 @@
 package adventuregame;
 
+import adventuregame.Dialogue.B;
 import adventuregame.Inventory.Trade;
 import adventuregame.abstractclasses.Describable;
 import adventuregame.abstractclasses.Item;
@@ -161,27 +162,25 @@ public class Player extends Unit
 
         ArrayList<NonPlayer> ens = myRoom.NPs;
         for(Weapon w : inv.getWeapons()) if(w instanceof Sword) ((Sword)w).setNumAttacks();
-        if(!ens.isEmpty())
-        {
-            Weapon chosen = null;
-            while(!ens.isEmpty())
-            {   
-                final int chosenEnemyIndex = ens.size() > 1 ? Utils.promptList(name.equals("Laur") ? "Which fooeeoee meets thine bloodtherstey eyee?" : "Which enemy?", Utils.namesOf(ens)) : 0;
 
-                ArrayList<Weapon> weps = inv.getWeapons();
-                if(name.equals("Peili")) weps.addFirst(new Weapon.Punch("You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad"), new Damage(2)));
-                else weps.addFirst(new Weapon.Punch("You heave a mighty blow at the " + ens.get(chosenEnemyIndex).getModifiedDescription("sad")));
-                if(chosen == null) chosen = Utils.promptList(name.equals("Laur") ? "How will you vanquish yoerer foeee??" : "Choose your attack type:", weps);                
-
-                Damage d = chosen.getDamage();
-                if(hasEffect(Effect.Type.WEAKNESS)) { d = new Damage(d); d.setValue(d.getValue() - firstEffectOf(Effect.Type.WEAKNESS).strength); }
-                this.attack(ens.get(chosenEnemyIndex), d, chosen.getAttackMessage());
-                if(chosen instanceof Sword && ((Sword)chosen).use() && !ens.isEmpty()) System.out.println("Attack again!");
-                else break;
-            }
-        }
-        else System.out.println("No enemies.");
+        Utils.promptList("Which weapon do you choose?", getViableWeapons());
     }
+
+    private ArrayList<Weapon> getViableWeapons()
+    {
+        ArrayList<Weapon> viable = inv.getWeapons();
+
+        //body.getViableHands: for h in emptyhands if body.vitals(h) != working emptyhands.remove(h)
+        //for v in viable for h in emptyhands if body.where(v) == body.where(h) emptyhands.dontremove(h)
+        //if person is too close to body.where(v)
+        for(Weapon v: new ArrayList<>(viable)) if(v.getMinHands() > body.getViableHands().size() || body.where(v).getImpeded()) viable.remove(v);
+        //for v in viable if v too high skill/dont know how to use viable.remove(v);
+        
+        return viable;
+    }
+
+    //body.Location has impeded bool and a body.Location.Type enum field
+    //Weapons go in sheaths which are Equippables, Weapons also have an unsheathed body.Locations
 
     private void trade()
     {

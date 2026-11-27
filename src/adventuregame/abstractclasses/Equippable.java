@@ -11,7 +11,7 @@ public abstract class Equippable extends Actor {
     private String simpleDesc;
     private Type type;
 
-    public Equippable(String name, String description, String pluralDescription, Type type)
+    protected Equippable(String name, String description, String pluralDescription, Type type)
     {
         this.name = name;
         this.description = description;
@@ -49,11 +49,16 @@ public abstract class Equippable extends Actor {
         if(!isFinal && u instanceof Player) ((Player)u).ableToAct = true;
     }
 
-    public sealed interface Type permits Type.Clothes, Type.Armor
+    public sealed interface Type permits Type.Basic, Type.Clothes, Type.Armor
     {
+        public enum Basic implements Type
+        {
+            ONBELT, SHOULDERSLING, HAND, MULTIHAND
+        }
+
         public enum Clothes implements Type
         {
-            HAT, EYE, NECK, BODY, WRIST, RING, BELT, ONBELT, PANTS, SHOES
+            HAT, EYE, NECK, BODY, WRIST, RING, BACKBELT, WAISTBELT, PANTS, SHOES
         }
 
         public enum Armor implements Type
@@ -109,5 +114,14 @@ public abstract class Equippable extends Actor {
                 }
             }
         }
+    }
+
+    public static class Sheath extends Equippable 
+    {
+        public Sheath(String name, String description, String pluralDescription, Type.Clothes type)
+        {
+            if(type != Clothes.BACKBELT || type != Clothes.WAISTBELT) throw new RuntimeException("Sheath must be a belt");
+            super(name, description, pluralDescription, type);
+        }//
     }
 }
